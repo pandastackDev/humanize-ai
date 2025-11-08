@@ -7,9 +7,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "eslint .",
-		"dev:next": "next dev",
 		"dev:convex": "npx convex dev",
-		"setup": "pnpx tsx scripts/setup.ts"
+		"setup-env": "pnpx tsx scripts/setup.ts"
 	},
 	"dependencies": {
 		"@radix-ui/react-avatar": "^1.1.0",
