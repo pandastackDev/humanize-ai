@@ -3,7 +3,7 @@
 import { PersonIcon } from "@radix-ui/react-icons";
 import {
 	Avatar,
-	Box,
+	Button,
 	DropdownMenu,
 	Flex,
 	IconButton,
@@ -13,7 +13,7 @@ import type { User } from "@workos-inc/node";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import authkitSignOut from "@/actions/signOut";
+import signOut from "@/actions/signOut";
 
 export function UserNav({
 	user,
@@ -29,10 +29,6 @@ export function UserNav({
 
 	const isAdmin = role === "admin";
 	const isDashboard = pathname.startsWith("/dashboard");
-
-	const handleSignOutClick = async () => {
-		await authkitSignOut();
-	};
 
 	return (
 		<DropdownMenu.Root open={open} onOpenChange={setOpen}>
@@ -112,7 +108,9 @@ export function UserNav({
 				)}
 				<DropdownMenu.Separator />
 				<DropdownMenu.Item color="blue" onClick={() => setOpen(false)}>
-					<Box onClick={handleSignOutClick}>Log out</Box>
+					<form action={signOut}>
+						<Button type="submit">Sign Out</Button>
+					</form>
 				</DropdownMenu.Item>
 			</DropdownMenu.Content>
 		</DropdownMenu.Root>
