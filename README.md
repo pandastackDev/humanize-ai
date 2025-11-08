@@ -20,6 +20,7 @@ pnpm next dev:convex
   - https://workos.com/docs/authkit/nextjs
   - https://workos.com/docs
   - https://workos.com/docs/reference
+  - https://workos.com/docs/widgets/user-management
 - stripe
 - convex
 

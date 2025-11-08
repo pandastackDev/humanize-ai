@@ -88,8 +88,11 @@ importers:
         specifier: ^1.1.2
         version: 1.2.8(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       '@radix-ui/themes':
-        specifier: ^3.1.3
+        specifier: ^3.2.1
         version: 3.2.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+      '@tanstack/react-query':
+        specifier: 5.90.7
+        version: 5.90.7(react@19.2.0)
       '@workos-inc/authkit-nextjs':
         specifier: ^2.11.0
         version: 2.11.0(next@16.0.1(@babel/core@7.28.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -109,14 +112,14 @@ importers:
         specifier: ^0.1.58
         version: 0.1.104(convex@1.28.2(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(zod@4.1.12)
       jose:
-        specifier: ^5.9.3
-        version: 5.10.0
+        specifier: ^6.1.0
+        version: 6.1.0
       next:
         specifier: 16.0.1
         version: 16.0.1(@babel/core@7.28.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       next-themes:
-        specifier: ^0.3.0
-        version: 0.3.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^0.4.6
+        version: 0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       nextjs-toploader:
         specifier: ^3.6.15
         version: 3.9.17(next@16.0.1(@babel/core@7.28.5)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -142,8 +145,8 @@ importers:
         specifier: 0.5.1
         version: 0.5.1(@babel/core@7.28.5)(react-native@0.81.5(@babel/core@7.28.5)(@types/react@19.2.2)(react@19.2.0))(react@19.2.0)
       stripe:
-        specifier: ^16.12.0
-        version: 16.12.0
+        specifier: ^19.3.0
+        version: 19.3.0(@types/node@24.10.0)
     devDependencies:
       '@types/node':
         specifier: ^24.10.0
@@ -4034,6 +4037,9 @@ packages:
   jose@5.6.3:
     resolution: {integrity: sha512-1Jh//hEEwMhNYPDDLwXHa2ePWgWiFNNUadVmguAAw2IJ6sj9mNxV5tGXJNqlMkJAybF6Lgw1mISDxTePP/187g==}
 
+  jose@6.1.0:
+    resolution: {integrity: sha512-TTQJyoEoKcC1lscpVDCSsVgYzUDg/0Bt3WE//WiTPK6uOCQC2KZS4MpugbMWt/zyjkopgZoXhZuCi00gLudfUA==}
+
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
@@ -4436,11 +4442,11 @@ packages:
   nested-error-stacks@2.0.1:
     resolution: {integrity: sha512-SrQrok4CATudVzBS7coSz26QRSmlK9TzzoFbeKfcPBUFPjcQM9Rqvr/DlJkOrwI/0KcgvMub1n1g5Jt9EgRn4A==}
 
-  next-themes@0.3.0:
-    resolution: {integrity: sha512-/QHIrsYpd6Kfk7xakK4svpDI5mmXP0gfvCoJdGpZQ2TOrQZmsW0QxjaiLn8wbIKjtm4BTSqLoix4lxYYOnLJ/w==}
+  next-themes@0.4.6:
+    resolution: {integrity: sha512-pZvgD5L0IEvX5/9GWyHMf3m8BKiVQwsCMHfoFosXtXBMnaS0ZnIJ9ST4b4NqLVKDEm8QBxoNNGNaBv2JNF6XNA==}
     peerDependencies:
-      react: ^16.8 || ^17 || ^18
-      react-dom: ^16.8 || ^17 || ^18
+      react: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17 || ^18 || ^19 || ^19.0.0-rc
 
   next@16.0.1:
     resolution: {integrity: sha512-e9RLSssZwd35p7/vOa+hoDFggUZIUbZhIUSLZuETCwrCVvxOs87NamoUzT+vbcNAL8Ld9GobBnWOA6SbV/arOw==}
@@ -5244,9 +5250,14 @@ packages:
     resolution: {integrity: sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==}
     engines: {node: '>=8'}
 
-  stripe@16.12.0:
-    resolution: {integrity: sha512-H7eFVLDxeTNNSn4JTRfL2//LzCbDrMSZ+2q1c7CanVWgK2qIW5TwS+0V7N9KcKZZNpYh/uCqK0PyZh/2UsaAtQ==}
-    engines: {node: '>=12.*'}
+  stripe@19.3.0:
+    resolution: {integrity: sha512-3MbqRkw5LXb4LWP1LgIEYxUAYhYDDU5pcHZj4Xha6VWPnN1wrUmQ7Htsgm8wR584s0hn1aQg1lYD0Hi+F37E5g==}
+    engines: {node: '>=16'}
+    peerDependencies:
+      '@types/node': '>=16'
+    peerDependenciesMeta:
+      '@types/node':
+        optional: true
 
   structured-headers@0.4.1:
     resolution: {integrity: sha512-0MP/Cxx5SzeeZ10p/bZI0S6MpgD+yxAhi1BOQ34jgnMXsCq3j1t6tQnZu+KdlL7dvJTLT3g9xN8tl10TqgFMcg==}
@@ -10236,6 +10247,8 @@ snapshots:
 
   jose@5.6.3: {}
 
+  jose@6.1.0: {}
+
   js-tokens@4.0.0: {}
 
   js-yaml@3.14.1:
@@ -10818,7 +10831,7 @@ snapshots:
 
   nested-error-stacks@2.0.1: {}
 
-  next-themes@0.3.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
+  next-themes@0.4.6(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
     dependencies:
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
@@ -11896,10 +11909,11 @@ snapshots:
 
   strip-json-comments@3.1.1: {}
 
-  stripe@16.12.0:
+  stripe@19.3.0(@types/node@24.10.0):
     dependencies:
-      '@types/node': 24.10.0
       qs: 6.14.0
+    optionalDependencies:
+      '@types/node': 24.10.0
 
   structured-headers@0.4.1: {}
 

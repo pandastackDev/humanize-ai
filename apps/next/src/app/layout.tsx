@@ -1,5 +1,6 @@
 import { Box, Flex, Theme } from "@radix-ui/themes";
 import "@radix-ui/themes/styles.css";
+import "@workos-inc/widgets/styles.css";
 import {
 	AuthKitProvider,
 	Impersonation,
