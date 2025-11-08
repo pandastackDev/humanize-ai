@@ -1,15 +1,15 @@
 "use node";
 
-import { internalAction } from "./_generated/server";
-import { v } from "convex/values";
 import { WorkOS } from "@workos-inc/node";
+import { v } from "convex/values";
+import { internalAction } from "./_generated/server";
 
 export const verifyWebhook = internalAction({
   args: v.object({
     payload: v.string(),
     signature: v.string(),
   }),
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const workos = new WorkOS(process.env.WORKOS_API_KEY);
 
     return await workos.webhooks.constructEvent({

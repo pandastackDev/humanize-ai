@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useTheme } from 'next-themes';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import Image from "next/image";
+import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export function Logo() {
   const { resolvedTheme } = useTheme();
@@ -13,16 +13,28 @@ export function Logo() {
   }, []);
 
   if (!mounted) {
-    return <Image src="/logos/superapp_logo.svg" className="logo" alt="SuperApp logo" width={144} height={24} />;
+    return (
+      <Image
+        alt="SuperApp logo"
+        className="logo"
+        height={24}
+        src="/logos/superapp_logo.svg"
+        width={144}
+      />
+    );
   }
 
   return (
     <Image
-      src={resolvedTheme === 'dark' ? '/logos/superapp_logo_dark.svg' : '/logos/superapp_logo.svg'}
-      className="logo"
       alt="SuperApp logo"
-      width={144}
+      className="logo"
       height={24}
+      src={
+        resolvedTheme === "dark"
+          ? "/logos/superapp_logo_dark.svg"
+          : "/logos/superapp_logo.svg"
+      }
+      width={144}
     />
   );
 }

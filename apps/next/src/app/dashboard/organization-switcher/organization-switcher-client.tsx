@@ -2,21 +2,21 @@
 
 import { OrganizationSwitcher, WorkOsWidgets } from "@workos-inc/widgets";
 
-interface OrganizationSwitcherClientProps {
-	authToken: string;
-}
+type OrganizationSwitcherClientProps = {
+  authToken: string;
+};
 
 export function OrganizationSwitcherClient({
-	authToken,
+  authToken,
 }: OrganizationSwitcherClientProps) {
-	return (
-		<WorkOsWidgets>
-			<OrganizationSwitcher
-				authToken={authToken}
-				switchToOrganization={() => {
-					alert("switchToOrganization");
-				}}
-			/>
-		</WorkOsWidgets>
-	);
+  return (
+    <WorkOsWidgets>
+      <OrganizationSwitcher
+        authToken={authToken}
+        switchToOrganization={() => {
+          alert("switchToOrganization");
+        }}
+      />
+    </WorkOsWidgets>
+  );
 }

@@ -1,9 +1,9 @@
-import { DashboardContainer } from '@/app/components/layout/dashboard-container';
-import { Box, Card, Flex, Heading, Text } from '@radix-ui/themes';
+import { Box, Card, Flex, Heading, Text } from "@radix-ui/themes";
+import { withAuth } from "@workos-inc/authkit-nextjs";
 
-import { UsersManagement, WorkOsWidgets } from '@workos-inc/widgets';
-import { withAuth } from '@workos-inc/authkit-nextjs';
-import { workos } from '@/app/api/workos';
+import { UsersManagement, WorkOsWidgets } from "@workos-inc/widgets";
+import { workos } from "@/app/api/workos";
+import { DashboardContainer } from "@/app/components/layout/dashboard-container";
 
 export default async function Users() {
   const { user, organizationId } = await withAuth({ ensureSignedIn: true });
@@ -24,7 +24,7 @@ export default async function Users() {
   const authToken = await workos.widgets.getToken({
     organizationId,
     userId: user.id,
-    scopes: ['widgets:users-table:manage'],
+    scopes: ["widgets:users-table:manage"],
   });
 
   return (

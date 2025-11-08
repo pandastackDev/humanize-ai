@@ -17,6 +17,7 @@ pnpm next dev:convex
 - react-native 0.81.5
 - workos + authkit
   - https://github.com/workos/authkit
+  - https://github.com/workos/authkit-nextjs
   - https://workos.com/docs/authkit/nextjs
   - https://workos.com/docs
   - https://workos.com/docs/reference

@@ -1,5 +1,5 @@
+import { Box, Flex, Heading, Text, TextField } from "@radix-ui/themes";
 import { withAuth } from "@workos-inc/authkit-nextjs";
-import { Text, Heading, TextField, Flex, Box } from "@radix-ui/themes";
 
 export default async function AccountPage() {
   const { user, role, permissions } = await withAuth({ ensureSignedIn: true });
@@ -16,27 +16,25 @@ export default async function AccountPage() {
   return (
     <>
       <Flex direction="column" gap="2" mb="7">
-        <Heading size="8" align="center">
+        <Heading align="center" size="8">
           Account details
         </Heading>
-        <Text size="5" align="center" color="gray">
+        <Text align="center" color="gray" size="5">
           Below are your account details
         </Text>
       </Flex>
 
       {userFields && (
-        <Flex direction="column" justify="center" gap="3" width="400px">
+        <Flex direction="column" gap="3" justify="center" width="400px">
           {userFields.map(([label, value]) => (
-            <Flex asChild align="center" gap="6" key={String(value)}>
-              <label>
-                <Text weight="bold" size="3" style={{ width: 100 }}>
-                  {label}
-                </Text>
+            <Flex align="center" gap="6" key={String(value)}>
+              <Text size="3" style={{ width: 100 }} weight="bold">
+                {label}
+              </Text>
 
-                <Box flexGrow="1">
-                  <TextField.Root value={String(value) || ""} readOnly />
-                </Box>
-              </label>
+              <Box flexGrow="1">
+                <TextField.Root readOnly value={String(value) || ""} />
+              </Box>
             </Flex>
           ))}
         </Flex>

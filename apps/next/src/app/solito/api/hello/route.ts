@@ -1,3 +1,4 @@
-export async function GET(request: Request) {
-  return new Response('Hello, Solito!')
+// biome-ignore lint/suspicious/useAwait: todo
+export async function GET(_request: Request) {
+  return new Response("Hello, Solito!");
 }

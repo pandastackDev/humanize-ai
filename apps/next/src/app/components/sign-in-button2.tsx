@@ -9,27 +9,27 @@ import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import signOut from "../../actions/signOut";
 
 export function SignInButton({ large }: { large?: boolean }) {
-	const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-	if (loading) {
-		return <div>Loading...</div>;
-	}
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-	if (user) {
-		return (
-			<Flex gap="3">
-				<form action={signOut}>
-					<Button type="submit" size={large ? "3" : "2"}>
-						Sign Out
-					</Button>
-				</form>
-			</Flex>
-		);
-	}
+  if (user) {
+    return (
+      <Flex gap="3">
+        <form action={signOut}>
+          <Button size={large ? "3" : "2"} type="submit">
+            Sign Out
+          </Button>
+        </form>
+      </Flex>
+    );
+  }
 
-	return (
-		<Button asChild size={large ? "3" : "2"}>
-			<a href="/login">Sign In {large && "with AuthKit"}</a>
-		</Button>
-	);
+  return (
+    <Button asChild size={large ? "3" : "2"}>
+      <a href="/login">Sign In {large && "with AuthKit"}</a>
+    </Button>
+  );
 }
