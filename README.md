@@ -11,10 +11,25 @@ pnpm next dev:convex
 
 ## Backend
 
-1. Setup UV https://docs.astral.sh/uv/
-2. Setup Python `uv python install 3.14`
+```bash
+# Setup UV https://docs.astral.sh/uv/
+
+cd backend
+
+# Setup Python 
+uv python install 3.14
+
+# Setup venv
 uv venv
 source .venv/bin/activate
+
+# Make sure dependencies are installed
+uv sync
+
+# Start the development server:
+uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+# Open http://localhost:8000
+```
 
 ```
 uv add ruff
@@ -35,6 +50,7 @@ uv venv
 - UV https://docs.astral.sh/uv/
 - Ruff https://docs.astral.sh/ruff/
 - https://pre-commit.com/
+- [FastAPI](https://fastapi.tiangolo.com/)
 
 
 ## FE Deps

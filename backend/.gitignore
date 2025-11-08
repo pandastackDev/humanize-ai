@@ -3,3 +3,10 @@ __pycache__
 .ruff_cache
 .venv
 .coverage
+.vercel/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.DS_Store
+.env*
