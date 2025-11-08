@@ -1,5 +1,7 @@
 # humanize
 
+## Frontend
+
 pnpm i
 cd apps/next && pnpm setup-env
 cd ../..
@@ -7,8 +9,35 @@ cd ../..
 pnpm web
 pnpm next dev:convex
 
+## Backend
 
-## Deps
+1. Setup UV https://docs.astral.sh/uv/
+2. Setup Python `uv python install 3.14`
+uv venv
+source .venv/bin/activate
+
+```
+uv add ruff
+uv run ruff check
+uv lock
+uv sync
+
+uv run example.py
+uvx pycowsay 'hello world!'
+
+uv tool install ruff
+uv python pin 3.14
+uv venv
+```
+
+## BE Deps
+
+- UV https://docs.astral.sh/uv/
+- Ruff https://docs.astral.sh/ruff/
+- https://pre-commit.com/
+
+
+## FE Deps
 - node 22, pnpm 10
 - Solito https://solito.dev/  https://github.com/nandorojo/solito
 - nextjs 16

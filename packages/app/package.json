@@ -2,6 +2,12 @@
   "version": "0.0.0",
   "name": "app",
   "main": "index.ts",
+  "sideEffects": false,
+  "scripts": {
+    "lint-ci": "oxlint --type-aware && eslint .",
+    "lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && eslint . --fix",
+    "check-types": "tsc --noEmit"
+  },
   "dependencies": {
     "@react-navigation/native": "^7.0.15",
     "@react-navigation/native-stack": "^7.2.1",
@@ -9,5 +15,14 @@
     "moti": "^0.30.0",
     "solito": "5.0.0"
   },
-  "sideEffects": false
+  "devDependencies": {
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "eslint": "^9.39.1",
+    "eslint-config-next": "16.0.1",
+    "eslint-plugin-oxlint": "^1.26.0",
+    "oxlint": "^1.26.0",
+    "oxlint-tsgolint": "^0.5.1",
+    "typescript": "~5.9.2"
+  }
 }
