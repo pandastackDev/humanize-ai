@@ -1,15 +1,32 @@
 {
 	"name": "@humanize/expo",
+	"main": "index.js",
+	"version": "1.0.0",
+	"private": true,
+	"scripts": {
+		"dev": "expo start",
+		"android": "expo run:android",
+		"ios": "expo run:ios",
+		"expo-install": "expo install",
+		"lint-ci": "oxlint --type-aware && expo lint",
+		"lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && expo lint --fix",
+		"check-types": "tsc --noEmit",
+		"fix-deps": "expo install --check",
+		"check-deps": "pnpx expo-doctor@latest",
+		"check-config": "expo config --type introspect",
+		"check-compiler": "pnpx react-compiler-healthcheck@latest",
+		"check-expo": "pnpm lint && pnpm check-compiler && pnpm check-config && pnpm check-deps"
+	},
 	"dependencies": {
 		"app": "*",
-		"expo": "^54.0.16",
+		"expo": "^54.0.23",
 		"expo-image": "~3.0.10",
 		"expo-linear-gradient": "~15.0.7",
 		"expo-linking": "~8.0.8",
 		"expo-splash-screen": "~31.0.10",
 		"expo-status-bar": "~3.0.8",
 		"moti": "^0.30.0",
-		"react-native": "0.81.4",
+		"react-native": "0.81.5",
 		"react-native-gesture-handler": "~2.28.0",
 		"react-native-reanimated": "~4.1.1",
 		"react-native-safe-area-context": "~5.6.0",
@@ -23,17 +40,11 @@
 		"react-compiler-runtime": "19.0.0-beta-3229e95-20250315",
 		"typescript": "~5.9.2"
 	},
-	"scripts": {
-		"dev": "expo start",
-		"android": "expo run:android",
-		"ios": "expo run:ios"
-	},
-	"main": "index.js",
-	"version": "1.0.0",
-	"private": true,
 	"expo": {
 		"install": {
-			"exclude": ["react"]
+			"exclude": [
+				"react"
+			]
 		}
 	}
 }

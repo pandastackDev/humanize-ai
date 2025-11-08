@@ -3,6 +3,15 @@
 ## Deps
 - node 22, pnpm 10
 - Solito https://solito.dev/  https://github.com/nandorojo/solito
+- nextjs 16
+- react 19.2
+- expo sdk 54
+- react-native 0.81.5
+
+
+npm i -g eas-cli
+pnpx expo install expo@^54.0.0 --fix
+pnpx expo-doctor@latest
 
 
 # Blank Solito Example Monorepo 🕴

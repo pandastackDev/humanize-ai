@@ -1,16 +1,19 @@
 {
-  "expo": {
-    "name": "solito-blank",
-    "slug": "solito-blank",
-    "version": "1.0.0",
-    "scheme": "solito-blank",
-    "platforms": ["ios", "android"],
-    "ios": {
-      "bundleIdentifier": "com.solito.blank"
-    },
-    "newArchEnabled": true,
-    "experiments": {
-      "reactCanary": true
-    }
-  }
+	"expo": {
+		"name": "humanize-app",
+		"slug": "humanize-app",
+		"version": "1.0.0",
+		"scheme": "humanize-app",
+		"platforms": ["ios", "android"],
+		"ios": {
+			"bundleIdentifier": "com.humanize.app"
+		},
+		"newArchEnabled": true,
+		"experiments": {
+			"typedRoutes": true,
+			"tsconfigPaths": true,
+			"reactCompiler": true,
+			"reactCanary": true
+		}
+	}
 }
