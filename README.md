@@ -3,7 +3,9 @@
 pnpm i
 cd apps/next && pnpm setup-env
 cd ../..
+
 pnpm web
+pnpm next dev:convex
 
 
 ## Deps
@@ -13,6 +15,11 @@ pnpm web
 - react 19.2
 - expo sdk 54
 - react-native 0.81.5
+- workos + authkit
+  - https://github.com/workos/authkit
+  - https://workos.com/docs/authkit/nextjs
+- stripe
+- convex
 
 
 npm i -g eas-cli
