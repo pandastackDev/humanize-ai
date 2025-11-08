@@ -1,6 +1,7 @@
 # humanize
 
 ## Deps
+- node 22, pnpm 10
 - Solito https://solito.dev/  https://github.com/nandorojo/solito
 
 
