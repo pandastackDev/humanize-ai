@@ -2,12 +2,16 @@
 	"name": "@humanize/monorepo",
 	"private": true,
 	"type": "module",
-	"workspaces": ["apps/*", "packages/*"],
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
 	"engines": {
 		"node": "22.21.1"
 	},
 	"packageManager": "pnpm@10.20.0",
 	"scripts": {
+		"app": "pnpm -F app",
 		"next": "pnpm -F @humanize/next",
 		"expo": "pnpm -F @humanize/expo",
 		"web": "pnpm next dev",
