@@ -51,6 +51,7 @@ uv venv
 - Ruff https://docs.astral.sh/ruff/
 - https://pre-commit.com/
 - [FastAPI](https://fastapi.tiangolo.com/)
+- https://guides.scalar.com/scalar/scalar-api-references/integrations/fastapi
 
 
 ## FE Deps

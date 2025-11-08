@@ -44,7 +44,7 @@ class Product(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     price: float = Field(..., gt=0, description="Price must be positive")
     quantity: int = Field(default=0, ge=0, description="Stock quantity")
-    discount_percentage: Optional[float] = Field(None, ge=0, le=100)
+    discount_percentage: Optional[float] = Field(default=None, ge=0, le=100)
     sku: str = Field(..., pattern=r"^[A-Z]{3}-\d{6}$")  # e.g., ABC-123456
 
 
