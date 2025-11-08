@@ -1,0 +1,16 @@
+.dashboard-nav-button {
+  border-radius: var(--radius-3);
+  cursor: pointer;
+}
+
+.dashboard-nav-button:hover {
+  background-color: var(--gray-3);
+}
+
+.dashboard-nav-button:active {
+  background-color: var(--gray-2);
+}
+
+.selected {
+  background-color: var(--gray-4);
+}
