@@ -77,6 +77,19 @@ pnpx expo install expo@^54.0.0 --fix
 pnpx expo-doctor@latest
 
 
+
+uv lock --locked
+uv run ruff check --fix
+uv run ruff format --check .
+uv run pyright .
+uv run pytest -v
+uv build
+
+or 
+chmod +x ./check.sh
+./check.sh
+
+
 # Blank Solito Example Monorepo 🕴
 
 ```sh
