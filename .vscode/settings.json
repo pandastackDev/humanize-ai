@@ -18,8 +18,12 @@
   "files.exclude": {
     "**/node_modules/**": true,
     "**/.expo/**": true,
+    "**/.next/**": true,
     "**/.turbo/**": true,
+    "**/.venv/**": true,
+    "**/__pycache__/**": true,
     "**/.ruff_cache/**": true,
+    "**/.pytest_cache/**": true,
     "**/.cache/**": true
   },
   // usability
