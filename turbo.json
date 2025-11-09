@@ -11,7 +11,10 @@
         "WORKOS_API_KEY",
         "WORKOS_CLIENT_ID",
         "WORKOS_COOKIE_PASSWORD",
-        "CONVEX_DEPLOYMENT"
+        "NEXT_PUBLIC_WORKOS_REDIRECT_URI",
+        "NEXT_PUBLIC_BASE_URL",
+        "CONVEX_DEPLOYMENT",
+        "NEXT_PUBLIC_CONVEX_URL"
       ]
     },
     "check-types": {
