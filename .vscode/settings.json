@@ -1,8 +1,114 @@
 {
+  "search.exclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.expo/**": true,
+    "**/.turbo/**": true,
+    "**/.cache/**": true
+  },
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/dist/**": true,
+    "**/build/**": true,
+    "**/.expo/**": true,
+    "**/.turbo/**": true,
+    "**/.cache/**": true
+  },
+  "files.exclude": {
+    "**/node_modules/**": true,
+    "**/.expo/**": true,
+    "**/.turbo/**": true,
+    "**/.ruff_cache/**": true,
+    "**/.cache/**": true
+  },
+  // usability
+  "editor.guides.bracketPairsHorizontal": true,
+  "editor.guides.highlightActiveIndentation": "always",
+  "eslint.enable": false,
+  "oxc.enable": true,
+  "githubPullRequests.ignoredPullRequestBranches": ["main"],
   "explorer.fileNesting.enabled": true,
   "explorer.fileNesting.patterns": {
     "*.js": "${capture}.js.map, ${capture}.d.ts, ${capture}.d.ts.map",
     "*.ts": "$(capture).test.ts, $(capture).benchmark.ts, $(capture).test.tsx, $(capture).test.node.ts, $(capture).test.node.tsx, $(capture).test.native.ts, $(capture).test.native.tsx, $(capture).test.ios.ts, $(capture).test.ios.tsx, $(capture).test.web.ts, $(capture).test.web.tsx, $(capture).test.android.ts, $(capture).test.android.tsx, ${capture}.native.tsx, ${capture}.ios.tsx, ${capture}.android.tsx, ${capture}.web.tsx, ${capture}.native.ts, ${capture}.ios.ts, ${capture}.android.ts, ${capture}.web.ts, ${capture}.native.js, ${capture}.ios.js, ${capture}.android.js, ${capture}.web.js, ${capture}.native.jsx, ${capture}.ios.jsx, ${capture}.android.jsx, ${capture}.web.jsx",
     "*.tsx": "$(capture).test.ts, $(capture).test.tsx, $(capture).test.node.ts, $(capture).test.node.tsx, $(capture).test.native.ts, $(capture).test.native.tsx, $(capture).test.ios.ts, $(capture).test.ios.tsx, $(capture).test.web.ts, $(capture).test.web.tsx, $(capture).test.android.ts, $(capture).test.android.tsx, ${capture}.native.tsx, ${capture}.ios.tsx, ${capture}.types.tsx, ${capture}.android.tsx, ${capture}.web.tsx, ${capture}.native.ts, ${capture}.types.ts, ${capture}.ios.ts, ${capture}.android.ts, ${capture}.web.ts, ${capture}.native.js, ${capture}.ios.js, ${capture}.android.js, ${capture}.web.js, ${capture}.native.jsx, ${capture}.ios.jsx, ${capture}.android.jsx, ${capture}.web.jsx"
+  },
+  // tailwindcss
+  "tailwindCSS.classAttributes": [
+    "class",
+    "className",
+    "headerClassName",
+    "contentContainerClassName",
+    "columnWrapperClassName",
+    "endFillColorClassName",
+    "imageClassName",
+    "tintColorClassName",
+    "ios_backgroundColorClassName",
+    "thumbColorClassName",
+    "trackColorOnClassName",
+    "trackColorOffClassName",
+    "selectionColorClassName",
+    "cursorColorClassName",
+    "underlineColorAndroidClassName",
+    "placeholderTextColorClassName",
+    "selectionHandleColorClassName",
+    "colorsClassName",
+    "progressBackgroundColorClassName",
+    "titleColorClassName",
+    "underlayColorClassName",
+    "colorClassName",
+    "drawerBackgroundColorClassName",
+    "statusBarBackgroundColorClassName",
+    "backdropColorClassName",
+    "backgroundColorClassName",
+    "ListFooterComponentClassName",
+    "ListHeaderComponentClassName"
+  ],
+  "tailwindCSS.classFunctions": ["useResolveClassNames", "cn", "clsx"],
+  "tailwindCSS.emmetCompletions": true,
+  "emmet.showExpandedAbbreviation": "never",
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  // typescript
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "typescript.tsdk": "node_modules/typescript/lib",
+  // formatting
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.biome": "explicit",
+    "source.organizeImports.biome": "explicit"
+  },
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[graphql]": {
+    "editor.defaultFormatter": "biomejs.biome"
   }
 }

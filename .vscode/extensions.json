@@ -1,0 +1,12 @@
+{
+  "recommendations": [
+    "esbenp.prettier-vscode",
+    "biomejs.biome",
+    "oxc.oxc-vscode",
+    // "dbaeumer.vscode-eslint",
+    "expo.vscode-expo-tools",
+    "bradlc.vscode-tailwindcss",
+    "austenc.tailwind-docs",
+    "michaelcurrin.auto-commit-msg"
+  ]
+}
