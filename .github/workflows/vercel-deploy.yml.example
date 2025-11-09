@@ -1,0 +1,88 @@
+# Optional: GitHub Actions workflow for Vercel deployment
+# Rename this file to 'vercel-deploy.yml' to enable
+# You'll need to add VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID as GitHub secrets
+
+name: Vercel Deployment
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      
+      - name: Install dependencies
+        run: pnpm install
+      
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+      
+      - name: Type check
+        run: |
+          cd apps/next
+          pnpm check-types
+      
+      - name: Lint
+        run: |
+          cd apps/next
+          pnpm lint-ci
+      
+      - name: Install Vercel CLI
+        run: npm install -g vercel
+      
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=${{ github.ref == 'refs/heads/main' && 'production' || 'preview' }} --token=${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Build Project Artifacts
+        run: vercel build ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }}
+      
+      - name: Deploy to Vercel
+        id: deploy
+        run: |
+          URL=$(vercel deploy --prebuilt ${{ github.ref == 'refs/heads/main' && '--prod' || '' }} --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$URL" >> $GITHUB_OUTPUT
+      
+      - name: Comment on PR
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `✅ Deployment Preview: ${{ steps.deploy.outputs.url }}`
+            })
+
+# Setup Instructions:
+# 1. Go to Vercel Dashboard → Settings → Tokens
+# 2. Create a new token
+# 3. Add to GitHub Secrets as VERCEL_TOKEN
+# 4. Run `vercel --scope=your-team` to get VERCEL_ORG_ID and VERCEL_PROJECT_ID
+# 5. Add those as GitHub Secrets too
+# 6. Rename this file to 'vercel-deploy.yml' to enable
+

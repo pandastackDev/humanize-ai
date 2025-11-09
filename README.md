@@ -201,7 +201,33 @@ When running locally or using staging, use the following test card numbers for t
 
 ## Deploying
 
-Once you're ready to deploy your app, refer to the [Convex documentation](https://docs.convex.dev/production) for instructions on deploying to hosted solutions like Vercel.
+### 🚀 Unified Vercel Deployment (Next.js + FastAPI)
+
+This project is configured to deploy both the Next.js frontend and FastAPI backend to a single Vercel deployment.
+
+**Quick Deploy:**
+```bash
+vercel
+```
+
+For detailed instructions, see:
+- **[Quick Start Guide](DEPLOYMENT_QUICK_START.md)** - Fast deployment reference
+- **[Complete Deployment Guide](VERCEL_DEPLOYMENT.md)** - Detailed setup and configuration
+- **[Setup Summary](SETUP_SUMMARY.md)** - Architecture overview and what was configured
+- **[API Integration Examples](NEXT_API_EXAMPLE.md)** - How to call the FastAPI from Next.js
+
+**Deployment Structure:**
+- Frontend: All routes handled by Next.js (e.g., `/`, `/dashboard`, `/pricing`)
+- Backend: All `/api/*` routes proxied to FastAPI serverless functions
+- Single domain, no CORS issues, automatic scaling
+
+**After Deployment:**
+- Next.js App: `https://yourdomain.com/`
+- API Docs: `https://yourdomain.com/api/`
+- Swagger UI: `https://yourdomain.com/api/docs`
+- Scalar UI: `https://yourdomain.com/api/scalar`
+
+Refer to the [Convex documentation](https://docs.convex.dev/production) for Convex-specific deployment instructions.
 
 Remember to use your production API keys for both Stripe and WorkOS before deploying to production.
 
