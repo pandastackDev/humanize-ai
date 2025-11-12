@@ -75,7 +75,6 @@ export default function ClientDemo() {
 
     createMutation.mutate({
       body: {
-        id: Math.floor(Math.random() * 10_000), // Generate random ID
         name: formData.name,
         value: formData.value,
         category: formData.category,
