@@ -56,6 +56,7 @@ uv pip compile pyproject.toml -o requirements.txt --no-emit-package backend
 - https://pre-commit.com/
 - [FastAPI](https://fastapi.tiangolo.com/)
 - https://guides.scalar.com/scalar/scalar-api-references/integrations/fastapi
+- https://heyapi.dev/ - OpenAPI -> TypeScript code generator (https://github.com/hey-api/openapi-ts)
 
 ## FE Deps
 

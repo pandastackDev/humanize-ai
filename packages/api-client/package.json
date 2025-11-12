@@ -1,0 +1,24 @@
+{
+  "name": "@humanize/api-client",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "generate": "openapi-ts",
+    "generate:local": "openapi-ts",
+    "generate:staging": "OPENAPI_URL=https://humanize-python.vercel.app/openapi.json openapi-ts",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf src/client"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.90.7"
+  },
+  "devDependencies": {
+    "@hey-api/client-fetch": "^0.5.7",
+    "@hey-api/client-next": "^0.5.1",
+    "@hey-api/openapi-ts": "^0.87.2",
+    "typescript": "~5.9.2"
+  }
+}

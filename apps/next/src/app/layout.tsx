@@ -12,6 +12,7 @@ import NextTopLoader from "nextjs-toploader";
 import { DynamicBackground } from "./components/layout/dynamic-background";
 import { Footer } from "./components/layout/footer";
 import { Header } from "./components/layout/header";
+import { QueryProvider } from "./providers/query-provider";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -29,27 +30,29 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.className}`}>
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <Theme
-            accentColor="iris"
-            panelBackground="solid"
-            style={{ backgroundColor: "var(--gray-1)" }}
-          >
-            <DynamicBackground>
-              <NextTopLoader showSpinner={false} />
-              <Flex direction="column" minHeight="100vh">
-                <Header />
-                <Box asChild flexGrow="1">
-                  <AuthKitProvider>
-                    <Impersonation />
-                    <main>{children}</main>
-                  </AuthKitProvider>
-                </Box>
-                <Footer />
-              </Flex>
-            </DynamicBackground>
-          </Theme>
-        </ThemeProvider>
+        <QueryProvider>
+          <ThemeProvider attribute="class" defaultTheme="dark">
+            <Theme
+              accentColor="iris"
+              panelBackground="solid"
+              style={{ backgroundColor: "var(--gray-1)" }}
+            >
+              <DynamicBackground>
+                <NextTopLoader showSpinner={false} />
+                <Flex direction="column" minHeight="100vh">
+                  <Header />
+                  <Box asChild flexGrow="1">
+                    <AuthKitProvider>
+                      <Impersonation />
+                      <main>{children}</main>
+                    </AuthKitProvider>
+                  </Box>
+                  <Footer />
+                </Flex>
+              </DynamicBackground>
+            </Theme>
+          </ThemeProvider>
+        </QueryProvider>
       </body>
     </html>
   );

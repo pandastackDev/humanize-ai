@@ -22,6 +22,7 @@
     "@workos-inc/node": "^7.72.2",
     "@workos-inc/widgets": "1.5.0",
     "app": "workspace:*",
+    "@humanize/api-client": "workspace:*",
     "convex": "^1.15.0",
     "convex-helpers": "^0.1.58",
     "jose": "^6.1.0",
@@ -38,6 +39,7 @@
     "stripe": "^19.3.0"
   },
   "devDependencies": {
+    "@tanstack/react-query-devtools": "5.90.2",
     "@types/node": "^24.10.0",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
