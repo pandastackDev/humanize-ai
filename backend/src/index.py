@@ -11,6 +11,13 @@ Best practices implemented:
 import os
 import sys
 import logging
+
+# Add the src directory to Python path for Vercel deployment
+# This ensures that the 'api' module can be found
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
