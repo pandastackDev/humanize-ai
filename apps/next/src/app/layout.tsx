@@ -39,12 +39,12 @@ export default function RootLayout({
             >
               <DynamicBackground>
                 <NextTopLoader showSpinner={false} />
-                <Flex direction="column" minHeight="100vh">
+                <Flex direction="column" minHeight="100vh" style={{ position: "relative", zIndex: 1 }}>
                   <Header />
-                  <Box asChild flexGrow="1">
+                  <Box asChild flexGrow="1" style={{ position: "relative", zIndex: 1 }}>
                     <AuthKitProvider>
                       <Impersonation />
-                      <main>{children}</main>
+                      <main style={{ position: "relative", zIndex: 1 }}>{children}</main>
                     </AuthKitProvider>
                   </Box>
                   <Footer />

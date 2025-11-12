@@ -1,95 +1,56 @@
-import { Box, Flex, Link, Text } from "@radix-ui/themes";
 import { withAuth } from "@workos-inc/authkit-nextjs";
-import { createOrganization } from "@/actions/createOrganization";
-import { switchToOrganization } from "@/actions/switchToOrganization";
+import Link from "next/link";
 import { Logo } from "../logo";
 import { SignInButton } from "../sign-in-button";
-import { OrganizationSwitcherHeader } from "./organization-switcher-header";
+import { MainNav } from "./main-nav";
 import ThemeToggle from "./theme-toggle";
 import { UserNav } from "./user-nav";
 
 export async function Header() {
   const { user, role, organizationId } = await withAuth();
 
-  // Fetch organization details and auth token if user has an organizationId
+  // Fetch organization details if user has an organizationId
   let organizationName: string | undefined;
-  let authToken: string | undefined;
-
-  if (organizationId && user) {
+  if (organizationId) {
     try {
       const { workos } = await import("@/app/api/workos");
       const organization =
         await workos.organizations.getOrganization(organizationId);
       organizationName = organization.name;
-
-      // Get auth token for organization switcher widget
-      authToken = await workos.widgets.getToken({
-        organizationId,
-        userId: user.id,
-        scopes: [],
-      });
     } catch (error) {
       console.error("Error fetching organization:", error);
     }
   }
 
-  // Server action to handle organization switching
-  async function handleSwitchOrganization({
-    organizationId: targetOrganizationId,
-  }: {
-    organizationId: string;
-  }) {
-    "use server";
-
-    // Get the current pathname - we'll redirect back to home for simplicity
-    await switchToOrganization({
-      organizationId: targetOrganizationId,
-      pathname: "/",
-    });
-  }
-
-  // Server action to handle creating a new team
-  async function handleCreateTeam(name: string) {
-    "use server";
-
-    await createOrganization({
-      name,
-      pathname: "/",
-    });
-  }
-
   return (
-    <Flex direction="row" justify="between" pb="4" pt="4">
-      <Box pl="9">
-        <Link href="/">
-          <Logo />
-        </Link>
-      </Box>
-      <Box pr="9">
-        <Flex align="center" gap="3">
+    <header
+      className="sticky top-0 z-50 w-full border-b backdrop-blur supports-backdrop-filter:bg-[var(--header-bg)]/80"
+      style={{
+        backgroundColor: "var(--header-bg)",
+        borderColor: "var(--header-bg)",
+      }}
+    >
+      <div className="container relative flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center">
+          <Link
+            className="flex items-center space-x-2 transition-opacity hover:opacity-80"
+            href="/"
+          >
+            <Logo />
+          </Link>
+        </div>
+        <nav className="-translate-x-1/2 absolute left-1/2 hidden items-center md:flex">
+          <MainNav />
+        </nav>
+        <div className="flex items-center gap-3">
           {!user && (
             <>
-              <Link href="/pricing">
-                <Text>Pricing</Text>
-              </Link>
               <SignInButton />
               <ThemeToggle />
             </>
           )}
           {user && (
             <>
-              {!role && (
-                <Link href="/pricing">
-                  <Text>Pricing</Text>
-                </Link>
-              )}
-              {authToken && organizationId && (
-                <OrganizationSwitcherHeader
-                  authToken={authToken}
-                  onCreateTeam={handleCreateTeam}
-                  onSwitchOrganization={handleSwitchOrganization}
-                />
-              )}
               <ThemeToggle />
               <UserNav
                 organizationName={organizationName}
@@ -98,8 +59,8 @@ export async function Header() {
               />
             </>
           )}
-        </Flex>
-      </Box>
-    </Flex>
+        </div>
+      </div>
+    </header>
   );
 }
