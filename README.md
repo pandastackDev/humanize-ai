@@ -27,7 +27,8 @@ source .venv/bin/activate
 uv sync
 
 # Start the development server:
-uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn src.index:app --reload --host 0.0.0.0 --port 8000
+
 # Open http://localhost:8000
 ```
 
@@ -45,6 +46,7 @@ uv python pin 3.12
 uv venv
 
 uv pip compile pyproject.toml -o requirements.txt --no-emit-package backend
+
 ```
 
 ## BE Deps
