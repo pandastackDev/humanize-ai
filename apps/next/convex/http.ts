@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
+import { handleWebhookEvent } from "./webhookHandlers";
 
 const http = httpRouter();
 
@@ -19,104 +20,8 @@ http.route({
 
       const { data, event } = JSON.parse(bodyText);
 
-      switch (event) {
-        case "user.created": {
-          await ctx.runMutation(internal.users.create, {
-            email: data.email,
-            workos_id: data.id,
-          });
-          break;
-        }
-        case "user.deleted": {
-          const user = await ctx.runQuery(internal.users.getByWorkOSId, {
-            workos_id: data.id,
-          });
-
-          if (!user?._id) {
-            throw new Error(
-              `Unhandled event type: User not found: ${data.id}.`
-            );
-          }
-
-          await ctx.runMutation(internal.users.destroy, {
-            id: user._id,
-          });
-
-          break;
-        }
-        case "user.updated": {
-          const user = await ctx.runQuery(internal.users.getByWorkOSId, {
-            workos_id: data.id,
-          });
-
-          if (!user?._id) {
-            // TODO: compose more sophisticated error messaging?
-            throw new Error(
-              `Unhandled event type: User not found: ${data.id}.`
-            );
-          }
-
-          await ctx.runMutation(internal.users.update, {
-            id: user._id,
-            patch: { email: data.email },
-          });
-
-          break;
-        }
-        case "organization.created": {
-          await ctx.runMutation(internal.organizations.create, {
-            name: data.name,
-            workos_id: data.id,
-          });
-          break;
-        }
-        case "organization.deleted": {
-          const organization = await ctx.runQuery(
-            internal.organizations.getByWorkOSId,
-            {
-              workos_id: data.id,
-            }
-          );
-
-          if (!organization?._id) {
-            // TODO: compose more sophisticated error messaging?
-            throw new Error(
-              `Unhandled event type: organization not found: ${data.id}.`
-            );
-          }
-
-          await ctx.runMutation(internal.organizations.destroy, {
-            id: organization._id,
-          });
-
-          break;
-        }
-        case "organization.updated": {
-          const organization = await ctx.runQuery(
-            internal.organizations.getByWorkOSId,
-            {
-              workos_id: data.id,
-            }
-          );
-
-          if (!organization?._id) {
-            // TODO: compose more sophisticated error messaging?
-            throw new Error(
-              `Unhandled event type: organization not found: ${data.id}.`
-            );
-          }
-
-          await ctx.runMutation(internal.organizations.update, {
-            id: organization._id,
-            patch: { name: data.name },
-          });
-
-          break;
-        }
-        default: {
-          throw new Error(`Unhandled event type: ${event}`);
-        }
-      }
+      // Handle the webhook event using extracted handlers
+      await handleWebhookEvent(ctx, event, data);
 
       return new Response(JSON.stringify({ status: "success" }), {
         status: 200,

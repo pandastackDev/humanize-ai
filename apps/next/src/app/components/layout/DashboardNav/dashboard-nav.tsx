@@ -8,6 +8,7 @@ import {
   CheckCircledIcon,
   DashboardIcon,
   GearIcon,
+  GroupIcon,
   Link2Icon,
   LockClosedIcon,
   PersonIcon,
@@ -30,6 +31,12 @@ const navItems = [
     href: "/dashboard/users",
     icon: PersonIcon,
     label: "Users",
+  },
+  {
+    title: "Team",
+    href: "/dashboard/team",
+    icon: GroupIcon,
+    label: "Team",
   },
   {
     title: "User Profile",

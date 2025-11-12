@@ -9,9 +9,11 @@
  */
 
 import type * as http from "../http.js";
+import type * as organizationMemberships from "../organizationMemberships.js";
 import type * as organizations from "../organizations.js";
 import type * as stripe from "../stripe.js";
 import type * as users from "../users.js";
+import type * as webhookHandlers from "../webhookHandlers.js";
 import type * as workos from "../workos.js";
 
 import type {
@@ -30,9 +32,11 @@ import type {
  */
 declare const fullApi: ApiFromModules<{
   http: typeof http;
+  organizationMemberships: typeof organizationMemberships;
   organizations: typeof organizations;
   stripe: typeof stripe;
   users: typeof users;
+  webhookHandlers: typeof webhookHandlers;
   workos: typeof workos;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

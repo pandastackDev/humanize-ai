@@ -10,20 +10,30 @@ export const GET = async (request: NextRequest) => {
     return redirect("/pricing");
   }
 
-  // If this is a new user who just subscribed, their role won't have been updated
-  // so we need to refresh the session to get the updated role
-  if (auth.user && !auth.role) {
-    // Get the user's organization memberships so we can extract the org ID
-    const oms = await workos.userManagement.listOrganizationMemberships({
-      userId: auth.user.id,
-    });
+  // Get the user's organization memberships
+  const oms = await workos.userManagement.listOrganizationMemberships({
+    userId: auth.user.id,
+  });
 
-    if (oms.data.length > 0) {
-      auth = await refreshSession({
-        organizationId: oms.data[0].organizationId,
-        ensureSignedIn: true,
-      });
-    }
+  // If user has no organizations and no active session org, redirect to pricing
+  // They'll need to subscribe to create their first organization
+  if (oms.data.length === 0 && !auth.organizationId) {
+    return redirect("/pricing");
+  }
+
+  // If user has organizations but no current organization context, switch to the first one
+  // This handles Multiple Workspaces: user can be in many orgs, we pick their first one
+  const hasNoOrgId = !auth.organizationId;
+  const hasNoRole = !auth.role;
+  const needsOrgContext = hasNoOrgId || hasNoRole;
+  const hasOrganizations = oms.data.length > 0;
+  const shouldSwitchOrg = auth.user && needsOrgContext && hasOrganizations;
+
+  if (shouldSwitchOrg) {
+    auth = await refreshSession({
+      organizationId: oms.data[0].organizationId,
+      ensureSignedIn: true,
+    });
   }
 
   if (auth.organizationId) {
