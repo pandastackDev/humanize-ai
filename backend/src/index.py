@@ -17,7 +17,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from scalar_fastapi import get_scalar_api_reference
 
 # from api.config import settings
-# from api.v1 import router as v1_router
+from api.v1 import router as v1_router
 
 
 from pydantic_settings import BaseSettings
@@ -111,7 +111,7 @@ async def log_requests(request: Request, call_next):
 
 
 # Include API v1 router with versioned prefix
-# app.include_router(v1_router, prefix=settings.API_V1_STR)
+app.include_router(v1_router, prefix=settings.API_V1_STR)
 
 logger.info(f"✓ API v1 router mounted at {settings.API_V1_STR}")
 
