@@ -1,0 +1,14 @@
+{
+  "name": "widgets-examples",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --filter \"@example/**\" run dev",
+    "format": "prettier --write ."
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "prettier": "^3.6.2"
+  },
+  "packageManager": "pnpm@10.13.1"
+}

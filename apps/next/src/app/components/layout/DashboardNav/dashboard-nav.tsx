@@ -6,7 +6,6 @@ import {
   ArrowRightIcon,
   AvatarIcon,
   CheckCircledIcon,
-  ComponentInstanceIcon,
   DashboardIcon,
   GearIcon,
   Link2Icon,
@@ -55,12 +54,6 @@ const navItems = [
     href: "/dashboard/api-keys",
     icon: TokensIcon,
     label: "API Keys",
-  },
-  {
-    title: "Organization Switcher",
-    href: "/dashboard/organization-switcher",
-    icon: ComponentInstanceIcon,
-    label: "Organization Switcher",
   },
   {
     title: "Domain Verification",
