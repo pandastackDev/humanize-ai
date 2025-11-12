@@ -4,10 +4,5 @@
   "outputDirectory": "apps/next/.next",
   "framework": "nextjs",
   "installCommand": "pnpm install",
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "src/index.py"
-    }
-  ]
+  "rewrites": [{ "source": "/api2/:path*", "destination": "/api/index" }]
 }
