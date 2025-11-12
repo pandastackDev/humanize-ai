@@ -30,12 +30,18 @@ export function AddTeamModal({
 
     try {
       await onCreateTeam(teamName);
+      // If we reach here without redirect, close the modal
       setTeamName("");
       setLoading(false);
       onOpenChange(false);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to create team");
       setLoading(false);
+      // Check if this is a Next.js redirect error - if so, let it propagate
+      if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
+        onOpenChange(false);
+        throw err;
+      }
+      setError(err instanceof Error ? err.message : "Failed to create team");
     }
   };
 
