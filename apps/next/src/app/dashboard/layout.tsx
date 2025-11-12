@@ -3,9 +3,8 @@ import type { Metadata } from "next";
 import { DashboardNav } from "../components/layout/DashboardNav/dashboard-nav";
 
 export const metadata: Metadata = {
-  title: "Next.js B2B Starter Kit Dashboard",
-  description:
-    "Fully featured B2B dashboard with Next.js, Radix UI, and WorkOS",
+  title: "Humanize app",
+  description: "Humanize app",
 };
 
 export default function DashboardLayout({
