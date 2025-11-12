@@ -4,5 +4,16 @@
   "outputDirectory": "apps/next/.next",
   "framework": "nextjs",
   "installCommand": "pnpm install",
-  "rewrites": [{ "source": "/api2/:path*", "destination": "/api/index" }]
+  "builds": [
+    {
+      "src": "backend/src/api/main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api2/(.*)",
+      "dest": "backend/src/api/main.py"
+    }
+  ]
 }

@@ -1,6 +1,7 @@
 {
   "buildCommand": "cd apps/next && pnpm install && pnpm build",
   "outputDirectory": "apps/next/.next",
+  "rewrites": [{ "source": "/api2/:path*", "destination": "/api/index" }],
   "framework": "nextjs",
   "installCommand": "pnpm install",
   "rewrites": [{ "source": "/(.*)", "destination": "/api/index" }],
