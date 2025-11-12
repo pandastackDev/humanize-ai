@@ -28,7 +28,7 @@ export async function getUserOrganizations() {
       return {
         id: org.id,
         name: org.name,
-        role: membership.role?.name,
+        role: membership.role?.slug,
         roleSlug: membership.role?.slug,
         status: membership.status,
         createdAt: org.createdAt,
@@ -57,7 +57,7 @@ export async function getUserMemberships() {
     id: membership.id,
     organizationId: membership.organizationId,
     userId: membership.userId,
-    role: membership.role?.name,
+    role: membership.role?.slug,
     roleSlug: membership.role?.slug,
     status: membership.status,
     createdAt: membership.createdAt,

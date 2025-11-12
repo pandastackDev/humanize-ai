@@ -95,7 +95,7 @@ export default async function TeamPage() {
                     <Table.Cell>{member.user.email}</Table.Cell>
                     <Table.Cell>
                       <Text weight="medium">
-                        {member.role?.name || "Member"}
+                        {member.role?.slug || "member"}
                       </Text>
                     </Table.Cell>
                     <Table.Cell>

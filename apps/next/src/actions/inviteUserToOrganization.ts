@@ -50,7 +50,7 @@ export async function inviteUserToOrganization({
   }
 
   // Create an invitation
-  const invitation = await workos.userManagement.createInvitation({
+  const invitation = await workos.userManagement.sendInvitation({
     organizationId,
     email,
     roleSlug,
