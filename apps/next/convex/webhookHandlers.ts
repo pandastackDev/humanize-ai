@@ -6,9 +6,22 @@
 import { internal } from "./_generated/api";
 import type { ActionCtx } from "./_generated/server";
 
-type WebhookData = any;
+type WebhookData = Record<string, unknown> & {
+  id: string;
+  email?: string;
+  name?: string;
+  user_id?: string;
+  organization_id?: string;
+  role?: {
+    slug: string;
+  };
+  status?: string;
+};
 
 export async function handleUserCreated(ctx: ActionCtx, data: WebhookData) {
+  if (!data.email) {
+    throw new Error("Email is required for user creation");
+  }
   await ctx.runMutation(internal.users.create, {
     email: data.email,
     workos_id: data.id,
@@ -38,20 +51,33 @@ export async function handleUserUpdated(ctx: ActionCtx, data: WebhookData) {
     throw new Error(`User not found: ${data.id}`);
   }
 
+  if (!data.email) {
+    throw new Error("Email is required for user update");
+  }
+
   await ctx.runMutation(internal.users.update, {
     id: user._id,
     patch: { email: data.email },
   });
 }
 
-export async function handleOrganizationCreated(ctx: ActionCtx, data: WebhookData) {
+export async function handleOrganizationCreated(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
+  if (!data.name) {
+    throw new Error("Name is required for organization creation");
+  }
   await ctx.runMutation(internal.organizations.create, {
     name: data.name,
     workos_id: data.id,
   });
 }
 
-export async function handleOrganizationDeleted(ctx: ActionCtx, data: WebhookData) {
+export async function handleOrganizationDeleted(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
   const organization = await ctx.runQuery(
     internal.organizations.getByWorkOSId,
     {
@@ -68,7 +94,10 @@ export async function handleOrganizationDeleted(ctx: ActionCtx, data: WebhookDat
   });
 }
 
-export async function handleOrganizationUpdated(ctx: ActionCtx, data: WebhookData) {
+export async function handleOrganizationUpdated(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
   const organization = await ctx.runQuery(
     internal.organizations.getByWorkOSId,
     {
@@ -80,23 +109,39 @@ export async function handleOrganizationUpdated(ctx: ActionCtx, data: WebhookDat
     throw new Error(`Organization not found: ${data.id}`);
   }
 
+  if (!data.name) {
+    throw new Error("Name is required for organization update");
+  }
+
   await ctx.runMutation(internal.organizations.update, {
     id: organization._id,
     patch: { name: data.name },
   });
 }
 
-export async function handleMembershipCreated(ctx: ActionCtx, data: WebhookData) {
+export async function handleMembershipCreated(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
+  const hasRequiredFields = data.user_id && data.organization_id && data.status;
+  if (!hasRequiredFields) {
+    throw new Error(
+      "user_id, organization_id, and status are required for membership creation"
+    );
+  }
   await ctx.runMutation(internal.organizationMemberships.create, {
     workos_id: data.id,
-    user_id: data.user_id,
-    organization_id: data.organization_id,
+    user_id: data.user_id as string,
+    organization_id: data.organization_id as string,
     role: data.role?.slug || "member",
-    status: data.status,
+    status: data.status as string,
   });
 }
 
-export async function handleMembershipUpdated(ctx: ActionCtx, data: WebhookData) {
+export async function handleMembershipUpdated(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
   const membership = await ctx.runQuery(
     internal.organizationMemberships.getByWorkOSId,
     {
@@ -108,16 +153,23 @@ export async function handleMembershipUpdated(ctx: ActionCtx, data: WebhookData)
     throw new Error(`Membership not found: ${data.id}`);
   }
 
+  if (!data.status) {
+    throw new Error("Status is required for membership update");
+  }
+
   await ctx.runMutation(internal.organizationMemberships.update, {
     id: membership._id,
     patch: {
       role: data.role?.slug || membership.role,
-      status: data.status,
+      status: data.status as string,
     },
   });
 }
 
-export async function handleMembershipDeleted(ctx: ActionCtx, data: WebhookData) {
+export async function handleMembershipDeleted(
+  ctx: ActionCtx,
+  data: WebhookData
+) {
   const membership = await ctx.runQuery(
     internal.organizationMemberships.getByWorkOSId,
     {
@@ -137,8 +189,15 @@ export async function handleMembershipDeleted(ctx: ActionCtx, data: WebhookData)
 /**
  * Main webhook event dispatcher
  */
-export async function handleWebhookEvent(ctx: ActionCtx, event: string, data: WebhookData) {
-  const handlers: Record<string, (ctx: ActionCtx, data: WebhookData) => Promise<void>> = {
+export async function handleWebhookEvent(
+  ctx: ActionCtx,
+  event: string,
+  data: WebhookData
+) {
+  const handlers: Record<
+    string,
+    (handlerCtx: ActionCtx, handlerData: WebhookData) => Promise<void>
+  > = {
     "user.created": handleUserCreated,
     "user.deleted": handleUserDeleted,
     "user.updated": handleUserUpdated,
@@ -157,4 +216,3 @@ export async function handleWebhookEvent(ctx: ActionCtx, event: string, data: We
 
   await handler(ctx, data);
 }
-

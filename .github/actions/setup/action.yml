@@ -1,3 +1,5 @@
+name: Setup UV
+description: Sets up UV
 runs:
   using: composite
   steps:

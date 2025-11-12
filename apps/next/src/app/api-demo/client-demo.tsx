@@ -45,8 +45,8 @@ export default function ClientDemo() {
         tags: "",
       });
     },
-    onError: (error) => {
-      console.error("Failed to create item:", error);
+    onError: (createError) => {
+      console.error("Failed to create item:", createError);
       alert("Failed to create item. Please try again.");
     },
   });
@@ -59,8 +59,8 @@ export default function ClientDemo() {
         queryKey: ["getSampleDataApiV1ItemsDataGet"],
       });
     },
-    onError: (error) => {
-      console.error("Failed to delete item:", error);
+    onError: (deleteError) => {
+      console.error("Failed to delete item:", deleteError);
       alert("Failed to delete item. Please try again.");
     },
   });
@@ -102,6 +102,7 @@ export default function ClientDemo() {
         <button
           className="mt-2 rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
           onClick={() => refetch()}
+          type="button"
         >
           Retry
         </button>

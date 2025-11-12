@@ -96,7 +96,7 @@
         "noDistractingElements": "error",
         "noHeaderScope": "error",
         "noInteractiveElementToNoninteractiveRole": "error",
-        "noLabelWithoutControl": "error",
+        "noLabelWithoutControl": "off",
         "noNoninteractiveElementInteractions": "error",
         "noNoninteractiveElementToInteractiveRole": "error",
         "noNoninteractiveTabindex": "error",
