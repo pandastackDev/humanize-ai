@@ -17,7 +17,7 @@ pnpm next dev:convex
 cd backend
 
 # Setup Python
-uv python install 3.14
+uv python install 3.12
 
 # Setup venv
 uv venv
@@ -41,8 +41,10 @@ uv run example.py
 uvx pycowsay 'hello world!'
 
 uv tool install ruff
-uv python pin 3.14
+uv python pin 3.12
 uv venv
+
+uv pip compile pyproject.toml -o requirements.txt --no-emit-package backend
 ```
 
 ## BE Deps
@@ -206,22 +208,26 @@ When running locally or using staging, use the following test card numbers for t
 This project is configured to deploy both the Next.js frontend and FastAPI backend to a single Vercel deployment.
 
 **Quick Deploy:**
+
 ```bash
 vercel
 ```
 
 For detailed instructions, see:
+
 - **[Quick Start Guide](DEPLOYMENT_QUICK_START.md)** - Fast deployment reference
 - **[Complete Deployment Guide](VERCEL_DEPLOYMENT.md)** - Detailed setup and configuration
 - **[Setup Summary](SETUP_SUMMARY.md)** - Architecture overview and what was configured
 - **[API Integration Examples](NEXT_API_EXAMPLE.md)** - How to call the FastAPI from Next.js
 
 **Deployment Structure:**
+
 - Frontend: All routes handled by Next.js (e.g., `/`, `/dashboard`, `/pricing`)
 - Backend: All `/api/*` routes proxied to FastAPI serverless functions
 - Single domain, no CORS issues, automatic scaling
 
 **After Deployment:**
+
 - Next.js App: `https://yourdomain.com/`
 - API Docs: `https://yourdomain.com/api/`
 - Swagger UI: `https://yourdomain.com/api/docs`
