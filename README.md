@@ -2,12 +2,17 @@
 
 ## Frontend
 
+```bash
 pnpm i
 cd apps/next && pnpm setup-env
 cd ../..
 
 pnpm web
 pnpm next dev:convex
+
+# Gen OpenAPI -> TypeScript client
+pnpm api-client generate
+```
 
 ## Backend
 

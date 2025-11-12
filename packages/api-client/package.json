@@ -7,7 +7,6 @@
   "types": "./src/index.ts",
   "scripts": {
     "generate": "openapi-ts",
-    "generate:local": "openapi-ts",
     "generate:staging": "OPENAPI_URL=https://humanize-python.vercel.app/openapi.json openapi-ts",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf src/client"

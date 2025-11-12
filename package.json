@@ -12,6 +12,7 @@
   "packageManager": "pnpm@10.20.0",
   "scripts": {
     "app": "pnpm -F app",
+    "api-client": "pnpm -F @humanize/api-client",
     "next": "pnpm -F @humanize/next",
     "expo": "pnpm -F @humanize/expo",
     "web": "pnpm next dev",
