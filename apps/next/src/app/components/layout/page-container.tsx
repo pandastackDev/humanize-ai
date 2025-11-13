@@ -1,5 +1,5 @@
-import { Box, ScrollArea } from "@radix-ui/themes";
 import type React from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function PageContainer({
   children,
@@ -11,13 +11,13 @@ export default function PageContainer({
   return (
     <>
       {scrollable ? (
-        <ScrollArea type="always">
-          <Box height="calc(100dvh-64px)" pl="8" pt="4">
+        <ScrollArea className="h-[calc(100dvh-64px)]">
+          <div className="pl-8 pt-4">
             {children}
-          </Box>
+          </div>
         </ScrollArea>
       ) : (
-        <Box p="2">{children}</Box>
+        <div className="p-2">{children}</div>
       )}
     </>
   );

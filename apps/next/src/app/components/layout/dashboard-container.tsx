@@ -1,6 +1,5 @@
 "use client";
 
-import { Flex } from "@radix-ui/themes";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 
@@ -16,24 +15,13 @@ export function DashboardContainer({
     setMounted(true);
   }, []);
 
-  let color = "transparent";
-  if (mounted) {
-    color = resolvedTheme === "light" ? "white" : "transparent";
-  }
+  const bgColor = mounted && resolvedTheme === "light" ? "bg-background" : "";
 
   return (
-    <Flex
-      align="stretch"
-      direction="column"
-      flexGrow="1"
-      p="4"
-      style={{
-        borderRadius: "var(--radius-3)",
-        backgroundColor: color,
-        border: "1px solid var(--gray-3)",
-      }}
+    <div
+      className={`flex flex-1 flex-col items-stretch rounded-lg border p-4 ${bgColor}`}
     >
       {children}
-    </Flex>
+    </div>
   );
 }

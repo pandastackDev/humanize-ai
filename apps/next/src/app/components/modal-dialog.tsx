@@ -1,17 +1,22 @@
 "use client";
 
-import { InfoCircledIcon } from "@radix-ui/react-icons";
-import {
-  Button,
-  Callout,
-  Dialog,
-  Flex,
-  Text,
-  TextField,
-} from "@radix-ui/themes";
+import { Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 /**
  * The 'subscriptionLevel' prop is the name of the subscription plan and is directly tied to the Stripe price lookup key.
@@ -65,51 +70,51 @@ export function ModalDialog({
   };
 
   return (
-    <Dialog.Root onOpenChange={setOpen} open={open}>
-      <Dialog.Trigger>
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogTrigger asChild>
         <Button onClick={() => setError("")}>
           Subscribe to {subscriptionLevel}
         </Button>
-      </Dialog.Trigger>
-      <Dialog.Content>
-        <Dialog.Title>Subscribe to {subscriptionLevel}</Dialog.Title>
-        <Dialog.Description mb="4" size="2">
-          Enter details about your business
-        </Dialog.Description>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Subscribe to {subscriptionLevel}</DialogTitle>
+          <DialogDescription>
+            Enter details about your business
+          </DialogDescription>
+        </DialogHeader>
 
-        <Flex direction="column" gap="3">
-          <Flex direction="column" gap="1">
-            <Text as="div" mb="1" size="2" weight="bold">
-              Organization name
-            </Text>
-            <TextField.Root
+        <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="org-name">Organization name</Label>
+            <Input
+              id="org-name"
               onBlur={(e) => setOrgName(e.target.value)}
-              placeholder="Enter your orgnization name"
+              placeholder="Enter your organization name"
             />
-          </Flex>
+          </div>
           {error && (
-            <Callout.Root color="red">
-              <Callout.Icon>
-                <InfoCircledIcon />
-              </Callout.Icon>
-              <Callout.Text>{error}</Callout.Text>
-            </Callout.Root>
+            <Alert variant="destructive">
+              <Info className="h-4 w-4" />
+              <AlertTitle>Error</AlertTitle>
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
-        </Flex>
+        </div>
 
-        <Flex gap="3" justify="end" mt="4">
-          <Dialog.Close>
-            <Button color="gray" variant="soft">
-              Cancel
-            </Button>
-          </Dialog.Close>
-          <Dialog.Close>
-            <Button loading={loading} onClick={handleSubscribe}>
-              Subscribe
-            </Button>
-          </Dialog.Close>
-        </Flex>
-      </Dialog.Content>
-    </Dialog.Root>
+        <DialogFooter>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            disabled={loading}
+          >
+            Cancel
+          </Button>
+          <Button onClick={handleSubscribe} disabled={loading}>
+            {loading ? "Subscribing..." : "Subscribe"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

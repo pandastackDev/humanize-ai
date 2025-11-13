@@ -1,18 +1,13 @@
 "use client";
 
-import { Theme } from "@radix-ui/themes";
-import { usePathname } from "next/navigation";
-
 export function DynamicBackground({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const isDashboard = pathname.startsWith("/dashboard");
-
   return (
-    <Theme
-      radius="medium"
-      style={{ backgroundColor: isDashboard ? "var(--gray-2)" : undefined }}
+    <div 
+      style={{ 
+        backgroundColor: "color-mix(in oklab, var(--background) 60%, transparent)"
+      }}
     >
       {children}
-    </Theme>
+    </div>
   );
 }

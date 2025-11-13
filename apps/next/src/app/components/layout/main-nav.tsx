@@ -22,7 +22,6 @@ import {
   Video,
   Wand2,
 } from "lucide-react";
-import Link from "next/link";
 import type { ComponentPropsWithoutRef, ComponentType } from "react";
 import {
   NavigationMenu,
@@ -171,26 +170,24 @@ function ListItem({
 } & ComponentPropsWithoutRef<"li">) {
   return (
     <li {...props}>
-      <NavigationMenuLink asChild>
-        <Link
-          className={cn(
-            "flex w-[340px] cursor-pointer gap-2 rounded-2xl bg-white px-6 py-[1.1rem] outline-none transition-colors hover:bg-[#F5F8FF]",
-            description && "flex-col"
-          )}
-          href={href}
-        >
-          <div className="flex items-start gap-2">
-            {Icon && <Icon className="mt-1 h-6 w-6 shrink-0" />}
-            <div className="flex flex-col gap-1">
-              <span className="font-bold text-base leading-none">{title}</span>
-              {description && (
-                <p className="text-slate-600 text-sm leading-snug">
-                  {description}
-                </p>
-              )}
-            </div>
+      <NavigationMenuLink
+        className={cn(
+          "flex w-[340px] cursor-pointer gap-2 rounded-2xl bg-white px-6 py-[1.1rem] outline-none transition-colors hover:bg-[#F5F8FF]",
+          description && "flex-col"
+        )}
+        href={href}
+      >
+        <div className="flex items-start gap-2">
+          {Icon && <Icon className="mt-1 h-6 w-6 shrink-0" />}
+          <div className="flex flex-col gap-1">
+            <span className="font-bold text-base leading-none">{title}</span>
+            {description && (
+              <p className="text-slate-600 text-sm leading-snug">
+                {description}
+              </p>
+            )}
           </div>
-        </Link>
+        </div>
       </NavigationMenuLink>
     </li>
   );
@@ -200,9 +197,11 @@ export function MainNav() {
   return (
     <NavigationMenu>
       <NavigationMenuList className="flex-wrap gap-6">
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Resources</NavigationMenuTrigger>
-          <NavigationMenuContent>
+        <NavigationMenuItem value="resources">
+          <NavigationMenuTrigger value="resources">
+            Resources
+          </NavigationMenuTrigger>
+          <NavigationMenuContent value="resources">
             <div className="rounded-3xl border-2 border-slate-100 bg-white px-8 py-7 shadow-xl">
               <div className="mb-4 w-fit font-bold text-base">
                 AISEO.ai Resources
@@ -222,9 +221,11 @@ export function MainNav() {
           </NavigationMenuContent>
         </NavigationMenuItem>
 
-        <NavigationMenuItem>
-          <NavigationMenuTrigger>Free Tools</NavigationMenuTrigger>
-          <NavigationMenuContent>
+        <NavigationMenuItem value="free-tools">
+          <NavigationMenuTrigger value="free-tools">
+            Free Tools
+          </NavigationMenuTrigger>
+          <NavigationMenuContent value="free-tools">
             <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-100 bg-white px-8 py-7 shadow-xl">
               <div className="mb-4 font-bold text-base">Free Tools</div>
               <div className="flex gap-6">
@@ -236,13 +237,11 @@ export function MainNav() {
                     <ul className="list-none space-y-2">
                       {tools.map((tool) => (
                         <li key={tool.title}>
-                          <NavigationMenuLink asChild>
-                            <Link
-                              className="block text-slate-600 text-sm hover:text-indigo-600"
-                              href={tool.href}
-                            >
-                              {tool.title}
-                            </Link>
+                          <NavigationMenuLink
+                            className="block text-slate-600 text-sm hover:text-indigo-600"
+                            href={tool.href}
+                          >
+                            {tool.title}
                           </NavigationMenuLink>
                         </li>
                       ))}
@@ -255,20 +254,29 @@ export function MainNav() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/pricing">Pricing</Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle}
+            href="/pricing"
+          >
+            Pricing
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/humanize">Humanize AI</Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle}
+            href="/humanize"
+          >
+            Humanize AI
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-            <Link href="/affiliate">Become an affiliate</Link>
+          <NavigationMenuLink
+            className={navigationMenuTriggerStyle}
+            href="/affiliate"
+          >
+            Become an affiliate
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

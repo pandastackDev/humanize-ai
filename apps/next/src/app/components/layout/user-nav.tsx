@@ -1,18 +1,21 @@
 "use client";
 
-import { PersonIcon } from "@radix-ui/react-icons";
-import {
-  Avatar,
-  Button,
-  DropdownMenu,
-  Flex,
-  IconButton,
-  Text,
-} from "@radix-ui/themes";
+import { User as UserIcon } from "lucide-react";
 import type { User } from "@workos-inc/node";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import signOut from "@/actions/signOut";
 
 export function UserNav({
@@ -31,88 +34,73 @@ export function UserNav({
   const isDashboard = pathname.startsWith("/dashboard");
 
   return (
-    <DropdownMenu.Root onOpenChange={setOpen} open={open}>
-      <DropdownMenu.Trigger>
-        <IconButton
-          style={{ position: "relative", cursor: "pointer" }}
-          variant="ghost"
-        >
-          <Avatar
-            fallback={user.firstName?.[0] || <PersonIcon />}
-            radius="medium"
-            size="2"
-            src={user.profilePictureUrl as string}
-          />
-        </IconButton>
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Content size="2">
-        <DropdownMenu.Label>
-          <Flex direction="column" gap="1">
-            <Text as="p" size="3" weight="medium">
+    <DropdownMenu onOpenChange={setOpen} open={open}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={user.profilePictureUrl as string} alt={user.firstName || ""} />
+            <AvatarFallback>
+              {user.firstName?.[0] || <UserIcon className="h-4 w-4" />}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">
               {user.firstName}
-            </Text>
-            <Text as="p" size="1" style={{ color: "var(--gray-11)" }}>
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
               {user.email}
-            </Text>
+            </p>
             {organizationName && (
-              <Flex
-                direction="column"
-                mt="2"
-                style={{
-                  borderTop: "1px solid var(--gray-6)",
-                  paddingTop: "8px",
-                }}
-              >
-                <Text as="p" size="2" weight="medium">
+              <div className="mt-2 space-y-1 border-t pt-2">
+                <p className="text-sm font-medium leading-none">
                   {organizationName}
-                </Text>
+                </p>
                 {role && (
-                  <Text
-                    as="p"
-                    size="1"
-                    style={{
-                      color: "var(--gray-11)",
-                      textTransform: "capitalize",
-                    }}
-                  >
+                  <p className="text-xs leading-none text-muted-foreground capitalize">
                     {role}
-                  </Text>
+                  </p>
                 )}
-              </Flex>
+              </div>
             )}
-          </Flex>
-        </DropdownMenu.Label>
+          </div>
+        </DropdownMenuLabel>
         {!isDashboard && isAdmin && (
           <>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Group>
-              <Link href="/dashboard">
-                <DropdownMenu.Item onClick={() => setOpen(false)}>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard" onClick={() => setOpen(false)}>
                   Dashboard
-                </DropdownMenu.Item>
-              </Link>
-            </DropdownMenu.Group>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </>
         )}
         {isDashboard && (
           <>
-            <DropdownMenu.Separator />
-            <DropdownMenu.Group>
-              <Link href="/product">
-                <DropdownMenu.Item onClick={() => setOpen(false)}>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/product" onClick={() => setOpen(false)}>
                   Product
-                </DropdownMenu.Item>
-              </Link>
-            </DropdownMenu.Group>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
           </>
         )}
-        <DropdownMenu.Separator />
-        <DropdownMenu.Item color="blue" onClick={() => setOpen(false)}>
-          <form action={signOut}>
-            <Button type="submit">Sign Out</Button>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <form action={signOut} className="w-full">
+            <Button type="submit" variant="ghost" className="w-full justify-start">
+              Sign Out
+            </Button>
           </form>
-        </DropdownMenu.Item>
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

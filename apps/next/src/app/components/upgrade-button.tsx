@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@radix-ui/themes";
+import { Button } from "@/components/ui/button";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
 
 export function UpgradeButton({
@@ -15,7 +15,7 @@ export function UpgradeButton({
   };
 
   return (
-    <Button onClick={handleClick} style={{ cursor: "pointer" }} variant="soft">
+    <Button onClick={handleClick} variant="outline" className="cursor-pointer">
       {children}
     </Button>
   );

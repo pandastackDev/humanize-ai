@@ -1,9 +1,11 @@
-import { Avatar, Button, Flex, Link } from "@radix-ui/themes";
 import {
   getSignInUrl,
   getSignUpUrl,
   withAuth,
 } from "@workos-inc/authkit-nextjs";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import signOut from "@/actions/signOut";
 
 export async function SignInButton({
@@ -18,25 +20,24 @@ export async function SignInButton({
 
   if (user) {
     return (
-      <Flex align="center" gap="3">
+      <div className="flex items-center gap-3">
         <form action={signOut}>
-          <Button size={large ? "3" : "2"} type="submit">
+          <Button size={large ? "lg" : "default"} type="submit">
             Sign Out
           </Button>
         </form>
-        <a href="/dashboard">
-          <Avatar
-            fallback={user.firstName?.[0] || ""}
-            size="2"
-            src={user.profilePictureUrl as string}
-          />
-        </a>
-      </Flex>
+        <Link href="/dashboard">
+          <Avatar className="h-8 w-8">
+            <AvatarImage src={user.profilePictureUrl as string} alt={user.firstName || ""} />
+            <AvatarFallback>{user.firstName?.[0] || ""}</AvatarFallback>
+          </Avatar>
+        </Link>
+      </div>
     );
   }
 
   return (
-    <Button asChild size={large ? "3" : "2"}>
+    <Button asChild size={large ? "lg" : "default"}>
       <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link>
     </Button>
   );

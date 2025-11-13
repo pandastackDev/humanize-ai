@@ -602,9 +602,9 @@ export function HumanizeEditor() {
           </div>
 
           {/* History and Fact Check Sidebar - Right Side (Outside Text Area) */}
-          <div className="hidden flex-col gap-3 md:flex">
+          <div className="mt-4 hidden flex-col gap-3 md:flex">
             <Button
-              className="flex h-auto flex-col items-center gap-1.5 rounded-lg p-2.5 transition-all hover:bg-slate-100 dark:hover:bg-slate-700"
+              className="mt-20 flex h-auto flex-col items-center gap-1.5 rounded-lg p-2.5 transition-all hover:bg-slate-100 dark:hover:bg-slate-700"
               variant="ghost"
             >
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-700">

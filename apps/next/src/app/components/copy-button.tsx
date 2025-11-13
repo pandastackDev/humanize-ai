@@ -1,9 +1,14 @@
 "use client";
 
-import { CheckIcon, CopyIcon } from "@radix-ui/react-icons";
-import { Box, Button, Tooltip } from "@radix-ui/themes";
-import { useTheme } from "next-themes";
+import { Check, Copy } from "lucide-react";
 import { type ReactNode, useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function CopyButton({
   children,
@@ -13,42 +18,41 @@ export default function CopyButton({
   copyValue: string;
 }) {
   const [copied, setCopied] = useState(false);
-  const { resolvedTheme } = useTheme();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const copyToClipboard = async () => {
     setCopied(true);
 
     try {
       await navigator.clipboard.writeText(copyValue);
+      setTimeout(() => setCopied(false), 2000);
     } catch (err) {
       console.error("Failed to copy: ", err);
+      setCopied(false);
     }
   };
 
-  let color: "gray" | "blue" = "blue";
-  if (mounted) {
-    color = resolvedTheme === "dark" ? "gray" : "blue";
-  }
-
   return (
-    <Box>
-      <Button
-        color={color}
-        onClick={copyToClipboard}
-        size="3"
-        style={{ cursor: "pointer" }}
-        variant="surface"
-      >
-        {children}
-        <Tooltip content={copied ? "Copied" : "Copy"}>
-          {copied ? <CheckIcon /> : <CopyIcon />}
-        </Tooltip>
-      </Button>
-    </Box>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={copyToClipboard}
+            variant="outline"
+            size="lg"
+            className="cursor-pointer gap-2"
+          >
+            {children}
+            {copied ? (
+              <Check className="h-4 w-4" />
+            ) : (
+              <Copy className="h-4 w-4" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>{copied ? "Copied!" : "Copy to clipboard"}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

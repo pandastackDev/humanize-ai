@@ -1,6 +1,6 @@
-import { CheckIcon } from "@radix-ui/react-icons";
-import { Box, Card, Flex, Strong, Text } from "@radix-ui/themes";
+import { Check } from "lucide-react";
 import { withAuth } from "@workos-inc/authkit-nextjs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ModalDialog } from "./modal-dialog";
 
 // Ideally this data would come from a database or API
@@ -38,57 +38,50 @@ export async function Pricing() {
   const { user } = await withAuth();
 
   return (
-    <Flex gap="5" minWidth="50vw">
+    <div className="flex min-w-[50vw] gap-5">
       {plans.map((plan) => (
-        <Box flexGrow="1" key={plan.name}>
+        <div className="flex-1" key={plan.name}>
           <Card
-            size="3"
-            style={plan.highlight ? { border: "1px solid blue" } : undefined}
+            className={plan.highlight ? "border-blue-500" : ""}
           >
-            <Flex direction="column" gap="4">
-              <Flex direction="column" gap="0">
-                <Text
-                  as="p"
-                  color={plan.highlight ? "blue" : undefined}
-                  size="5"
-                >
-                  {plan.name}
-                </Text>
-                <Text color="gray" size="1">
-                  {plan.teamMembers} team members
-                </Text>
-              </Flex>
-              <Flex align="center" gap="2">
-                <Text size="8">
-                  <Strong>
-                    {plan.currency}
-                    {plan.price}
-                  </Strong>
-                </Text>
-                <Flex direction="column">
-                  <Text color="gray" size="1">
+            <CardHeader>
+              <CardTitle className={plan.highlight ? "text-blue-600" : ""}>
+                {plan.name}
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                {plan.teamMembers} team members
+              </p>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div className="flex items-center gap-2">
+                <p className="text-4xl font-bold">
+                  {plan.currency}
+                  {plan.price}
+                </p>
+                <div className="flex flex-col">
+                  <p className="text-xs text-muted-foreground">
                     per month,
-                  </Text>
-                  <Text color="gray" size="1">
+                  </p>
+                  <p className="text-xs text-muted-foreground">
                     billed {plan.cadence}
-                  </Text>
-                </Flex>
-              </Flex>
-              <Flex direction="column" gap="2">
-                {plan.features.map((feature) => (
-                  <Flex align="center" gap="2" key={feature}>
-                    <CheckIcon />
-                    <Text size="1">{feature}</Text>
-                  </Flex>
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                {plan.features.map((feature, index) => (
+                  <div className="flex items-center gap-2" key={`${plan.name}-${index}`}>
+                    <Check className="h-4 w-4" />
+                    <p className="text-sm">{feature}</p>
+                  </div>
                 ))}
-              </Flex>
+              </div>
               {user && (
                 <ModalDialog subscriptionLevel={plan.name} userId={user.id} />
               )}
-            </Flex>
+            </CardContent>
           </Card>
-        </Box>
+        </div>
       ))}
-    </Flex>
+    </div>
   );
 }

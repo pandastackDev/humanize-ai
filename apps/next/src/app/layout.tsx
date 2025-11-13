@@ -1,5 +1,3 @@
-import { Box, Flex, Theme } from "@radix-ui/themes";
-import "@radix-ui/themes/styles.css";
 import "@workos-inc/widgets/styles.css";
 import {
   AuthKitProvider,
@@ -28,29 +26,25 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className}`}>
+    <html className="overflow-x-hidden" lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} overflow-x-hidden bg-background`}>
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
-            <Theme
-              accentColor="iris"
-              panelBackground="solid"
-              style={{ backgroundColor: "var(--gray-1)" }}
-            >
+            <div className="min-h-screen bg-background">
               <DynamicBackground>
                 <NextTopLoader showSpinner={false} />
-                <Flex direction="column" minHeight="100vh" style={{ position: "relative", zIndex: 1 }}>
+                <div className="relative z-1 flex min-h-screen flex-col">
                   <Header />
-                  <Box asChild flexGrow="1" style={{ position: "relative", zIndex: 1 }}>
+                  <div className="relative z-1 grow">
                     <AuthKitProvider>
                       <Impersonation />
-                      <main style={{ position: "relative", zIndex: 1 }}>{children}</main>
+                      <main className="relative z-1">{children}</main>
                     </AuthKitProvider>
-                  </Box>
+                  </div>
                   <Footer />
-                </Flex>
+                </div>
               </DynamicBackground>
-            </Theme>
+            </div>
           </ThemeProvider>
         </QueryProvider>
       </body>

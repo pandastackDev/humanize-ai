@@ -1,6 +1,7 @@
 "use client";
 
 import {
+<<<<<<< HEAD
   ActivityLogIcon,
   ArchiveIcon,
   ArrowRightIcon,
@@ -15,6 +16,21 @@ import {
   TokensIcon,
 } from "@radix-ui/react-icons";
 import { Box, Flex } from "@radix-ui/themes";
+=======
+  Activity,
+  Archive,
+  ArrowRight,
+  User,
+  CheckCircle2,
+  Layers,
+  LayoutDashboard,
+  Settings,
+  Link2,
+  Lock,
+  Users,
+  Key,
+} from "lucide-react";
+>>>>>>> f5ce883 (feat: setup the initial UI of project)
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./page.module.css";
@@ -23,13 +39,13 @@ const navItems = [
   {
     title: "Dashboard",
     href: "/dashboard",
-    icon: DashboardIcon,
+    icon: LayoutDashboard,
     label: "Dashboard",
   },
   {
     title: "Users",
     href: "/dashboard/users",
-    icon: PersonIcon,
+    icon: Users,
     label: "Users",
   },
   {
@@ -41,49 +57,58 @@ const navItems = [
   {
     title: "User Profile",
     href: "/dashboard/profile",
-    icon: AvatarIcon,
+    icon: User,
     label: "User Profile",
   },
   {
     title: "User Sessions",
     href: "/dashboard/sessions",
-    icon: ActivityLogIcon,
+    icon: Activity,
     label: "User Sessions",
   },
   {
     title: "User Security",
     href: "/dashboard/security",
-    icon: LockClosedIcon,
+    icon: Lock,
     label: "User Security",
   },
   {
     title: "API Keys",
     href: "/dashboard/api-keys",
-    icon: TokensIcon,
+    icon: Key,
     label: "API Keys",
   },
   {
+<<<<<<< HEAD
+=======
+    title: "Organization Switcher",
+    href: "/dashboard/organization-switcher",
+    icon: Layers,
+    label: "Organization Switcher",
+  },
+  {
+>>>>>>> f5ce883 (feat: setup the initial UI of project)
     title: "Domain Verification",
     href: "/dashboard/domain-verification",
-    icon: CheckCircledIcon,
+    icon: CheckCircle2,
     label: "Domain Verification",
   },
   {
     title: "SSO Connection",
     href: "/dashboard/sso-connection",
-    icon: Link2Icon,
+    icon: Link2,
     label: "SSO Connection",
   },
   {
     title: "Audit Logs",
     href: "/dashboard/audit-logs",
-    icon: ArchiveIcon,
+    icon: Archive,
     label: "Audit Logs",
   },
   {
     title: "Settings",
     href: "/dashboard/settings",
-    icon: GearIcon,
+    icon: Settings,
     label: "Settings",
   },
 ];
@@ -92,38 +117,33 @@ export function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <Box width="300px">
-      <Flex
-        align="stretch"
-        direction="column"
-        flexGrow="1"
-        gap="1"
-        overflow="hidden"
-      >
+    <div className="w-[300px]">
+      <div className="flex flex-1 flex-col items-stretch gap-1 overflow-hidden">
         {navItems.map((item) => {
-          const Icon = item.icon ?? ArrowRightIcon;
+          const Icon = item.icon ?? ArrowRight;
           const selected = pathname === item.href ? styles.selected : null;
           return (
             item.href && (
-              <Flex direction="column" gap="1" key={item.href} p="1">
+              <div className="flex flex-col gap-1 p-1" key={item.href}>
                 <Link href={item.href}>
-                  <Flex
-                    align="center"
-                    className={[styles["dashboard-nav-button"], selected].join(
-                      " "
-                    )}
-                    gap="2"
-                    p="2"
+                  <div
+                    className={[
+                      styles["dashboard-nav-button"],
+                      selected,
+                      "flex items-center gap-2 p-2",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
                   >
-                    <Icon height="20px" width="20px" />
+                    <Icon className="h-5 w-5" />
                     {item.title}
-                  </Flex>
+                  </div>
                 </Link>
-              </Flex>
+              </div>
             )
           );
         })}
-      </Flex>
-    </Box>
+      </div>
+    </div>
   );
 }
