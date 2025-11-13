@@ -1,9 +1,9 @@
 "use client";
 
-import { Menu } from "lucide-react";
-import { useState } from "react";
-import Link from "next/link";
 import type { User } from "@workos-inc/node";
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -20,11 +20,7 @@ export function MobileNav({ user }: { user: User | null }) {
   return (
     <Sheet onOpenChange={setOpen} open={open}>
       <SheetTrigger asChild className="md:hidden">
-        <Button
-          className="h-9 w-9 p-0"
-          size="icon"
-          variant="ghost"
-        >
+        <Button className="h-9 w-9 p-0" size="icon" variant="ghost">
           <Menu className="h-5 w-5" />
           <span className="sr-only">Toggle menu</span>
         </Button>
@@ -50,40 +46,27 @@ export function MobileNav({ user }: { user: User | null }) {
 }
 
 function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
-  const [openResources, setOpenResources] = useState(false);
   const [openFreeTools, setOpenFreeTools] = useState(false);
-
-  const resources = [
-    {
-      title: "FAQ",
-      href: "/faq",
-      description:
-        "Find answers to common questions about AISEO.ai, our technology, usage, and best practices.",
-    },
-    {
-      title: "Roadmap",
-      href: "/roadmap",
-      description:
-        "Stay updated with our forward vision, upcoming features, and the evolution journey of AISEO.ai.",
-    },
-    {
-      title: "Blog",
-      href: "/blog",
-      description:
-        "Dive into insightful articles, stories, and updates from the world of AI-enhanced SEO and content creation.",
-    },
-  ];
 
   const freeTools = {
     "YouTube Tools": [
       { title: "YouTube Video Downloader", href: "/tools/youtube-downloader" },
       { title: "YouTube to MP3", href: "/tools/youtube-mp3" },
       { title: "YouTube Title Generator", href: "/tools/youtube-title" },
-      { title: "YouTube Description Generator", href: "/tools/youtube-description" },
+      {
+        title: "YouTube Description Generator",
+        href: "/tools/youtube-description",
+      },
       { title: "YouTube Hashtag Generator", href: "/tools/youtube-hashtag" },
       { title: "YouTube Username Generator", href: "/tools/youtube-username" },
-      { title: "YouTube Transcript Generator", href: "/tools/youtube-transcript" },
-      { title: "YouTube Thumbnail Downloader", href: "/tools/youtube-thumbnail" },
+      {
+        title: "YouTube Transcript Generator",
+        href: "/tools/youtube-transcript",
+      },
+      {
+        title: "YouTube Thumbnail Downloader",
+        href: "/tools/youtube-thumbnail",
+      },
       { title: "YouTube Shorts Downloader", href: "/tools/youtube-shorts" },
     ],
     "Social & Image Tools": [
@@ -112,40 +95,14 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
     <nav className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <button
-          className="flex items-center justify-between rounded-md px-3 py-2 text-left text-base font-medium transition-colors hover:bg-accent"
-          onClick={() => setOpenResources(!openResources)}
-          type="button"
-        >
-          Resources
-          <span className={`transition-transform ${openResources ? "rotate-180" : ""}`}>
-            ▼
-          </span>
-        </button>
-        {openResources && (
-          <div className="ml-4 flex flex-col gap-2 border-l pl-4">
-            {resources.map((resource) => (
-              <Link
-                className="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-                href={resource.href}
-                key={resource.title}
-                onClick={onLinkClick}
-              >
-                <div className="font-medium">{resource.title}</div>
-                <div className="text-xs text-muted-foreground/80">{resource.description}</div>
-              </Link>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <button
-          className="flex items-center justify-between rounded-md px-3 py-2 text-left text-base font-medium transition-colors hover:bg-accent"
+          className="flex scale-[0.98] transform items-center justify-between rounded-md px-3 py-2 text-left font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
           onClick={() => setOpenFreeTools(!openFreeTools)}
           type="button"
         >
           Free Tools
-          <span className={`transition-transform ${openFreeTools ? "rotate-180" : ""}`}>
+          <span
+            className={`transition-transform ${openFreeTools ? "rotate-180" : ""}`}
+          >
             ▼
           </span>
         </button>
@@ -157,7 +114,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
                 <div className="flex flex-col gap-1">
                   {tools.map((tool) => (
                     <Link
-                      className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                      className="scale-[0.98] transform rounded-md px-3 py-1.5 text-muted-foreground text-sm transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent hover:text-foreground active:scale-[0.95]"
                       href={tool.href}
                       key={tool.title}
                       onClick={onLinkClick}
@@ -173,7 +130,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </div>
 
       <Link
-        className="rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
+        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
         href="/pricing"
         onClick={onLinkClick}
       >
@@ -181,7 +138,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </Link>
 
       <Link
-        className="rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
+        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
         href="/humanize"
         onClick={onLinkClick}
       >
@@ -189,7 +146,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </Link>
 
       <Link
-        className="rounded-md px-3 py-2 text-base font-medium transition-colors hover:bg-accent"
+        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
         href="/affiliate"
         onClick={onLinkClick}
       >
@@ -198,4 +155,3 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
     </nav>
   );
 }
-

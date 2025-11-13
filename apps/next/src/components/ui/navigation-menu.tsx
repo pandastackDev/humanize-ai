@@ -106,7 +106,7 @@ const NavigationMenuItem = forwardRef<HTMLLIElement, NavigationMenuItemProps>(
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
 const navigationMenuTriggerStyle =
-  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-[var(--nav-item-bg)] px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50";
+  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-[var(--nav-item-bg)] px-4 py-2 text-sm font-medium text-foreground transition-all duration-200 ease-in-out transform scale-[0.98] hover:scale-100 hover:bg-accent hover:text-accent-foreground active:scale-[0.95] focus:bg-accent focus:text-accent-foreground focus:outline-none focus:scale-100 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100 cursor-pointer";
 
 type NavigationMenuTriggerProps =
   React.ButtonHTMLAttributes<HTMLButtonElement> & {

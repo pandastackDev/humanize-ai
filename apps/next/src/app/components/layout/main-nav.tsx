@@ -2,17 +2,14 @@
 
 import {
   BarChart3,
-  BookOpen,
   Download,
   Eye,
   FileCheck,
   FileCode,
-  FileQuestion,
   FileText,
   Hash,
   Image as ImageIcon,
   Instagram,
-  Map as MapIcon,
   Music,
   Search,
   Shield,
@@ -33,30 +30,6 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
-
-const resources = [
-  {
-    title: "FAQ",
-    href: "/faq",
-    description:
-      "Find answers to common questions about AISEO.ai, our technology, usage, and best practices.",
-    icon: FileQuestion,
-  },
-  {
-    title: "Roadmap",
-    href: "/roadmap",
-    description:
-      "Stay updated with our forward vision, upcoming features, and the evolution journey of AISEO.ai.",
-    icon: MapIcon,
-  },
-  {
-    title: "Blog",
-    href: "/blog",
-    description:
-      "Dive into insightful articles, stories, and updates from the world of AI-enhanced SEO and content creation.",
-    icon: BookOpen,
-  },
-];
 
 const freeTools = {
   "YouTube Tools": [
@@ -172,7 +145,7 @@ function ListItem({
     <li {...props}>
       <NavigationMenuLink
         className={cn(
-          "flex w-full min-w-[280px] max-w-[340px] cursor-pointer gap-2 rounded-2xl bg-white px-4 py-[1.1rem] outline-none transition-colors hover:bg-[#F5F8FF] sm:px-6",
+          "flex w-full min-w-[280px] max-w-[340px] scale-[0.98] transform cursor-pointer gap-2 rounded-2xl bg-white px-4 py-[1.1rem] outline-none transition-all duration-200 ease-in-out hover:scale-100 hover:bg-[#F5F8FF] active:scale-[0.95] sm:px-6",
           description && "flex-col"
         )}
         href={href}
@@ -199,30 +172,6 @@ export function MainNav() {
   return (
     <NavigationMenu>
       <NavigationMenuList className="flex-wrap gap-6">
-        <NavigationMenuItem value="resources">
-          <NavigationMenuTrigger value="resources">
-            Resources
-          </NavigationMenuTrigger>
-          <NavigationMenuContent value="resources">
-            <div className="rounded-3xl border-2 border-slate-100 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7">
-              <div className="mb-4 w-fit font-bold text-sm sm:text-base">
-                AISEO.ai Resources
-              </div>
-              <ul className="flex flex-col gap-3">
-                {resources.map((resource) => (
-                  <ListItem
-                    description={resource.description}
-                    href={resource.href}
-                    icon={resource.icon}
-                    key={resource.title}
-                    title={resource.title}
-                  />
-                ))}
-              </ul>
-            </div>
-          </NavigationMenuContent>
-        </NavigationMenuItem>
-
         <NavigationMenuItem value="free-tools">
           <NavigationMenuTrigger value="free-tools">
             Free Tools
@@ -245,7 +194,7 @@ export function MainNav() {
                       {tools.map((tool) => (
                         <li key={tool.title}>
                           <NavigationMenuLink
-                            className="block text-slate-600 text-xs hover:text-indigo-600 sm:text-sm"
+                            className="block scale-[0.98] transform text-slate-600 text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-indigo-600 active:scale-[0.95] sm:text-sm"
                             href={tool.href}
                           >
                             {tool.title}
