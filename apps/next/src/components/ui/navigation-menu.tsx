@@ -61,7 +61,7 @@ const NavigationMenu = forwardRef<HTMLDivElement, NavigationMenuProps>(
       <NavigationMenuContext.Provider value={{ openItem, setOpenItem }}>
         <div
           className={cn(
-            "relative z-10 flex max-w-max flex-1 items-center justify-center",
+            "relative z-10 flex max-w-max flex-1 items-center justify-center overflow-visible",
             className
           )}
           data-navigation-menu
@@ -82,7 +82,7 @@ const NavigationMenuList = forwardRef<
 >(({ className, ...props }, ref) => (
   <ul
     className={cn(
-      "group flex flex-1 list-none items-center justify-center space-x-1",
+      "group flex flex-1 list-none items-center justify-center space-x-1 overflow-visible",
       className
     )}
     ref={ref}
@@ -98,7 +98,7 @@ type NavigationMenuItemProps = React.LiHTMLAttributes<HTMLLIElement> & {
 
 const NavigationMenuItem = forwardRef<HTMLLIElement, NavigationMenuItemProps>(
   ({ children, ...props }, ref) => (
-    <li ref={ref} {...props}>
+    <li className="relative" ref={ref} {...props}>
       {children}
     </li>
   )
@@ -167,13 +167,13 @@ const NavigationMenuContent = forwardRef<
   return (
     <div
       className={cn(
-        "fade-in-0 zoom-in-95 slide-in-from-top-2 md:-translate-x-1/2 absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] max-w-[600px] animate-in md:left-1/2 md:w-auto",
+        "fade-in-0 zoom-in-95 slide-in-from-top-2 md:-translate-x-1/2 absolute top-full left-0 z-50 mt-2 w-[calc(100vw-2rem)] max-w-[600px] animate-in md:left-1/2 md:w-auto",
         className
       )}
       ref={ref}
       {...props}
     >
-      <div className="relative z-50 rounded-md border bg-popover text-popover-foreground shadow-lg">
+      <div className="relative rounded-md border bg-popover text-popover-foreground shadow-lg">
         {children}
       </div>
     </div>

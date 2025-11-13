@@ -25,13 +25,13 @@ export async function Header() {
 
   return (
     <header
-      className="sticky top-0 z-50 w-full border-b backdrop-blur supports-backdrop-filter:bg-[var(--header-bg)]/80"
+      className="sticky top-0 z-50 w-full overflow-visible border-b backdrop-blur supports-backdrop-filter:bg-[var(--header-bg)]/80"
       style={{
         backgroundColor: "var(--header-bg)",
         borderColor: "var(--header-bg)",
       }}
     >
-      <div className="container relative flex h-16 items-center justify-between px-4 md:px-6">
+      <div className="container relative flex h-16 items-center justify-between overflow-visible px-4 md:px-6">
         <div className="flex items-center">
           <Link
             className="flex items-center space-x-2 transition-opacity hover:opacity-80"
@@ -40,7 +40,7 @@ export async function Header() {
             <Logo />
           </Link>
         </div>
-        <nav className="-translate-x-1/2 absolute left-1/2 hidden items-center md:flex">
+        <nav className="-translate-x-1/2 absolute left-1/2 hidden items-center overflow-visible md:flex">
           <MainNav />
         </nav>
         <div className="flex items-center gap-2 md:gap-3">

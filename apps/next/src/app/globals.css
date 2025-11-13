@@ -184,11 +184,18 @@ a {
     scrollbar-width: none; /* Firefox */
   }
 
-  /* Prevent horizontal scroll on all containers */
+  /* Prevent horizontal scroll on all containers, but allow dropdowns */
   .container,
   [class*="container"] {
     max-width: 100%;
     overflow-x: hidden;
+  }
+
+  /* Allow navigation menu dropdowns to overflow */
+  [data-navigation-menu],
+  nav[class*="navigation"],
+  header nav {
+    overflow: visible !important;
   }
 }
 
