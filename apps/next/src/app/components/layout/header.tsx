@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Logo } from "../logo";
 import { SignInButton } from "../sign-in-button";
 import { MainNav } from "./main-nav";
+import { MobileNav } from "./mobile-nav";
 import ThemeToggle from "./theme-toggle";
 import { UserNav } from "./user-nav";
 
@@ -42,10 +43,12 @@ export async function Header() {
         <nav className="-translate-x-1/2 absolute left-1/2 hidden items-center md:flex">
           <MainNav />
         </nav>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 md:gap-3">
           {!user && (
             <>
-              <SignInButton />
+              <div className="hidden sm:block">
+                <SignInButton />
+              </div>
               <ThemeToggle />
             </>
           )}
@@ -59,6 +62,7 @@ export async function Header() {
               />
             </>
           )}
+          <MobileNav user={user} />
         </div>
       </div>
     </header>

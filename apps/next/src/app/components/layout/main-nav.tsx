@@ -172,17 +172,19 @@ function ListItem({
     <li {...props}>
       <NavigationMenuLink
         className={cn(
-          "flex w-[340px] cursor-pointer gap-2 rounded-2xl bg-white px-6 py-[1.1rem] outline-none transition-colors hover:bg-[#F5F8FF]",
+          "flex w-full min-w-[280px] max-w-[340px] cursor-pointer gap-2 rounded-2xl bg-white px-4 py-[1.1rem] outline-none transition-colors hover:bg-[#F5F8FF] sm:px-6",
           description && "flex-col"
         )}
         href={href}
       >
         <div className="flex items-start gap-2">
-          {Icon && <Icon className="mt-1 h-6 w-6 shrink-0" />}
+          {Icon && <Icon className="mt-1 h-5 w-5 shrink-0 sm:h-6 sm:w-6" />}
           <div className="flex flex-col gap-1">
-            <span className="font-bold text-base leading-none">{title}</span>
+            <span className="font-bold text-sm leading-none sm:text-base">
+              {title}
+            </span>
             {description && (
-              <p className="text-slate-600 text-sm leading-snug">
+              <p className="text-slate-600 text-xs leading-snug sm:text-sm">
                 {description}
               </p>
             )}
@@ -202,8 +204,8 @@ export function MainNav() {
             Resources
           </NavigationMenuTrigger>
           <NavigationMenuContent value="resources">
-            <div className="rounded-3xl border-2 border-slate-100 bg-white px-8 py-7 shadow-xl">
-              <div className="mb-4 w-fit font-bold text-base">
+            <div className="rounded-3xl border-2 border-slate-100 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7">
+              <div className="mb-4 w-fit font-bold text-sm sm:text-base">
                 AISEO.ai Resources
               </div>
               <ul className="flex flex-col gap-3">
@@ -226,19 +228,24 @@ export function MainNav() {
             Free Tools
           </NavigationMenuTrigger>
           <NavigationMenuContent value="free-tools">
-            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-100 bg-white px-8 py-7 shadow-xl">
-              <div className="mb-4 font-bold text-base">Free Tools</div>
-              <div className="flex gap-6">
+            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-100 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7">
+              <div className="mb-4 font-bold text-sm sm:text-base">
+                Free Tools
+              </div>
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:gap-6">
                 {Object.entries(freeTools).map(([category, tools]) => (
-                  <div className="w-[200px]" key={category}>
-                    <div className="mb-3 font-semibold text-slate-800 text-sm">
+                  <div
+                    className="w-full min-w-[160px] sm:w-[200px]"
+                    key={category}
+                  >
+                    <div className="mb-3 font-semibold text-slate-800 text-xs sm:text-sm">
                       {category}
                     </div>
                     <ul className="list-none space-y-2">
                       {tools.map((tool) => (
                         <li key={tool.title}>
                           <NavigationMenuLink
-                            className="block text-slate-600 text-sm hover:text-indigo-600"
+                            className="block text-slate-600 text-xs hover:text-indigo-600 sm:text-sm"
                             href={tool.href}
                           >
                             {tool.title}

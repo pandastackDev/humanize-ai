@@ -167,7 +167,7 @@ const NavigationMenuContent = forwardRef<
   return (
     <div
       className={cn(
-        "fade-in-0 zoom-in-95 slide-in-from-top-2 absolute top-full left-0 mt-2 w-full animate-in md:w-auto",
+        "fade-in-0 zoom-in-95 slide-in-from-top-2 md:-translate-x-1/2 absolute top-full left-0 mt-2 w-[calc(100vw-2rem)] max-w-[600px] animate-in md:left-1/2 md:w-auto",
         className
       )}
       ref={ref}
