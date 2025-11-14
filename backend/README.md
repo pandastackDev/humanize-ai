@@ -10,11 +10,10 @@ This CI/CD pipeline uses modern Python tooling:
 - **FastAPI** for building high-performance APIs
 - **Ruff** for linting and formatting
 - **Pyright** for static type checking
-- **Pytest** for testing 
+- **Pytest** for testing
 - `pytest-cov` for coverage
 - Checks `uv.lock` for consistency
 - Builds distributable wheels
-
 
 ## Getting Started
 
@@ -42,6 +41,7 @@ uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
 When you make changes to your project, the server will automatically reload.
 
 Visit:
+
 - API Documentation: http://localhost:8000/docs
 - Alternative API Docs: http://localhost:8000/redoc
 
@@ -84,11 +84,13 @@ uv run ruff format .
 ### First Time Setup
 
 1. Install Vercel CLI:
+
 ```bash
 npm install -g vercel
 ```
 
 2. Login to Vercel:
+
 ```bash
 vercel login
 ```
@@ -106,6 +108,7 @@ Or push to your repository with the [Vercel Git integration](https://vercel.com/
 ### Configuration
 
 The `vercel.json` file configures how Vercel deploys the FastAPI application:
+
 - Builds the Python application using `@vercel/python`
 - Routes all requests to the FastAPI app
 - Static files are served from the `public/` directory
