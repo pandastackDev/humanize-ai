@@ -4,18 +4,15 @@ import { switchToOrganization } from "@/actions/switchToOrganization";
 import { OrganizationSwitcherHeader } from "./organization-switcher-header";
 
 export async function OrganizationSwitcher() {
-  const { user, role, organizationId } = await withAuth();
+  const { user, role: _role, organizationId } = await withAuth();
 
   // Fetch organization details and auth token if user has an organizationId
-  let organizationName: string | undefined;
   let authToken: string | undefined;
 
   if (organizationId && user) {
     try {
       const { workos } = await import("@/app/api/workos");
-      const organization =
-        await workos.organizations.getOrganization(organizationId);
-      organizationName = organization.name;
+      await workos.organizations.getOrganization(organizationId);
 
       // Get auth token for organization switcher widget
       authToken = await workos.widgets.getToken({

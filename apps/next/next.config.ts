@@ -10,7 +10,7 @@ const withWebpack: NextConfig = {
     }
 
     config.resolve.alias = {
-      ...(config.resolve.alias || {}),
+      ...config.resolve.alias,
       "react-native": "react-native-web",
       "react-native$": "react-native-web",
       "react-native/Libraries/EventEmitter/RCTDeviceEventEmitter$":

@@ -3,8 +3,13 @@
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import {
+  type AnchorHTMLAttributes,
+  type ButtonHTMLAttributes,
+  type HTMLAttributes,
+  type LiHTMLAttributes,
+  type ReactNode,
+  type RefObject,
   createContext,
-  forwardRef,
   useContext,
   useEffect,
   useState,
@@ -32,54 +37,60 @@ function useNavigationMenu() {
 }
 
 type NavigationMenuProps = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
 };
 
-const NavigationMenu = forwardRef<HTMLDivElement, NavigationMenuProps>(
-  ({ className, children, ...props }, ref) => {
-    const [openItem, setOpenItem] = useState<string | null>(null);
+const NavigationMenu = ({
+  className,
+  children,
+  ref,
+  ...props
+}: NavigationMenuProps & { ref?: RefObject<HTMLDivElement | null> }) => {
+  const [openItem, setOpenItem] = useState<string | null>(null);
 
-    // Close dropdown when clicking outside
-    useEffect(() => {
-      const handleClickOutside = (event: MouseEvent) => {
-        const target = event.target as HTMLElement;
-        if (!target.closest("[data-navigation-menu]")) {
-          setOpenItem(null);
-        }
-      };
-
-      if (openItem) {
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-          document.removeEventListener("mousedown", handleClickOutside);
-        };
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest("[data-navigation-menu]")) {
+        setOpenItem(null);
       }
-    }, [openItem]);
+    };
 
-    return (
-      <NavigationMenuContext.Provider value={{ openItem, setOpenItem }}>
-        <div
-          className={cn(
-            "relative z-10 flex max-w-max flex-1 items-center justify-center overflow-visible",
-            className
-          )}
-          data-navigation-menu
-          ref={ref}
-          {...props}
-        >
-          {children}
-        </div>
-      </NavigationMenuContext.Provider>
-    );
-  }
-);
+    if (openItem) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => {
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+  }, [openItem]);
+
+  return (
+    <NavigationMenuContext.Provider value={{ openItem, setOpenItem }}>
+      <div
+        className={cn(
+          "relative z-10 flex max-w-max flex-1 items-center justify-center overflow-visible",
+          className
+        )}
+        data-navigation-menu
+        ref={ref}
+        {...props}
+      >
+        {children}
+      </div>
+    </NavigationMenuContext.Provider>
+  );
+};
 NavigationMenu.displayName = "NavigationMenu";
 
-const NavigationMenuList = forwardRef<
-  HTMLUListElement,
-  React.HTMLAttributes<HTMLUListElement>
->(({ className, ...props }, ref) => (
+const NavigationMenuList = ({
+  className,
+  ref,
+  ...props
+}: HTMLAttributes<HTMLUListElement> & {
+  ref?: RefObject<HTMLUListElement | null>;
+}) => (
   <ul
     className={cn(
       "group flex flex-1 list-none items-center justify-center space-x-1 overflow-visible",
@@ -88,36 +99,42 @@ const NavigationMenuList = forwardRef<
     ref={ref}
     {...props}
   />
-));
+);
 NavigationMenuList.displayName = "NavigationMenuList";
 
-type NavigationMenuItemProps = React.LiHTMLAttributes<HTMLLIElement> & {
-  children: React.ReactNode;
+type NavigationMenuItemProps = LiHTMLAttributes<HTMLLIElement> & {
+  children: ReactNode;
   value?: string;
 };
 
-const NavigationMenuItem = forwardRef<HTMLLIElement, NavigationMenuItemProps>(
-  ({ children, ...props }, ref) => (
-    <li className="relative" ref={ref} {...props}>
-      {children}
-    </li>
-  )
+const NavigationMenuItem = ({
+  children,
+  ref,
+  ...props
+}: NavigationMenuItemProps & { ref?: RefObject<HTMLLIElement | null> }) => (
+  <li className="relative" ref={ref} {...props}>
+    {children}
+  </li>
 );
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
 const navigationMenuTriggerStyle =
   "group inline-flex h-9 w-max items-center justify-center rounded-md bg-[var(--nav-item-bg)] px-4 py-2 text-sm font-medium text-foreground transition-all duration-200 ease-in-out transform scale-[0.98] hover:scale-100 hover:bg-accent hover:text-accent-foreground active:scale-[0.95] focus:bg-accent focus:text-accent-foreground focus:outline-none focus:scale-100 disabled:pointer-events-none disabled:opacity-50 disabled:scale-100 cursor-pointer";
 
-type NavigationMenuTriggerProps =
-  React.ButtonHTMLAttributes<HTMLButtonElement> & {
-    value: string;
-    children: React.ReactNode;
-  };
+type NavigationMenuTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+  value: string;
+  children: ReactNode;
+};
 
-const NavigationMenuTrigger = forwardRef<
-  HTMLButtonElement,
-  NavigationMenuTriggerProps
->(({ className, children, value, ...props }, ref) => {
+const NavigationMenuTrigger = ({
+  className,
+  children,
+  value,
+  ref,
+  ...props
+}: NavigationMenuTriggerProps & {
+  ref?: RefObject<HTMLButtonElement | null>;
+}) => {
   const { openItem, setOpenItem } = useNavigationMenu();
   const isOpen = openItem === value;
 
@@ -145,18 +162,21 @@ const NavigationMenuTrigger = forwardRef<
       />
     </button>
   );
-});
+};
 NavigationMenuTrigger.displayName = "NavigationMenuTrigger";
 
-type NavigationMenuContentProps = React.HTMLAttributes<HTMLDivElement> & {
+type NavigationMenuContentProps = HTMLAttributes<HTMLDivElement> & {
   value: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const NavigationMenuContent = forwardRef<
-  HTMLDivElement,
-  NavigationMenuContentProps
->(({ className, children, value, ...props }, ref) => {
+const NavigationMenuContent = ({
+  className,
+  children,
+  value,
+  ref,
+  ...props
+}: NavigationMenuContentProps & { ref?: RefObject<HTMLDivElement | null> }) => {
   const { openItem } = useNavigationMenu();
   const isOpen = openItem === value;
 
@@ -178,22 +198,25 @@ const NavigationMenuContent = forwardRef<
       </div>
     </div>
   );
-});
+};
 NavigationMenuContent.displayName = "NavigationMenuContent";
 
-type NavigationMenuLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
+type NavigationMenuLinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   href: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
-const NavigationMenuLink = forwardRef<
-  HTMLAnchorElement,
-  NavigationMenuLinkProps
->(({ className, href, children, ...props }, ref) => (
+const NavigationMenuLink = ({
+  className,
+  href,
+  children,
+  ref,
+  ...props
+}: NavigationMenuLinkProps & { ref?: RefObject<HTMLAnchorElement | null> }) => (
   <Link className={className} href={href} ref={ref} {...props}>
     {children}
   </Link>
-));
+);
 NavigationMenuLink.displayName = "NavigationMenuLink";
 
 export {
