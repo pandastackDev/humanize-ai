@@ -3,4 +3,3 @@
 from .sanitization import InputSanitizer
 
 __all__ = ["InputSanitizer"]
-

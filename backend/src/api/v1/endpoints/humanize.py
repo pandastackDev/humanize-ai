@@ -71,7 +71,11 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         service = get_humanization_service()
 
         # Convert LengthMode enum to string
-        length_mode_str = request.length_mode.value if isinstance(request.length_mode, LengthMode) else request.length_mode
+        length_mode_str = (
+            request.length_mode.value
+            if isinstance(request.length_mode, LengthMode)
+            else request.length_mode
+        )
 
         # Call humanization service with sanitized input
         result = service.humanize(
@@ -88,7 +92,7 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         logger.info("=" * 80)
         logger.info(f"Output Text Length: {len(result['humanized_text'])} characters")
         logger.info(f"Output Text Preview: {result['humanized_text'][:200]}...")
-        
+
         if result.get("metrics"):
             metrics = result["metrics"]
             logger.info("-" * 80)
@@ -98,7 +102,7 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
             logger.info(f"  • Processing Time: {metrics.get('processing_time_ms', 'N/A')} ms")
             logger.info(f"  • Word Count: {metrics.get('word_count', 'N/A')}")
             logger.info(f"  • Chunks Used: {metrics.get('chunks_used', 'N/A')}")
-        
+
         if result.get("metadata"):
             metadata = result["metadata"]
             logger.info("-" * 80)
@@ -109,7 +113,7 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
             logger.info(f"  • Model Used: {metadata.get('model_used', 'N/A')}")
             logger.info(f"  • Semantic Passed: {metadata.get('semantic_passed', 'N/A')}")
             logger.info(f"  • Style Passed: {metadata.get('style_passed', 'N/A')}")
-        
+
         logger.info("=" * 80)
 
         # Convert dict result to response model
@@ -131,8 +135,4 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         ) from e
     except Exception as e:
         logger.exception(f"Unexpected error in humanize: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to humanize text: {str(e)}"
-        ) from e
-
-
+        raise HTTPException(status_code=500, detail=f"Failed to humanize text: {str(e)}") from e

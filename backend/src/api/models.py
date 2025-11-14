@@ -180,13 +180,13 @@ class HumanizeRequest(BaseModel):
     def validate_style_sample_word_count(cls, v: Optional[str]) -> Optional[str]:
         """
         Validate that style_sample has at least 150 words if provided.
-        
+
         Args:
             v: Style sample text (optional)
-            
+
         Returns:
             The style sample text if valid
-            
+
         Raises:
             ValueError: If style_sample is provided but has less than 150 words
         """

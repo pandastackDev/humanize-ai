@@ -8,7 +8,7 @@ Used for:
 """
 
 import logging
-from typing import List, Optional
+from typing import Optional
 
 import numpy as np
 from numpy import ndarray
@@ -151,5 +151,3 @@ class EmbeddingService:
             Style embedding vector
         """
         return self.get_embedding(style_sample)
-
-

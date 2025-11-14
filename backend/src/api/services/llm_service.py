@@ -63,9 +63,7 @@ class LLMService:
             try:
                 import anthropic
 
-                self.anthropic_client = anthropic.Anthropic(
-                    api_key=settings.ANTHROPIC_API_KEY
-                )
+                self.anthropic_client = anthropic.Anthropic(api_key=settings.ANTHROPIC_API_KEY)
                 logger.info("Anthropic client initialized")
             except Exception as e:
                 logger.error(f"Failed to initialize Anthropic client: {e}")
@@ -111,9 +109,7 @@ class LLMService:
         # Try OpenAI fallback
         if self.openai_enabled:
             try:
-                return self._generate_openai(
-                    prompt, system_prompt, model, temperature, max_tokens
-                )
+                return self._generate_openai(prompt, system_prompt, model, temperature, max_tokens)
             except Exception as e:
                 logger.warning(f"OpenAI generation failed: {e}. Trying Anthropic.")
                 if self.anthropic_enabled:
@@ -161,8 +157,10 @@ class LLMService:
         # Ensure content ends with proper punctuation (don't cut off mid-sentence)
         if content and content[-1] not in ".!?":
             if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
-                logger.warning("Response may have been truncated - content doesn't end with punctuation")
-        
+                logger.warning(
+                    "Response may have been truncated - content doesn't end with punctuation"
+                )
+
         return content or ""
 
     def _generate_openai(
@@ -193,8 +191,10 @@ class LLMService:
         # Ensure content ends with proper punctuation (don't cut off mid-sentence)
         if content and content[-1] not in ".!?":
             if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
-                logger.warning("Response may have been truncated - content doesn't end with punctuation")
-        
+                logger.warning(
+                    "Response may have been truncated - content doesn't end with punctuation"
+                )
+
         return content or ""
 
     def _generate_anthropic(
@@ -213,7 +213,7 @@ class LLMService:
 
         # Anthropic requires max_tokens, use reasonable default if not provided
         effective_max_tokens = max_tokens or 4096
-        
+
         response = self.anthropic_client.messages.create(
             model=model_name,
             max_tokens=effective_max_tokens,
@@ -222,12 +222,22 @@ class LLMService:
             messages=[{"role": "user", "content": prompt}],
         )
 
-        content = response.content[0].text
+        # Extract text from response - handle different content block types
+        if not response.content or len(response.content) == 0:
+            raise ValueError("Anthropic response has no content")
+
+        first_block = response.content[0]
+        # Check if it's a TextBlock with .text attribute
+        if hasattr(first_block, "text"):
+            content = first_block.text  # type: ignore[attr-defined]
+        else:
+            # Handle other block types (ThinkingBlock, ToolUseBlock, etc.)
+            raise ValueError(f"Unexpected content block type: {type(first_block)}")
         # Ensure content ends with proper punctuation (don't cut off mid-sentence)
         if content and content[-1] not in ".!?":
             if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
-                logger.warning("Response may have been truncated - content doesn't end with punctuation")
-        
+                logger.warning(
+                    "Response may have been truncated - content doesn't end with punctuation"
+                )
+
         return content or ""
-
-

@@ -160,9 +160,7 @@ class TextChunkingService:
                         }
                     )
                     # Start new chunk with overlap from previous chunk
-                    overlap_sentences = self._get_overlap_sentences(
-                        current_chunk, overlap
-                    )
+                    overlap_sentences = self._get_overlap_sentences(current_chunk, overlap)
                     current_chunk = overlap_sentences + [sentence]
                     current_token_count = self.count_tokens(" ".join(current_chunk))
                     start_index = chunks[-1]["end_index"] + 1 if chunks else 0
@@ -189,9 +187,7 @@ class TextChunkingService:
 
         # Filter out chunks that are too small (unless it's the only chunk)
         if len(chunks) > 1:
-            chunks = [
-                c for c in chunks if c["token_count"] >= min_tokens or len(chunks) == 1
-            ]
+            chunks = [c for c in chunks if c["token_count"] >= min_tokens or len(chunks) == 1]
 
         return chunks
 
@@ -213,4 +209,3 @@ class TextChunkingService:
                 break
 
         return overlap_sentences
-

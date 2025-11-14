@@ -227,14 +227,14 @@ Je taak is om de gegeven tekst te herschrijven terwijl je:
 def build_user_prompt(
     text: str,
     tone: Optional[str] = None,
-    length_mode: str = "standard",
+    length_mode: Optional[str] = None,
     readability_level: Optional[str] = None,
     style_sample: Optional[str] = None,
     language: str = "en",
 ) -> str:
     """
     Build simple user prompt - just the text to rewrite.
-    
+
     IMPORTANT: Keep this simple! All instructions go in the system prompt.
     This prevents the LLM from echoing instructions back in the output.
 
@@ -252,4 +252,3 @@ def build_user_prompt(
     # Keep it simple - just the text. All instructions are in the system prompt.
     # This prevents the LLM from echoing instructions back in the output.
     return f"Rewrite the following text:\n\n{text}\n\nOutput only the rewritten text, nothing else."
-

@@ -8,7 +8,6 @@ Validates:
 """
 
 import logging
-from typing import Optional
 
 from api.config import settings
 
@@ -58,9 +57,7 @@ class ValidationService:
             # On error, assume valid (fail open) but log the issue
             return True, 0.0
 
-    def validate_style_similarity(
-        self, style_embedding, humanized_text: str
-    ) -> tuple[bool, float]:
+    def validate_style_similarity(self, style_embedding, humanized_text: str) -> tuple[bool, float]:
         """
         Validate that style matches the style sample.
 
@@ -132,5 +129,3 @@ class ValidationService:
             "avg_sentence_length": avg_length,
             "lexical_diversity": lexical_diversity,
         }
-
-

@@ -11,11 +11,10 @@ Pipeline steps:
 7. Validation
 """
 
-import asyncio
 import logging
 import re
 import time
-from typing import Optional, List, Tuple
+from typing import Optional, List, Tuple, Any
 
 from api.config import settings
 
@@ -75,8 +74,8 @@ class HumanizationService:
             language_confidence = 1.0
             logger.info(f"Using provided language: {detected_language}")
         else:
-            detected_language, language_confidence = (
-                self.language_service.detect_language(input_text)
+            detected_language, language_confidence = self.language_service.detect_language(
+                input_text
             )
             logger.info(
                 f"Detected language: {detected_language} (confidence: {language_confidence:.2f})"
@@ -84,24 +83,15 @@ class HumanizationService:
 
         # Step 4: Style Conditioning
         style_embedding = None
-        style_context = None
         if style_sample and len(style_sample.strip().split()) >= 150:
             try:
                 style_embedding = self.embedding_service.get_style_embedding(style_sample)
-                style_context = {
-                    "type": "embedding",
-                    "embedding": style_embedding,
-                    "sample_length": len(style_sample.split()),
-                }
-                logger.info(f"Style embedding generated from {len(style_sample.split())} word sample")
+                logger.info(
+                    f"Style embedding generated from {len(style_sample.split())} word sample"
+                )
             except Exception as e:
                 logger.warning(f"Failed to extract style embedding: {e}")
-                style_context = None
         else:
-            style_context = {
-                "type": "preset",
-                "template": tone or "general",
-            }
             logger.info(f"Using preset style template: {tone or 'general'}")
 
         # Step 5: Text Chunking
@@ -110,11 +100,11 @@ class HumanizationService:
 
         if not chunks:
             raise ValueError("Text chunking failed - no chunks generated")
-        
+
         # Store original text structure for reassembly
         # Detect if input has bullet points or special formatting
         has_bullets = bool(re.search(r"➜|•|[*\-]\s+", input_text))
-        original_lines = input_text.split("\n") if has_bullets else None
+        input_text.split("\n") if has_bullets else None
 
         # Step 6: Get Language Prompt Template
         prompt_template = get_prompt_template(detected_language)
@@ -132,7 +122,9 @@ class HumanizationService:
         )
 
         # Step 8: Reassembly & Smoothing
-        humanized_text = self._reassemble_and_smooth(humanized_chunks, detected_language, input_text)
+        humanized_text = self._reassemble_and_smooth(
+            humanized_chunks, detected_language, input_text
+        )
 
         # Step 9: Validation
         validation_results = self._validate_output(
@@ -233,35 +225,39 @@ class HumanizationService:
                 # BUT allow enough tokens to complete sentences (don't cut off mid-sentence)
                 input_words = len(chunk["text"].split())
                 input_chars = len(chunk["text"])
-                
+
                 # Estimate base tokens needed (input * 1.3 tokens per word)
                 base_tokens = int(input_words * 1.3)
-                
+
                 # For "standard" mode, allow some expansion but complete sentences
                 # We want to control length via prompts, not hard token limits
                 # Set a reasonable max but allow enough room for completion
                 if length_mode == "standard":
                     # Allow up to 130% tokens (30% buffer) but ensure we can complete
-                    max_output_tokens = max(int(base_tokens * 1.3), base_tokens + 200)  # Minimum 200 token buffer
+                    max_output_tokens = max(
+                        int(base_tokens * 1.3), base_tokens + 200
+                    )  # Minimum 200 token buffer
                 elif length_mode == "shorten":
                     # Even when shortening, allow enough to complete sentences
-                    max_output_tokens = max(int(base_tokens * 0.9), base_tokens - 100)  # At least 90% of original
+                    max_output_tokens = max(
+                        int(base_tokens * 0.9), base_tokens - 100
+                    )  # At least 90% of original
                     max_output_tokens = max(max_output_tokens, 100)  # Minimum 100 tokens
                 elif length_mode == "expand":
                     max_output_tokens = int(base_tokens * 1.8)  # 80% expansion allowed
                 else:
                     max_output_tokens = max(int(base_tokens * 1.3), base_tokens + 200)
-                
+
                 # Ensure we don't set an unreasonably low limit that cuts sentences
                 # Minimum 50% more than input to allow sentence completion
                 min_required = max(int(base_tokens * 1.5), 150)
                 max_output_tokens = max(max_output_tokens, min_required)
-                
+
                 logger.debug(
                     f"Chunk {i + 1}: Input {input_chars} chars, {input_words} words ({base_tokens} tokens) -> "
                     f"Max tokens: {max_output_tokens} (mode: {length_mode})"
                 )
-                
+
                 humanized_chunk = self.llm_service.generate_text(
                     prompt=user_prompt,
                     system_prompt=system_prompt,
@@ -290,7 +286,9 @@ class HumanizationService:
                         # Check if it might be a list item that continues
                         is_bullet_item = cleaned_chunk.startswith(("➜", "•", "-", "*"))
                         if not is_bullet_item:
-                            logger.warning(f"Chunk {i + 1} may be incomplete - doesn't end with punctuation: {cleaned_chunk[-50:]}")
+                            logger.warning(
+                                f"Chunk {i + 1} may be incomplete - doesn't end with punctuation: {cleaned_chunk[-50:]}"
+                            )
                     humanized_chunks.append(cleaned_chunk)
                 else:
                     # Fallback: use original chunk if LLM produced empty/invalid output
@@ -319,8 +317,7 @@ class HumanizationService:
         # Step 7: Reassemble chunks in original order
         # Check if original has bullet points or line breaks we need to preserve
         has_bullets = bool(re.search(r"➜|•|[*\-]\s+", original_text))
-        original_lines = original_text.split("\n")
-        
+
         if has_bullets and len(chunks) > 1:
             # Try to preserve line structure - join chunks but preserve newlines
             # If chunks contain bullet points, join with newlines instead of spaces
@@ -361,9 +358,9 @@ class HumanizationService:
             "es": "Suaviza las transiciones entre oraciones y párrafos en el siguiente texto. Solo ajusta espaciado, puntuación y redacción menor para mejorar el flujo. No cambies el significado o contenido. Devuelve solo el texto suavizado:\n\n",
             "fr": "Lissez les transitions entre phrases et paragraphes dans le texte suivant. Ajustez uniquement l'espacement, la ponctuation et la formulation mineure pour améliorer le flux. Ne changez pas le sens ou le contenu. Retournez uniquement le texte lissé:\n\n",
         }
-        
+
         smoothing_prompt = smoothing_prompts.get(language, smoothing_prompts["en"])
-        
+
         try:
             smoothed = self.llm_service.generate_text(
                 prompt=smoothing_prompt + text,
@@ -392,19 +389,19 @@ class HumanizationService:
         # Preserve paragraph breaks (double newlines)
         # First, normalize different newline formats
         text = text.replace("\r\n", "\n").replace("\r", "\n")
-        
+
         # Split by double newlines first to preserve paragraph structure
         # Then process each paragraph separately
         if "\n\n" in text:
             paragraphs = text.split("\n\n")
             smoothed_paragraphs = []
-            
+
             for para in paragraphs:
                 # Process paragraph while preserving bullet points and line breaks
                 para = self._smooth_paragraph(para)
                 if para:
                     smoothed_paragraphs.append(para)
-            
+
             # Rejoin paragraphs with double newlines
             result = "\n\n".join(smoothed_paragraphs)
         else:
@@ -421,41 +418,43 @@ class HumanizationService:
                 result = "\n".join(smoothed_lines)
             else:
                 # Regular paragraph
-                result = self._smooth_paragraph(text)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
-        
+                result = self._smooth_paragraph(text)
+
         # Final cleanup: ensure proper spacing around punctuation
         result = re.sub(r"([.!?])([A-Z])", r"\1 \2", result)  # Space after sentence end
         result = re.sub(r"([,;:])([A-Za-z])", r"\1 \2", result)  # Space after punctuation
-        
+
         return result.strip()
-    
+
     def _smooth_paragraph(self, para: str) -> str:
         """
         Smooth a single paragraph while preserving formatting.
-        
+
         Args:
             para: Paragraph text
-            
+
         Returns:
             Smoothed paragraph
         """
         import re
-        
+
         # Don't remove spaces if the line starts with a bullet symbol
         # Check if line starts with bullet point
         if re.match(r"^\s*[➜•*\-]\s+", para):
             # Preserve bullet point structure
             bullet_match = re.match(r"^(\s*[➜•*\-]\s+)", para)
             bullet_part = bullet_match.group(1) if bullet_match else ""
-            text_part = para[len(bullet_part):] if bullet_part else para
-            
+            text_part = para[len(bullet_part) :] if bullet_part else para
+
             # Smooth the text part only
             text_part = re.sub(r"\s+", " ", text_part)  # Multiple spaces to single
             text_part = re.sub(r"\s+([.!?])", r"\1", text_part)  # Remove space before punctuation
-            text_part = re.sub(r"([.!?])\s+([A-Z])", r"\1 \2", text_part)  # Ensure space after sentence
+            text_part = re.sub(
+                r"([.!?])\s+([A-Z])", r"\1 \2", text_part
+            )  # Ensure space after sentence
             text_part = re.sub(r",\s+", ", ", text_part)  # Fix comma spacing
             text_part = re.sub(r"\.\s*\.", ".", text_part)  # Fix double periods
-            
+
             return bullet_part + text_part.strip()
         else:
             # Regular paragraph - remove extra whitespace
@@ -477,7 +476,7 @@ class HumanizationService:
     ) -> str:
         """
         Build enhanced system prompt with all specific instructions.
-        
+
         This ensures all instructions are in the system prompt (where they belong)
         and not in the user prompt (which would cause the LLM to echo them back).
 
@@ -493,43 +492,59 @@ class HumanizationService:
             Complete system prompt with all instructions
         """
         instructions = []
-        
+
         # Tone instructions
         if tone:
             instructions.append(f"Write in a {tone} tone.")
 
         # Voice preservation (CRITICAL)
-        instructions.append("CRITICAL: Preserve the sentence voice (active vs passive) from the original text. If a sentence is active voice, rewrite it as active voice. If it's passive voice, rewrite it as passive voice. Do not change active to passive or vice versa.")
+        instructions.append(
+            "CRITICAL: Preserve the sentence voice (active vs passive) from the original text. If a sentence is active voice, rewrite it as active voice. If it's passive voice, rewrite it as passive voice. Do not change active to passive or vice versa."
+        )
 
         # Length mode instructions
         if length_mode == "shorten":
-            instructions.append("Make the text significantly more concise while preserving all key information. Aim for 60-80% of the original length. Ensure all sentences are complete and fully written.")
+            instructions.append(
+                "Make the text significantly more concise while preserving all key information. Aim for 60-80% of the original length. Ensure all sentences are complete and fully written."
+            )
         elif length_mode == "expand":
-            instructions.append("Add depth and nuance to the text while maintaining its core meaning. Aim for 120-150% of the original length. Ensure all sentences are complete and fully written.")
+            instructions.append(
+                "Add depth and nuance to the text while maintaining its core meaning. Aim for 120-150% of the original length. Ensure all sentences are complete and fully written."
+            )
         else:
-            instructions.append("Preserve the approximate length of the original text - maintain within 90-110% of the original character count. Do not add unnecessary words or expand sentences unnecessarily.")
-            instructions.append("Keep sentences concise and direct - aim for similar word count per sentence as the original.")
+            instructions.append(
+                "Preserve the approximate length of the original text - maintain within 90-110% of the original character count. Do not add unnecessary words or expand sentences unnecessarily."
+            )
+            instructions.append(
+                "Keep sentences concise and direct - aim for similar word count per sentence as the original."
+            )
 
         # Readability instructions
         if readability_level:
-            instructions.append(f"Adjust the readability level to {readability_level} while maintaining clarity.")
+            instructions.append(
+                f"Adjust the readability level to {readability_level} while maintaining clarity."
+            )
 
         # Style sample instructions
         if style_sample:
-            instructions.append("Match the tone, syntax, rhythm, and vocabulary frequency of the provided style sample.")
+            instructions.append(
+                "Match the tone, syntax, rhythm, and vocabulary frequency of the provided style sample."
+            )
 
         # Build complete system prompt
         if instructions:
-            instruction_text = "\n\nAdditional instructions:\n" + "\n".join(f"- {inst}" for inst in instructions)
+            instruction_text = "\n\nAdditional instructions:\n" + "\n".join(
+                f"- {inst}" for inst in instructions
+            )
             return base_system_prompt + instruction_text
-        
+
         return base_system_prompt
 
     def _validate_output(
         self,
         original_text: str,
         humanized_text: str,
-        style_embedding: Optional,
+        style_embedding: Any = None,
     ) -> dict:
         """
         Validate the humanized output for quality.
@@ -544,23 +559,17 @@ class HumanizationService:
         """
         # 9a. Semantic Similarity Check
         is_semantically_valid, semantic_similarity = (
-            self.validation_service.validate_semantic_similarity(
-                original_text, humanized_text
-            )
+            self.validation_service.validate_semantic_similarity(original_text, humanized_text)
         )
 
         # 9b. Style Adherence Check (if style_sample provided)
         style_similarity = None
         is_style_valid = None
         if style_embedding is not None:
-            is_style_valid, style_similarity = (
-                self.validation_service.validate_style_similarity(
-                    style_embedding, humanized_text
-                )
+            is_style_valid, style_similarity = self.validation_service.validate_style_similarity(
+                style_embedding, humanized_text
             )
-            logger.info(
-                f"Style similarity: {style_similarity:.3f} (passed: {is_style_valid})"
-            )
+            logger.info(f"Style similarity: {style_similarity:.3f} (passed: {is_style_valid})")
 
         return {
             "semantic_similarity": semantic_similarity,

@@ -88,4 +88,3 @@ class InputSanitizer:
         if not text or not text.strip():
             return None
         return InputSanitizer.sanitize(text)
-

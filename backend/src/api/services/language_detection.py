@@ -7,7 +7,6 @@ Supports multiple detection methods:
 """
 
 import logging
-from typing import Optional
 
 try:
     from langdetect import detect, DetectorFactory
@@ -16,6 +15,10 @@ try:
     LANGDETECT_AVAILABLE = True
 except ImportError:
     LANGDETECT_AVAILABLE = False
+    # Define dummy values for type checking
+    detect = None  # type: ignore
+    DetectorFactory = None  # type: ignore
+    LangDetectException = Exception  # type: ignore
     logging.warning("langdetect not available. Install with: pip install langdetect")
 
 from api.config import settings
@@ -23,7 +26,7 @@ from api.config import settings
 logger = logging.getLogger(__name__)
 
 # Set seed for consistent results
-if LANGDETECT_AVAILABLE:
+if LANGDETECT_AVAILABLE and DetectorFactory is not None:
     DetectorFactory.seed = 0
 
 
@@ -39,7 +42,7 @@ class LanguageDetectionService:
     def _load_fasttext(self) -> None:
         """Load FastText model if available."""
         try:
-            import fasttext
+            import fasttext  # type: ignore[import-untyped]
 
             logger.info(f"Loading FastText model from {settings.FASTTEXT_MODEL_PATH}")
             self.fasttext_model = fasttext.load_model(settings.FASTTEXT_MODEL_PATH)
@@ -82,12 +85,12 @@ class LanguageDetectionService:
                 logger.warning(f"FastText detection failed: {e}. Falling back to langdetect.")
 
         # Fallback to langdetect
-        if LANGDETECT_AVAILABLE:
+        if LANGDETECT_AVAILABLE and detect is not None:
             try:
                 lang_code = detect(text)
                 # langdetect doesn't provide confidence, so we use a default
                 return lang_code, 0.8
-            except LangDetectException as e:
+            except LangDetectException as e:  # type: ignore[misc]
                 logger.error(f"Language detection failed: {e}")
                 raise ValueError(f"Could not detect language: {e}") from e
 
@@ -118,5 +121,3 @@ class LanguageDetectionService:
             "ar",  # Arabic
         }
         return lang_code.lower() in primary_languages
-
-
