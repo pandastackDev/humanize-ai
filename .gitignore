@@ -73,3 +73,5 @@ apps/expo/android
 build/**
 
 .ruff_cache
+
+*.tsbuildinfo

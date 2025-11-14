@@ -4,10 +4,11 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "debug": "next dev --inspect",
     "build": "next build",
     "start": "next start",
-    "lint-ci": "oxlint --type-aware && eslint .",
-    "lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && eslint . --fix",
+    "lint-ci": "oxlint --type-aware && eslint",
+    "lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && eslint --fix",
     "check-types": "tsc --noEmit",
     "dev:convex": "npx convex dev",
     "setup-env": "pnpx tsx scripts/setup.ts"
@@ -37,7 +38,7 @@
     "convex-helpers": "^0.1.58",
     "jose": "^6.1.0",
     "lucide-react": "^0.553.0",
-    "next": "16.0.1",
+    "next": "16.0.3",
     "next-themes": "^0.4.6",
     "nextjs-toploader": "^3.6.15",
     "prettier": "^3.3.3",
@@ -52,21 +53,28 @@
     "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
+    "@humanize/configs": "workspace:*",
     "@tailwindcss/postcss": "^4.1.17",
     "@tanstack/react-query-devtools": "5.90.2",
     "@types/node": "^24.10.0",
-    "@types/react": "^19.2.2",
-    "@types/react-dom": "^19.2.2",
+    "@types/react": "19.2.4",
+    "@types/react-dom": "19.2.3",
     "autoprefixer": "^10.4.22",
-    "babel-plugin-react-compiler": "^1.0.0",
+    "babel-plugin-react-compiler": "1.0.0",
     "chalk": "^5.3.0",
     "eslint": "^9.39.1",
-    "eslint-config-next": "16.0.1",
-    "eslint-plugin-oxlint": "^1.26.0",
-    "oxlint": "^1.26.0",
-    "oxlint-tsgolint": "^0.5.1",
+    "eslint-config-next": "16.0.3",
+    "eslint-plugin-oxlint": "^1.28.0",
+    "oxlint": "^1.28.0",
+    "oxlint-tsgolint": "^0.6.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17",
     "typescript": "~5.9.2"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.4",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }

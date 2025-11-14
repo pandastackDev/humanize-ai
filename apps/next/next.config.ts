@@ -1,8 +1,7 @@
-const path = require("node:path");
-/**
- * @type {import('next').NextConfig}
- */
-const withWebpack = {
+import path from "node:path";
+import type { NextConfig } from "next";
+
+const withWebpack: NextConfig = {
   webpack(config) {
     if (!config.resolve) {
       config.resolve = {};
@@ -32,10 +31,7 @@ const withWebpack = {
   },
 };
 
-/**
- * @type {import('next').NextConfig}
- */
-const withTurpopack = {
+const withTurpopack: NextConfig = {
   turbopack: {
     resolveAlias: {
       "react-native": "react-native-web",
@@ -64,10 +60,9 @@ const withTurpopack = {
   },
 };
 
-/**
- * @type {import('next').NextConfig}
- */
-module.exports = {
+const nextConfig: NextConfig = {
+  reactCompiler: true,
+  reactStrictMode: false, // reanimated doesn't support this on web
   transpilePackages: [
     "react-native",
     "react-native-web",
@@ -76,15 +71,13 @@ module.exports = {
     "moti",
     "react-native-gesture-handler",
   ],
-
   compiler: {
     define: {
       __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),
     },
   },
-  reactStrictMode: false, // reanimated doesn't support this on web
-  reactCompiler: true,
-
   ...withWebpack,
   ...withTurpopack,
 };
+
+export default nextConfig;

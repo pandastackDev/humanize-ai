@@ -1,0 +1,10 @@
+{
+  "name": "@humanize/configs",
+  "private": true,
+  "version": "1.0.0",
+  "files": [
+    "typescript/base.json",
+    "typescript/react-library.json",
+    "typescript/nextjs.json"
+  ]
+}

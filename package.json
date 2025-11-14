@@ -22,11 +22,12 @@
     "check-all": "pnpm i && biome check --write --unsafe && turbo lint && pnpm check-types && pnpm fe fix-deps && pnpm fe check-expo && pnpm turbo build",
     "check-ci": "biome check --unsafe && turbo lint-ci && pnpm check-types && pnpm fe check-expo",
     "bump-deps": "pnpm up -iLr",
+    "bump-next": "cd apps/next && pnpx @next/codemod@canary upgrade latest",
     "bump-biome": "pnpm update @biomejs/biome --latest && biome migrate --write",
     "clean": "turbo clean && rm -rf .turbo node_modules"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.4",
+    "@biomejs/biome": "2.3.5",
     "turbo": "^2.6.1"
   }
 }

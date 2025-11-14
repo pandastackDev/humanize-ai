@@ -1,5 +1,6 @@
 import { withAuth } from "@workos-inc/authkit-nextjs";
 import Link from "next/link";
+import { OrganizationSwitcher } from "@/app/components/layout/organization-switcher";
 import { Logo } from "../logo";
 import { SignInButton } from "../sign-in-button";
 import { MainNav } from "./main-nav";
@@ -54,6 +55,7 @@ export async function Header() {
           )}
           {user && (
             <>
+              <OrganizationSwitcher />
               <ThemeToggle />
               <UserNav
                 organizationName={organizationName}

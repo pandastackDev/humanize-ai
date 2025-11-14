@@ -4,7 +4,7 @@ import {
   Impersonation,
 } from "@workos-inc/authkit-nextjs/components";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import { DynamicBackground } from "./components/layout/dynamic-background";
@@ -20,14 +20,26 @@ export const metadata: Metadata = {
   description: "Humanize is a platform for ... ",
 };
 
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
+});
+
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <html className="overflow-x-hidden" lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} overflow-x-hidden bg-background`}>
+      <body
+        className={`${inter.className} ${geistSans.variable} ${geistMono.variable} overflow-x-hidden bg-background antialiased`}
+      >
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
             <div className="min-h-screen bg-background">

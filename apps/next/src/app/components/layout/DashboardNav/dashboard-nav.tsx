@@ -1,36 +1,18 @@
 "use client";
 
 import {
-<<<<<<< HEAD
-  ActivityLogIcon,
-  ArchiveIcon,
-  ArrowRightIcon,
-  AvatarIcon,
-  CheckCircledIcon,
-  DashboardIcon,
-  GearIcon,
-  GroupIcon,
-  Link2Icon,
-  LockClosedIcon,
-  PersonIcon,
-  TokensIcon,
-} from "@radix-ui/react-icons";
-import { Box, Flex } from "@radix-ui/themes";
-=======
   Activity,
   Archive,
   ArrowRight,
-  User,
   CheckCircle2,
-  Layers,
+  Key,
   LayoutDashboard,
-  Settings,
   Link2,
   Lock,
+  Settings,
+  User,
   Users,
-  Key,
 } from "lucide-react";
->>>>>>> f5ce883 (feat: setup the initial UI of project)
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import styles from "./page.module.css";
@@ -51,7 +33,7 @@ const navItems = [
   {
     title: "Team",
     href: "/dashboard/team",
-    icon: GroupIcon,
+    icon: Users,
     label: "Team",
   },
   {
@@ -79,15 +61,6 @@ const navItems = [
     label: "API Keys",
   },
   {
-<<<<<<< HEAD
-=======
-    title: "Organization Switcher",
-    href: "/dashboard/organization-switcher",
-    icon: Layers,
-    label: "Organization Switcher",
-  },
-  {
->>>>>>> f5ce883 (feat: setup the initial UI of project)
     title: "Domain Verification",
     href: "/dashboard/domain-verification",
     icon: CheckCircle2,
