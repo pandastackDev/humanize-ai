@@ -1,4 +1,43 @@
+# Build artifacts
 dist/
 build/
+*.egg-info/
+
+# Tests
 tests/
+test_*.py
+*_test.py
+
+# Documentation
+*.md
+README.md
+CHANGELOG.md
+
+# Development files
 .pre-commit-config.yaml
+pyproject.toml.bak
+*.swp
+*.swo
+*~
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Examples and demos
+examples/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+
+# OS
+.DS_Store
+Thumbs.db

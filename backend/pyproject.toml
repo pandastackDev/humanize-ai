@@ -18,7 +18,6 @@ dependencies = [
     "langdetect>=1.0.9",
     "tiktoken>=0.7.0",
     "numpy>=1.26.0",
-    "scikit-learn>=1.5.0",
 ]
 
 [build-system]
