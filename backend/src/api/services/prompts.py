@@ -6,7 +6,6 @@ Falls back to English if language not supported.
 """
 
 import logging
-from typing import Optional, Dict
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +26,7 @@ SUPPORTED_LANGUAGES = {
 }
 
 
-def get_prompt_template(language: str = "en") -> Dict[str, str]:
+def get_prompt_template(language: str = "en") -> dict[str, str]:
     """
     Get localized prompt template for the specified language.
 
@@ -48,7 +47,7 @@ def get_prompt_template(language: str = "en") -> Dict[str, str]:
 
 
 # Prompt templates for each supported language
-PROMPT_TEMPLATES: Dict[str, Dict[str, str]] = {
+PROMPT_TEMPLATES: dict[str, dict[str, str]] = {
     "en": {
         "system_prompt": """You are an expert text rewriting engine that humanizes AI-generated text to make it sound natural, authentic, and written by a human.
 
@@ -226,10 +225,10 @@ Je taak is om de gegeven tekst te herschrijven terwijl je:
 
 def build_user_prompt(
     text: str,
-    tone: Optional[str] = None,
-    length_mode: Optional[str] = None,
-    readability_level: Optional[str] = None,
-    style_sample: Optional[str] = None,
+    tone: str | None = None,
+    length_mode: str | None = None,
+    readability_level: str | None = None,
+    style_sample: str | None = None,
     language: str = "en",
 ) -> str:
     """

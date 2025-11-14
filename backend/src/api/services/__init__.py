@@ -10,13 +10,13 @@ This module contains business logic for:
 - Main humanization orchestration
 """
 
+from . import prompts
+from .embedding_service import EmbeddingService
 from .humanization_service import HumanizationService
 from .language_detection import LanguageDetectionService
-from .text_chunking import TextChunkingService
 from .llm_service import LLMService
-from .embedding_service import EmbeddingService
+from .text_chunking import TextChunkingService
 from .validation_service import ValidationService
-from . import prompts
 
 __all__ = [
     "HumanizationService",

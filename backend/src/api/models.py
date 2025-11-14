@@ -4,10 +4,8 @@ Pydantic models for API request/response validation.
 
 from datetime import datetime
 from enum import Enum
-from typing import Optional, List
 
-from pydantic import BaseModel, Field, EmailStr, field_validator, ConfigDict
-
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
 # ============================================================================
 # Enums
@@ -34,8 +32,8 @@ class Item(BaseModel):
     id: int = Field(..., gt=0, description="Item ID must be positive")
     name: str = Field(..., min_length=1, max_length=100, description="Item name")
     value: float = Field(..., ge=0, description="Item value must be non-negative")
-    category: Optional[ItemCategory] = None
-    tags: List[str] = Field(default_factory=list)
+    category: ItemCategory | None = None
+    tags: list[str] = Field(default_factory=list)
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -57,8 +55,8 @@ class ItemCreate(BaseModel):
 
     name: str = Field(..., min_length=1, max_length=100)
     value: float = Field(..., ge=0)
-    category: Optional[ItemCategory] = None
-    tags: List[str] = Field(default_factory=list)
+    category: ItemCategory | None = None
+    tags: list[str] = Field(default_factory=list)
 
     @field_validator("name")
     @classmethod
@@ -71,10 +69,10 @@ class ItemCreate(BaseModel):
 class ItemUpdate(BaseModel):
     """Model for updating items (all fields optional)"""
 
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    value: Optional[float] = Field(None, ge=0)
-    category: Optional[ItemCategory] = None
-    tags: Optional[List[str]] = None
+    name: str | None = Field(None, min_length=1, max_length=100)
+    value: float | None = Field(None, ge=0)
+    category: ItemCategory | None = None
+    tags: list[str] | None = None
 
 
 # ============================================================================
@@ -88,7 +86,7 @@ class User(BaseModel):
     id: int
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr  # Validates email format
-    full_name: Optional[str] = None
+    full_name: str | None = None
     is_active: bool = True
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -112,7 +110,7 @@ class UserCreate(BaseModel):
 
     username: str = Field(..., min_length=3, max_length=50, pattern="^[a-zA-Z0-9_]+$")
     email: EmailStr
-    full_name: Optional[str] = None
+    full_name: str | None = None
     password: str = Field(..., min_length=8)
 
     @field_validator("password")
@@ -133,7 +131,7 @@ class UserCreate(BaseModel):
 class DataResponse(BaseModel):
     """Response model for list of items"""
 
-    data: List[Item]
+    data: list[Item]
     total: int
     timestamp: datetime = Field(default_factory=datetime.now)
 
@@ -143,7 +141,7 @@ class ApiResponse(BaseModel):
 
     success: bool
     message: str
-    data: Optional[dict] = None
+    data: dict | None = None
 
 
 # ============================================================================
@@ -163,21 +161,21 @@ class HumanizeRequest(BaseModel):
     """Request model for humanize endpoint"""
 
     input_text: str = Field(..., min_length=1, description="Text to humanize")
-    tone: Optional[str] = Field(None, description="Writing tone (e.g., 'academic', 'casual')")
+    tone: str | None = Field(None, description="Writing tone (e.g., 'academic', 'casual')")
     length_mode: LengthMode = Field(
         LengthMode.STANDARD, description="Length mode: 'shorten', 'expand', or 'standard'"
     )
-    style_sample: Optional[str] = Field(
+    style_sample: str | None = Field(
         None, description="Style sample text (min 150 words required if provided)"
     )
-    readability_level: Optional[str] = Field(None, description="Readability level")
-    language: Optional[str] = Field(
+    readability_level: str | None = Field(None, description="Readability level")
+    language: str | None = Field(
         None, description="Target language (auto-detected if not provided)"
     )
 
     @field_validator("style_sample")
     @classmethod
-    def validate_style_sample_word_count(cls, v: Optional[str]) -> Optional[str]:
+    def validate_style_sample_word_count(cls, v: str | None) -> str | None:
         """
         Validate that style_sample has at least 150 words if provided.
 
@@ -216,36 +214,36 @@ class HumanizeRequest(BaseModel):
 class Metrics(BaseModel):
     """Metrics for humanization process"""
 
-    semantic_similarity: Optional[float] = None
-    style_similarity: Optional[float] = None
-    word_count: Optional[int] = None
-    character_count: Optional[int] = None
-    original_word_count: Optional[int] = None
-    processing_time_ms: Optional[float] = None
-    chunks_used: Optional[int] = None
-    sentence_length_variance: Optional[float] = None
-    avg_sentence_length: Optional[float] = None
-    lexical_diversity: Optional[float] = None
+    semantic_similarity: float | None = None
+    style_similarity: float | None = None
+    word_count: int | None = None
+    character_count: int | None = None
+    original_word_count: int | None = None
+    processing_time_ms: float | None = None
+    chunks_used: int | None = None
+    sentence_length_variance: float | None = None
+    avg_sentence_length: float | None = None
+    lexical_diversity: float | None = None
 
 
 class Metadata(BaseModel):
     """Metadata for humanization process"""
 
-    detected_language: Optional[str] = None
-    language_confidence: Optional[float] = None
-    chunk_count: Optional[int] = None
-    model_used: Optional[str] = None
-    semantic_passed: Optional[bool] = None
-    style_passed: Optional[bool] = None
+    detected_language: str | None = None
+    language_confidence: float | None = None
+    chunk_count: int | None = None
+    model_used: str | None = None
+    semantic_passed: bool | None = None
+    style_passed: bool | None = None
 
 
 class HumanizeResponse(BaseModel):
     """Response model for humanize endpoint"""
 
     humanized_text: str = Field(..., description="Humanized text")
-    language: Optional[str] = Field(None, description="Detected/target language")
-    metrics: Optional[Metrics] = None
-    metadata: Optional[Metadata] = None
+    language: str | None = Field(None, description="Detected/target language")
+    metrics: Metrics | None = None
+    metadata: Metadata | None = None
 
     model_config = ConfigDict(
         json_schema_extra={

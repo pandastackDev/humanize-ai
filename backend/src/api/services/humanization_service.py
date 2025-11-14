@@ -14,16 +14,16 @@ Pipeline steps:
 import logging
 import re
 import time
-from typing import Optional, List, Tuple, Any
+from typing import Any
 
 from api.config import settings
 
 from .embedding_service import EmbeddingService
 from .language_detection import LanguageDetectionService
 from .llm_service import LLMService
+from .prompts import build_user_prompt, get_prompt_template
 from .text_chunking import TextChunkingService
 from .validation_service import ValidationService
-from .prompts import get_prompt_template, build_user_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -42,11 +42,11 @@ class HumanizationService:
     def humanize(
         self,
         input_text: str,
-        tone: Optional[str] = None,
+        tone: str | None = None,
         length_mode: str = "standard",
-        style_sample: Optional[str] = None,
-        readability_level: Optional[str] = None,
-        language: Optional[str] = None,
+        style_sample: str | None = None,
+        readability_level: str | None = None,
+        language: str | None = None,
     ) -> dict:
         """
         Humanize text using the full pipeline.
@@ -168,14 +168,14 @@ class HumanizationService:
 
     def _rewrite_chunks_parallel(
         self,
-        chunks: List[dict],
+        chunks: list[dict],
         prompt_template: dict,
-        tone: Optional[str],
+        tone: str | None,
         length_mode: str,
-        readability_level: Optional[str],
-        style_sample: Optional[str],
+        readability_level: str | None,
+        style_sample: str | None,
         language: str,
-    ) -> Tuple[List[str], str]:
+    ) -> tuple[list[str], str]:
         """
         Rewrite all chunks in parallel using asyncio.
 
@@ -302,7 +302,7 @@ class HumanizationService:
 
         return humanized_chunks, model_used or "unknown"
 
-    def _reassemble_and_smooth(self, chunks: List[str], language: str, original_text: str) -> str:
+    def _reassemble_and_smooth(self, chunks: list[str], language: str, original_text: str) -> str:
         """
         Reassemble chunks and apply smoothing while preserving formatting.
 
@@ -468,10 +468,10 @@ class HumanizationService:
     def _build_system_prompt(
         self,
         base_system_prompt: str,
-        tone: Optional[str] = None,
+        tone: str | None = None,
         length_mode: str = "standard",
-        readability_level: Optional[str] = None,
-        style_sample: Optional[str] = None,
+        readability_level: str | None = None,
+        style_sample: str | None = None,
         language: str = "en",
     ) -> str:
         """

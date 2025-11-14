@@ -7,7 +7,6 @@ sentence boundaries and context.
 
 import logging
 import re
-from typing import List, Optional
 
 import tiktoken
 
@@ -51,10 +50,10 @@ class TextChunkingService:
     def chunk_text(
         self,
         text: str,
-        max_tokens: Optional[int] = None,
-        min_tokens: Optional[int] = None,
+        max_tokens: int | None = None,
+        min_tokens: int | None = None,
         overlap: int = 50,
-    ) -> List[dict]:
+    ) -> list[dict]:
         """
         Chunk text into smaller pieces while preserving sentence boundaries.
 
@@ -191,7 +190,7 @@ class TextChunkingService:
 
         return chunks
 
-    def _get_overlap_sentences(self, sentences: List[str], overlap_tokens: int) -> List[str]:
+    def _get_overlap_sentences(self, sentences: list[str], overlap_tokens: int) -> list[str]:
         """Get sentences from the end of a chunk for overlap."""
         if not sentences:
             return []

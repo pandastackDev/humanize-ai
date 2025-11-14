@@ -8,9 +8,10 @@ Best practices implemented:
 - Separation of concerns (models, endpoints, config)
 """
 
+import logging
 import os
 import sys
-import logging
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -25,7 +26,6 @@ if current_dir not in sys.path:
 
 from api.config import settings  # noqa: E402
 from api.v1 import router as v1_router  # noqa: E402
-
 
 # Configure logging for Vercel
 logging.basicConfig(

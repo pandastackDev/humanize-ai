@@ -13,10 +13,13 @@
   "scripts": {
     "app": "pnpm -F app",
     "api-client": "pnpm -F @humanize/api-client",
+    "configs": "pnpm -F @humanize/configs",
     "next": "pnpm -F @humanize/next",
     "expo": "pnpm -F @humanize/expo",
     "web": "pnpm next dev",
     "native": "pnpm expo dev",
+    "convex": "pnpm next dev:convex",
+    "python": "cd backend && uv run uvicorn src.index:app --reload --host 0.0.0.0 --port 8000",
     "check-types": "turbo check-types",
     "check": "biome check --write --unsafe && turbo lint && pnpm check-types",
     "check-all": "pnpm i && biome check --write --unsafe && turbo lint && pnpm check-types && pnpm fe fix-deps && pnpm fe check-expo && pnpm turbo build",
@@ -24,7 +27,8 @@
     "bump-deps": "pnpm up -iLr",
     "bump-next": "cd apps/next && pnpx @next/codemod@canary upgrade latest",
     "bump-biome": "pnpm update @biomejs/biome --latest && biome migrate --write",
-    "clean": "turbo clean && rm -rf .turbo node_modules"
+    "clean": "turbo clean && rm -rf .turbo",
+    "reinstall": "rm -rf node_modules **/node_modules pnpm-lock.yaml **/pnpm-lock.yaml && pnpm install"
   },
   "devDependencies": {
     "@biomejs/biome": "2.3.5",

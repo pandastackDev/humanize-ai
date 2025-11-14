@@ -8,7 +8,6 @@ Supports:
 """
 
 import logging
-from typing import Optional
 
 from api.config import settings
 
@@ -72,10 +71,10 @@ class LLMService:
     def generate_text(
         self,
         prompt: str,
-        system_prompt: Optional[str] = None,
-        model: Optional[str] = None,
+        system_prompt: str | None = None,
+        model: str | None = None,
         temperature: float = 0.7,
-        max_tokens: Optional[int] = None,
+        max_tokens: int | None = None,
     ) -> str:
         """
         Generate text using LLM.
@@ -132,10 +131,10 @@ class LLMService:
     def _generate_openrouter(
         self,
         prompt: str,
-        system_prompt: Optional[str],
-        model: Optional[str],
+        system_prompt: str | None,
+        model: str | None,
         temperature: float,
-        max_tokens: Optional[int],
+        max_tokens: int | None,
     ) -> str:
         """Generate text using OpenRouter."""
         model_name = model or settings.OPENROUTER_MODEL_GPT4
@@ -166,10 +165,10 @@ class LLMService:
     def _generate_openai(
         self,
         prompt: str,
-        system_prompt: Optional[str],
-        model: Optional[str],
+        system_prompt: str | None,
+        model: str | None,
         temperature: float,
-        max_tokens: Optional[int],
+        max_tokens: int | None,
     ) -> str:
         """Generate text using OpenAI."""
         model_name = model or settings.OPENAI_LLM_MODEL
@@ -200,10 +199,10 @@ class LLMService:
     def _generate_anthropic(
         self,
         prompt: str,
-        system_prompt: Optional[str],
-        model: Optional[str],
+        system_prompt: str | None,
+        model: str | None,
         temperature: float,
-        max_tokens: Optional[int],
+        max_tokens: int | None,
     ) -> str:
         """Generate text using Anthropic."""
         model_name = model or settings.ANTHROPIC_LLM_MODEL

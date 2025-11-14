@@ -9,7 +9,7 @@ Supports multiple detection methods:
 import logging
 
 try:
-    from langdetect import detect, DetectorFactory
+    from langdetect import DetectorFactory, detect
     from langdetect.lang_detect_exception import LangDetectException
 
     LANGDETECT_AVAILABLE = True

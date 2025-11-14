@@ -5,9 +5,8 @@ Removes null bytes, control characters, normalizes whitespace,
 trims text, and validates UTF-8 encoding.
 """
 
-import re
 import logging
-from typing import Optional
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -75,7 +74,7 @@ class InputSanitizer:
         return text
 
     @staticmethod
-    def sanitize_optional(text: Optional[str]) -> Optional[str]:
+    def sanitize_optional(text: str | None) -> str | None:
         """
         Sanitize optional text input.
 

@@ -6,19 +6,18 @@ This file demonstrates various Pydantic features and best practices.
 """
 
 from datetime import datetime
-from typing import Optional, List, Dict, Any
 from enum import Enum
+from typing import Any
 
 from pydantic import (
     BaseModel,
+    ConfigDict,
+    EmailStr,
     Field,
+    ValidationError,
     field_validator,
     model_validator,
-    EmailStr,
-    ConfigDict,
-    ValidationError,
 )
-
 
 # ============================================================================
 # 1. Basic Models
@@ -44,7 +43,7 @@ class Product(BaseModel):
     name: str = Field(..., min_length=1, max_length=100)
     price: float = Field(..., gt=0, description="Price must be positive")
     quantity: int = Field(default=0, ge=0, description="Stock quantity")
-    discount_percentage: Optional[float] = Field(default=None, ge=0, le=100)
+    discount_percentage: float | None = Field(default=None, ge=0, le=100)
     sku: str = Field(..., pattern=r"^[A-Z]{3}-\d{6}$")  # e.g., ABC-123456
 
 
@@ -69,9 +68,9 @@ class Customer(BaseModel):
     id: int
     name: str
     email: EmailStr
-    phone: Optional[str] = None
+    phone: str | None = None
     address: Address
-    shipping_address: Optional[Address] = None
+    shipping_address: Address | None = None
 
     model_config = ConfigDict(
         str_strip_whitespace=True,
@@ -151,7 +150,7 @@ class Order(BaseModel):
     id: int
     status: OrderStatus = OrderStatus.PENDING
     payment_method: PaymentMethod
-    items: List[str]
+    items: list[str]
     total: float = Field(..., gt=0)
     created_at: datetime = Field(default_factory=datetime.now)
 
@@ -167,12 +166,12 @@ class BlogPost(BaseModel):
     title: str
     content: str
     author: str
-    tags: List[str] = Field(default_factory=list)
+    tags: list[str] = Field(default_factory=list)
     published: bool = False
     views: int = 0
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: Optional[datetime] = None
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    updated_at: datetime | None = None
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
 
 # ============================================================================
@@ -229,7 +228,7 @@ class APIKey(BaseModel):
 
     name: str
     key: str = Field(..., min_length=20)
-    permissions: List[str]
+    permissions: list[str]
     expires_at: datetime
 
 
@@ -280,14 +279,14 @@ class BaseEntity(BaseModel):
 
     id: int
     created_at: datetime = Field(default_factory=datetime.now)
-    updated_at: Optional[datetime] = None
+    updated_at: datetime | None = None
 
 
 class Task(BaseEntity):
     """Task inheriting from BaseEntity"""
 
     title: str
-    description: Optional[str] = None
+    description: str | None = None
     completed: bool = False
     priority: int = Field(default=1, ge=1, le=5)
 

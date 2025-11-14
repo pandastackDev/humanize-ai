@@ -8,7 +8,9 @@ cd apps/next && pnpm setup-env
 cd ../..
 
 pnpm web
-pnpm next dev:convex
+pnpm convex
+pnpm python
+pnpm native # expo app (currently not used)
 
 # Gen OpenAPI -> TypeScript client
 pnpm api-client generate

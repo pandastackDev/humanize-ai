@@ -8,7 +8,6 @@ Used for:
 """
 
 import logging
-from typing import Optional
 
 import numpy as np
 from numpy import ndarray
@@ -60,7 +59,7 @@ class EmbeddingService:
                 logger.error(f"Failed to initialize OpenRouter embedding client: {e}")
                 self.openrouter_enabled = False
 
-    def get_embedding(self, text: str, model: Optional[str] = None) -> ndarray:
+    def get_embedding(self, text: str, model: str | None = None) -> ndarray:
         """
         Get embedding vector for text.
 
@@ -95,7 +94,7 @@ class EmbeddingService:
 
         raise RuntimeError("No embedding provider available. Please configure API keys.")
 
-    def _get_openai_embedding(self, text: str, model: Optional[str]) -> ndarray:
+    def _get_openai_embedding(self, text: str, model: str | None) -> ndarray:
         """Get embedding using OpenAI."""
         model_name = model or settings.OPENAI_EMBEDDING_MODEL
 
@@ -105,7 +104,7 @@ class EmbeddingService:
 
         return np.array(response.data[0].embedding)
 
-    def _get_openrouter_embedding(self, text: str, model: Optional[str]) -> ndarray:
+    def _get_openrouter_embedding(self, text: str, model: str | None) -> ndarray:
         """Get embedding using OpenRouter."""
         model_name = model or settings.OPENROUTER_MODEL_EMBEDDING
 
