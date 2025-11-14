@@ -26,7 +26,7 @@ def get_humanization_service() -> HumanizationService:
     return _humanization_service
 
 
-@router.post("/", response_model=HumanizeResponse, tags=["Humanize"])
+@router.post("/", response_model=HumanizeResponse)
 async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
     """
     Humanize AI-generated text to make it sound more natural and human-like.
