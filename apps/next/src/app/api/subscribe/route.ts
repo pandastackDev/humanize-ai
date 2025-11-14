@@ -6,6 +6,24 @@ import { workos } from "../workos";
 export const POST = async (req: NextRequest) => {
   const { userId, orgName, subscriptionLevel } = await req.json();
 
+  // Validate environment variables at runtime
+  const workosApiKey = process.env.WORKOS_API_KEY;
+  const stripeApiKey = process.env.STRIPE_API_KEY;
+
+  if (!workosApiKey || workosApiKey === "wk_placeholder_for_build_time_only") {
+    return NextResponse.json(
+      { error: "WorkOS API key is not configured" },
+      { status: 500 }
+    );
+  }
+
+  if (!stripeApiKey || stripeApiKey === "sk_placeholder_for_build") {
+    return NextResponse.json(
+      { error: "Stripe API key is not configured" },
+      { status: 500 }
+    );
+  }
+
   try {
     const organization = await workos.organizations.createOrganization({
       name: orgName,
