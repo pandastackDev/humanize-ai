@@ -6,7 +6,6 @@ import {
   ArrowRight,
   CheckCircle2,
   Key,
-  Layers,
   LayoutDashboard,
   Link2,
   Lock,
@@ -60,12 +59,6 @@ const navItems = [
     href: "/dashboard/api-keys",
     icon: Key,
     label: "API Keys",
-  },
-  {
-    title: "Organization Switcher",
-    href: "/dashboard/organization-switcher",
-    icon: Layers,
-    label: "Organization Switcher",
   },
   {
     title: "Domain Verification",
