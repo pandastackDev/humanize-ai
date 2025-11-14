@@ -8,7 +8,9 @@
   "scripts": {
     "generate": "openapi-ts",
     "generate:staging": "OPENAPI_URL=https://humanize-python.vercel.app/openapi.json openapi-ts",
-    "typecheck": "tsc --noEmit",
+    "lint-ci": "oxlint --type-aware && eslint",
+    "lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && eslint --fix",
+    "check-types": "tsc --noEmit",
     "clean": "rm -rf src/client"
   },
   "dependencies": {

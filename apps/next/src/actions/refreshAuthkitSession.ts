@@ -15,6 +15,9 @@ export async function getEntitlements(accessToken?: string): Promise<string[]> {
 
   try {
     const [, payload] = accessToken.split(".");
+    if (!payload) {
+      return [];
+    }
     const claims = JSON.parse(atob(payload));
     return claims.entitlements ? claims.entitlements : [];
   } catch (error) {

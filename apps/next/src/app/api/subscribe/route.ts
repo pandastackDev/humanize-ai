@@ -36,6 +36,17 @@ export const POST = async (req: NextRequest) => {
       );
     }
 
+    if (!price.data[0]) {
+      console.error(
+        "No price found for subscription level:",
+        subscriptionLevel
+      );
+      return NextResponse.json(
+        { error: "Price not found for the selected subscription level" },
+        { status: 404 }
+      );
+    }
+
     const user = await workos.userManagement.getUser(userId);
 
     // Create Stripe customer

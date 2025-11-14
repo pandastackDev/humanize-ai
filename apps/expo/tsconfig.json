@@ -1,4 +1,21 @@
 {
-  "extends": "../../tsconfig",
-  "include": ["**/*.ts", "**/*.tsx", ".expo/types/**/*.ts", "expo-env.d.ts"]
+  "extends": "expo/tsconfig.base",
+  "compilerOptions": {
+    "strict": true,
+    "strictNullChecks": true,
+    "paths": {
+      "@/*": ["./*"],
+      "app/*": ["../../packages/app/*"]
+    },
+    "noEmit": true,
+    "incremental": true
+  },
+  "include": [
+    "**/*.ts",
+    "**/*.tsx",
+    ".expo/types/**/*.ts",
+    "global.d.ts",
+    "expo-env.d.ts",
+    "uniwind-types.d.ts"
+  ]
 }

@@ -5,16 +5,17 @@
     "noEmit": true,
     "incremental": true,
     "isolatedModules": true,
+    "target": "ES2022",
     "lib": ["es2022", "DOM", "DOM.Iterable"],
-    "module": "NodeNext",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "moduleDetection": "force",
-    "moduleResolution": "NodeNext",
     "esModuleInterop": true,
     "noUncheckedIndexedAccess": true,
+    "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022",
-    "baseUrl": "."
+    "strictNullChecks": true,
+    "strict": true
   }
 }

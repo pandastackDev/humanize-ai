@@ -82,5 +82,7 @@ export async function userHasOrganizationAccess(
     organizationId,
   });
 
-  return memberships.data.length > 0 && memberships.data[0].status === "active";
+  return (
+    memberships.data.length > 0 && memberships.data[0]?.status === "active"
+  );
 }

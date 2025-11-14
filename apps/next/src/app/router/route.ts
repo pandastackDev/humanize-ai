@@ -29,7 +29,7 @@ export const GET = async (request: NextRequest) => {
   const hasOrganizations = oms.data.length > 0;
   const shouldSwitchOrg = auth.user && needsOrgContext && hasOrganizations;
 
-  if (shouldSwitchOrg) {
+  if (shouldSwitchOrg && oms.data[0]) {
     auth = await refreshSession({
       organizationId: oms.data[0].organizationId,
       ensureSignedIn: true,
