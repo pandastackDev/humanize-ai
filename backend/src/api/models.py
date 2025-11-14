@@ -168,12 +168,36 @@ class HumanizeRequest(BaseModel):
         LengthMode.STANDARD, description="Length mode: 'shorten', 'expand', or 'standard'"
     )
     style_sample: Optional[str] = Field(
-        None, description="Style sample text (min 150 words recommended)"
+        None, description="Style sample text (min 150 words required if provided)"
     )
     readability_level: Optional[str] = Field(None, description="Readability level")
     language: Optional[str] = Field(
         None, description="Target language (auto-detected if not provided)"
     )
+
+    @field_validator("style_sample")
+    @classmethod
+    def validate_style_sample_word_count(cls, v: Optional[str]) -> Optional[str]:
+        """
+        Validate that style_sample has at least 150 words if provided.
+        
+        Args:
+            v: Style sample text (optional)
+            
+        Returns:
+            The style sample text if valid
+            
+        Raises:
+            ValueError: If style_sample is provided but has less than 150 words
+        """
+        if v is not None and v.strip():
+            word_count = len(v.strip().split())
+            if word_count < 150:
+                raise ValueError(
+                    f"style_sample must have at least 150 words, but got {word_count} words. "
+                    f"Please provide a longer style sample for better results."
+                )
+        return v
 
     model_config = ConfigDict(
         json_schema_extra={
@@ -196,7 +220,9 @@ class Metrics(BaseModel):
     style_similarity: Optional[float] = None
     word_count: Optional[int] = None
     character_count: Optional[int] = None
+    original_word_count: Optional[int] = None
     processing_time_ms: Optional[float] = None
+    chunks_used: Optional[int] = None
     sentence_length_variance: Optional[float] = None
     avg_sentence_length: Optional[float] = None
     lexical_diversity: Optional[float] = None
@@ -209,6 +235,8 @@ class Metadata(BaseModel):
     language_confidence: Optional[float] = None
     chunk_count: Optional[int] = None
     model_used: Optional[str] = None
+    semantic_passed: Optional[bool] = None
+    style_passed: Optional[bool] = None
 
 
 class HumanizeResponse(BaseModel):

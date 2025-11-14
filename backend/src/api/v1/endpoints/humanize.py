@@ -8,6 +8,7 @@ from fastapi import APIRouter, HTTPException
 
 from api.models import HumanizeRequest, HumanizeResponse, LengthMode
 from api.services import HumanizationService
+from api.utils.sanitization import InputSanitizer
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +26,7 @@ def get_humanization_service() -> HumanizationService:
     return _humanization_service
 
 
-@router.post("/humanize", response_model=HumanizeResponse, tags=["Humanize"])
+@router.post("/", response_model=HumanizeResponse, tags=["Humanize"])
 async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
     """
     Humanize AI-generated text to make it sound more natural and human-like.
@@ -48,7 +49,23 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         HTTPException: If humanization fails
     """
     try:
-        logger.info(f"Humanize request received. Text length: {len(request.input_text)}")
+        logger.info("=" * 80)
+        logger.info("📥 HUMANIZE REQUEST RECEIVED")
+        logger.info("=" * 80)
+        logger.info(f"Input Text Length: {len(request.input_text)} characters")
+        logger.info(f"Input Text Preview: {request.input_text[:200]}...")
+        logger.info(f"Tone: {request.tone or 'Not specified'}")
+        logger.info(f"Length Mode: {request.length_mode or 'standard'}")
+        logger.info(f"Readability Level: {request.readability_level or 'Not specified'}")
+        logger.info(f"Language: {request.language or 'Auto-detect'}")
+        logger.info(f"Style Sample: {'Provided' if request.style_sample else 'Not provided'}")
+
+        # Step 2: Input Sanitization
+        sanitizer = InputSanitizer()
+        sanitized_input_text = sanitizer.sanitize(request.input_text)
+        sanitized_style_sample = sanitizer.sanitize_optional(request.style_sample)
+
+        logger.info(f"Sanitized Input Length: {len(sanitized_input_text)} characters")
 
         # Get service instance
         service = get_humanization_service()
@@ -56,17 +73,44 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         # Convert LengthMode enum to string
         length_mode_str = request.length_mode.value if isinstance(request.length_mode, LengthMode) else request.length_mode
 
-        # Call humanization service
+        # Call humanization service with sanitized input
         result = service.humanize(
-            input_text=request.input_text,
+            input_text=sanitized_input_text,
             tone=request.tone,
             length_mode=length_mode_str,
-            style_sample=request.style_sample,
+            style_sample=sanitized_style_sample,
             readability_level=request.readability_level,
             language=request.language,
         )
 
-        logger.info(f"Humanization successful. Output length: {len(result['humanized_text'])}")
+        logger.info("=" * 80)
+        logger.info("✅ HUMANIZATION SUCCESSFUL")
+        logger.info("=" * 80)
+        logger.info(f"Output Text Length: {len(result['humanized_text'])} characters")
+        logger.info(f"Output Text Preview: {result['humanized_text'][:200]}...")
+        
+        if result.get("metrics"):
+            metrics = result["metrics"]
+            logger.info("-" * 80)
+            logger.info("Metrics:")
+            logger.info(f"  • Semantic Similarity: {metrics.get('semantic_similarity', 'N/A')}")
+            logger.info(f"  • Style Similarity: {metrics.get('style_similarity', 'N/A')}")
+            logger.info(f"  • Processing Time: {metrics.get('processing_time_ms', 'N/A')} ms")
+            logger.info(f"  • Word Count: {metrics.get('word_count', 'N/A')}")
+            logger.info(f"  • Chunks Used: {metrics.get('chunks_used', 'N/A')}")
+        
+        if result.get("metadata"):
+            metadata = result["metadata"]
+            logger.info("-" * 80)
+            logger.info("Metadata:")
+            logger.info(f"  • Detected Language: {metadata.get('detected_language', 'N/A')}")
+            logger.info(f"  • Language Confidence: {metadata.get('language_confidence', 'N/A')}")
+            logger.info(f"  • Chunk Count: {metadata.get('chunk_count', 'N/A')}")
+            logger.info(f"  • Model Used: {metadata.get('model_used', 'N/A')}")
+            logger.info(f"  • Semantic Passed: {metadata.get('semantic_passed', 'N/A')}")
+            logger.info(f"  • Style Passed: {metadata.get('style_passed', 'N/A')}")
+        
+        logger.info("=" * 80)
 
         # Convert dict result to response model
         return HumanizeResponse(

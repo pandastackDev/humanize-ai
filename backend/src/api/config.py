@@ -52,12 +52,12 @@ class Settings(BaseSettings):
     FASTTEXT_MODEL_PATH: str = ""  # Optional: path to FastText model file
 
     # Validation Thresholds
-    SEMANTIC_SIMILARITY_THRESHOLD: float = 0.90
-    STYLE_SIMILARITY_THRESHOLD: float = 0.85
+    SEMANTIC_SIMILARITY_THRESHOLD: float = 0.92
+    STYLE_SIMILARITY_THRESHOLD: float = 0.90
 
     # Text Chunking Configuration
     MAX_CHUNK_TOKENS: int = 1000
-    MIN_CHUNK_TOKENS: int = 200
+    MIN_CHUNK_TOKENS: int = 500
 
     model_config = {
         "case_sensitive": True,

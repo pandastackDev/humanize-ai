@@ -154,9 +154,16 @@ class LLMService:
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
+            stop=None,  # Don't use stop sequences that might cut off mid-sentence
         )
 
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        # Ensure content ends with proper punctuation (don't cut off mid-sentence)
+        if content and content[-1] not in ".!?":
+            if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
+                logger.warning("Response may have been truncated - content doesn't end with punctuation")
+        
+        return content or ""
 
     def _generate_openai(
         self,
@@ -179,9 +186,16 @@ class LLMService:
             messages=messages,
             temperature=temperature,
             max_tokens=max_tokens,
+            stop=None,  # Don't use stop sequences that might cut off mid-sentence
         )
 
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        # Ensure content ends with proper punctuation (don't cut off mid-sentence)
+        if content and content[-1] not in ".!?":
+            if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
+                logger.warning("Response may have been truncated - content doesn't end with punctuation")
+        
+        return content or ""
 
     def _generate_anthropic(
         self,
@@ -197,14 +211,23 @@ class LLMService:
         # Anthropic uses different message format
         system = system_prompt or "You are a helpful assistant."
 
+        # Anthropic requires max_tokens, use reasonable default if not provided
+        effective_max_tokens = max_tokens or 4096
+        
         response = self.anthropic_client.messages.create(
             model=model_name,
-            max_tokens=max_tokens or 4096,
+            max_tokens=effective_max_tokens,
             temperature=temperature,
             system=system,
             messages=[{"role": "user", "content": prompt}],
         )
 
-        return response.content[0].text
+        content = response.content[0].text
+        # Ensure content ends with proper punctuation (don't cut off mid-sentence)
+        if content and content[-1] not in ".!?":
+            if not content.strip().endswith((".", "!", "?", '"', "'", ")", "]", "}")):
+                logger.warning("Response may have been truncated - content doesn't end with punctuation")
+        
+        return content or ""
 
 

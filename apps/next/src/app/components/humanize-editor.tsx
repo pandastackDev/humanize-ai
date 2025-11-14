@@ -9,6 +9,7 @@ import {
   FileText,
   FileUp,
   History,
+  Loader2,
   Sparkles,
   ThumbsDown,
   ThumbsUp,
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { humanizeText } from "@/lib/humanize-api";
 import { cn } from "@/lib/utils";
 
 const languages = [
@@ -74,7 +76,47 @@ const purposes = [
   { value: "legal", label: "Legal Material", pro: true },
 ];
 
+const lengthModes = [
+  { value: "shorten", label: "Shorten" },
+  { value: "expand", label: "Expand" },
+  { value: "standard", label: "Standard" },
+];
+
 const WORD_COUNT_REGEX = /\s+/;
+const WORD_SPLIT_REGEX = /\s+/;
+
+/**
+ * Map language display name to ISO 639-1 language code.
+ */
+function getLanguageCode(languageName: string): string {
+  const languageMap: Record<string, string> = {
+    English: "en",
+    Spanish: "es",
+    French: "fr",
+    German: "de",
+    Bulgarian: "bg",
+    Czech: "cs",
+    Danish: "da",
+    Greek: "el",
+    Estonian: "et",
+    Finnish: "fi",
+    Hungarian: "hu",
+    Italian: "it",
+    Japanese: "ja",
+    Latvian: "lv",
+    Dutch: "nl",
+    Polish: "pl",
+    Portuguese: "pt",
+    "Brazilian (Pr)": "pt-BR",
+    Romanian: "ro",
+    Russian: "ru",
+    Slovak: "sk",
+    Slovenian: "sl",
+    Swedish: "sv",
+    Chinese: "zh",
+  };
+  return languageMap[languageName] || "en";
+}
 
 export function HumanizeEditor() {
   const [inputText, setInputText] = useState("");
@@ -82,9 +124,16 @@ export function HumanizeEditor() {
   const [selectedLanguage, setSelectedLanguage] = useState("English");
   const [readabilityLevel, setReadabilityLevel] = useState("university");
   const [purpose, setPurpose] = useState("academic");
+  const [lengthMode, setLengthMode] = useState<
+    "shorten" | "expand" | "standard"
+  >("standard");
+  const [styleSample, setStyleSample] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"text" | "file">("text");
   const [activeTab, setActiveTab] = useState("humanize");
   const [showAllLanguages, setShowAllLanguages] = useState(false);
+  const [showStyleSample, setShowStyleSample] = useState(false);
   const allLanguagesRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside
@@ -158,6 +207,41 @@ export function HumanizeEditor() {
       document.body.style.overflowX = originalOverflowX;
     };
   }, []);
+
+  // Handle humanize button click
+  const handleHumanize = async () => {
+    if (!inputText.trim()) {
+      return;
+    }
+
+    setIsLoading(true);
+    setError(null);
+    setOutputText("");
+
+    try {
+      const languageCode = getLanguageCode(selectedLanguage);
+      const response = await humanizeText({
+        input_text: inputText,
+        tone: purpose,
+        length_mode: lengthMode,
+        readability_level: readabilityLevel,
+        language: languageCode !== "en" ? languageCode : undefined, // Only send if not English
+        style_sample: styleSample.trim() || undefined,
+      });
+
+      setOutputText(response.humanized_text || "");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to humanize text. Please try again.";
+      setError(errorMessage);
+      setOutputText("");
+      console.error("Humanize error:", err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="relative mx-auto w-full max-w-[1400px] overflow-x-hidden px-4 py-6 md:px-6">
@@ -366,10 +450,10 @@ export function HumanizeEditor() {
                       onValueChange={setReadabilityLevel}
                       value={readabilityLevel}
                     >
-                      <SelectTrigger className="h-9 flex-1 cursor-pointer rounded-md border border-slate-200 bg-white px-3 font-medium text-xs shadow-sm transition-all hover:border-slate-300 focus:border-slate-400 sm:h-8 sm:w-[160px] sm:flex-none dark:border-slate-600 dark:bg-slate-700 dark:hover:border-slate-500">
+                      <SelectTrigger className="h-8 flex-1 cursor-pointer rounded-md border border-slate-200 bg-white px-2.5 font-medium text-xs shadow-sm transition-all hover:border-slate-300 focus:border-slate-400 sm:h-7 sm:w-[130px] sm:flex-none dark:border-slate-600 dark:bg-slate-700 dark:hover:border-slate-500">
                         <SelectValue placeholder="Select Readability Level" />
                       </SelectTrigger>
-                      <SelectContent className="min-w-[160px]">
+                      <SelectContent className="min-w-[130px]">
                         {readabilityLevels.map((level) => (
                           <SelectItem
                             className="cursor-pointer"
@@ -390,10 +474,10 @@ export function HumanizeEditor() {
                     </Select>
 
                     <Select onValueChange={setPurpose} value={purpose}>
-                      <SelectTrigger className="h-9 flex-1 cursor-pointer rounded-md border border-slate-200 bg-white px-3 font-medium text-xs shadow-sm transition-all hover:border-slate-300 focus:border-slate-400 sm:h-8 sm:w-[160px] sm:flex-none dark:border-slate-600 dark:bg-slate-700 dark:hover:border-slate-500">
+                      <SelectTrigger className="h-8 flex-1 cursor-pointer rounded-md border border-slate-200 bg-white px-2.5 font-medium text-xs shadow-sm transition-all hover:border-slate-300 focus:border-slate-400 sm:h-7 sm:w-[130px] sm:flex-none dark:border-slate-600 dark:bg-slate-700 dark:hover:border-slate-500">
                         <SelectValue placeholder="Select Purpose" />
                       </SelectTrigger>
-                      <SelectContent className="min-w-[160px]">
+                      <SelectContent className="min-w-[130px]">
                         {purposes.map((p) => (
                           <SelectItem
                             className="cursor-pointer"
@@ -412,15 +496,81 @@ export function HumanizeEditor() {
                         ))}
                       </SelectContent>
                     </Select>
+
+                    <Select
+                      onValueChange={(value) =>
+                        setLengthMode(
+                          value as "shorten" | "expand" | "standard"
+                        )
+                      }
+                      value={lengthMode}
+                    >
+                      <SelectTrigger className="h-8 flex-1 cursor-pointer rounded-md border border-slate-200 bg-white px-2.5 font-medium text-xs shadow-sm transition-all hover:border-slate-300 focus:border-slate-400 sm:h-7 sm:w-[130px] sm:flex-none dark:border-slate-600 dark:bg-slate-700 dark:hover:border-slate-500">
+                        <SelectValue placeholder="Length Mode" />
+                      </SelectTrigger>
+                      <SelectContent className="min-w-[130px]">
+                        {lengthModes.map((lengthModeOption) => (
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={lengthModeOption.value}
+                            value={lengthModeOption.value}
+                          >
+                            {lengthModeOption.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <Button
                     className="h-9 w-full cursor-pointer gap-1.5 rounded-md border border-slate-200 bg-white px-3 font-medium text-slate-700 text-xs shadow-sm transition-all hover:border-slate-300 hover:bg-slate-50 hover:text-slate-900 sm:ml-auto sm:h-8 sm:w-auto dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:border-slate-500 dark:hover:bg-slate-600"
+                    onClick={() => setShowStyleSample(!showStyleSample)}
                     variant="outline"
                   >
                     <Sparkles className="h-3.5 w-3.5 text-slate-700 dark:text-slate-300" />
                     Personalize
                   </Button>
+                </div>
+              )}
+
+              {/* Style Sample Input - Collapsible */}
+              {activeTab === "humanize" && showStyleSample && (
+                <div className="border-slate-200 border-b bg-slate-50 px-3 py-3 sm:px-4 dark:border-slate-700 dark:bg-slate-800/50">
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="font-medium text-slate-900 text-xs sm:text-sm dark:text-slate-100">
+                      Style Sample (Optional, ≥150 words recommended)
+                    </label>
+                    <Button
+                      className="h-6 w-6 rounded p-0 text-slate-600 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-600"
+                      onClick={() => setShowStyleSample(false)}
+                      variant="ghost"
+                    >
+                      <svg
+                        aria-label="Close style sample input"
+                        className="h-4 w-4"
+                        fill="none"
+                        height="16"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        viewBox="0 0 24 24"
+                        width="16"
+                      >
+                        <title>Close style sample input</title>
+                        <path d="M18 6L6 18M6 6l12 12" />
+                      </svg>
+                    </Button>
+                  </div>
+                  <Textarea
+                    className="min-h-[100px] resize-none border border-slate-200 bg-white text-sm dark:border-slate-600 dark:bg-slate-700"
+                    onChange={(e) => setStyleSample(e.target.value)}
+                    placeholder="Paste a sample of writing style you want to match (at least 150 words for best results)..."
+                    value={styleSample}
+                  />
+                  <p className="mt-1 text-slate-500 text-xs dark:text-slate-400">
+                    {styleSample.trim()
+                      ? `${styleSample.trim().split(WORD_SPLIT_REGEX).length} words`
+                      : "Leave empty to use default style"}
+                  </p>
                 </div>
               )}
 
@@ -518,9 +668,19 @@ export function HumanizeEditor() {
                     </div>
                     <Button
                       className="h-9 w-full gap-2 rounded-lg bg-slate-900 px-4 font-medium text-sm text-white transition-all hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:bg-slate-700 dark:hover:bg-slate-600"
-                      disabled={!inputText.trim()}
+                      disabled={!inputText.trim() || isLoading}
+                      onClick={
+                        activeTab === "humanize" ? handleHumanize : undefined
+                      }
                     >
-                      {getActionButtonText()}
+                      {isLoading && activeTab === "humanize" ? (
+                        <>
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                          Humanizing...
+                        </>
+                      ) : (
+                        getActionButtonText()
+                      )}
                     </Button>
                   </div>
                 </div>
@@ -530,12 +690,41 @@ export function HumanizeEditor() {
                   <div className="flex flex-1 flex-col">
                     <div className="flex-1 overflow-hidden">
                       {activeTab === "humanize" ? (
-                        <Textarea
-                          className="h-[300px] w-full resize-none border-0 px-4 py-4 text-sm focus-visible:ring-0 sm:px-6 sm:py-5 md:h-[450px]"
-                          onChange={(e) => setOutputText(e.target.value)}
-                          placeholder="Your humanized text will appear here..."
-                          value={outputText}
-                        />
+                        error ? (
+                          <div className="flex h-[300px] w-full flex-col items-center justify-center gap-4 px-4 py-5 sm:px-6 md:h-[450px]">
+                            <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
+                              <p className="mb-2 font-semibold text-red-900 text-sm dark:text-red-200">
+                                Error
+                              </p>
+                              <p className="text-red-700 text-xs dark:text-red-300">
+                                {error}
+                              </p>
+                              <Button
+                                className="mt-3 h-8 w-full text-xs"
+                                onClick={() => {
+                                  setError(null);
+                                  handleHumanize();
+                                }}
+                                variant="outline"
+                              >
+                                Try Again
+                              </Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <Textarea
+                            className="h-[300px] w-full resize-none whitespace-pre-wrap border-0 px-4 py-4 text-sm focus-visible:ring-0 sm:px-6 sm:py-5 md:h-[450px]"
+                            onChange={(e) => setOutputText(e.target.value)}
+                            placeholder={
+                              isLoading
+                                ? "Humanizing your text..."
+                                : "Your humanized text will appear here..."
+                            }
+                            readOnly={isLoading}
+                            style={{ whiteSpace: "pre-wrap" }}
+                            value={outputText}
+                          />
+                        )
                       ) : (
                         <div className="flex h-[300px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6 md:h-[450px]">
                           <h3 className="mb-2 font-semibold text-base text-slate-900 sm:text-lg dark:text-slate-100">

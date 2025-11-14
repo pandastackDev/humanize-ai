@@ -16,6 +16,7 @@ from .text_chunking import TextChunkingService
 from .llm_service import LLMService
 from .embedding_service import EmbeddingService
 from .validation_service import ValidationService
+from . import prompts
 
 __all__ = [
     "HumanizationService",
@@ -24,6 +25,7 @@ __all__ = [
     "LLMService",
     "EmbeddingService",
     "ValidationService",
+    "prompts",
 ]
 
 
