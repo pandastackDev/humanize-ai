@@ -144,3 +144,128 @@ class ApiResponse(BaseModel):
     success: bool
     message: str
     data: Optional[dict] = None
+
+
+# ============================================================================
+# Humanize Models
+# ============================================================================
+
+
+class LengthMode(str, Enum):
+    """Length mode for humanization"""
+
+    SHORTEN = "shorten"
+    EXPAND = "expand"
+    STANDARD = "standard"
+
+
+class HumanizeRequest(BaseModel):
+    """Request model for humanize endpoint"""
+
+    input_text: str = Field(..., min_length=1, description="Text to humanize")
+    tone: Optional[str] = Field(None, description="Writing tone (e.g., 'academic', 'casual')")
+    length_mode: LengthMode = Field(
+        LengthMode.STANDARD, description="Length mode: 'shorten', 'expand', or 'standard'"
+    )
+    style_sample: Optional[str] = Field(
+        None, description="Style sample text (min 150 words required if provided)"
+    )
+    readability_level: Optional[str] = Field(None, description="Readability level")
+    language: Optional[str] = Field(
+        None, description="Target language (auto-detected if not provided)"
+    )
+
+    @field_validator("style_sample")
+    @classmethod
+    def validate_style_sample_word_count(cls, v: Optional[str]) -> Optional[str]:
+        """
+        Validate that style_sample has at least 150 words if provided.
+        
+        Args:
+            v: Style sample text (optional)
+            
+        Returns:
+            The style sample text if valid
+            
+        Raises:
+            ValueError: If style_sample is provided but has less than 150 words
+        """
+        if v is not None and v.strip():
+            word_count = len(v.strip().split())
+            if word_count < 150:
+                raise ValueError(
+                    f"style_sample must have at least 150 words, but got {word_count} words. "
+                    f"Please provide a longer style sample for better results."
+                )
+        return v
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "input_text": "The utilization of advanced technological systems facilitates enhanced productivity.",
+                    "tone": "academic",
+                    "length_mode": "standard",
+                    "readability_level": "university",
+                }
+            ]
+        }
+    )
+
+
+class Metrics(BaseModel):
+    """Metrics for humanization process"""
+
+    semantic_similarity: Optional[float] = None
+    style_similarity: Optional[float] = None
+    word_count: Optional[int] = None
+    character_count: Optional[int] = None
+    original_word_count: Optional[int] = None
+    processing_time_ms: Optional[float] = None
+    chunks_used: Optional[int] = None
+    sentence_length_variance: Optional[float] = None
+    avg_sentence_length: Optional[float] = None
+    lexical_diversity: Optional[float] = None
+
+
+class Metadata(BaseModel):
+    """Metadata for humanization process"""
+
+    detected_language: Optional[str] = None
+    language_confidence: Optional[float] = None
+    chunk_count: Optional[int] = None
+    model_used: Optional[str] = None
+    semantic_passed: Optional[bool] = None
+    style_passed: Optional[bool] = None
+
+
+class HumanizeResponse(BaseModel):
+    """Response model for humanize endpoint"""
+
+    humanized_text: str = Field(..., description="Humanized text")
+    language: Optional[str] = Field(None, description="Detected/target language")
+    metrics: Optional[Metrics] = None
+    metadata: Optional[Metadata] = None
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "humanized_text": "Using advanced technology helps us work more efficiently.",
+                    "language": "en",
+                    "metrics": {
+                        "semantic_similarity": 0.95,
+                        "style_similarity": 0.88,
+                        "word_count": 120,
+                        "character_count": 650,
+                        "processing_time_ms": 1250.5,
+                    },
+                    "metadata": {
+                        "detected_language": "en",
+                        "chunk_count": 1,
+                        "model_used": "openai/gpt-4-turbo",
+                    },
+                }
+            ]
+        }
+    )

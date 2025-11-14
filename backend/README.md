@@ -35,7 +35,7 @@ uv sync
 Start the development server on http://0.0.0.0:8000
 
 ```bash
-uv run uvicorn src.api.main:app --reload --host 0.0.0.0 --port 8000
+uv run uvicorn src.index:app --reload --host 0.0.0.0 --port 8000
 ```
 
 When you make changes to your project, the server will automatically reload.
