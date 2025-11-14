@@ -4,6 +4,7 @@ import { refreshSession } from "@workos-inc/authkit-nextjs";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { workos } from "@/app/api/workos";
+import { env } from "@/env";
 
 export const switchToOrganization = async ({
   organizationId,
@@ -23,16 +24,11 @@ export const switchToOrganization = async ({
     if (error.rawData?.authkit_redirect_url) {
       redirect(error.rawData.authkit_redirect_url);
     } else {
-      const clientId = process.env.WORKOS_CLIENT_ID;
-      if (!clientId) {
-        throw new Error("WORKOS_CLIENT_ID environment variable is not set");
-      }
-
       const args = {
         organizationId,
-        clientId,
+        clientId: env.WORKOS_CLIENT_ID,
         provider: "authkit" as const,
-        redirectUri: `${process.env.NEXT_PUBLIC_BASE_URL}/callback`,
+        redirectUri: `${env.NEXT_PUBLIC_BASE_URL}/callback`,
       };
 
       if (error.error === "sso_required" || error.error === "mfa_enrollment") {

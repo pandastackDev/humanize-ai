@@ -1,28 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
+import { env } from "@/env";
 import { stripe } from "../stripe";
 import { workos } from "../workos";
 
 export const POST = async (req: NextRequest) => {
   const { userId, orgName, subscriptionLevel } = await req.json();
-
-  // Validate environment variables at runtime
-  const workosApiKey = process.env.WORKOS_API_KEY;
-  const stripeApiKey = process.env.STRIPE_API_KEY;
-
-  if (!workosApiKey || workosApiKey === "wk_placeholder_for_build_time_only") {
-    return NextResponse.json(
-      { error: "WorkOS API key is not configured" },
-      { status: 500 }
-    );
-  }
-
-  if (!stripeApiKey || stripeApiKey === "sk_placeholder_for_build") {
-    return NextResponse.json(
-      { error: "Stripe API key is not configured" },
-      { status: 500 }
-    );
-  }
 
   try {
     const organization = await workos.organizations.createOrganization({
@@ -92,8 +75,8 @@ export const POST = async (req: NextRequest) => {
         },
       ],
       mode: "subscription",
-      success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/dashboard`,
-      cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/pricing`,
+      success_url: `${env.NEXT_PUBLIC_BASE_URL}/dashboard`,
+      cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/pricing`,
     });
 
     return NextResponse.json({ url: session.url });

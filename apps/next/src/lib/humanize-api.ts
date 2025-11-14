@@ -2,16 +2,18 @@
  * Humanize API client for calling the backend /humanize endpoint.
  */
 
-export interface HumanizeRequest {
+import { env } from "@/env";
+
+export type HumanizeRequest = {
   input_text: string;
   tone?: string;
   length_mode?: "shorten" | "expand" | "standard";
   style_sample?: string;
   readability_level?: string;
   language?: string;
-}
+};
 
-export interface HumanizeMetrics {
+export type HumanizeMetrics = {
   semantic_similarity?: number;
   style_similarity?: number;
   word_count?: number;
@@ -20,32 +22,27 @@ export interface HumanizeMetrics {
   sentence_length_variance?: number;
   avg_sentence_length?: number;
   lexical_diversity?: number;
-}
+};
 
-export interface HumanizeMetadata {
+export type HumanizeMetadata = {
   detected_language?: string;
   language_confidence?: number;
   chunk_count?: number;
   model_used?: string;
-}
+};
 
-export interface HumanizeResponse {
+export type HumanizeResponse = {
   humanized_text: string;
   language?: string;
   metrics?: HumanizeMetrics;
   metadata?: HumanizeMetadata;
-}
+};
 
 /**
  * Get the backend API base URL.
  */
 function getApiBaseUrl(): string {
-  if (typeof window !== "undefined") {
-    // Client-side: use environment variable or default to localhost
-    return process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000";
-  }
-  // Server-side: use environment variable or default to localhost
-  return process.env.NEXT_PUBLIC_PYTHON_API_URL || "http://localhost:8000";
+  return env.NEXT_PUBLIC_PYTHON_API_URL;
 }
 
 /**

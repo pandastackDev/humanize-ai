@@ -1,6 +1,7 @@
 import { Sdk } from "@humanize/api-client";
 import Link from "next/link";
 import { Suspense } from "react";
+import { env } from "@/env";
 import ClientDemo from "./client-demo";
 
 // Initialize SDK for server-side usage
@@ -123,8 +124,7 @@ export default function ApiDemoPage() {
           <p className="text-blue-800 text-sm">
             <strong>API Endpoint:</strong>{" "}
             <code className="rounded bg-blue-100 px-1 py-0.5">
-              {process.env.NEXT_PUBLIC_PYTHON_API_URL ||
-                "http://localhost:8000"}
+              {env.NEXT_PUBLIC_PYTHON_API_URL}
             </code>
           </p>
           <p className="mt-2 text-blue-800 text-sm">

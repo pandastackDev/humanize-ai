@@ -3,6 +3,7 @@
 import { withAuth } from "@workos-inc/authkit-nextjs";
 import { redirect } from "next/navigation";
 import { workos } from "@/app/api/workos";
+import { env } from "@/env";
 import { stripe } from "../app/api/stripe";
 
 export default async function redirectToBillingPortal(path: string) {
@@ -12,17 +13,16 @@ export default async function redirectToBillingPortal(path: string) {
     `${workos.baseURL}/organizations/${organizationId}`,
     {
       headers: {
-        Authorization: `Bearer ${process.env.WORKOS_API_KEY}`,
+        Authorization: `Bearer ${env.WORKOS_API_KEY}`,
         "content-type": "application/json",
       },
     }
   );
   const workosOrg = await response.json();
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const billingPortalSession = await stripe.billingPortal.sessions.create({
     customer: workosOrg?.stripe_customer_id,
-    return_url: `${baseUrl}/dashboard/${path}`,
+    return_url: `${env.NEXT_PUBLIC_BASE_URL}/dashboard/${path}`,
   });
 
   redirect(billingPortalSession?.url);

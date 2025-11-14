@@ -1,5 +1,7 @@
 import path from "node:path";
 import type { NextConfig } from "next";
+// Import env here to validate during build
+import "./src/env";
 
 const withWebpack: NextConfig = {
   webpack(config) {
