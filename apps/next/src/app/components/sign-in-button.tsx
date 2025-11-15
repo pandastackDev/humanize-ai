@@ -4,9 +4,9 @@ import {
   withAuth,
 } from "@workos-inc/authkit-nextjs";
 import Link from "next/link";
-import signOut from "@/actions/signOut";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import signOut from "@/actions/signOut";
 
 export async function SignInButton({
   large,
@@ -28,10 +28,7 @@ export async function SignInButton({
         </form>
         <Link href="/dashboard">
           <Avatar className="h-8 w-8">
-            <AvatarImage
-              alt={user.firstName || ""}
-              src={user.profilePictureUrl as string}
-            />
+            <AvatarImage src={user.profilePictureUrl as string} alt={user.firstName || ""} />
             <AvatarFallback>{user.firstName?.[0] || ""}</AvatarFallback>
           </Avatar>
         </Link>

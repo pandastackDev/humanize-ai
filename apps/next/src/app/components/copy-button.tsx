@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Copy } from "lucide-react";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -36,10 +36,10 @@ export default function CopyButton({
       <Tooltip>
         <TooltipTrigger asChild>
           <Button
-            className="cursor-pointer gap-2"
             onClick={copyToClipboard}
-            size="lg"
             variant="outline"
+            size="lg"
+            className="cursor-pointer gap-2"
           >
             {children}
             {copied ? (

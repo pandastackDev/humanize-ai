@@ -1,12 +1,10 @@
 "use client";
 
-import type { User } from "@workos-inc/node";
 import { User as UserIcon } from "lucide-react";
+import type { User } from "@workos-inc/node";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import signOut from "@/actions/signOut";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +15,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import signOut from "@/actions/signOut";
 
 export function UserNav({
   user,
@@ -36,32 +36,31 @@ export function UserNav({
   return (
     <DropdownMenu onOpenChange={setOpen} open={open}>
       <DropdownMenuTrigger asChild>
-        <Button className="relative h-10 w-10 rounded-full" variant="ghost">
+        <Button variant="ghost" className="relative h-10 w-10 rounded-full">
           <Avatar className="h-10 w-10">
-            <AvatarImage
-              alt={user.firstName || ""}
-              src={user.profilePictureUrl as string}
-            />
+            <AvatarImage src={user.profilePictureUrl as string} alt={user.firstName || ""} />
             <AvatarFallback>
               {user.firstName?.[0] || <UserIcon className="h-4 w-4" />}
             </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56" forceMount>
+      <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm leading-none">{user.firstName}</p>
-            <p className="text-muted-foreground text-xs leading-none">
+            <p className="text-sm font-medium leading-none">
+              {user.firstName}
+            </p>
+            <p className="text-xs leading-none text-muted-foreground">
               {user.email}
             </p>
             {organizationName && (
               <div className="mt-2 space-y-1 border-t pt-2">
-                <p className="font-medium text-sm leading-none">
+                <p className="text-sm font-medium leading-none">
                   {organizationName}
                 </p>
                 {role && (
-                  <p className="text-muted-foreground text-xs capitalize leading-none">
+                  <p className="text-xs leading-none text-muted-foreground capitalize">
                     {role}
                   </p>
                 )}
@@ -96,11 +95,7 @@ export function UserNav({
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <form action={signOut} className="w-full">
-            <Button
-              className="w-full justify-start"
-              type="submit"
-              variant="ghost"
-            >
+            <Button type="submit" variant="ghost" className="w-full justify-start">
               Sign Out
             </Button>
           </form>

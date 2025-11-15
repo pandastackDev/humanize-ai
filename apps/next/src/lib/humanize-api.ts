@@ -2,11 +2,8 @@
  * Humanize API client for calling the backend /humanize endpoint.
  */
 
-<<<<<<< HEAD
 import { env } from "@/env";
 
-=======
->>>>>>> 106b21e (fix tslint & deployment)
 export type HumanizeRequest = {
   input_text: string;
   tone?: string;
