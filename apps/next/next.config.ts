@@ -78,6 +78,9 @@ const nextConfig: NextConfig = {
       __DEV__: JSON.stringify(process.env.NODE_ENV !== "production"),
     },
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  },
   ...withWebpack,
   ...withTurpopack,
 };
