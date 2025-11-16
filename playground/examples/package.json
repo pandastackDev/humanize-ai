@@ -1,0 +1,10 @@
+{
+  "name": "turborepo-examples",
+  "scripts": {
+    "install-all": "tsx install-all.ts",
+    "update-turbo": "tsx update-turbo.ts"
+  },
+  "devDependencies": {
+    "tsx": "4.19.1"
+  }
+}

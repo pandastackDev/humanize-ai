@@ -4,7 +4,7 @@ import { StyleSheet } from "react-native";
 
 export function StylesProvider({ children }: { children: React.ReactNode }) {
   useServerInsertedHTML(() => {
-    // @ts-expect-error
+    // @ts-expect-error - getSheet() is not in the TypeScript types but exists in react-native-web for SSR
     const sheet = StyleSheet.getSheet();
     return (
       <style

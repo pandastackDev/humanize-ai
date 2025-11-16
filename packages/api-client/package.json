@@ -1,6 +1,6 @@
 {
   "name": "@humanize/api-client",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "private": true,
   "type": "module",
   "main": "./src/index.ts",
@@ -17,10 +17,14 @@
     "@tanstack/react-query": "5.90.7"
   },
   "devDependencies": {
-    "@humanize/configs": "workspace:*",
     "@hey-api/client-fetch": "^0.5.7",
     "@hey-api/client-next": "^0.5.1",
     "@hey-api/openapi-ts": "^0.87.2",
-    "typescript": "~5.9.2"
+    "@humanize/configs": "workspace:*",
+    "@types/node": "^22.15.3",
+    "eslint": "^9.39.1",
+    "oxlint": "^1.28.0",
+    "oxlint-tsgolint": "^0.6.0",
+    "typescript": "5.9.2"
   }
 }

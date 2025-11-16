@@ -1,8 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@humanize/configs/typescript/nextjs.json",
+  "extends": "@humanize/configs/typescript/nextjs",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
       "app/*": ["../../packages/app/*"]

@@ -1,11 +1,11 @@
 {
-  "$schema": "https://turbo.build/schema.json",
+  "$schema": "https://turborepo.com/schema.json",
   "ui": "stream",
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
+      "outputs": [".next/**", "!.next/cache/**"],
       "env": [
         "STRIPE_API_KEY",
         "WORKOS_API_KEY",
@@ -17,22 +17,15 @@
         "NEXT_PUBLIC_CONVEX_URL"
       ]
     },
-    "check-types": {
-      "dependsOn": ["^check-types"],
-      "inputs": ["$TURBO_DEFAULT$", "tsconfig*.json"],
-      "outputs": ["**/.tsbuildinfo", "**/tsconfig.tsbuildinfo"]
-    },
     "lint": {
       "dependsOn": ["^lint"],
-      "inputs": ["$TURBO_DEFAULT$", ".oxlintrc.json", "eslint.config.js"],
-      "outputs": [],
-      "cache": true
+      "env": ["OPENAPI_URL", "NEXT_PUBLIC_PYTHON_API_URL"]
     },
     "lint-ci": {
-      "dependsOn": ["^lint-ci"],
-      "inputs": ["$TURBO_DEFAULT$", ".oxlintrc.json", "eslint.config.js"],
-      "outputs": [],
-      "cache": true
+      "dependsOn": ["^lint"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
     },
     "dev": {
       "cache": false,

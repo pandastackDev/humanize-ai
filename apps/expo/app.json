@@ -2,7 +2,7 @@
   "expo": {
     "name": "humanize-app",
     "slug": "humanize-app",
-    "version": "1.0.0",
+    "version": "0.0.0",
     "scheme": "humanize-app",
     "platforms": ["ios", "android"],
     "ios": {

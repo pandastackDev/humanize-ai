@@ -1,8 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/tsconfig",
-  "extends": "@humanize/configs/typescript/react-library.json",
+  "extends": "@humanize/configs/typescript/react-library",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "app/*": ["./*"]
     }

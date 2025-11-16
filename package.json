@@ -14,16 +14,16 @@
     "app": "pnpm -F app",
     "api-client": "pnpm -F @humanize/api-client",
     "configs": "pnpm -F @humanize/configs",
+    "ui": "pnpm -F @humanize/ui",
     "next": "pnpm -F @humanize/next",
     "expo": "pnpm -F @humanize/expo",
     "web": "pnpm next dev",
     "native": "pnpm expo dev",
     "convex": "pnpm next dev:convex",
     "python": "cd backend && uv run uvicorn src.index:app --reload --host 0.0.0.0 --port 8000",
+    "check": "pnpm i && biome check --write --unsafe && turbo lint && pnpm check-types && ./check.sh",
+    "check-fast": "biome check --write --unsafe && turbo lint && pnpm check-types && ./check.sh",
     "check-types": "turbo check-types",
-    "check-fast": "biome check --write --unsafe && turbo lint && pnpm check-types",
-    "check": "pnpm i && biome check --write --unsafe && turbo lint && pnpm check-types && pnpm fe fix-deps && pnpm fe check-expo && pnpm turbo build",
-    "check-ci": "biome check --unsafe && turbo lint-ci && pnpm check-types && pnpm fe check-expo",
     "bump-deps": "pnpm up -iLr",
     "bump-next": "cd apps/next && pnpx @next/codemod@canary upgrade latest",
     "bump-biome": "pnpm update @biomejs/biome --latest && biome migrate --write",
@@ -33,5 +33,11 @@
   "devDependencies": {
     "@biomejs/biome": "2.3.5",
     "turbo": "^2.6.1"
+  },
+  "pnpm": {
+    "overrides": {
+      "@types/react": "19.2.4",
+      "@types/react-dom": "19.2.3"
+    }
   }
 }
