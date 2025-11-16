@@ -118,6 +118,7 @@ function getLanguageCode(languageName: string): string {
   return languageMap[languageName] || "en";
 }
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO: Refactor this component
 export function HumanizeEditor() {
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");

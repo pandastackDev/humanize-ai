@@ -21,7 +21,7 @@ export default function ThemeToggle() {
 
   if (!mounted) {
     return (
-      <Button variant="ghost" size="icon">
+      <Button size="icon" variant="ghost">
         <Sun className="h-5 w-5" />
       </Button>
     );
@@ -32,7 +32,7 @@ export default function ThemeToggle() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button size="icon" variant="ghost">
           <Icon className="h-5 w-5 transition-all" />
           <span className="sr-only">Toggle theme</span>
         </Button>

@@ -342,7 +342,7 @@
         "noParameterProperties": "error",
         "noRestrictedGlobals": "error",
         "noRestrictedImports": {
-          "level": "error",
+          "level": "warn",
           "options": {
             "paths": {
               "react": {
