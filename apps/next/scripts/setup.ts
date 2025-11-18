@@ -142,6 +142,31 @@ async function generateStripeProducts(stripeApiKey: string) {
         "Created 6 prices: basic-monthly, basic-annual, pro-monthly, pro-annual, ultra-monthly, ultra-annual"
       )
     );
+
+    const enterprisePrice = await stripe.prices.create({
+      currency: "usd",
+      unit_amount: 10_000,
+      recurring: {
+        interval: "month",
+      },
+      product_data: {
+        name: "Enterprise",
+      },
+      lookup_key: "enterprise",
+    });
+
+    const auditLogsFeature = await stripe.entitlements.features.create({
+      name: "Audit logs",
+      lookup_key: "audit-logs",
+    });
+
+    await stripe.products.createFeature(enterprisePrice.product as string, {
+      entitlement_feature: auditLogsFeature.id,
+    });
+
+    console.log(
+      chalk.green("Stripe test mode products and prices generated successfully")
+    );
   } catch (error) {
     console.log(
       chalk.red(`Failed to generate Stripe test mode prices: ${error}`)
