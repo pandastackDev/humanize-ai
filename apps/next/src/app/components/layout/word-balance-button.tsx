@@ -73,28 +73,27 @@ export function WordBalanceButton({
   return (
     <>
       <div className="flex items-center gap-2">
-        <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-md bg-muted text-sm">
+        <div className="hidden items-center gap-2 rounded-md bg-muted px-3 py-1.5 text-sm sm:flex">
           <span className="text-muted-foreground">Balance:</span>
           <span className="font-semibold">
             {loading ? "..." : (wordBalance ?? 0).toLocaleString()}
           </span>
         </div>
         <Button
+          className="hidden sm:flex"
           onClick={() => setDialogOpen(true)}
           size="sm"
-          className="hidden sm:flex"
         >
           Get more words
         </Button>
       </div>
       <WordPurchaseDialog
-        open={dialogOpen}
-        onOpenChange={handleDialogClose}
-        userId={userId}
-        organizationId={organizationId}
         currentBalance={wordBalance ?? 0}
+        onOpenChange={handleDialogClose}
+        open={dialogOpen}
+        organizationId={organizationId}
+        userId={userId}
       />
     </>
   );
 }
-

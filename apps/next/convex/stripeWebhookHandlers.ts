@@ -8,62 +8,72 @@ import type { ActionCtx } from "./_generated/server";
 
 type StripeWebhookData = Stripe.Event["data"];
 
+function extractSessionMetadata(
+  session: Stripe.Checkout.Session
+): Record<string, string> | undefined {
+  if (session.metadata && Object.keys(session.metadata).length > 0) {
+    return session.metadata;
+  }
+  if (session.client_reference_id) {
+    try {
+      return JSON.parse(session.client_reference_id);
+    } catch (error) {
+      console.error("Failed to parse client_reference_id metadata:", error);
+    }
+  }
+  return;
+}
+
+async function handleWordPurchase(
+  ctx: ActionCtx,
+  metadata: Record<string, string>
+): Promise<boolean> {
+  if (metadata.type !== "word_purchase") {
+    return false;
+  }
+
+  const organizationId = metadata.organizationId;
+  const wordAmount = Number.parseInt(metadata.wordAmount || "0", 10);
+
+  if (!(organizationId && wordAmount)) {
+    console.warn("Word purchase missing organizationId or wordAmount");
+    return true;
+  }
+
+  try {
+    await ctx.runMutation(internal.organizations.addWordBalance, {
+      organization_id: organizationId,
+      word_amount: wordAmount,
+    });
+    console.log(`Added ${wordAmount} words to organization ${organizationId}`);
+  } catch (error) {
+    console.error(
+      `Error adding word balance for organization ${organizationId}:`,
+      error
+    );
+    throw error;
+  }
+  return true;
+}
+
 async function handleCheckoutSessionCompleted(
   ctx: ActionCtx,
   data: StripeWebhookData
 ) {
   const session = data.object as Stripe.Checkout.Session;
-  const customerId = session.customer as string;
-  const subscriptionId = session.subscription as string | null;
-  let metadata: Record<string, string> | undefined;
-  if (session.metadata && Object.keys(session.metadata).length > 0) {
-    metadata = session.metadata;
-  } else if (session.client_reference_id) {
-    try {
-      metadata = JSON.parse(session.client_reference_id);
-    } catch (error) {
-      console.error(
-        "Failed to parse client_reference_id metadata:",
-        error
-      );
-    }
-  }
+  const metadata = extractSessionMetadata(session);
 
-  // Check if this is a word purchase (one-time payment)
-  if (metadata && metadata.type === "word_purchase") {
-    const organizationId = metadata.organizationId;
-    const wordAmount = parseInt(metadata.wordAmount || "0", 10);
-
-    if (!organizationId || !wordAmount) {
-      console.warn("Word purchase missing organizationId or wordAmount");
-      return;
-    }
-
-    // Add words to organization balance
-    try {
-      await ctx.runMutation(internal.organizations.addWordBalance, {
-        organization_id: organizationId,
-        word_amount: wordAmount,
-      });
-      console.log(
-        `Added ${wordAmount} words to organization ${organizationId}`
-      );
-    } catch (error) {
-      console.error(
-        `Error adding word balance for organization ${organizationId}:`,
-        error
-      );
-      throw error;
-    }
+  if (metadata && (await handleWordPurchase(ctx, metadata))) {
     return;
   }
 
-  // Handle subscription checkout
-  if (!customerId || !subscriptionId) {
+  const customerId = session.customer as string;
+  const subscriptionId = session.subscription as string | null;
+
+  if (!(customerId && subscriptionId)) {
     throw new Error("Missing customer or subscription ID in checkout session");
   }
 
-  // Get organization by Stripe customer ID
   const org = await ctx.runQuery(internal.subscriptions.getByStripeCustomerId, {
     stripe_customer_id: customerId,
   });
@@ -73,11 +83,60 @@ async function handleCheckoutSessionCompleted(
     return;
   }
 
-  // Get subscription details from Stripe to determine plan
-  // The subscription metadata or price lookup key should indicate the plan
-  // For now, we'll need to get this from the subscription object
-  // This should be done by querying Stripe API, but for webhook handlers
-  // we can get it from the subscription metadata
+  // Subscription details will be handled by customer.subscription.created event
+  console.log(
+    `Checkout completed for organization ${org.workos_id} with subscription ${subscriptionId}`
+  );
+}
+
+function parsePlanFromLookupKey(
+  lookupKey: string | null | undefined
+): "basic" | "pro" | "ultra" {
+  if (!lookupKey) {
+    return "basic";
+  }
+  const lookupLower = lookupKey.toLowerCase();
+  if (lookupLower.includes("ultra")) {
+    return "ultra";
+  }
+  if (lookupLower.includes("pro")) {
+    return "pro";
+  }
+  return "basic";
+}
+
+function parseBillingPeriodFromLookupKey(
+  lookupKey: string | null | undefined
+): "monthly" | "annual" {
+  if (!lookupKey) {
+    return "monthly";
+  }
+  const lookupLower = lookupKey.toLowerCase();
+  if (lookupLower.includes("annual") || lookupLower.includes("yearly")) {
+    return "annual";
+  }
+  return "monthly";
+}
+
+function mapStripeStatusToConvex(
+  stripeStatus: string
+): "active" | "past_due" | "cancelled" | "unpaid" | "trialing" {
+  if (stripeStatus === "active") {
+    return "active";
+  }
+  if (stripeStatus === "past_due") {
+    return "past_due";
+  }
+  if (stripeStatus === "canceled") {
+    return "cancelled";
+  }
+  if (stripeStatus === "unpaid") {
+    return "unpaid";
+  }
+  if (stripeStatus === "trialing") {
+    return "trialing";
+  }
+  return "active";
 }
 
 async function handleCustomerSubscriptionCreated(
@@ -87,7 +146,6 @@ async function handleCustomerSubscriptionCreated(
   const subscription = data.object as Stripe.Subscription;
   const customerId = subscription.customer as string;
 
-  // Get organization by Stripe customer ID
   const org = await ctx.runQuery(internal.subscriptions.getByStripeCustomerId, {
     stripe_customer_id: customerId,
   });
@@ -97,34 +155,20 @@ async function handleCustomerSubscriptionCreated(
     return;
   }
 
-  // Determine plan from price lookup key or metadata
-  const priceId = subscription.items.data[0]?.price.id;
-  let plan: "basic" | "pro" | "ultra" = "basic";
-  let billingPeriod: "monthly" | "annual" = "monthly";
-
-  // Try to get plan from price lookup key
   const priceLookupKey = subscription.items.data[0]?.price.lookup_key;
-  if (priceLookupKey) {
-    const lookupLower = priceLookupKey.toLowerCase();
-    if (lookupLower.includes("basic")) plan = "basic";
-    else if (lookupLower.includes("pro")) plan = "pro";
-    else if (lookupLower.includes("ultra")) plan = "ultra";
+  const plan = parsePlanFromLookupKey(priceLookupKey);
+  const billingPeriod = parseBillingPeriodFromLookupKey(priceLookupKey);
 
-    if (lookupLower.includes("annual") || lookupLower.includes("yearly")) {
-      billingPeriod = "annual";
-    }
-  }
-
-  // Update subscription in Convex
   await ctx.runMutation(internal.subscriptions.updateSubscription, {
     organization_id: org.workos_id,
     subscription_plan: plan,
     subscription_status: "active",
     billing_period: billingPeriod,
     stripe_subscription_id: subscription.id,
-    current_period_end: subscription.current_period_end
-      ? subscription.current_period_end
-      : undefined,
+    current_period_end:
+      "current_period_end" in subscription && subscription.current_period_end
+        ? (subscription.current_period_end as number)
+        : undefined,
   });
 }
 
@@ -135,7 +179,6 @@ async function handleCustomerSubscriptionUpdated(
   const subscription = data.object as Stripe.Subscription;
   const customerId = subscription.customer as string;
 
-  // Get organization by Stripe customer ID
   const org = await ctx.runQuery(internal.subscriptions.getByStripeCustomerId, {
     stripe_customer_id: customerId,
   });
@@ -145,45 +188,21 @@ async function handleCustomerSubscriptionUpdated(
     return;
   }
 
-  // Determine plan and status
   const priceLookupKey = subscription.items.data[0]?.price.lookup_key;
-  let plan: "basic" | "pro" | "ultra" = "basic";
-  let billingPeriod: "monthly" | "annual" = "monthly";
+  const plan = parsePlanFromLookupKey(priceLookupKey);
+  const billingPeriod = parseBillingPeriodFromLookupKey(priceLookupKey);
+  const status = mapStripeStatusToConvex(subscription.status);
 
-  if (priceLookupKey) {
-    const lookupLower = priceLookupKey.toLowerCase();
-    if (lookupLower.includes("basic")) plan = "basic";
-    else if (lookupLower.includes("pro")) plan = "pro";
-    else if (lookupLower.includes("ultra")) plan = "ultra";
-
-    if (lookupLower.includes("annual") || lookupLower.includes("yearly")) {
-      billingPeriod = "annual";
-    }
-  }
-
-  const status =
-    subscription.status === "active"
-      ? "active"
-      : subscription.status === "past_due"
-        ? "past_due"
-        : subscription.status === "canceled"
-          ? "cancelled"
-          : subscription.status === "unpaid"
-            ? "unpaid"
-            : subscription.status === "trialing"
-              ? "trialing"
-              : "active";
-
-  // Update subscription in Convex
   await ctx.runMutation(internal.subscriptions.updateSubscription, {
     organization_id: org.workos_id,
     subscription_plan: plan,
     subscription_status: status,
     billing_period: billingPeriod,
     stripe_subscription_id: subscription.id,
-    current_period_end: subscription.current_period_end
-      ? subscription.current_period_end
-      : undefined,
+    current_period_end:
+      "current_period_end" in subscription && subscription.current_period_end
+        ? (subscription.current_period_end as number)
+        : undefined,
   });
 }
 
@@ -236,4 +255,3 @@ export async function handleStripeWebhook(
 
   await handler(ctx, data);
 }
-

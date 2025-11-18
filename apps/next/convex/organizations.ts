@@ -1,39 +1,33 @@
+import { v } from "convex/values";
 import { crud } from "convex-helpers/server/crud";
 import {
   internalMutation,
   internalQuery,
-  query,
   type QueryCtx,
+  query,
 } from "./_generated/server";
 import schema from "./schema";
-import { v } from "convex/values";
 
 const organizationFields = schema.tables.organizations.validator.fields;
 
-const fetchOrganizationByWorkOSId = async (
-  ctx: QueryCtx,
-  workosId: string
-) => {
-  return await ctx.db
+const fetchOrganizationByWorkOSId = async (ctx: QueryCtx, workosId: string) =>
+  await ctx.db
     .query("organizations")
     .filter((q) => q.eq(q.field("workos_id"), workosId))
     .first();
-};
 
 export const { create, destroy, update } = crud(schema, "organizations");
 
 export const getByWorkOSId = internalQuery({
   args: { workos_id: organizationFields.workos_id },
-  handler: async (ctx, args) => {
-    return await fetchOrganizationByWorkOSId(ctx, args.workos_id);
-  },
+  handler: async (ctx, args) =>
+    await fetchOrganizationByWorkOSId(ctx, args.workos_id),
 });
 
 export const getPublicByWorkOSId = query({
   args: { workos_id: organizationFields.workos_id },
-  handler: async (ctx, args) => {
-    return await fetchOrganizationByWorkOSId(ctx, args.workos_id);
-  },
+  handler: async (ctx, args) =>
+    await fetchOrganizationByWorkOSId(ctx, args.workos_id),
 });
 
 export const addWordBalance = internalMutation({

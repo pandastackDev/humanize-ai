@@ -119,7 +119,7 @@ const NavigationMenuItem = ({
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
 const navigationMenuTriggerStyle =
-"group inline-flex h-9 w-max items-center justify-center rounded-md bg-white dark:bg-white px-4 py-2 text-[14px] font-[600] text-[#646464] transition-all duration-200 ease-in-out hover:bg-gray-50 dark:hover:bg-gray-50 hover:text-[#646464] active:bg-gray-50 dark:active:bg-gray-50 focus:bg-gray-50 dark:focus:bg-gray-50 focus:text-[#646464] focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
+  "group inline-flex h-9 w-max items-center justify-center rounded-md bg-white dark:bg-white px-4 py-2 text-[14px] font-[600] text-[#646464] transition-all duration-200 ease-in-out hover:bg-gray-50 dark:hover:bg-gray-50 hover:text-[#646464] active:bg-gray-50 dark:active:bg-gray-50 focus:bg-gray-50 dark:focus:bg-gray-50 focus:text-[#646464] focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer";
 type NavigationMenuTriggerProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   value: string;
   children: ReactNode;

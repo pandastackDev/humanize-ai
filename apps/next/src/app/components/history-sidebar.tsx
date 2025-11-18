@@ -10,21 +10,21 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-export interface HistoryItem {
+export type HistoryItem = {
   id: string;
   originalText: string;
   humanizedText: string;
   timestamp: Date;
   wordCount: number;
-}
+};
 
-interface HistorySidebarProps {
+type HistorySidebarProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   history: HistoryItem[];
   onSelectHistory: (item: HistoryItem) => void;
   onDeleteHistory: (id: string) => void;
-}
+};
 
 export function HistorySidebar({
   open,
@@ -36,14 +36,22 @@ export function HistorySidebar({
   const formatDate = (date: Date) => {
     const now = new Date();
     const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
+    const minutes = Math.floor(diff / 60_000);
+    const hours = Math.floor(diff / 3_600_000);
+    const days = Math.floor(diff / 86_400_000);
 
-    if (minutes < 1) return "Just now";
-    if (minutes < 60) return `${minutes}m ago`;
-    if (hours < 24) return `${hours}h ago`;
-    if (days < 7) return `${days}d ago`;
+    if (minutes < 1) {
+      return "Just now";
+    }
+    if (minutes < 60) {
+      return `${minutes}m ago`;
+    }
+    if (hours < 24) {
+      return `${hours}h ago`;
+    }
+    if (days < 7) {
+      return `${days}d ago`;
+    }
     return date.toLocaleDateString();
   };
 
@@ -67,8 +75,8 @@ export function HistorySidebar({
           ) : (
             history.map((item) => (
               <div
-                key={item.id}
                 className="group relative rounded-lg border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-sm dark:border-slate-700 dark:bg-[#141414]"
+                key={item.id}
               >
                 <Button
                   className="absolute top-2 right-2 h-6 w-6 rounded p-0 opacity-0 transition-opacity group-hover:opacity-100"
@@ -80,12 +88,13 @@ export function HistorySidebar({
                 >
                   <X className="h-3 w-3" />
                 </Button>
-                <div
-                  className="cursor-pointer"
+                <button
+                  className="w-full cursor-pointer text-left"
                   onClick={() => {
                     onSelectHistory(item);
                     onOpenChange(false);
                   }}
+                  type="button"
                 >
                   <div className="mb-2 flex items-center justify-between">
                     <span className="font-medium text-slate-900 text-xs dark:text-slate-100">
@@ -99,7 +108,7 @@ export function HistorySidebar({
                     {item.originalText.substring(0, 150)}
                     {item.originalText.length > 150 ? "..." : ""}
                   </p>
-                </div>
+                </button>
               </div>
             ))
           )}
@@ -108,4 +117,3 @@ export function HistorySidebar({
     </Sheet>
   );
 }
-

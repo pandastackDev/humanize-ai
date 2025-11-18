@@ -13,7 +13,7 @@ export const GET = async () => {
         userId: auth.user.id,
       });
       // Use the first organization if available
-      if (oms.data.length > 0) {
+      if (oms.data.length > 0 && oms.data[0]) {
         organizationId = oms.data[0].organizationId;
       }
     }

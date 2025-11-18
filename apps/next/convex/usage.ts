@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 // Get usage for an organization/user for a specific month
 export const getByOrganizationMonth = query({
@@ -8,8 +8,8 @@ export const getByOrganizationMonth = query({
     year: v.number(),
     month: v.number(),
   },
-  handler: async (ctx, args) => {
-    return await ctx.db
+  handler: async (ctx, args) =>
+    await ctx.db
       .query("usage")
       .withIndex("by_organization_month", (q) =>
         q
@@ -17,8 +17,7 @@ export const getByOrganizationMonth = query({
           .eq("year", args.year)
           .eq("month", args.month)
       )
-      .first();
-  },
+      .first(),
 });
 
 export const getByUserMonth = query({
@@ -27,14 +26,16 @@ export const getByUserMonth = query({
     year: v.number(),
     month: v.number(),
   },
-  handler: async (ctx, args) => {
-    return await ctx.db
+  handler: async (ctx, args) =>
+    await ctx.db
       .query("usage")
       .withIndex("by_user_month", (q) =>
-        q.eq("user_id", args.user_id).eq("year", args.year).eq("month", args.month)
+        q
+          .eq("user_id", args.user_id)
+          .eq("year", args.year)
+          .eq("month", args.month)
       )
-      .first();
-  },
+      .first(),
 });
 
 // Track usage for a request
@@ -48,7 +49,7 @@ export const trackUsage = mutation({
   },
   handler: async (ctx, args) => {
     // Try to find existing usage record
-    let usage = await ctx.db
+    const usage = await ctx.db
       .query("usage")
       .withIndex("by_organization_month", (q) =>
         q
@@ -68,21 +69,19 @@ export const trackUsage = mutation({
         words_used: usage.words_used + args.words,
         requests_count: usage.requests_count + 1,
       };
-    } else {
-      // Create new usage record
-      const newUsageId = await ctx.db.insert("usage", {
-        organization_id: args.organization_id,
-        user_id: args.user_id,
-        year: args.year,
-        month: args.month,
-        words_used: args.words,
-        requests_count: 1,
-      });
-      return {
-        words_used: args.words,
-        requests_count: 1,
-      };
     }
+    // Create new usage record
+    const newUsageId = await ctx.db.insert("usage", {
+      organization_id: args.organization_id,
+      user_id: args.user_id,
+      year: args.year,
+      month: args.month,
+      words_used: args.words,
+      requests_count: 1,
+    });
+    return {
+      words_used: args.words,
+      requests_count: 1,
+    };
   },
 });
-

@@ -1,8 +1,8 @@
 import { httpRouter } from "convex/server";
 import { internal } from "./_generated/api";
 import { httpAction } from "./_generated/server";
-import { handleWebhookEvent } from "./webhookHandlers";
 import { handleStripeWebhook } from "./stripeWebhookHandlers";
+import { handleWebhookEvent } from "./webhookHandlers";
 
 const http = httpRouter();
 

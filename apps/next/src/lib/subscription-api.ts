@@ -5,7 +5,12 @@
 import { env } from "@/env";
 
 export type SubscriptionPlan = "free" | "basic" | "pro" | "ultra";
-export type SubscriptionStatus = "active" | "cancelled" | "past_due" | "unpaid" | "trialing";
+export type SubscriptionStatus =
+  | "active"
+  | "cancelled"
+  | "past_due"
+  | "unpaid"
+  | "trialing";
 
 export type SubscriptionInfo = {
   plan: SubscriptionPlan;
@@ -73,4 +78,3 @@ export async function checkSubscription(
     throw new Error("Failed to check subscription status. Please try again.");
   }
 }
-

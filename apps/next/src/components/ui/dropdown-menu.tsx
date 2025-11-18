@@ -2,7 +2,12 @@
 
 import * as DropdownMenuPrimitive from "@radix-ui/react-dropdown-menu";
 import { Check, ChevronRight, Circle } from "lucide-react";
-import type * as React from "react";
+import type {
+  ComponentPropsWithoutRef,
+  ElementRef,
+  HTMLAttributes,
+  RefObject,
+} from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -24,12 +29,10 @@ const DropdownMenuSubTrigger = ({
   children,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubTrigger> & {
   inset?: boolean;
 } & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.SubTrigger
-  > | null>;
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.SubTrigger> | null>;
 }) => (
   <DropdownMenuPrimitive.SubTrigger
     className={cn(
@@ -51,10 +54,8 @@ const DropdownMenuSubContent = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.SubContent
-  > | null>;
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.SubContent> & {
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.SubContent> | null>;
 }) => (
   <DropdownMenuPrimitive.SubContent
     className={cn(
@@ -73,10 +74,8 @@ const DropdownMenuContent = ({
   sideOffset = 4,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.Content
-  > | null>;
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Content> & {
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.Content> | null>;
 }) => (
   <DropdownMenuPrimitive.Portal>
     <DropdownMenuPrimitive.Content
@@ -97,12 +96,10 @@ const DropdownMenuItem = ({
   inset,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
   inset?: boolean;
 } & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.Item
-  > | null>;
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.Item> | null>;
 }) => (
   <DropdownMenuPrimitive.Item
     className={cn(
@@ -122,10 +119,8 @@ const DropdownMenuCheckboxItem = ({
   checked,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.CheckboxItem
-  > | null>;
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.CheckboxItem> & {
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.CheckboxItem> | null>;
 }) => (
   <DropdownMenuPrimitive.CheckboxItem
     checked={checked}
@@ -152,10 +147,8 @@ const DropdownMenuRadioItem = ({
   children,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.RadioItem
-  > | null>;
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.RadioItem> & {
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.RadioItem> | null>;
 }) => (
   <DropdownMenuPrimitive.RadioItem
     className={cn(
@@ -180,12 +173,10 @@ const DropdownMenuLabel = ({
   inset,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Label> & {
   inset?: boolean;
 } & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.Label
-  > | null>;
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.Label> | null>;
 }) => (
   <DropdownMenuPrimitive.Label
     className={cn(
@@ -203,10 +194,8 @@ const DropdownMenuSeparator = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof DropdownMenuPrimitive.Separator
-  > | null>;
+}: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Separator> & {
+  ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.Separator> | null>;
 }) => (
   <DropdownMenuPrimitive.Separator
     className={cn("-mx-1 my-1 h-px bg-muted", className)}
@@ -219,7 +208,7 @@ DropdownMenuSeparator.displayName = DropdownMenuPrimitive.Separator.displayName;
 const DropdownMenuShortcut = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLSpanElement>) => (
+}: HTMLAttributes<HTMLSpanElement>) => (
   <span
     className={cn("ml-auto text-xs tracking-widest opacity-60", className)}
     {...props}

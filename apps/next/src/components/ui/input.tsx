@@ -1,4 +1,4 @@
-import type * as React from "react";
+import type { ComponentProps, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -7,8 +7,8 @@ const Input = ({
   type,
   ref,
   ...props
-}: React.ComponentProps<"input"> & {
-  ref?: React.RefObject<HTMLInputElement | null>;
+}: ComponentProps<"input"> & {
+  ref?: RefObject<HTMLInputElement | null>;
 }) => (
   <input
     className={cn(

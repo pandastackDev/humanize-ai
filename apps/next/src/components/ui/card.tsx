@@ -1,4 +1,4 @@
-import type * as React from "react";
+import type { HTMLAttributes, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -6,8 +6,8 @@ const Card = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  ref?: React.RefObject<HTMLDivElement | null>;
+}: HTMLAttributes<HTMLDivElement> & {
+  ref?: RefObject<HTMLDivElement | null>;
 }) => (
   <div
     className={cn(
@@ -24,8 +24,8 @@ const CardHeader = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  ref?: React.RefObject<HTMLDivElement | null>;
+}: HTMLAttributes<HTMLDivElement> & {
+  ref?: RefObject<HTMLDivElement | null>;
 }) => (
   <div
     className={cn("flex flex-col space-y-1.5 p-6", className)}
@@ -39,8 +39,8 @@ const CardTitle = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLHeadingElement> & {
-  ref?: React.RefObject<HTMLParagraphElement | null>;
+}: HTMLAttributes<HTMLHeadingElement> & {
+  ref?: RefObject<HTMLParagraphElement | null>;
 }) => (
   <h3
     className={cn(
@@ -57,8 +57,8 @@ const CardDescription = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement> & {
-  ref?: React.RefObject<HTMLParagraphElement | null>;
+}: HTMLAttributes<HTMLParagraphElement> & {
+  ref?: RefObject<HTMLParagraphElement | null>;
 }) => (
   <p
     className={cn("text-muted-foreground text-sm", className)}
@@ -72,8 +72,8 @@ const CardContent = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  ref?: React.RefObject<HTMLDivElement | null>;
+}: HTMLAttributes<HTMLDivElement> & {
+  ref?: RefObject<HTMLDivElement | null>;
 }) => <div className={cn("p-6 pt-0", className)} ref={ref} {...props} />;
 CardContent.displayName = "CardContent";
 
@@ -81,8 +81,8 @@ const CardFooter = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> & {
-  ref?: React.RefObject<HTMLDivElement | null>;
+}: HTMLAttributes<HTMLDivElement> & {
+  ref?: RefObject<HTMLDivElement | null>;
 }) => (
   <div
     className={cn("flex items-center p-6 pt-0", className)}

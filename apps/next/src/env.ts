@@ -144,7 +144,11 @@ export const env = createEnv({
      * ⚠️ This is safe to expose to the browser
      * @example "pk_test_51PcLUhAaDFStRNr01FGoJsSfcVE3ZbV..."
      */
-    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1).startsWith("pk_").optional(),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
+      .string()
+      .min(1)
+      .startsWith("pk_")
+      .optional(),
   },
 
   /**

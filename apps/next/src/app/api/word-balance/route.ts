@@ -12,7 +12,7 @@ export const GET = async (req: NextRequest) => {
     );
   }
 
-  if (!env.NEXT_PUBLIC_BACKEND_URL) {
+  if (!env.NEXT_PUBLIC_PYTHON_API_URL) {
     return NextResponse.json(
       { error: "Backend URL is not configured" },
       { status: 500 }
@@ -20,8 +20,8 @@ export const GET = async (req: NextRequest) => {
   }
 
   try {
-    const backendUrl = `${env.NEXT_PUBLIC_BACKEND_URL}/api/v1/billing/word-balance?organization_id=${encodeURIComponent(organizationId)}`;
-    
+    const backendUrl = `${env.NEXT_PUBLIC_PYTHON_API_URL}/api/v1/billing/word-balance?organization_id=${encodeURIComponent(organizationId)}`;
+
     const response = await fetch(backendUrl, {
       method: "GET",
       headers: {
@@ -49,5 +49,3 @@ export const GET = async (req: NextRequest) => {
     );
   }
 };
-
-

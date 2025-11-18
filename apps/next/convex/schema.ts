@@ -12,7 +12,12 @@ export default defineSchema({
     stripe_customer_id: v.optional(v.string()),
     stripe_subscription_id: v.optional(v.string()),
     subscription_plan: v.optional(
-      v.union(v.literal("free"), v.literal("basic"), v.literal("pro"), v.literal("ultra"))
+      v.union(
+        v.literal("free"),
+        v.literal("basic"),
+        v.literal("pro"),
+        v.literal("ultra")
+      )
     ),
     subscription_status: v.optional(
       v.union(
@@ -23,7 +28,9 @@ export default defineSchema({
         v.literal("trialing")
       )
     ),
-    billing_period: v.optional(v.union(v.literal("monthly"), v.literal("annual"))),
+    billing_period: v.optional(
+      v.union(v.literal("monthly"), v.literal("annual"))
+    ),
     current_period_end: v.optional(v.number()),
     word_balance: v.optional(v.number()), // One-time purchased words balance
   })

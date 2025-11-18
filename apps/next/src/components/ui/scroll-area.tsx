@@ -1,7 +1,7 @@
 "use client";
 
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
-import type * as React from "react";
+import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -10,10 +10,8 @@ const ScrollArea = ({
   children,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof ScrollAreaPrimitive.Root
-  > | null>;
+}: ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> & {
+  ref?: RefObject<ElementRef<typeof ScrollAreaPrimitive.Root> | null>;
 }) => (
   <ScrollAreaPrimitive.Root
     className={cn("relative overflow-hidden", className)}
@@ -34,10 +32,8 @@ const ScrollBar = ({
   orientation = "vertical",
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<
-  typeof ScrollAreaPrimitive.ScrollAreaScrollbar
-> & {
-  ref?: React.RefObject<React.ElementRef<
+}: ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar> & {
+  ref?: RefObject<ElementRef<
     typeof ScrollAreaPrimitive.ScrollAreaScrollbar
   > | null>;
 }) => (

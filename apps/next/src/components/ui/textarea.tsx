@@ -1,4 +1,4 @@
-import type * as React from "react";
+import type { ComponentProps, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -6,8 +6,8 @@ const Textarea = ({
   className,
   ref,
   ...props
-}: React.ComponentProps<"textarea"> & {
-  ref?: React.RefObject<HTMLTextAreaElement | null>;
+}: ComponentProps<"textarea"> & {
+  ref?: RefObject<HTMLTextAreaElement | null>;
 }) => (
   <textarea
     className={cn(

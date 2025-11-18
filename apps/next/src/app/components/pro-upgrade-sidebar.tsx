@@ -176,7 +176,7 @@ export function ProUpgradeSidebar({
           {/* Unlock Button */}
           <div className="space-y-2">
             <Button
-              className="w-full px-6 py-6 text-base font-semibold"
+              className="w-full px-6 py-6 font-semibold text-base"
               onClick={handleUnlock}
             >
               Unlock With Free Trial

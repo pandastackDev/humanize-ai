@@ -7,55 +7,65 @@ import { workos } from "../workos";
 const PRICE_PER_PACKAGE = 1.99; // $1.99 per 1000 words
 const WORDS_PER_PACKAGE = 1000;
 
-export const POST = async (req: NextRequest) => {
-  let body;
-  const findCustomerByMetadata = async (
-    key: string,
-    value: string
-  ): Promise<Stripe.Customer | null> => {
-    try {
-      const result = await stripe.customers.search({
-        query: `metadata['${key}']:'${value}'`,
-        limit: 1,
-      });
-      return result.data[0] ?? null;
-    } catch (error) {
-      console.error(
-        `Error searching Stripe customers by metadata ${key}:`,
-        error
-      );
-      return null;
-    }
-  };
+type RequestBody = {
+  userId: string;
+  organizationId?: string;
+  wordAmount: number;
+  packages: number;
+};
 
+async function findCustomerByMetadata(
+  key: string,
+  value: string
+): Promise<Stripe.Customer | null> {
   try {
-    body = await req.json();
+    const result = await stripe.customers.search({
+      query: `metadata['${key}']:'${value}'`,
+      limit: 1,
+    });
+    return result.data[0] ?? null;
+  } catch (error) {
+    console.error(
+      `Error searching Stripe customers by metadata ${key}:`,
+      error
+    );
+    return null;
+  }
+}
+
+async function parseRequestBody(req: NextRequest): Promise<RequestBody | null> {
+  try {
+    return await req.json();
   } catch (error) {
     console.error("Error parsing request body:", error);
+    return null;
+  }
+}
+
+function validateRequestBody(body: RequestBody | null): NextResponse | null {
+  if (!body) {
     return NextResponse.json(
       { error: "Invalid request body" },
       { status: 400 }
     );
   }
 
-  const { userId, organizationId, wordAmount, packages } = body;
+  const { userId, wordAmount, packages } = body;
 
-  if (!userId || !wordAmount || !packages) {
+  if (!(userId && wordAmount && packages)) {
     return NextResponse.json(
       { error: "Missing required fields: userId, wordAmount, packages" },
       { status: 400 }
     );
   }
 
-  // Validate word amount
-  if (wordAmount < 1000 || wordAmount > 30000) {
+  if (wordAmount < 1000 || wordAmount > 30_000) {
     return NextResponse.json(
       { error: "Word amount must be between 1,000 and 30,000" },
       { status: 400 }
     );
   }
 
-  // Validate packages
   if (packages < 1 || packages > 30) {
     return NextResponse.json(
       { error: "Packages must be between 1 and 30" },
@@ -63,7 +73,10 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  // Validate environment variables
+  return null;
+}
+
+function validateEnvironment(): NextResponse | null {
   if (!env.STRIPE_API_KEY) {
     console.error("STRIPE_API_KEY is not set");
     return NextResponse.json(
@@ -80,92 +93,72 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  try {
-    // Get or create Stripe customer
-    let customerId: string;
-    let organization;
+  return null;
+}
 
-    if (organizationId) {
-      // Get organization from WorkOS
-      organization = await workos.organizations.getOrganization(organizationId);
-      
-      // Check if organization has a Stripe customer ID
-      // We'll need to store this in Convex or fetch from Stripe
-      // For now, we'll search Stripe for existing customer by metadata
-      const existingCustomer = await findCustomerByMetadata(
-        "workOSOrganizationId",
-        organizationId
-      );
+async function getOrCreateCustomer(
+  userId: string,
+  organizationId?: string
+): Promise<string> {
+  if (organizationId) {
+    const organization =
+      await workos.organizations.getOrganization(organizationId);
+    const existingCustomer = await findCustomerByMetadata(
+      "workOSOrganizationId",
+      organizationId
+    );
 
-      if (existingCustomer) {
-        customerId = existingCustomer.id;
-      } else {
-        // Create new Stripe customer
-        const customer = await stripe.customers.create({
-          email: organization.domains?.[0] || undefined,
-          metadata: {
-            workOSOrganizationId: organizationId,
-            workOSUserId: userId,
-          },
-        });
-        customerId = customer.id;
-      }
-    } else {
-      // No organization - create customer with user ID only
-      const existingCustomer = await findCustomerByMetadata(
-        "workOSUserId",
-        userId
-      );
-
-      if (existingCustomer) {
-        customerId = existingCustomer.id;
-      } else {
-        const customer = await stripe.customers.create({
-          metadata: {
-            workOSUserId: userId,
-          },
-        });
-        customerId = customer.id;
-      }
+    if (existingCustomer) {
+      return existingCustomer.id;
     }
 
-    // Calculate total price
-    const totalPrice = packages * PRICE_PER_PACKAGE;
-    const amountInCents = Math.round(totalPrice * 100);
-
-    const metadata = {
-      type: "word_purchase",
-      userId,
-      organizationId: organizationId || "",
-      wordAmount: wordAmount.toString(),
-      packages: packages.toString(),
-    };
-    const clientReferenceId = JSON.stringify(metadata);
-
-    // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      customer: customerId,
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: "Word Package",
-              description: `${wordAmount.toLocaleString()} words (${packages} × ${WORDS_PER_PACKAGE.toLocaleString()} words)`,
-            },
-            unit_amount: amountInCents,
-          },
-          quantity: 1,
-        },
-      ],
-      mode: "payment",
-      success_url: `${env.NEXT_PUBLIC_BASE_URL}/?purchase=success`,
-      cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/?purchase=cancelled`,
-      client_reference_id: clientReferenceId,
-      payment_intent_data: {
-        metadata,
+    const customer = await stripe.customers.create({
+      email: organization.domains?.[0]?.domain || undefined,
+      metadata: {
+        workOSOrganizationId: organizationId,
+        workOSUserId: userId,
       },
+    });
+    return customer.id;
+  }
+
+  const existingCustomer = await findCustomerByMetadata("workOSUserId", userId);
+
+  if (existingCustomer) {
+    return existingCustomer.id;
+  }
+
+  const customer = await stripe.customers.create({
+    metadata: {
+      workOSUserId: userId,
+    },
+  });
+  return customer.id;
+}
+
+export const POST = async (req: NextRequest) => {
+  const body = await parseRequestBody(req);
+
+  const validationError = validateRequestBody(body);
+  if (validationError) {
+    return validationError;
+  }
+
+  const envError = validateEnvironment();
+  if (envError) {
+    return envError;
+  }
+
+  const { userId, organizationId, wordAmount, packages } = body as RequestBody;
+
+  try {
+    const customerId = await getOrCreateCustomer(userId, organizationId);
+    const session = await createCheckoutSession({
+      customerId,
+      userId,
+      organizationId,
+      wordAmount,
+      packages,
     });
 
     return NextResponse.json({
@@ -183,3 +176,47 @@ export const POST = async (req: NextRequest) => {
   }
 };
 
+async function createCheckoutSession(params: {
+  customerId: string;
+  userId: string;
+  organizationId: string | undefined;
+  wordAmount: number;
+  packages: number;
+}): Promise<Stripe.Checkout.Session> {
+  const { customerId, userId, organizationId, wordAmount, packages } = params;
+  const totalPrice = packages * PRICE_PER_PACKAGE;
+  const amountInCents = Math.round(totalPrice * 100);
+
+  const metadata = {
+    type: "word_purchase",
+    userId,
+    organizationId: organizationId || "",
+    wordAmount: wordAmount.toString(),
+    packages: packages.toString(),
+  };
+
+  return await stripe.checkout.sessions.create({
+    customer: customerId,
+    payment_method_types: ["card"],
+    line_items: [
+      {
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: "Word Package",
+            description: `${wordAmount.toLocaleString()} words (${packages} × ${WORDS_PER_PACKAGE.toLocaleString()} words)`,
+          },
+          unit_amount: amountInCents,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: "payment",
+    success_url: `${env.NEXT_PUBLIC_BASE_URL}/?purchase=success`,
+    cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/?purchase=cancelled`,
+    client_reference_id: JSON.stringify(metadata),
+    payment_intent_data: {
+      metadata,
+    },
+  });
+}

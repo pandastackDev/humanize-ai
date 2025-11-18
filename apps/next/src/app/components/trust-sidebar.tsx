@@ -19,8 +19,11 @@ export function TrustSidebar() {
       {/* User Reviews */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-1">
-          {[...Array(5)].map((_, i) => (
-            <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" key={i} />
+          {[0, 1, 2, 3, 4].map((starNum) => (
+            <Star
+              className="h-5 w-5 fill-yellow-400 text-yellow-400"
+              key={`star-yellow-${starNum}`}
+            />
           ))}
         </div>
         <p className="text-slate-600 text-sm dark:text-slate-400">
@@ -77,10 +80,10 @@ export function TrustSidebar() {
               99.54% Success Rate
             </p>
             <div className="mt-2 flex items-center gap-1">
-              {[...Array(5)].map((_, i) => (
+              {[0, 1, 2, 3, 4].map((starNum) => (
                 <Star
                   className="h-4 w-4 fill-green-500 text-green-500"
-                  key={i}
+                  key={`star-green-${starNum}`}
                 />
               ))}
             </div>

@@ -18,7 +18,7 @@ export default async function Home() {
               Plagiarism-Free Content
             </p>
           </div>
-          <HumanizeEditor userId={user.id} organizationId={organizationId} />
+          <HumanizeEditor organizationId={organizationId} userId={user.id} />
         </div>
       </div>
     );

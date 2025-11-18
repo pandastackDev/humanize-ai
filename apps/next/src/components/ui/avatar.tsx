@@ -1,7 +1,7 @@
 "use client";
 
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
-import type * as React from "react";
+import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -9,8 +9,8 @@ const Avatar = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & {
-  ref?: React.RefObject<React.ElementRef<typeof AvatarPrimitive.Root> | null>;
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Root> & {
+  ref?: RefObject<ElementRef<typeof AvatarPrimitive.Root> | null>;
 }) => (
   <AvatarPrimitive.Root
     className={cn(
@@ -27,8 +27,8 @@ const AvatarImage = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> & {
-  ref?: React.RefObject<React.ElementRef<typeof AvatarPrimitive.Image> | null>;
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Image> & {
+  ref?: RefObject<ElementRef<typeof AvatarPrimitive.Image> | null>;
 }) => (
   <AvatarPrimitive.Image
     className={cn("aspect-square h-full w-full", className)}
@@ -42,10 +42,8 @@ const AvatarFallback = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> & {
-  ref?: React.RefObject<React.ElementRef<
-    typeof AvatarPrimitive.Fallback
-  > | null>;
+}: ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback> & {
+  ref?: RefObject<ElementRef<typeof AvatarPrimitive.Fallback> | null>;
 }) => (
   <AvatarPrimitive.Fallback
     className={cn(

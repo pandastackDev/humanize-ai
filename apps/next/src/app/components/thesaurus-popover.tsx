@@ -9,11 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-interface ThesaurusPopoverProps {
+type ThesaurusPopoverProps = {
   word: string;
   onSelectSynonym: (synonym: string) => void;
   children: React.ReactNode;
-}
+};
 
 // Mock thesaurus data - in production, this would call an API
 const getSynonyms = async (word: string): Promise<string[]> => {
@@ -78,7 +78,7 @@ export function ThesaurusPopover({
   return (
     <DropdownMenu onOpenChange={handleOpenChange} open={open}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 p-3" align="start">
+      <DropdownMenuContent align="start" className="w-64 p-3">
         <div className="mb-2">
           <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
             Synonyms for "{word}"
@@ -92,8 +92,8 @@ export function ThesaurusPopover({
           <div className="flex flex-wrap gap-2">
             {synonyms.map((synonym) => (
               <Button
-                key={synonym}
                 className="h-7 rounded-md px-2 font-normal text-xs"
+                key={synonym}
                 onClick={() => handleSelect(synonym)}
                 variant="outline"
               >
@@ -106,4 +106,3 @@ export function ThesaurusPopover({
     </DropdownMenu>
   );
 }
-

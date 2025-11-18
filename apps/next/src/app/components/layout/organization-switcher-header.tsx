@@ -22,7 +22,9 @@ export function OrganizationSwitcherHeader({
 
   // Hide any "Loading..." text from WorkOS widgets in the header
   useEffect(() => {
-    if (!widgetRef.current) return;
+    if (!widgetRef.current) {
+      return;
+    }
 
     const isWidgetLoaded = () => {
       const text = widgetRef.current?.innerText?.trim().toLowerCase();
@@ -49,12 +51,14 @@ export function OrganizationSwitcherHeader({
     });
 
     return () => observer.disconnect();
-  }, [authToken]);
+  }, []);
 
   return (
     <>
       <div
-        className={widgetReady ? "transition-opacity" : "pointer-events-none opacity-0"}
+        className={
+          widgetReady ? "transition-opacity" : "pointer-events-none opacity-0"
+        }
         ref={widgetRef}
       >
         <WorkOsWidgets>

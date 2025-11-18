@@ -1,11 +1,20 @@
+import type { User } from "@workos-inc/node";
 import { type NextRequest, NextResponse } from "next/server";
 import type Stripe from "stripe";
 import { env } from "@/env";
 import { stripe } from "../stripe";
 import { workos } from "../workos";
 
-export const POST = async (req: NextRequest) => {
-  let body;
+type RequestBody = {
+  userId: string;
+  orgName?: string;
+  subscriptionLevel: string;
+};
+
+async function parseAndValidateRequest(
+  req: NextRequest
+): Promise<RequestBody | NextResponse> {
+  let body: RequestBody;
   try {
     body = await req.json();
   } catch (error) {
@@ -16,39 +25,19 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  const { userId, orgName, subscriptionLevel } = body;
+  const { userId, subscriptionLevel } = body;
 
-  if (!userId || !subscriptionLevel) {
+  if (!(userId && subscriptionLevel)) {
     return NextResponse.json(
       { error: "Missing required fields: userId, subscriptionLevel" },
       { status: 400 }
     );
   }
 
-  // Get user info first to generate org name if not provided
-  let user;
-  try {
-    console.log("Getting WorkOS user:", userId);
-    user = await workos.userManagement.getUser(userId);
-    console.log("User retrieved:", user.email);
-  } catch (error: unknown) {
-    const errorMsg = error instanceof Error ? error.message : "Unknown error";
-    console.error("Failed to get WorkOS user:", errorMsg, error);
-    return NextResponse.json(
-      {
-        error: `Failed to retrieve user information: ${errorMsg}`,
-      },
-      { status: 500 }
-    );
-  }
+  return body;
+}
 
-  // Generate organization name if not provided
-  const organizationName = orgName || 
-    (user.firstName 
-      ? `${user.firstName}'s Organization`
-      : `${user.email.split("@")[0]}'s Organization`);
-
-  // Validate environment variables
+function validateEnvironment(): NextResponse | null {
   if (!env.WORKOS_API_KEY) {
     console.error("WORKOS_API_KEY is not set");
     return NextResponse.json(
@@ -65,96 +54,161 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  let organization;
+  return null;
+}
+
+async function getWorkOSUser(userId: string): Promise<User | NextResponse> {
+  try {
+    console.log("Getting WorkOS user:", userId);
+    const user = await workos.userManagement.getUser(userId);
+    console.log("User retrieved:", user.email);
+    return user;
+  } catch (error: unknown) {
+    const errorMsg = error instanceof Error ? error.message : "Unknown error";
+    console.error("Failed to get WorkOS user:", errorMsg, error);
+    return NextResponse.json(
+      { error: `Failed to retrieve user information: ${errorMsg}` },
+      { status: 500 }
+    );
+  }
+}
+
+function generateOrganizationName(user: User, orgName?: string): string {
+  if (orgName) {
+    return orgName;
+  }
+  if (user.firstName) {
+    return `${user.firstName}'s Organization`;
+  }
+  return `${user.email.split("@")[0]}'s Organization`;
+}
+
+type WorkOSOrganization = Awaited<
+  ReturnType<typeof workos.organizations.createOrganization>
+>;
+
+function parseWorkOSError(error: unknown): {
+  message: string;
+  statusCode: number;
+} {
+  let errorMsg = "Unknown error";
+  let statusCode = 500;
+
+  if (error instanceof Error) {
+    errorMsg = error.message;
+
+    if (
+      errorMsg.includes("fetch failed") ||
+      errorMsg.includes("NetworkError") ||
+      errorMsg.includes("ECONNREFUSED") ||
+      errorMsg.includes("ETIMEDOUT")
+    ) {
+      errorMsg = `Network error connecting to WorkOS API: ${errorMsg}. Please check your internet connection and WorkOS API key.`;
+    } else if (errorMsg.includes("401") || errorMsg.includes("Unauthorized")) {
+      errorMsg =
+        "WorkOS API authentication failed. Please check your WORKOS_API_KEY in environment variables.";
+      statusCode = 401;
+    } else if (errorMsg.includes("403") || errorMsg.includes("Forbidden")) {
+      errorMsg =
+        "WorkOS API access forbidden. Please check your API key permissions.";
+      statusCode = 403;
+    }
+  }
+
+  return { message: errorMsg, statusCode };
+}
+
+function logWorkOSError(error: unknown, errorMsg: string): void {
+  console.error("Failed to create WorkOS organization:", errorMsg);
+  console.error("Error details:", error);
+
+  if (error && typeof error === "object") {
+    if ("status" in error) {
+      console.error("WorkOS API status:", error.status);
+    }
+    if ("code" in error) {
+      console.error("WorkOS API code:", error.code);
+    }
+    if ("requestId" in error) {
+      console.error("WorkOS request ID:", error.requestId);
+    }
+  }
+}
+
+async function createWorkOSOrganization(
+  organizationName: string
+): Promise<WorkOSOrganization | NextResponse> {
   try {
     console.log("Creating WorkOS organization:", organizationName);
-    console.log("WorkOS API Key configured:", env.WORKOS_API_KEY ? "Yes" : "No");
-    console.log("WorkOS Client ID configured:", env.WORKOS_CLIENT_ID ? "Yes" : "No");
-    
-    organization = await workos.organizations.createOrganization({
+    console.log(
+      "WorkOS API Key configured:",
+      env.WORKOS_API_KEY ? "Yes" : "No"
+    );
+    console.log(
+      "WorkOS Client ID configured:",
+      env.WORKOS_CLIENT_ID ? "Yes" : "No"
+    );
+
+    const organization = await workos.organizations.createOrganization({
       name: organizationName,
     });
     console.log("Organization created:", organization.id);
+    return organization;
   } catch (error: unknown) {
-    let errorMsg = "Unknown error";
-    let statusCode = 500;
-    
-    if (error instanceof Error) {
-      errorMsg = error.message;
-      
-      // Handle network/fetch errors
-      if (
-        errorMsg.includes("fetch failed") ||
-        errorMsg.includes("NetworkError") ||
-        errorMsg.includes("ECONNREFUSED") ||
-        errorMsg.includes("ETIMEDOUT")
-      ) {
-        errorMsg = `Network error connecting to WorkOS API: ${errorMsg}. Please check your internet connection and WorkOS API key.`;
-      } else if (errorMsg.includes("401") || errorMsg.includes("Unauthorized")) {
-        errorMsg = `WorkOS API authentication failed. Please check your WORKOS_API_KEY in environment variables.`;
-        statusCode = 401;
-      } else if (errorMsg.includes("403") || errorMsg.includes("Forbidden")) {
-        errorMsg = `WorkOS API access forbidden. Please check your API key permissions.`;
-        statusCode = 403;
-      }
-    }
-    
-    // Log full error details for debugging
-    console.error("Failed to create WorkOS organization:", errorMsg);
-    console.error("Error details:", error);
-    
-    // Check if error object has additional properties
-    if (error && typeof error === "object") {
-      if ("status" in error) {
-        console.error("WorkOS API status:", error.status);
-      }
-      if ("code" in error) {
-        console.error("WorkOS API code:", error.code);
-      }
-      if ("requestId" in error) {
-        console.error("WorkOS request ID:", error.requestId);
-      }
-    }
-    
+    const { message, statusCode } = parseWorkOSError(error);
+    logWorkOSError(error, message);
+
     return NextResponse.json(
       {
-        error: `Failed to create organization: ${errorMsg}. Please check your WorkOS API configuration and network connection.`,
+        error: `Failed to create organization: ${message}. Please check your WorkOS API configuration and network connection.`,
       },
       { status: statusCode }
     );
   }
+}
 
-  // Try to create membership with admin role, fallback to no role if it fails
+function isRoleError(error: unknown): boolean {
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+  if ("code" in error) {
+    return error.code === "invalid_role";
+  }
+  if (error instanceof Error) {
+    return (
+      error.message.includes("invalid") ||
+      error.message.includes("role") ||
+      error.message.includes("The role is invalid")
+    );
+  }
+  return false;
+}
+
+async function createOrganizationMembership(
+  organizationId: string,
+  userId: string
+): Promise<NextResponse | null> {
   try {
     console.log("Creating organization membership with admin role");
     await workos.userManagement.createOrganizationMembership({
-      organizationId: organization.id,
+      organizationId,
       userId,
       roleSlug: "admin",
     });
     console.log("Organization membership created with admin role");
+    return null;
   } catch (roleError: unknown) {
-    // If admin role doesn't exist (invalid_role error), try without roleSlug
-    const isRoleError =
-      roleError &&
-      typeof roleError === "object" &&
-      ("code" in roleError
-        ? roleError.code === "invalid_role"
-        : roleError instanceof Error &&
-          (roleError.message.includes("invalid") ||
-            roleError.message.includes("role") ||
-            roleError.message.includes("The role is invalid")));
-
-    if (isRoleError) {
+    if (isRoleError(roleError)) {
       console.warn(
         "Admin role not found in WorkOS, creating membership without roleSlug (will use default role)"
       );
       try {
         await workos.userManagement.createOrganizationMembership({
-          organizationId: organization.id,
+          organizationId,
           userId,
         });
         console.log("Organization membership created without role");
+        return null;
       } catch (membershipError: unknown) {
         const membershipErrorMsg =
           membershipError instanceof Error
@@ -172,29 +226,50 @@ export const POST = async (req: NextRequest) => {
           { status: 500 }
         );
       }
-    } else {
-      const roleErrorMsg =
-        roleError instanceof Error ? roleError.message : "Unknown error";
-      console.error("Failed to create organization membership:", roleErrorMsg, roleError);
-      return NextResponse.json(
-        {
-          error: `Failed to create organization membership: ${roleErrorMsg}`,
-        },
-        { status: 500 }
-      );
     }
+
+    const roleErrorMsg =
+      roleError instanceof Error ? roleError.message : "Unknown error";
+    console.error(
+      "Failed to create organization membership:",
+      roleErrorMsg,
+      roleError
+    );
+    return NextResponse.json(
+      { error: `Failed to create organization membership: ${roleErrorMsg}` },
+      { status: 500 }
+    );
   }
+}
 
-  // Retrieve price ID from Stripe
-  // The Stripe look up key for the price *must* be the same as the subscription level string
-  let price: Stripe.ApiList<Stripe.Price>;
-
+async function getStripePrice(
+  subscriptionLevel: string
+): Promise<Stripe.Price | NextResponse> {
   try {
     console.log("Retrieving Stripe price for:", subscriptionLevel);
-    price = await stripe.prices.list({
+    const priceList = await stripe.prices.list({
       lookup_keys: [subscriptionLevel],
     });
-    console.log("Stripe price retrieved:", price.data.length, "prices found");
+    console.log(
+      "Stripe price retrieved:",
+      priceList.data.length,
+      "prices found"
+    );
+
+    if (!priceList.data[0]) {
+      console.error(
+        "No price found for subscription level:",
+        subscriptionLevel
+      );
+      return NextResponse.json(
+        {
+          error: `Price not found for subscription level: ${subscriptionLevel}. Please create a Stripe price with lookup key "${subscriptionLevel}". See STRIPE_SETUP.md for instructions.`,
+        },
+        { status: 404 }
+      );
+    }
+
+    return priceList.data[0];
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     console.error(
@@ -209,31 +284,22 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
+}
 
-  if (!price.data[0]) {
-    console.error(
-      "No price found for subscription level:",
-      subscriptionLevel
-    );
-    return NextResponse.json(
-      {
-        error: `Price not found for subscription level: ${subscriptionLevel}. Please create a Stripe price with lookup key "${subscriptionLevel}". See STRIPE_SETUP.md for instructions.`,
-      },
-      { status: 404 }
-    );
-  }
-
-  // Create Stripe customer
-  let customer;
+async function createStripeCustomer(
+  user: User,
+  organizationId: string
+): Promise<Stripe.Customer | NextResponse> {
   try {
     console.log("Creating Stripe customer for:", user.email);
-    customer = await stripe.customers.create({
+    const customer = await stripe.customers.create({
       email: user.email,
       metadata: {
-        workOSOrganizationId: organization.id,
+        workOSOrganizationId: organizationId,
       },
     });
     console.log("Stripe customer created:", customer.id);
+    return customer;
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     console.error("Failed to create Stripe customer:", errorMsg, error);
@@ -244,38 +310,45 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
+}
 
-  // Update WorkOS organization with Stripe customer ID
-  // This will allow WorkOS to automatically add entitlements to the access token
+async function updateOrganizationWithCustomer(
+  organizationId: string,
+  customerId: string
+): Promise<void> {
   try {
     console.log("Updating WorkOS organization with Stripe customer ID");
     await workos.organizations.updateOrganization({
-      organization: organization.id,
-      stripeCustomerId: customer.id,
+      organization: organizationId,
+      stripeCustomerId: customerId,
     });
     console.log("WorkOS organization updated");
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
-    console.error(
-      "Failed to update WorkOS organization:",
-      errorMsg,
-      error
-    );
-    // Don't fail the whole request if this fails, just log it
+    console.error("Failed to update WorkOS organization:", errorMsg, error);
     console.warn(
       "Continuing despite WorkOS organization update failure. Customer ID may not be linked."
     );
   }
+}
 
-  let session;
+async function createStripeCheckoutSession(params: {
+  customerId: string;
+  priceId: string;
+  organizationId: string;
+  userId: string;
+  subscriptionLevel: string;
+}): Promise<Stripe.Checkout.Session | NextResponse> {
+  const { customerId, priceId, organizationId, userId, subscriptionLevel } =
+    params;
   try {
     console.log("Creating Stripe checkout session");
-    session = await stripe.checkout.sessions.create({
-      customer: customer.id,
+    const session = await stripe.checkout.sessions.create({
+      customer: customerId,
       billing_address_collection: "auto",
       line_items: [
         {
-          price: price.data[0].id,
+          price: priceId,
           quantity: 1,
         },
       ],
@@ -283,12 +356,13 @@ export const POST = async (req: NextRequest) => {
       success_url: `${env.NEXT_PUBLIC_BASE_URL}/dashboard`,
       cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/pricing`,
       metadata: {
-        workOSOrganizationId: organization.id,
-        userId: userId,
-        subscriptionLevel: subscriptionLevel,
+        workOSOrganizationId: organizationId,
+        userId,
+        subscriptionLevel,
       },
     });
     console.log("Stripe checkout session created:", session.id);
+    return session;
   } catch (error: unknown) {
     const errorMsg = error instanceof Error ? error.message : "Unknown error";
     console.error("Failed to create Stripe checkout session:", errorMsg, error);
@@ -299,8 +373,71 @@ export const POST = async (req: NextRequest) => {
       { status: 500 }
     );
   }
+}
 
-  if (!session.url) {
+export const POST = async (req: NextRequest) => {
+  const bodyOrError = await parseAndValidateRequest(req);
+  if (bodyOrError instanceof NextResponse) {
+    return bodyOrError;
+  }
+
+  const envError = validateEnvironment();
+  if (envError) {
+    return envError;
+  }
+
+  const { userId, orgName, subscriptionLevel } = bodyOrError;
+
+  const userOrError = await getWorkOSUser(userId);
+  if (userOrError instanceof NextResponse) {
+    return userOrError;
+  }
+
+  const organizationName = generateOrganizationName(userOrError, orgName);
+
+  const organizationOrError = await createWorkOSOrganization(organizationName);
+  if (organizationOrError instanceof NextResponse) {
+    return organizationOrError;
+  }
+
+  const membershipError = await createOrganizationMembership(
+    organizationOrError.id,
+    userId
+  );
+  if (membershipError) {
+    return membershipError;
+  }
+
+  const priceOrError = await getStripePrice(subscriptionLevel);
+  if (priceOrError instanceof NextResponse) {
+    return priceOrError;
+  }
+
+  const customerOrError = await createStripeCustomer(
+    userOrError,
+    organizationOrError.id
+  );
+  if (customerOrError instanceof NextResponse) {
+    return customerOrError;
+  }
+
+  await updateOrganizationWithCustomer(
+    organizationOrError.id,
+    customerOrError.id
+  );
+
+  const sessionOrError = await createStripeCheckoutSession({
+    customerId: customerOrError.id,
+    priceId: priceOrError.id,
+    organizationId: organizationOrError.id,
+    userId,
+    subscriptionLevel,
+  });
+  if (sessionOrError instanceof NextResponse) {
+    return sessionOrError;
+  }
+
+  if (!sessionOrError.url) {
     console.error("Stripe checkout session created but no URL returned");
     return NextResponse.json(
       { error: "Checkout session created but no URL was returned" },
@@ -308,5 +445,5 @@ export const POST = async (req: NextRequest) => {
     );
   }
 
-  return NextResponse.json({ url: session.url });
+  return NextResponse.json({ url: sessionOrError.url });
 };

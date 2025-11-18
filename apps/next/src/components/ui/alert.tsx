@@ -1,5 +1,5 @@
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import type { HTMLAttributes, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -24,9 +24,9 @@ const Alert = ({
   variant,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLDivElement> &
+}: HTMLAttributes<HTMLDivElement> &
   VariantProps<typeof alertVariants> & {
-    ref?: React.RefObject<HTMLDivElement | null>;
+    ref?: RefObject<HTMLDivElement | null>;
   }) => (
   <div
     className={cn(alertVariants({ variant }), className)}
@@ -41,8 +41,8 @@ const AlertTitle = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLHeadingElement> & {
-  ref?: React.RefObject<HTMLParagraphElement | null>;
+}: HTMLAttributes<HTMLHeadingElement> & {
+  ref?: RefObject<HTMLParagraphElement | null>;
 }) => (
   <h5
     className={cn("mb-1 font-medium leading-none tracking-tight", className)}
@@ -56,8 +56,8 @@ const AlertDescription = ({
   className,
   ref,
   ...props
-}: React.HTMLAttributes<HTMLParagraphElement> & {
-  ref?: React.RefObject<HTMLParagraphElement | null>;
+}: HTMLAttributes<HTMLParagraphElement> & {
+  ref?: RefObject<HTMLParagraphElement | null>;
 }) => (
   <div
     className={cn("text-sm [&_p]:leading-relaxed", className)}

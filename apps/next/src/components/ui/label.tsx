@@ -2,7 +2,7 @@
 
 import * as LabelPrimitive from "@radix-ui/react-label";
 import { cva, type VariantProps } from "class-variance-authority";
-import type * as React from "react";
+import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
 
 import { cn } from "@/lib/utils";
 
@@ -14,9 +14,9 @@ const Label = ({
   className,
   ref,
   ...props
-}: React.ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
+}: ComponentPropsWithoutRef<typeof LabelPrimitive.Root> &
   VariantProps<typeof labelVariants> & {
-    ref?: React.RefObject<React.ElementRef<typeof LabelPrimitive.Root> | null>;
+    ref?: RefObject<ElementRef<typeof LabelPrimitive.Root> | null>;
   }) => (
   <LabelPrimitive.Root
     className={cn(labelVariants(), className)}
