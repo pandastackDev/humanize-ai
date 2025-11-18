@@ -49,11 +49,15 @@ function getApiBaseUrl(): string {
  * Humanize text using the backend API.
  *
  * @param request - Humanize request parameters
+ * @param userId - WorkOS user ID (optional, for subscription checks)
+ * @param organizationId - WorkOS organization ID (optional)
  * @returns Promise resolving to humanized text response
  * @throws Error if the API call fails
  */
 export async function humanizeText(
-  request: HumanizeRequest
+  request: HumanizeRequest,
+  userId?: string,
+  organizationId?: string
 ): Promise<HumanizeResponse> {
   const baseUrl = getApiBaseUrl();
   const url = `${baseUrl}/api/v1/humanize`;
@@ -61,11 +65,21 @@ export async function humanizeText(
   try {
     console.log("Fetching humanize text from:", url);
     console.log("Request:", request);
+
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    if (userId) {
+      headers["X-User-Id"] = userId;
+    }
+    if (organizationId) {
+      headers["X-Organization-Id"] = organizationId;
+    }
+
     const response = await fetch(url, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(request),
     });
 

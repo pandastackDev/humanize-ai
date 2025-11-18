@@ -13,7 +13,12 @@ import { Header } from "./components/layout/header";
 import { QueryProvider } from "./providers/query-provider";
 import "./globals.css";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "arial"],
+  adjustFontFallback: true,
+});
 
 export const metadata: Metadata = {
   title: "Humanize",
@@ -23,11 +28,17 @@ export const metadata: Metadata = {
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["system-ui", "arial"],
+  adjustFontFallback: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  fallback: ["monospace", "Courier New"],
+  adjustFontFallback: true,
 });
 
 export default function RootLayout({
@@ -46,14 +57,14 @@ export default function RootLayout({
               <DynamicBackground>
                 <NextTopLoader showSpinner={false} />
                 <div className="relative z-1 flex min-h-screen flex-col">
-                  <Header />
-                  <div className="relative z-1 grow">
-                    <AuthKitProvider>
-                      <Impersonation />
+                  <AuthKitProvider>
+                    <Impersonation />
+                    <Header />
+                    <div className="relative z-1 grow">
                       <main className="relative z-1">{children}</main>
-                    </AuthKitProvider>
-                  </div>
-                  <Footer />
+                    </div>
+                    <Footer />
+                  </AuthKitProvider>
                 </div>
               </DynamicBackground>
             </div>

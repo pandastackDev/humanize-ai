@@ -40,7 +40,11 @@ export async function SignInButton({
   }
 
   return (
-    <Button asChild size={large ? "lg" : "default"}>
+    <Button
+      asChild
+      className="font-[900] text-[14px] text-white"
+      size={large ? "lg" : "default"}
+    >
       <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link>
     </Button>
   );

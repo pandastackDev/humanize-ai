@@ -9,7 +9,25 @@ export default defineSchema({
   organizations: defineTable({
     workos_id: v.string(),
     name: v.string(),
-  }),
+    stripe_customer_id: v.optional(v.string()),
+    stripe_subscription_id: v.optional(v.string()),
+    subscription_plan: v.optional(
+      v.union(v.literal("free"), v.literal("basic"), v.literal("pro"), v.literal("ultra"))
+    ),
+    subscription_status: v.optional(
+      v.union(
+        v.literal("active"),
+        v.literal("cancelled"),
+        v.literal("past_due"),
+        v.literal("unpaid"),
+        v.literal("trialing")
+      )
+    ),
+    billing_period: v.optional(v.union(v.literal("monthly"), v.literal("annual"))),
+    current_period_end: v.optional(v.number()),
+  })
+    .index("by_stripe_customer_id", ["stripe_customer_id"])
+    .index("workos_id", ["workos_id"]),
   organizationMemberships: defineTable({
     workos_id: v.string(),
     user_id: v.string(), // WorkOS user ID
@@ -20,4 +38,14 @@ export default defineSchema({
     .index("by_user", ["user_id"])
     .index("by_organization", ["organization_id"])
     .index("by_workos_id", ["workos_id"]),
+  usage: defineTable({
+    organization_id: v.string(),
+    user_id: v.string(),
+    year: v.number(),
+    month: v.number(), // 1-12
+    words_used: v.number(),
+    requests_count: v.number(),
+  })
+    .index("by_organization_month", ["organization_id", "year", "month"])
+    .index("by_user_month", ["user_id", "year", "month"]),
 });

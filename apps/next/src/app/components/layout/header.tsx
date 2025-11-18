@@ -25,13 +25,7 @@ export async function Header() {
   }
 
   return (
-    <header
-      className="sticky top-0 z-50 w-full overflow-visible border-b backdrop-blur supports-backdrop-filter:bg-[var(--header-bg)]/80"
-      style={{
-        backgroundColor: "var(--header-bg)",
-        borderColor: "var(--header-bg)",
-      }}
-    >
+    <header className="sticky top-0 z-50 w-full overflow-visible bg-white backdrop-blur supports-backdrop-filter:bg-white/80 dark:bg-white">
       <div className="container relative flex h-16 items-center justify-between overflow-visible px-4 md:px-6">
         <div className="flex items-center">
           <Link

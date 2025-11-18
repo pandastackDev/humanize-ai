@@ -1,9 +1,9 @@
 import { withAuth } from "@workos-inc/authkit-nextjs";
 import { HumanizeEditor } from "./components/humanize-editor";
-import { SignInButton } from "./components/sign-in-button2";
+import { SignInButtonClient } from "./components/sign-in-button-client";
 
 export default async function Home() {
-  const { user } = await withAuth();
+  const { user, organizationId } = await withAuth();
 
   if (user) {
     return (
@@ -18,7 +18,7 @@ export default async function Home() {
               Plagiarism-Free Content
             </p>
           </div>
-          <HumanizeEditor />
+          <HumanizeEditor userId={user.id} organizationId={organizationId} />
         </div>
       </div>
     );
@@ -49,7 +49,7 @@ export default async function Home() {
               </p>
             </div>
             <div className="mt-2">
-              <SignInButton large />
+              <SignInButtonClient large />
             </div>
           </div>
         </div>

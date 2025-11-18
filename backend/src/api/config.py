@@ -59,6 +59,30 @@ class Settings(BaseSettings):
     MAX_CHUNK_TOKENS: int = 1000
     MIN_CHUNK_TOKENS: int = 500
 
+    # Stripe Configuration
+    STRIPE_API_KEY: str = ""
+    STRIPE_WEBHOOK_SECRET: str = ""
+
+    # Subscription Limits (words per month)
+    SUBSCRIPTION_LIMITS: dict[str, dict[str, int]] = {
+        "free": {"words": 2500, "request_limit": 10},
+        "basic": {"words": 5000, "request_limit": 100},
+        "pro": {"words": 15000, "request_limit": 500},
+        "ultra": {"words": 30000, "request_limit": 1000},
+    }
+
+    # Request Limits (words per request)
+    REQUEST_LIMITS: dict[str, int] = {
+        "free": 500,
+        "basic": 500,
+        "pro": 1500,
+        "ultra": 3000,
+    }
+
+    # Convex Backend URL (for subscription queries)
+    CONVEX_URL: str = ""
+    CONVEX_DEPLOYMENT_KEY: str = ""
+
     model_config = {
         "case_sensitive": True,
         # Removed "env_file" - we load .env manually above

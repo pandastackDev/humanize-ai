@@ -3,12 +3,15 @@ Humanize endpoint for text rewriting and humanization.
 """
 
 import logging
+import re
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Header, HTTPException
 
-from api.models import HumanizeRequest, HumanizeResponse, LengthMode
+from api.config import settings
+from api.models import HumanizeRequest, HumanizeResponse, LengthMode, SubscriptionCheckRequest
 from api.services import HumanizationService
 from api.utils.sanitization import InputSanitizer
+from api.v1.endpoints.subscriptions import check_subscription
 
 logger = logging.getLogger(__name__)
 
@@ -26,27 +29,41 @@ def get_humanization_service() -> HumanizationService:
     return _humanization_service
 
 
+def count_words(text: str) -> int:
+    """Count words in text."""
+    # Simple word count using whitespace and punctuation
+    words = re.findall(r"\b\w+\b", text)
+    return len(words)
+
+
 @router.post("/", response_model=HumanizeResponse)
-async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
+async def humanize_text(
+    request: HumanizeRequest,
+    x_user_id: str | None = Header(None, alias="X-User-Id"),
+    x_organization_id: str | None = Header(None, alias="X-Organization-Id"),
+) -> HumanizeResponse:
     """
     Humanize AI-generated text to make it sound more natural and human-like.
 
     This endpoint processes text through:
-    1. Language detection (auto or provided)
-    2. Text chunking (if needed for long texts)
-    3. Style conditioning (if style_sample provided)
-    4. LLM rewriting (OpenRouter -> OpenAI/Anthropic fallback)
-    5. Smoothing and reassembly
-    6. Semantic/style validation
+    1. Subscription and usage limit checks
+    2. Language detection (auto or provided)
+    3. Text chunking (if needed for long texts)
+    4. Style conditioning (if style_sample provided)
+    5. LLM rewriting (OpenRouter -> OpenAI/Anthropic fallback)
+    6. Smoothing and reassembly
+    7. Semantic/style validation
 
     Args:
         request: HumanizeRequest containing input text and parameters
+        x_user_id: WorkOS user ID (optional, required for subscription checks)
+        x_organization_id: WorkOS organization ID (optional)
 
     Returns:
         HumanizeResponse with humanized text and metrics
 
     Raises:
-        HTTPException: If humanization fails
+        HTTPException: If humanization fails or limits are exceeded
     """
     try:
         logger.info("=" * 80)
@@ -59,6 +76,64 @@ async def humanize_text(request: HumanizeRequest) -> HumanizeResponse:
         logger.info(f"Readability Level: {request.readability_level or 'Not specified'}")
         logger.info(f"Language: {request.language or 'Auto-detect'}")
         logger.info(f"Style Sample: {'Provided' if request.style_sample else 'Not provided'}")
+        logger.info(f"User ID: {x_user_id or 'Not provided'}")
+        logger.info(f"Organization ID: {x_organization_id or 'Not provided'}")
+
+        # Count words in input text
+        input_word_count = count_words(request.input_text)
+
+        # Check subscription limits if user_id is provided
+        if x_user_id:
+            try:
+                subscription_check = SubscriptionCheckRequest(
+                    user_id=x_user_id, organization_id=x_organization_id
+                )
+                subscription_info = await check_subscription(subscription_check)
+
+                # Check word limit per request
+                request_limit = settings.REQUEST_LIMITS.get(
+                    subscription_info.plan.value, settings.REQUEST_LIMITS["free"]
+                )
+                if input_word_count > request_limit:
+                    raise HTTPException(
+                        status_code=403,
+                        detail=(
+                            f"Request limit exceeded. Your plan ({subscription_info.plan.value}) "
+                            f"allows up to {request_limit} words per request, but you provided {input_word_count} words. "
+                            f"Please reduce the text length or upgrade your plan."
+                        ),
+                    )
+
+                # Check monthly word limit
+                if subscription_info.words_remaining < input_word_count:
+                    raise HTTPException(
+                        status_code=403,
+                        detail=(
+                            f"Monthly limit exceeded. You have {subscription_info.words_remaining} words remaining "
+                            f"this month, but your request requires {input_word_count} words. "
+                            f"Please upgrade your plan or wait until next billing period."
+                        ),
+                    )
+
+                logger.info(f"Subscription Check: Plan={subscription_info.plan.value}, "
+                          f"Words Used={subscription_info.words_used}/{subscription_info.word_limit}, "
+                          f"Remaining={subscription_info.words_remaining}")
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.warning(f"Subscription check failed, proceeding anyway: {e}")
+                # Continue with processing even if subscription check fails
+        else:
+            # No user ID provided - use default free limits
+            request_limit = settings.REQUEST_LIMITS["free"]
+            if input_word_count > request_limit:
+                raise HTTPException(
+                    status_code=403,
+                    detail=(
+                        f"Request limit exceeded. Free tier allows up to {request_limit} words per request. "
+                        f"Please sign in and upgrade your plan."
+                    ),
+                )
 
         # Step 2: Input Sanitization
         sanitizer = InputSanitizer()

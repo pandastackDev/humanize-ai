@@ -1,7 +1,7 @@
 "use client";
 
 import type { User } from "@workos-inc/node";
-import { User as UserIcon } from "lucide-react";
+import { CreditCard, Settings, User as UserIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -93,6 +93,27 @@ export function UserNav({
             </DropdownMenuGroup>
           </>
         )}
+        <DropdownMenuSeparator />
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href="/pricing" onClick={() => setOpen(false)}>
+              <CreditCard className="mr-2 h-4 w-4" />
+              Pricing
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/profile" onClick={() => setOpen(false)}>
+              <UserIcon className="mr-2 h-4 w-4" />
+              Profile Settings
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard/settings" onClick={() => setOpen(false)}>
+              <Settings className="mr-2 h-4 w-4" />
+              Settings
+            </Link>
+          </DropdownMenuItem>
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <form action={signOut} className="w-full">

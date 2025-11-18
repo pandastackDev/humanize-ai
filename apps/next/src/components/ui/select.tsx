@@ -49,7 +49,7 @@ const SelectScrollUpButton = ({
 }) => (
   <SelectPrimitive.ScrollUpButton
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-pointer items-center justify-center py-1",
       className
     )}
     ref={ref}
@@ -71,7 +71,7 @@ const SelectScrollDownButton = ({
 }) => (
   <SelectPrimitive.ScrollDownButton
     className={cn(
-      "flex cursor-default items-center justify-center py-1",
+      "flex cursor-pointer items-center justify-center py-1",
       className
     )}
     ref={ref}

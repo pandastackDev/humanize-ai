@@ -57,53 +57,90 @@ async function generateStripeProducts(stripeApiKey: string) {
   console.log("\nGenerating Stripe test mode products and prices...");
 
   try {
+    // Monthly plans
     await stripe.prices.create({
       currency: "usd",
-      unit_amount: 500,
+      unit_amount: 599, // $5.99
       recurring: {
         interval: "month",
       },
       product_data: {
-        name: "Basic",
+        name: "Basic Monthly",
       },
-      lookup_key: "basic",
+      lookup_key: "basic-monthly",
     });
 
     await stripe.prices.create({
       currency: "usd",
-      unit_amount: 1000,
+      unit_amount: 1999, // $19.99
       recurring: {
         interval: "month",
       },
       product_data: {
-        name: "Standard",
+        name: "Pro Monthly",
       },
-      lookup_key: "standard",
+      lookup_key: "pro-monthly",
     });
 
-    const enterprisePrice = await stripe.prices.create({
+    await stripe.prices.create({
       currency: "usd",
-      unit_amount: 10_000,
+      unit_amount: 3999, // $39.99
       recurring: {
         interval: "month",
       },
       product_data: {
-        name: "Enterprise",
+        name: "Ultra Monthly",
       },
-      lookup_key: "enterprise",
+      lookup_key: "ultra-monthly",
     });
 
-    const auditLogsFeature = await stripe.entitlements.features.create({
-      name: "Audit logs",
-      lookup_key: "audit-logs",
+    // Annual plans (50% off) - charged upfront for full year
+    // Basic: $2.99/month * 12 = $35.88/year
+    await stripe.prices.create({
+      currency: "usd",
+      unit_amount: 3588, // $35.88 (2.99 * 12) charged annually upfront
+      recurring: {
+        interval: "year",
+      },
+      product_data: {
+        name: "Basic Annual",
+      },
+      lookup_key: "basic-annual",
     });
 
-    await stripe.products.createFeature(enterprisePrice.product as string, {
-      entitlement_feature: auditLogsFeature.id,
+    // Pro: $9.99/month * 12 = $119.88/year
+    await stripe.prices.create({
+      currency: "usd",
+      unit_amount: 11_988, // $119.88 (9.99 * 12) charged annually upfront
+      recurring: {
+        interval: "year",
+      },
+      product_data: {
+        name: "Pro Annual",
+      },
+      lookup_key: "pro-annual",
+    });
+
+    // Ultra: $19.99/month * 12 = $239.88/year
+    await stripe.prices.create({
+      currency: "usd",
+      unit_amount: 23_988, // $239.88 (19.99 * 12) charged annually upfront
+      recurring: {
+        interval: "year",
+      },
+      product_data: {
+        name: "Ultra Annual",
+      },
+      lookup_key: "ultra-annual",
     });
 
     console.log(
       chalk.green("Stripe test mode products and prices generated successfully")
+    );
+    console.log(
+      chalk.green(
+        "Created 6 prices: basic-monthly, basic-annual, pro-monthly, pro-annual, ultra-monthly, ultra-annual"
+      )
     );
   } catch (error) {
     console.log(

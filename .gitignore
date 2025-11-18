@@ -65,6 +65,7 @@ web-build/
 **/*/.expo
 
 **/*/.next
+apps/next/public
 
 apps/expo/ios
 apps/expo/android

@@ -36,7 +36,9 @@ export function SignInButtonClient({ large }: { large?: boolean }) {
 
   return (
     <Button asChild size={large ? "lg" : "default"}>
-      <Link href="/login">Sign In {large && "with AuthKit"}</Link>
+      <Link href="/login">
+        Sign In {large && "with AuthKit"}
+      </Link>
     </Button>
   );
 }

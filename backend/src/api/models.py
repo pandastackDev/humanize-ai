@@ -267,3 +267,68 @@ class HumanizeResponse(BaseModel):
             ]
         }
     )
+
+
+# ============================================================================
+# Subscription Models
+# ============================================================================
+
+
+class SubscriptionPlan(str, Enum):
+    """Subscription plan types"""
+
+    BASIC = "basic"
+    PRO = "pro"
+    ULTRA = "ultra"
+    FREE = "free"
+
+
+class SubscriptionStatus(str, Enum):
+    """Subscription status"""
+
+    ACTIVE = "active"
+    CANCELLED = "cancelled"
+    PAST_DUE = "past_due"
+    UNPAID = "unpaid"
+    TRIALING = "trialing"
+
+
+class SubscriptionCheckRequest(BaseModel):
+    """Request model for checking subscription status"""
+
+    user_id: str = Field(..., description="WorkOS user ID")
+    organization_id: str | None = Field(None, description="WorkOS organization ID")
+
+
+class SubscriptionInfo(BaseModel):
+    """Subscription information response"""
+
+    plan: SubscriptionPlan
+    status: SubscriptionStatus
+    word_limit: int
+    words_used: int
+    words_remaining: int
+    request_limit: int
+    requests_used: int
+    billing_period: str  # "monthly" or "annual"
+    current_period_end: str | None = None
+    stripe_customer_id: str | None = None
+    stripe_subscription_id: str | None = None
+
+
+class UsageTrackingRequest(BaseModel):
+    """Request model for tracking usage"""
+
+    user_id: str = Field(..., description="WorkOS user ID")
+    organization_id: str | None = Field(None, description="WorkOS organization ID")
+    words: int = Field(..., gt=0, description="Number of words used")
+    request_type: str = Field(default="humanize", description="Type of request")
+
+
+class UsageTrackingResponse(BaseModel):
+    """Response model for usage tracking"""
+
+    success: bool
+    words_used: int
+    words_remaining: int
+    limit_exceeded: bool

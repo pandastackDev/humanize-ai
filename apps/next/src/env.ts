@@ -51,6 +51,15 @@ export const env = createEnv({
      */
     STRIPE_API_KEY: z.string().min(1).startsWith("sk_"),
 
+    /**
+     * Stripe Webhook Secret
+     * Used to verify Stripe webhook signatures
+     * Format: whsec_...
+     * Get from: https://dashboard.stripe.com/webhooks
+     * @example "whsec_..."
+     */
+    STRIPE_WEBHOOK_SECRET: z.string().optional(),
+
     // ============================================
     // Convex Backend Configuration
     // ============================================
@@ -123,6 +132,19 @@ export const env = createEnv({
      * @example "https://academic-terrier-140.convex.cloud"
      */
     NEXT_PUBLIC_CONVEX_URL: z.url(),
+
+    // ============================================
+    // Stripe Publishable Key (Client-side)
+    // ============================================
+
+    /**
+     * Stripe Publishable Key (Public)
+     * Used for client-side Stripe operations (if needed)
+     * Format: pk_test_... (test) or pk_live_... (production)
+     * ⚠️ This is safe to expose to the browser
+     * @example "pk_test_51PcLUhAaDFStRNr01FGoJsSfcVE3ZbV..."
+     */
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string().min(1).startsWith("pk_").optional(),
   },
 
   /**
@@ -138,6 +160,7 @@ export const env = createEnv({
     WORKOS_CLIENT_ID: process.env.WORKOS_CLIENT_ID,
     WORKOS_COOKIE_PASSWORD: process.env.WORKOS_COOKIE_PASSWORD,
     STRIPE_API_KEY: process.env.STRIPE_API_KEY,
+    STRIPE_WEBHOOK_SECRET: process.env.STRIPE_WEBHOOK_SECRET,
     CONVEX_DEPLOYMENT: process.env.CONVEX_DEPLOYMENT,
     NODE_ENV: process.env.NODE_ENV,
 
@@ -149,6 +172,8 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_WORKOS_REDIRECT_URI,
     NEXT_PUBLIC_PYTHON_API_URL: process.env.NEXT_PUBLIC_PYTHON_API_URL,
     NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   },
 
   /**

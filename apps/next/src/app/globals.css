@@ -28,7 +28,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, sans-serif;
 } */
 
 html {
@@ -47,16 +47,17 @@ body {
   overflow-y: auto;
   width: 100%;
   position: relative;
+  font-family: Inter, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   /* Improve touch targets on mobile */
   touch-action: manipulation;
 }
-
-a {
-  color: inherit;
-  text-decoration: none;
+* {
+  font-family: Inter, sans-serif;
 }
+
+
 
 @media (prefers-color-scheme: dark) {
   html {
@@ -66,7 +67,6 @@ a {
 
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
   --color-background: var(--background);
@@ -112,7 +112,7 @@ a {
   --card-foreground: oklch(0.129 0.042 264.695);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.129 0.042 264.695);
-  --primary: oklch(0.208 0.042 265.755);
+  --primary: rgb(20,20,20);
   --primary-foreground: oklch(0.984 0.003 247.858);
   --secondary: oklch(0.968 0.007 247.896);
   --secondary-foreground: oklch(0.208 0.042 265.755);
@@ -148,7 +148,7 @@ a {
   --card-foreground: oklch(0.984 0.003 247.858);
   --popover: oklch(0.208 0.042 265.755);
   --popover-foreground: oklch(0.984 0.003 247.858);
-  --primary: oklch(0.929 0.013 255.508);
+  --primary: rgb(20,20,20);
   --primary-foreground: oklch(0.208 0.042 265.755);
   --secondary: oklch(0.279 0.041 260.031);
   --secondary-foreground: oklch(0.984 0.003 247.858);
@@ -180,16 +180,17 @@ a {
     @apply border-border outline-ring/50;
   }
   body {
-    @apply text-foreground;
+    @apply text-foreground font-medium;
     background-color: color-mix(in oklab, var(--background) 60%, transparent);
   }
 
   /* Improve touch targets for mobile */
-  button,
-  a,
-  [role="button"],
-  input[type="button"],
-  input[type="submit"] {
+  /* Only apply min-height to buttons without explicit height or min-h-0 class */
+  button:not([class*="min-h-0"]):not([class*="h-"]),
+  a:not([class*="min-h-0"]):not([class*="h-"]),
+  [role="button"]:not([class*="min-h-0"]):not([class*="h-"]),
+  input[type="button"]:not([class*="min-h-0"]):not([class*="h-"]),
+  input[type="submit"]:not([class*="min-h-0"]):not([class*="h-"]) {
     min-height: 44px;
     min-width: 44px;
   }
@@ -223,6 +224,19 @@ a {
   nav[class*="navigation"],
   header nav {
     overflow: visible !important;
+  }
+
+  /* Hide "Loading..." text from WorkOS OrganizationSwitcher widget */
+  [data-workos-widget] button,
+  [class*="workos"] button {
+    position: relative;
+  }
+  
+  /* Hide any element containing "Loading" text using a more specific approach */
+  header button[aria-label*="Loading"],
+  header [aria-label*="Loading"],
+  header button:empty::before {
+    display: none !important;
   }
 }
 

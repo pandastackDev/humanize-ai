@@ -50,16 +50,6 @@ export const LogoNext = () => (
     style={{ color: "currentcolor" }}
   >
     <g clipPath="url(#clip0_53_108)">
-      <circle
-        cx="8"
-        cy="8"
-        r="7.375"
-        fill="black"
-        stroke="var(--ds-gray-1000)"
-        strokeWidth="1.25"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      ></circle>
       <path
         d="M10.63 11V5"
         stroke="url(#paint0_linear_53_1080o22379mo)"
