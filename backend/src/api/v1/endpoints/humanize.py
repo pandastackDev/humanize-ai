@@ -115,9 +115,11 @@ async def humanize_text(
                         ),
                     )
 
-                logger.info(f"Subscription Check: Plan={subscription_info.plan.value}, "
-                          f"Words Used={subscription_info.words_used}/{subscription_info.word_limit}, "
-                          f"Remaining={subscription_info.words_remaining}")
+                logger.info(
+                    f"Subscription Check: Plan={subscription_info.plan.value}, "
+                    f"Words Used={subscription_info.words_used}/{subscription_info.word_limit}, "
+                    f"Remaining={subscription_info.words_remaining}"
+                )
             except HTTPException:
                 raise
             except Exception as e:

@@ -23,9 +23,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-async def get_subscription_from_convex(
-    user_id: str, organization_id: str | None
-) -> dict | None:
+async def get_subscription_from_convex(user_id: str, organization_id: str | None) -> dict | None:
     """
     Query Convex to get subscription information.
 
@@ -74,9 +72,7 @@ async def get_subscription_from_convex(
     return None
 
 
-async def get_usage_from_convex(
-    user_id: str, organization_id: str | None
-) -> dict[str, int]:
+async def get_usage_from_convex(user_id: str, organization_id: str | None) -> dict[str, int]:
     """
     Query Convex to get usage information for current month.
 
@@ -153,23 +149,17 @@ async def check_subscription(
         )
 
         # Default to free plan if no subscription found
-        plan_name = (
-            subscription_data.get("plan", "free") if subscription_data else "free"
-        )
+        plan_name = subscription_data.get("plan", "free") if subscription_data else "free"
         plan = SubscriptionPlan(plan_name.lower())
 
-        status_str = (
-            subscription_data.get("status", "active") if subscription_data else "active"
-        )
+        status_str = subscription_data.get("status", "active") if subscription_data else "active"
         try:
             status = SubscriptionStatus(status_str.lower())
         except ValueError:
             status = SubscriptionStatus.ACTIVE
 
         billing_period = (
-            subscription_data.get("billing_period", "monthly")
-            if subscription_data
-            else "monthly"
+            subscription_data.get("billing_period", "monthly") if subscription_data else "monthly"
         )
 
         # Get usage from Convex
@@ -198,14 +188,18 @@ async def check_subscription(
                 if subscription_data and subscription_data.get("current_period_end")
                 else None
             ),
-            stripe_customer_id=subscription_data.get("stripe_customer_id") if subscription_data else None,
+            stripe_customer_id=subscription_data.get("stripe_customer_id")
+            if subscription_data
+            else None,
             stripe_subscription_id=(
                 subscription_data.get("stripe_subscription_id") if subscription_data else None
             ),
         )
     except Exception as e:
         logger.error(f"Error checking subscription: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to check subscription: {str(e)}") from e
+        raise HTTPException(
+            status_code=500, detail=f"Failed to check subscription: {str(e)}"
+        ) from e
 
 
 @router.post("/usage", response_model=UsageTrackingResponse)
@@ -247,4 +241,3 @@ async def track_usage(request: UsageTrackingRequest) -> UsageTrackingResponse:
     except Exception as e:
         logger.error(f"Error tracking usage: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to track usage: {str(e)}") from e
-

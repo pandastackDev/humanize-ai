@@ -30,9 +30,7 @@ DETECTOR_ACCESS = {
 }
 
 
-async def get_organization_from_convex(
-    organization_id: str | None
-) -> dict | None:
+async def get_organization_from_convex(organization_id: str | None) -> dict | None:
     """
     Query Convex to get organization information including word balance.
 
@@ -68,9 +66,7 @@ async def get_organization_from_convex(
     return None
 
 
-async def get_subscription_from_convex(
-    user_id: str, organization_id: str | None
-) -> dict | None:
+async def get_subscription_from_convex(user_id: str, organization_id: str | None) -> dict | None:
     """
     Query Convex to get subscription information.
 
@@ -120,39 +116,31 @@ async def get_subscription_from_convex(
 
 
 @router.get("/status")
-async def get_billing_status(
-    user_id: str | None = None, organization_id: str | None = None
-):
+async def get_billing_status(user_id: str | None = None, organization_id: str | None = None):
     """
     Get billing status for frontend.
-    
+
     Returns subscription plan, limits, detector access, and status.
-    
+
     Args:
         user_id: WorkOS user ID (query parameter)
         organization_id: WorkOS organization ID (query parameter, optional)
-    
+
     Returns:
         Dictionary with billing status information
     """
     if not user_id:
-        raise HTTPException(
-            status_code=400, detail="user_id query parameter is required"
-        )
+        raise HTTPException(status_code=400, detail="user_id query parameter is required")
 
     try:
         # Get subscription info from Convex
         subscription_data = await get_subscription_from_convex(user_id, organization_id)
 
         # Default to free plan if no subscription found
-        plan_name = (
-            subscription_data.get("plan", "free") if subscription_data else "free"
-        )
+        plan_name = subscription_data.get("plan", "free") if subscription_data else "free"
         plan = plan_name.lower()
 
-        status_str = (
-            subscription_data.get("status", "active") if subscription_data else "active"
-        )
+        status_str = subscription_data.get("status", "active") if subscription_data else "active"
         status = status_str.lower()
 
         # Check if subscription is active
@@ -179,7 +167,9 @@ async def get_billing_status(
             "max_request_size": max_request_size,
             "detectors": detectors,
             "current_period_end": current_period_end,
-            "billing_period": subscription_data.get("billing_period", "monthly") if subscription_data else "monthly",
+            "billing_period": subscription_data.get("billing_period", "monthly")
+            if subscription_data
+            else "monthly",
         }
     except HTTPException:
         raise
@@ -191,24 +181,20 @@ async def get_billing_status(
 
 
 @router.get("/word-balance")
-async def get_word_balance(
-    organization_id: str | None = None
-):
+async def get_word_balance(organization_id: str | None = None):
     """
     Get word balance for an organization.
-    
+
     Returns the one-time purchased word balance.
-    
+
     Args:
         organization_id: WorkOS organization ID (query parameter, required)
-    
+
     Returns:
         Dictionary with word balance information
     """
     if not organization_id:
-        raise HTTPException(
-            status_code=400, detail="organization_id query parameter is required"
-        )
+        raise HTTPException(status_code=400, detail="organization_id query parameter is required")
 
     try:
         # Get organization info from Convex
@@ -231,8 +217,4 @@ async def get_word_balance(
         raise
     except Exception as e:
         logger.error(f"Error getting word balance: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Failed to get word balance: {str(e)}"
-        ) from e
-
-
+        raise HTTPException(status_code=500, detail=f"Failed to get word balance: {str(e)}") from e
