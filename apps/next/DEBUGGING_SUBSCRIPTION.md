@@ -87,3 +87,5 @@ The subscribe route now:
    - Try subscribing again
    - Check console logs for detailed error information
 
+
+

@@ -4,7 +4,6 @@ import {
   Impersonation,
 } from "@workos-inc/authkit-nextjs/components";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import { DynamicBackground } from "./components/layout/dynamic-background";
@@ -13,33 +12,10 @@ import { Header } from "./components/layout/header";
 import { QueryProvider } from "./providers/query-provider";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["system-ui", "arial"],
-  adjustFontFallback: true,
-});
-
 export const metadata: Metadata = {
   title: "Humanize",
   description: "Humanize is a platform for ... ",
 };
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["system-ui", "arial"],
-  adjustFontFallback: true,
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  display: "swap",
-  fallback: ["monospace", "Courier New"],
-  adjustFontFallback: true,
-});
 
 export default function RootLayout({
   children,
@@ -48,9 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html className="overflow-x-hidden" lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.className} ${geistSans.variable} ${geistMono.variable} overflow-x-hidden bg-background antialiased`}
-      >
+      <body className="overflow-x-hidden bg-background antialiased">
         <QueryProvider>
           <ThemeProvider attribute="class" defaultTheme="dark">
             <div className="min-h-screen bg-background">

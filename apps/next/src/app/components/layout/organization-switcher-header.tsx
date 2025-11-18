@@ -2,7 +2,7 @@
 
 import { DropdownMenu } from "@radix-ui/themes";
 import { OrganizationSwitcher, WorkOsWidgets } from "@workos-inc/widgets";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AddTeamModal } from "./add-team-modal";
 
 type OrganizationSwitcherHeaderProps = {
@@ -17,67 +17,61 @@ export function OrganizationSwitcherHeader({
   onCreateTeam,
 }: OrganizationSwitcherHeaderProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [widgetReady, setWidgetReady] = useState(false);
+  const widgetRef = useRef<HTMLDivElement>(null);
 
   // Hide any "Loading..." text from WorkOS widgets in the header
   useEffect(() => {
-    const hideLoadingText = () => {
-      const header = document.querySelector("header");
-      if (!header) return;
+    if (!widgetRef.current) return;
 
-      // Only search within the header for better performance
-      const allElements = header.querySelectorAll("*");
-      allElements.forEach((element) => {
-        const text = element.textContent?.trim();
-        if (text === "Loading..." || text === "Loading") {
-          // Hide the element if it's a button or within a WorkOS widget
-          const isButton = element.tagName === "BUTTON" || element.closest("button");
-          const isWorkOSWidget = 
-            element.closest("[data-workos-widget]") ||
-            element.closest("[class*='workos']") ||
-            element.closest("[class*='WorkOS']");
-          
-          if (isButton || isWorkOSWidget) {
-            (element as HTMLElement).style.display = "none";
-          }
-        }
-      });
+    const isWidgetLoaded = () => {
+      const text = widgetRef.current?.innerText?.trim().toLowerCase();
+      if (text && !text.startsWith("loading")) {
+        setWidgetReady(true);
+        return true;
+      }
+      return false;
     };
 
-    // Run immediately
-    hideLoadingText();
-    
-    // Observe for DOM changes only within the header
-    const header = document.querySelector("header");
-    if (header) {
-      const observer = new MutationObserver(hideLoadingText);
-      observer.observe(header, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-      });
-
-      return () => {
-        observer.disconnect();
-      };
+    if (isWidgetLoaded()) {
+      return;
     }
-  }, []);
+
+    const observer = new MutationObserver(() => {
+      if (isWidgetLoaded()) {
+        observer.disconnect();
+      }
+    });
+    observer.observe(widgetRef.current, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+
+    return () => observer.disconnect();
+  }, [authToken]);
 
   return (
     <>
-      <WorkOsWidgets>
-        <OrganizationSwitcher
-          authToken={authToken}
-          organizationLabel="Teams"
-          switchToOrganization={onSwitchOrganization}
-        >
-          <DropdownMenu.Separator />
-          <DropdownMenu.Group>
-            <DropdownMenu.Item onClick={() => setIsModalOpen(true)}>
-              Add new team
-            </DropdownMenu.Item>
-          </DropdownMenu.Group>
-        </OrganizationSwitcher>
-      </WorkOsWidgets>
+      <div
+        className={widgetReady ? "transition-opacity" : "pointer-events-none opacity-0"}
+        ref={widgetRef}
+      >
+        <WorkOsWidgets>
+          <OrganizationSwitcher
+            authToken={authToken}
+            organizationLabel="Teams"
+            switchToOrganization={onSwitchOrganization}
+          >
+            <DropdownMenu.Separator />
+            <DropdownMenu.Group>
+              <DropdownMenu.Item onClick={() => setIsModalOpen(true)}>
+                Add new team
+              </DropdownMenu.Item>
+            </DropdownMenu.Group>
+          </OrganizationSwitcher>
+        </WorkOsWidgets>
+      </div>
 
       <AddTeamModal
         onCreateTeam={onCreateTeam}

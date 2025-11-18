@@ -30,6 +30,44 @@ DETECTOR_ACCESS = {
 }
 
 
+async def get_organization_from_convex(
+    organization_id: str | None
+) -> dict | None:
+    """
+    Query Convex to get organization information including word balance.
+
+    Args:
+        organization_id: WorkOS organization ID
+
+    Returns:
+        Dictionary with organization info or None if not found
+    """
+    if not settings.CONVEX_URL or not organization_id:
+        return None
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            query_url = f"{settings.CONVEX_URL}/api/query"
+            query_data = {
+                "path": "organizations:getPublicByWorkOSId",
+                "args": {"workos_id": organization_id},
+                "format": "json",
+            }
+
+            headers = {}
+            if settings.CONVEX_DEPLOYMENT_KEY:
+                headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
+
+            response = await client.post(query_url, json=query_data, headers=headers)
+
+            if response.status_code == 200:
+                return response.json()
+    except Exception as e:
+        logger.error(f"Error querying Convex for organization: {e}")
+
+    return None
+
+
 async def get_subscription_from_convex(
     user_id: str, organization_id: str | None
 ) -> dict | None:
@@ -150,4 +188,51 @@ async def get_billing_status(
         raise HTTPException(
             status_code=500, detail=f"Failed to get billing status: {str(e)}"
         ) from e
+
+
+@router.get("/word-balance")
+async def get_word_balance(
+    organization_id: str | None = None
+):
+    """
+    Get word balance for an organization.
+    
+    Returns the one-time purchased word balance.
+    
+    Args:
+        organization_id: WorkOS organization ID (query parameter, required)
+    
+    Returns:
+        Dictionary with word balance information
+    """
+    if not organization_id:
+        raise HTTPException(
+            status_code=400, detail="organization_id query parameter is required"
+        )
+
+    try:
+        # Get organization info from Convex
+        org_data = await get_organization_from_convex(organization_id)
+
+        if not org_data:
+            # Return 0 if organization not found
+            return {
+                "word_balance": 0,
+                "organization_id": organization_id,
+            }
+
+        word_balance = org_data.get("word_balance", 0) or 0
+
+        return {
+            "word_balance": word_balance,
+            "organization_id": organization_id,
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting word balance: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to get word balance: {str(e)}"
+        ) from e
+
 

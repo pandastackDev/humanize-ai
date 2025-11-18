@@ -10,6 +10,7 @@ import {
   Hash,
   Image as ImageIcon,
   Instagram,
+  Menu,
   Music,
   Search,
   Shield,
@@ -19,7 +20,14 @@ import {
   Video,
   Wand2,
 } from "lucide-react";
-import type { ComponentPropsWithoutRef, ComponentType } from "react";
+import Link from "next/link";
+import {
+  type ComponentPropsWithoutRef,
+  type ComponentType,
+  useEffect,
+  useState,
+} from "react";
+import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -29,6 +37,13 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
 const freeTools = {
@@ -169,9 +184,24 @@ function ListItem({
 }
 
 export function MainNav() {
+  const [isCompact, setIsCompact] = useState(false);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 1024px)");
+    const updateMatch = () => setIsCompact(mediaQuery.matches);
+    updateMatch();
+    mediaQuery.addEventListener("change", updateMatch);
+
+    return () => mediaQuery.removeEventListener("change", updateMatch);
+  }, []);
+
+  if (isCompact) {
+    return <CompactNav />;
+  }
+
   return (
     <NavigationMenu>
-      <NavigationMenuList className="flex-wrap gap-6">
+      <NavigationMenuList className="flex-wrap gap-4 xl:gap-6">
         <NavigationMenuItem value="free-tools">
           <NavigationMenuTrigger value="free-tools">
             Free Tools
@@ -221,15 +251,6 @@ export function MainNav() {
         <NavigationMenuItem>
           <NavigationMenuLink
             className={navigationMenuTriggerStyle}
-            href="/humanize"
-          >
-            Humanize AI
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle}
             href="/affiliate"
           >
             Become an affiliate
@@ -237,5 +258,62 @@ export function MainNav() {
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
+  );
+}
+
+function CompactNav() {
+  return (
+    <div className="flex items-center gap-2 overflow-x-auto">
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button
+            className="gap-2 whitespace-nowrap"
+            size="sm"
+            variant="outline"
+          >
+            <Menu className="h-4 w-4" />
+            Browse tools
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-[90vw] max-w-md overflow-y-auto" side="left">
+          <SheetHeader>
+            <SheetTitle>Free Tools</SheetTitle>
+          </SheetHeader>
+          <div className="mt-6 flex flex-col gap-6">
+            {Object.entries(freeTools).map(([category, tools]) => (
+              <div key={category}>
+                <div className="mb-2 font-semibold text-muted-foreground text-sm uppercase">
+                  {category}
+                </div>
+                <div className="flex flex-col gap-2">
+                  {tools.map((tool) => (
+                    <Link
+                      className="rounded-md px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+                      href={tool.href}
+                      key={tool.title}
+                    >
+                      {tool.title}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      <Link
+        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        href="/pricing"
+      >
+        Pricing
+      </Link>
+      <Link
+        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        href="/affiliate"
+      >
+        Become an affiliate
+      </Link>
+    </div>
   );
 }

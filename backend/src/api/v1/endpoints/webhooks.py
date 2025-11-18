@@ -202,6 +202,50 @@ async def handle_stripe_webhook(request: Request, stripe_signature: str = Header
 
     try:
         if event_type == "checkout.session.completed":
+            # Check if this is a word purchase (one-time payment)
+            metadata = data.get("metadata", {})
+            if metadata.get("type") == "word_purchase":
+                organization_id = metadata.get("organizationId")
+                word_amount = metadata.get("wordAmount")
+
+                if organization_id and word_amount:
+                    try:
+                        word_amount_int = int(word_amount)
+                        # Update word balance in Convex
+                        if settings.CONVEX_URL:
+                            async with httpx.AsyncClient(timeout=10.0) as client:
+                                mutation_url = f"{settings.CONVEX_URL}/api/mutation"
+                                mutation_data = {
+                                    "path": "organizations:addWordBalance",
+                                    "args": {
+                                        "organization_id": organization_id,
+                                        "word_amount": word_amount_int,
+                                    },
+                                    "format": "json",
+                                }
+
+                                headers = {}
+                                if settings.CONVEX_DEPLOYMENT_KEY:
+                                    headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
+
+                                response = await client.post(
+                                    mutation_url, json=mutation_data, headers=headers
+                                )
+
+                                if response.status_code == 200:
+                                    logger.info(
+                                        f"Successfully added {word_amount_int} words to organization {organization_id}"
+                                    )
+                                else:
+                                    logger.error(
+                                        f"Failed to update word balance: {response.status_code} - {response.text}"
+                                    )
+                    except Exception as e:
+                        logger.error(f"Error processing word purchase: {e}")
+                
+                return {"status": "success", "event": event_type}
+
+            # Handle subscription checkout
             # Get customer and subscription IDs from checkout session
             customer_id = data.get("customer")
             subscription_id = data.get("subscription")

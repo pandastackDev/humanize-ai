@@ -25,6 +25,7 @@ export default defineSchema({
     ),
     billing_period: v.optional(v.union(v.literal("monthly"), v.literal("annual"))),
     current_period_end: v.optional(v.number()),
+    word_balance: v.optional(v.number()), // One-time purchased words balance
   })
     .index("by_stripe_customer_id", ["stripe_customer_id"])
     .index("workos_id", ["workos_id"]),

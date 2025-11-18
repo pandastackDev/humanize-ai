@@ -117,3 +117,5 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 3. Verify all environment variables are loaded correctly
 4. Try creating a new WorkOS application and reconfiguring
 
+
+

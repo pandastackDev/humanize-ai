@@ -14,8 +14,51 @@ async function handleCheckoutSessionCompleted(
 ) {
   const session = data.object as Stripe.Checkout.Session;
   const customerId = session.customer as string;
-  const subscriptionId = session.subscription as string;
+  const subscriptionId = session.subscription as string | null;
+  let metadata: Record<string, string> | undefined;
+  if (session.metadata && Object.keys(session.metadata).length > 0) {
+    metadata = session.metadata;
+  } else if (session.client_reference_id) {
+    try {
+      metadata = JSON.parse(session.client_reference_id);
+    } catch (error) {
+      console.error(
+        "Failed to parse client_reference_id metadata:",
+        error
+      );
+    }
+  }
 
+  // Check if this is a word purchase (one-time payment)
+  if (metadata && metadata.type === "word_purchase") {
+    const organizationId = metadata.organizationId;
+    const wordAmount = parseInt(metadata.wordAmount || "0", 10);
+
+    if (!organizationId || !wordAmount) {
+      console.warn("Word purchase missing organizationId or wordAmount");
+      return;
+    }
+
+    // Add words to organization balance
+    try {
+      await ctx.runMutation(internal.organizations.addWordBalance, {
+        organization_id: organizationId,
+        word_amount: wordAmount,
+      });
+      console.log(
+        `Added ${wordAmount} words to organization ${organizationId}`
+      );
+    } catch (error) {
+      console.error(
+        `Error adding word balance for organization ${organizationId}:`,
+        error
+      );
+      throw error;
+    }
+    return;
+  }
+
+  // Handle subscription checkout
   if (!customerId || !subscriptionId) {
     throw new Error("Missing customer or subscription ID in checkout session");
   }

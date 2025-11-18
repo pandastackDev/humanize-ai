@@ -7,6 +7,7 @@ import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
 import ThemeToggle from "./theme-toggle";
 import { UserNav } from "./user-nav";
+import { WordBalanceButton } from "./word-balance-button";
 
 export async function Header() {
   const { user, role, organizationId } = await withAuth();
@@ -26,18 +27,18 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full overflow-visible bg-white backdrop-blur supports-backdrop-filter:bg-white/80 dark:bg-white">
-      <div className="container relative flex h-16 items-center justify-between overflow-visible px-4 md:px-6">
-        <div className="flex items-center">
+      <div className="container flex h-16 items-center justify-between gap-3 overflow-visible px-4 md:px-6">
+        <div className="flex flex-1 items-center gap-4">
           <Link
-            className="flex items-center space-x-2 transition-opacity hover:opacity-80"
+            className="flex items-center space-x-2 font-semibold text-lg transition-opacity hover:opacity-80"
             href="/"
           >
             <Logo />
           </Link>
+          <div className="hidden lg:block">
+            <MainNav />
+          </div>
         </div>
-        <nav className="-translate-x-1/2 absolute left-1/2 hidden items-center overflow-visible md:flex">
-          <MainNav />
-        </nav>
         <div className="flex items-center gap-2 md:gap-3">
           {!user && (
             <>
@@ -49,6 +50,10 @@ export async function Header() {
           )}
           {user && (
             <>
+              <WordBalanceButton
+                organizationId={organizationId}
+                userId={user.id}
+              />
               <OrganizationSwitcher />
               <ThemeToggle />
               <UserNav
@@ -58,7 +63,9 @@ export async function Header() {
               />
             </>
           )}
-          <MobileNav user={user} />
+          <div className="lg:hidden">
+            <MobileNav user={user} />
+          </div>
         </div>
       </div>
     </header>
