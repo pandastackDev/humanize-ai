@@ -2,10 +2,24 @@
 
 set -e  # Exit on any error
 
+# Check if node is installed
+if ! command -v node &> /dev/null; then
+    echo "❌ Error: node is not installed. Please install it first."
+    echo "Visit: https://github.com/Schniz/fnm#readme"
+    exit 1
+fi
+
 # Check if pnpm is installed
 if ! command -v pnpm &> /dev/null; then
     echo "❌ Error: pnpm is not installed. Please install it first."
     echo "Visit: https://pnpm.io/installation"
+    exit 1
+fi
+
+# Check if uv is installed
+if ! command -v uv &> /dev/null; then
+    echo "❌ Error: uv is not installed. Please install it first."
+    echo "Visit: https://docs.astral.sh/uv/getting-started/installation/"
     exit 1
 fi
 
