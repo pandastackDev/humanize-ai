@@ -289,6 +289,9 @@ Learn more about the syncing system that connects [AuthKit](https://www.authkit.
    ```
 
 ```bash
+# install gh - https://cli.github.com
+
+# then
 cursor ~/.zshrc
 
 # if you want to always use the latest version of the scripts, just add these lines in your `.zshrc`: 
