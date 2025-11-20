@@ -105,7 +105,6 @@ uv lock --locked
 uv run ruff check --fix
 uv run ruff format --check .
 uv run pyright .
-uv run pytest -v
 uv build
 
 or
@@ -288,3 +287,16 @@ Learn more about the syncing system that connects [AuthKit](https://www.authkit.
    ```bash
    npm run dev
    ```
+
+```bash
+# install gh - https://cli.github.com
+
+# then
+cursor ~/.zshrc
+
+# if you want to always use the latest version of the scripts, just add these lines in your `.zshrc`: 
+# (replace with where you keep the git folder)
+
+export OPENAI_API_KEY="sk-xxxxx"
+source "/Users/vadym/Git/humanize/aliases.sh"
+```
