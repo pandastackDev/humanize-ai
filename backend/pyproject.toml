@@ -34,7 +34,7 @@ packages = ["src/yt_uv"]
 universal = true
 
 [dependency-groups]
-dev = ["pyright>=1.1.381"]
+dev = ["pytest-cov>=5.0.0", "pyright>=1.1.381"]
 
 [tool.ruff]
 line-length = 100

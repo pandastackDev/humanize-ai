@@ -105,6 +105,7 @@ uv lock --locked
 uv run ruff check --fix
 uv run ruff format --check .
 uv run pyright .
+uv run pytest -v
 uv build
 
 or
