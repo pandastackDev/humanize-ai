@@ -59,6 +59,15 @@ uv venv
 
 uv pip compile pyproject.toml -o requirements.txt --no-emit-package backend
 
+
+
+uv add --dev ruff
+
+uv run ruff check
+uv run ruff check --fix
+
+uv run ruff format
+uv run ruff format --check
 ```
 
 ## BE Deps
