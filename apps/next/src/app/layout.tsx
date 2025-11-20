@@ -1,16 +1,30 @@
-import "@workos-inc/widgets/styles.css";
+import { Providers } from "@/components/providers";
+import "@humanize/ui/globals.css";
 import {
   AuthKitProvider,
   Impersonation,
 } from "@workos-inc/authkit-nextjs/components";
+import "@workos-inc/widgets/styles.css";
 import type { Metadata } from "next";
-import { ThemeProvider } from "next-themes";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { DynamicBackground } from "./components/layout/dynamic-background";
 import { Footer } from "./components/layout/footer";
 import { Header } from "./components/layout/header";
 import { QueryProvider } from "./providers/query-provider";
-import "./globals.css";
+
+// If loading a variable font, you don't need to specify the font weight
+const fontSans = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-sans",
+});
+
+const fontHeading = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  weight: ["600", "700", "800"],
+});
 
 export const metadata: Metadata = {
   title: "Humanize",
@@ -23,10 +37,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="overflow-x-hidden" lang="en" suppressHydrationWarning>
-      <body className="overflow-x-hidden bg-background antialiased">
-        <QueryProvider>
-          <ThemeProvider attribute="class" defaultTheme="dark">
+    <html lang="en" suppressHydrationWarning>
+      <body
+        className={`${fontSans.variable} ${fontHeading.variable} font-sans antialiased`}
+      >
+        <Providers>
+          <QueryProvider>
             <div className="min-h-screen bg-background">
               <DynamicBackground>
                 <NextTopLoader showSpinner={false} />
@@ -42,8 +58,8 @@ export default function RootLayout({
                 </div>
               </DynamicBackground>
             </div>
-          </ThemeProvider>
-        </QueryProvider>
+          </QueryProvider>
+        </Providers>
       </body>
     </html>
   );

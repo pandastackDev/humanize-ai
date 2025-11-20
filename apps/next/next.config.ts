@@ -72,6 +72,7 @@ const nextConfig: NextConfig = {
     "react-native-reanimated",
     "moti",
     "react-native-gesture-handler",
+    "@humanize/ui",
   ],
   compiler: {
     define: {

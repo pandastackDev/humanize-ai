@@ -2,7 +2,9 @@
   "$schema": "https://json.schemastore.org/tsconfig",
   "extends": "@humanize/configs/typescript/react-library",
   "compilerOptions": {
-    "outDir": "dist"
+    "paths": {
+      "@humanize/ui/*": ["./src/*"]
+    }
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

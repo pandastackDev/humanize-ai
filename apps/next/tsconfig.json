@@ -4,7 +4,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./src/*"],
-      "app/*": ["../../packages/app/*"]
+      "app/*": ["../../packages/app/*"],
+      "@humanize/ui/*": ["../../packages/ui/src/*"]
     }
   },
   "include": [

@@ -245,7 +245,7 @@
         /** ------------------------ CSS Rules ------------------------ **/
         "noInvalidDirectionInLinearGradient": "error",
         "noInvalidGridAreas": "error",
-        "noInvalidPositionAtImportRule": "error",
+        "noInvalidPositionAtImportRule": "off",
         "noMissingVarFunction": "error",
         "noUnknownFunction": "error",
         "noUnknownMediaFeatureName": "error",

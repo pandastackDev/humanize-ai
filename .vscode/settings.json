@@ -70,6 +70,7 @@
     "ListFooterComponentClassName",
     "ListHeaderComponentClassName"
   ],
+  "tailwindCSS.experimental.configFile": "packages/ui/src/styles/globals.css",
   "tailwindCSS.classFunctions": ["useResolveClassNames", "cn", "clsx"],
   "tailwindCSS.emmetCompletions": true,
   "emmet.showExpandedAbbreviation": "never",

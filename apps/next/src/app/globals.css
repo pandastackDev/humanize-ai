@@ -1,36 +1,3 @@
-@import "tailwindcss";
-
-@plugin "tailwindcss-animate";
-
-@custom-variant dark (&:is(.dark *));
-
-/*
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: Inter, system-ui, arial, sans-serif;
-  --font-mono: monospace, "Courier New", monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Inter, sans-serif;
-} */
-
 html {
   max-width: 100vw;
   overflow-x: hidden;
@@ -52,9 +19,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   /* Improve touch targets on mobile */
   touch-action: manipulation;
-}
-* {
-  font-family: Inter, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {

@@ -1,3 +1,4 @@
+import { Button } from "@humanize/ui/components/button";
 import { withAuth } from "@workos-inc/authkit-nextjs";
 import { HumanizeEditor } from "./components/humanize-editor";
 import { SignInButtonClient } from "./components/sign-in-button-client";
@@ -10,10 +11,10 @@ export default async function Home() {
       <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col items-center px-2 py-6 sm:px-4 sm:py-8 md:py-12">
         <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
           <div className="flex w-full max-w-2xl flex-col items-center justify-center gap-3 text-center sm:gap-4">
-            <h1 className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text font-extrabold text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
+            <h1 className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text font-extrabold font-heading text-3xl text-transparent tracking-tight sm:text-4xl md:text-5xl">
               Humanize
             </h1>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg">
+            <p className="font-heading text-muted-foreground text-sm sm:text-base md:text-lg">
               Powerful Humanize AI Text Tool for 100% Human Score &
               Plagiarism-Free Content
             </p>
@@ -37,6 +38,8 @@ export default async function Home() {
               Plagiarism-Free Content
             </p>
           </div>
+
+          <Button size="sm">Button1234</Button>
 
           <div className="flex flex-col items-center gap-4 sm:gap-6">
             <div className="flex flex-col items-center gap-2 sm:gap-3">

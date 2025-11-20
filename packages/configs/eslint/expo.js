@@ -1,10 +1,12 @@
 // import oxlint from "eslint-plugin-oxlint";
+import js from "@eslint/js";
 import { defineConfig, globalIgnores } from "eslint/config";
 import expoConfig from "eslint-config-expo/flat.js";
+import onlyWarn from "eslint-plugin-only-warn";
 import reactCompiler from "eslint-plugin-react-compiler";
+import turboPlugin from "eslint-plugin-turbo";
 // import pluginReact from "eslint-plugin-react";
 // import pluginReactHooks from "eslint-plugin-react-hooks";
-import { config as baseConfig } from "./base.js";
 
 /**
  * A custom ESLint configuration for libraries that use Expo.
@@ -12,9 +14,22 @@ import { config as baseConfig } from "./base.js";
  * @type {import("eslint").Linter.Config[]}
  */
 export const config = defineConfig([
-  ...baseConfig,
+  js.configs.recommended,
   globalIgnores(["dist/*", "**/.expo", "**/node_modules"]),
   expoConfig,
+  {
+    plugins: {
+      turbo: turboPlugin,
+    },
+    rules: {
+      "turbo/no-undeclared-env-vars": "warn",
+    },
+  },
+  {
+    plugins: {
+      onlyWarn,
+    },
+  },
   reactCompiler.configs.recommended,
   {
     rules: {
