@@ -1,5 +1,6 @@
 // Learn more https://docs.expo.dev/guides/monorepos
 // Learn more https://docs.expo.io/guides/customizing-metro
+/* eslint-disable @typescript-eslint/no-require-imports */
 /**
  * @type {import('expo/metro-config')}
  */

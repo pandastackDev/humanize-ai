@@ -1,7 +1,6 @@
 "use client";
 
 import { Check } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
 import { Button } from "@/components/ui/button";
@@ -294,7 +293,6 @@ export function Pricing({
   userId?: string;
   organizationId?: string;
 }) {
-  const router = useRouter();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">(
     "annual"
   );

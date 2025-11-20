@@ -21,12 +21,7 @@ import {
   Wand2,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  type ComponentPropsWithoutRef,
-  type ComponentType,
-  useEffect,
-  useState,
-} from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -143,45 +138,6 @@ const freeTools = {
     { title: "AI Detector", href: "/tools/ai-detector", icon: Eye },
   ],
 };
-
-function ListItem({
-  title,
-  href,
-  description,
-  icon: Icon,
-  ...props
-}: {
-  title: string;
-  href: string;
-  description?: string;
-  icon?: ComponentType<{ className?: string }>;
-} & ComponentPropsWithoutRef<"li">) {
-  return (
-    <li {...props}>
-      <NavigationMenuLink
-        className={cn(
-          "flex w-full min-w-[280px] max-w-[340px] scale-[0.98] transform cursor-pointer gap-2 rounded-2xl bg-white px-4 py-[1.1rem] outline-none transition-all duration-200 ease-in-out hover:scale-100 hover:bg-[#F5F8FF] active:scale-[0.95] sm:px-6",
-          description && "flex-col"
-        )}
-        href={href}
-      >
-        <div className="flex items-start gap-2">
-          {Icon && <Icon className="mt-1 h-5 w-5 shrink-0 sm:h-6 sm:w-6" />}
-          <div className="flex flex-col gap-1">
-            <span className="font-bold text-sm leading-none sm:text-base">
-              {title}
-            </span>
-            {description && (
-              <p className="text-slate-600 text-xs leading-snug sm:text-sm">
-                {description}
-              </p>
-            )}
-          </div>
-        </div>
-      </NavigationMenuLink>
-    </li>
-  );
-}
 
 export function MainNav() {
   const [isCompact, setIsCompact] = useState(false);

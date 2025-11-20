@@ -81,7 +81,7 @@ export function ThesaurusPopover({
       <DropdownMenuContent align="start" className="w-64 p-3">
         <div className="mb-2">
           <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
-            Synonyms for "{word}"
+            Synonyms for &ldquo;{word}&rdquo;
           </p>
         </div>
         {isLoading ? (

@@ -1,7 +1,6 @@
 "use client";
 
 import { Info } from "lucide-react";
-import { useRouter } from "next/navigation";
 import type React from "react";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -31,8 +30,6 @@ export function ModalDialog({
   subscriptionLevel: string;
   userId: string;
 }) {
-  const router = useRouter();
-
   const [orgName, setOrgName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

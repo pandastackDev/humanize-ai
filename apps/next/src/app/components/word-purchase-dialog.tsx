@@ -1,7 +1,6 @@
 "use client";
 
 import { Minus, Plus } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,7 +35,6 @@ export function WordPurchaseDialog({
   organizationId,
   currentBalance = 0,
 }: WordPurchaseDialogProps) {
-  const router = useRouter();
   const [wordAmount, setWordAmount] = useState(MIN_WORDS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

@@ -14,12 +14,23 @@
         "NEXT_PUBLIC_WORKOS_REDIRECT_URI",
         "NEXT_PUBLIC_BASE_URL",
         "CONVEX_DEPLOYMENT",
-        "NEXT_PUBLIC_CONVEX_URL"
+        "NEXT_PUBLIC_CONVEX_URL",
+        "NODE_ENV",
+        "WORKOS_WEBHOOK_SECRET",
+        "STRIPE_WEBHOOK_SECRET",
+        "SKIP_ENV_VALIDATION"
       ]
     },
     "lint": {
       "dependsOn": ["^lint"],
-      "env": ["OPENAPI_URL", "NEXT_PUBLIC_PYTHON_API_URL"]
+      "env": [
+        "OPENAPI_URL",
+        "NEXT_PUBLIC_PYTHON_API_URL",
+        "NODE_ENV",
+        "WORKOS_WEBHOOK_SECRET",
+        "STRIPE_WEBHOOK_SECRET",
+        "SKIP_ENV_VALIDATION"
+      ]
     },
     "lint-ci": {
       "dependsOn": ["^lint"]

@@ -71,7 +71,7 @@ export const trackUsage = mutation({
       };
     }
     // Create new usage record
-    const newUsageId = await ctx.db.insert("usage", {
+    await ctx.db.insert("usage", {
       organization_id: args.organization_id,
       user_id: args.user_id,
       year: args.year,

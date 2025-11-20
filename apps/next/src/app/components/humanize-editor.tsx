@@ -171,14 +171,6 @@ function getLanguageCode(languageName: string): string {
 // Example text for "Try example" button
 const EXAMPLE_TEXT = `The seaside town was a picturesque blend of old-world charm and modern amenities. Waves crashed gently against the shore, their rhythmic sound providing a soothing backdrop to the bustling boardwalk. Colorful fishing boats bobbed in the harbor, their nets filled with the day's catch. Tourists strolled along the promenade, enjoying the salty sea breeze and the vibrant atmosphere.`;
 
-// Constants for word limits per request based on subscription tier
-const WORD_LIMITS: Record<SubscriptionPlan, number> = {
-  free: 500,
-  basic: 500,
-  pro: 1500,
-  ultra: 3000,
-};
-
 // History storage key
 const HISTORY_STORAGE_KEY = "humanize_history";
 
@@ -214,7 +206,6 @@ export function HumanizeEditor({
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [subscriptionPlan, setSubscriptionPlan] =
     useState<SubscriptionPlan>("free");
-  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   const [enabledFeatures, setEnabledFeatures] = useState({
     changed: true,
     structural: true,
@@ -239,7 +230,6 @@ export function HumanizeEditor({
   useEffect(() => {
     async function fetchSubscription() {
       if (!userId) {
-        setSubscriptionLoading(false);
         return;
       }
 
@@ -255,8 +245,6 @@ export function HumanizeEditor({
         console.error("Failed to fetch subscription:", err);
         // Default to free plan on error
         setSubscriptionPlan("free");
-      } finally {
-        setSubscriptionLoading(false);
       }
     }
 
@@ -466,11 +454,6 @@ export function HumanizeEditor({
   const handleSelectHistory = (item: HistoryItem) => {
     setInputText(item.originalText);
     setOutputText(item.humanizedText);
-    // Calculate word counts
-    const inputWords = item.originalText
-      .trim()
-      .split(WORD_COUNT_REGEX)
-      .filter(Boolean).length;
     // Simulate score for historical items
     setHumanScore(Math.floor(Math.random() * 20) + 80);
   };
@@ -499,10 +482,6 @@ export function HumanizeEditor({
       return;
     }
 
-    const detectionWordCount = inputText
-      .trim()
-      .split(WORD_COUNT_REGEX)
-      .filter(Boolean).length;
     if (wordCount < 10) {
       setDetectionError(
         "Text must contain at least 10 words for accurate detection"
