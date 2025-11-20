@@ -5,4 +5,3 @@ def test_placeholder():
     """Always passes so CI stays green."""
 
     assert True
-

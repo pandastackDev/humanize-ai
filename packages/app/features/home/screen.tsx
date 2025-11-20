@@ -53,4 +53,3 @@ export function HomeScreen() {
 const H1 = ({ children }: { children: React.ReactNode }) => (
   <Text style={{ fontWeight: "800", fontSize: 24 }}>{children}</Text>
 );
-
