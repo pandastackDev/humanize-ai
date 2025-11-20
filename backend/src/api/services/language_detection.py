@@ -7,6 +7,7 @@ Supports multiple detection methods:
 """
 
 import logging
+from pathlib import Path
 
 try:
     from langdetect import DetectorFactory, detect
@@ -44,8 +45,15 @@ class LanguageDetectionService:
         try:
             import fasttext  # type: ignore[import-untyped]
 
-            logger.info(f"Loading FastText model from {settings.FASTTEXT_MODEL_PATH}")
-            self.fasttext_model = fasttext.load_model(settings.FASTTEXT_MODEL_PATH)
+            # Resolve relative paths relative to project root
+            model_path = Path(settings.FASTTEXT_MODEL_PATH)
+            if not model_path.is_absolute():
+                # Get project root (3 levels up from this file: services -> api -> src -> backend -> root)
+                project_root = Path(__file__).parent.parent.parent.parent.parent
+                model_path = project_root / model_path
+
+            logger.info(f"Loading FastText model from {model_path}")
+            self.fasttext_model = fasttext.load_model(str(model_path))
             logger.info("FastText model loaded successfully")
         except ImportError:
             logger.warning("FastText not available. Falling back to langdetect.")
@@ -75,12 +83,13 @@ class LanguageDetectionService:
         # Try FastText first if available
         if self.use_fasttext and hasattr(self, "fasttext_model"):
             try:
-                predictions = self.fasttext_model.predict(text, k=1)
-                if predictions and len(predictions) > 0:
-                    label, confidence = predictions[0]
+                # FastText returns (labels_tuple, confidences_array)
+                labels, confidences = self.fasttext_model.predict(text, k=1)
+                if labels and len(labels) > 0:
                     # FastText returns labels like "__label__en", remove prefix
-                    lang_code = label.replace("__label__", "")
-                    return lang_code, float(confidence)
+                    lang_code = labels[0].replace("__label__", "")
+                    confidence = float(confidences[0])
+                    return lang_code, confidence
             except Exception as e:
                 logger.warning(f"FastText detection failed: {e}. Falling back to langdetect.")
 

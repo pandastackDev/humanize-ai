@@ -203,9 +203,9 @@ pnpm run dev
 
 After viewing your marketing splash page (`/`) and pricing page (`/pricing`), users sign up before choosing a plan. This is so we can create an organization and link it to a Stripe customer.
 
-Once signed up, users with the "admin" role can access the dashboard (`/dashboard`) where they can manage users, configure SSO and billing, and view audit logs. Note that in the default example, audit logs are only accessible when subscribed to the "Enterprise" plan.
+Once signed up, all authenticated users can access the dashboard (`/dashboard`). Users with the "admin" role can manage users, configure SSO and billing, and view audit logs. Note that in the default example, audit logs are only accessible when subscribed to the "Enterprise" plan.
 
-Users without the "admin" role are instead redirected to the product page (`/product`) where they can interact with your product.
+Users with the "member" role have access to premium features based on their subscription level.
 
 ## Testing
 

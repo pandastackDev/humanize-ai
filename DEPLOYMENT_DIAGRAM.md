@@ -22,7 +22,7 @@
     │  /                        │   │  Rewrite Rule in          │
     │  /dashboard               │   │  vercel.json              │
     │  /pricing                 │   │                           │
-    │  /product                 │   │  /api/* → /api/index.py   │
+    │  /dashboard               │   │  /api/* → /api/index.py   │
     │  /login                   │   │                           │
     │  ... (all pages)          │   │                           │
     └───────────────────────────┘   └───────────────────────────┘

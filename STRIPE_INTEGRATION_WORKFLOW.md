@@ -90,7 +90,7 @@ Stripe Billing Portal           │
    ```typescript
    {
      mode: "subscription",
-     success_url: "/dashboard",
+     success_url: "/",
      cancel_url: "/pricing",
      metadata: {
        workOSOrganizationId: organization.id,

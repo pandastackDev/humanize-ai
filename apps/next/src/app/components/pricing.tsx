@@ -2,11 +2,174 @@
 
 import { Check } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  checkSubscription,
+  type SubscriptionPlan,
+} from "@/lib/subscription-api";
+
+type PlanData = {
+  name: string;
+  description: string;
+  price: number;
+  originalPrice: number;
+  currency: string;
+  features: string[];
+  highlight: boolean;
+};
+
+type PricingCardProps = {
+  plan: PlanData;
+  billingPeriod: "monthly" | "annual";
+  isSelected: boolean;
+  onSelect: () => void;
+  userId: string | undefined;
+  subscriptionLoading: boolean;
+  subscriptionPlan: string | null;
+  loadingPlan: string | null;
+  onSubscribe: (planName: string) => void;
+  onManageSubscription: () => void;
+};
+
+function PricingCard({
+  plan,
+  billingPeriod,
+  isSelected,
+  onSelect,
+  userId,
+  subscriptionLoading,
+  subscriptionPlan,
+  loadingPlan,
+  onSubscribe,
+  onManageSubscription,
+}: PricingCardProps) {
+  const isCurrentPlanLoading = loadingPlan === `${plan.name}-${billingPeriod}`;
+  const hasActiveSubscription = subscriptionPlan && subscriptionPlan !== "free";
+
+  const renderButton = () => {
+    if (!userId) {
+      return (
+        <Button
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          onClick={() => {
+            window.location.href = "/login";
+          }}
+        >
+          Sign in to Subscribe
+        </Button>
+      );
+    }
+
+    if (subscriptionLoading) {
+      return (
+        <Button
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          disabled
+        >
+          <LoadingSpinner className="mr-2" size="sm" />
+          Loading...
+        </Button>
+      );
+    }
+
+    if (hasActiveSubscription) {
+      return (
+        <Button
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          onClick={onManageSubscription}
+        >
+          Manage Subscription
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+        disabled={isCurrentPlanLoading}
+        onClick={() => onSubscribe(plan.name)}
+      >
+        {isCurrentPlanLoading ? (
+          <>
+            <LoadingSpinner className="mr-2" size="sm" />
+            Redirecting...
+          </>
+        ) : (
+          "Subscribe"
+        )}
+      </Button>
+    );
+  };
+
+  return (
+    <div className="relative w-full flex-1 sm:max-w-none" key={plan.name}>
+      {plan.highlight && (
+        <div
+          className="-top-3 absolute right-4 z-10 rounded-full px-3 py-1 font-semibold text-white text-xs"
+          style={{ backgroundColor: "#0066ff" }}
+        >
+          MOST POPULAR
+        </div>
+      )}
+      <Card
+        className={`flex h-full cursor-pointer flex-col transition-all ${
+          isSelected
+            ? "border-2 border-[var(--primary)] shadow-lg"
+            : "border-slate-200"
+        }`}
+        onClick={onSelect}
+      >
+        <CardHeader>
+          <CardTitle
+            className={`text-xl ${
+              isSelected ? "text-[var(--primary)]" : "text-slate-900"
+            }`}
+          >
+            {plan.name}
+          </CardTitle>
+          <p className="text-muted-foreground text-sm">{plan.description}</p>
+        </CardHeader>
+        <CardContent className="flex flex-1 flex-col gap-4">
+          <div className="flex flex-wrap items-baseline gap-2">
+            <p className="font-bold text-3xl sm:text-4xl">
+              {plan.currency}
+              {plan.price.toFixed(2)}
+            </p>
+            {plan.price !== plan.originalPrice && (
+              <p className="text-muted-foreground text-sm line-through">
+                {plan.currency}
+                {plan.originalPrice.toFixed(2)}
+              </p>
+            )}
+            <p className="text-muted-foreground text-xs">
+              Per month, billed{" "}
+              {billingPeriod === "annual" ? "annually" : "monthly"}
+            </p>
+          </div>
+          <div className="flex flex-1 flex-col gap-3">
+            {plan.features.map((feature, index) => (
+              <div
+                className="flex items-start gap-2"
+                key={`${plan.name}-${index}`}
+              >
+                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
+                <p className="text-slate-700 text-sm dark:text-slate-300">
+                  {feature}
+                </p>
+              </div>
+            ))}
+          </div>
+          {renderButton()}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
 
 // Ideally this data would come from a database or API
 const plansData = {
@@ -124,14 +287,57 @@ const plansData = {
   ],
 };
 
-export function Pricing({ userId }: { userId?: string }) {
+export function Pricing({
+  userId,
+  organizationId,
+}: {
+  userId?: string;
+  organizationId?: string;
+}) {
   const router = useRouter();
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">(
     "annual"
   );
   const [selectedPlan, setSelectedPlan] = useState<string>("Pro");
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [subscriptionPlan, setSubscriptionPlan] =
+    useState<SubscriptionPlan | null>(null);
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   const plans = plansData[billingPeriod];
+
+  // Fetch subscription status on mount
+  useEffect(() => {
+    async function fetchSubscription() {
+      if (!userId) {
+        setSubscriptionLoading(false);
+        return;
+      }
+
+      try {
+        const subscriptionInfo = await checkSubscription(
+          userId,
+          organizationId
+        );
+        setSubscriptionPlan(subscriptionInfo.plan);
+      } catch (err) {
+        console.error("Failed to fetch subscription:", err);
+        setSubscriptionPlan(null);
+      } finally {
+        setSubscriptionLoading(false);
+      }
+    }
+
+    fetchSubscription();
+  }, [userId, organizationId]);
+
+  const handleManageSubscription = async () => {
+    try {
+      await redirectToBillingPortal("settings");
+    } catch (err) {
+      console.error("Failed to redirect to billing portal:", err);
+      alert("Failed to open billing portal. Please try again.");
+    }
+  };
 
   const handleSubscribe = async (planName: string) => {
     if (!userId) {
@@ -241,102 +447,21 @@ export function Pricing({ userId }: { userId?: string }) {
 
       {/* Pricing Cards */}
       <div className="flex w-full flex-col items-center justify-center gap-5 sm:flex-row sm:items-stretch">
-        {plans.map((plan) => {
-          const isSelected = selectedPlan === plan.name;
-          return (
-            <div
-              className="relative w-full flex-1 sm:max-w-none"
-              key={plan.name}
-            >
-              {plan.highlight && (
-                <div
-                  className="-top-3 absolute right-4 z-10 rounded-full px-3 py-1 font-semibold text-white text-xs"
-                  style={{ backgroundColor: "#0066ff" }}
-                >
-                  MOST POPULAR
-                </div>
-              )}
-              <Card
-                className={`flex h-full cursor-pointer flex-col transition-all ${
-                  isSelected
-                    ? "border-2 border-[var(--primary)] shadow-lg"
-                    : "border-slate-200"
-                }`}
-                onClick={() => setSelectedPlan(plan.name)}
-              >
-                <CardHeader>
-                  <CardTitle
-                    className={`text-xl ${
-                      isSelected ? "text-[var(--primary)]" : "text-slate-900"
-                    }`}
-                  >
-                    {plan.name}
-                  </CardTitle>
-                  <p className="text-muted-foreground text-sm">
-                    {plan.description}
-                  </p>
-                </CardHeader>
-                <CardContent className="flex flex-1 flex-col gap-4">
-                  <div className="flex flex-wrap items-baseline gap-2">
-                    <p className="font-bold text-3xl sm:text-4xl">
-                      {plan.currency}
-                      {plan.price.toFixed(2)}
-                    </p>
-                    {plan.price !== plan.originalPrice && (
-                      <p className="text-muted-foreground text-sm line-through">
-                        {plan.currency}
-                        {plan.originalPrice.toFixed(2)}
-                      </p>
-                    )}
-                    <p className="text-muted-foreground text-xs">
-                      Per month, billed{" "}
-                      {billingPeriod === "annual" ? "annually" : "monthly"}
-                    </p>
-                  </div>
-                  <div className="flex flex-1 flex-col gap-3">
-                    {plan.features.map((feature, index) => (
-                      <div
-                        className="flex items-start gap-2"
-                        key={`${plan.name}-${index}`}
-                      >
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
-                        <p className="text-slate-700 text-sm dark:text-slate-300">
-                          {feature}
-                        </p>
-                      </div>
-                    ))}
-                  </div>
-                  {userId ? (
-                    <Button
-                      className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
-                      disabled={loadingPlan === `${plan.name}-${billingPeriod}`}
-                      onClick={() => handleSubscribe(plan.name)}
-                    >
-                      {loadingPlan === `${plan.name}-${billingPeriod}` ? (
-                        <>
-                          <LoadingSpinner className="mr-2" size="sm" />
-                          Redirecting...
-                        </>
-                      ) : (
-                        "Subscribe"
-                      )}
-                    </Button>
-                  ) : (
-                    <Button
-                      className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
-                      onClick={() => {
-                        // Redirect to /login which will redirect to WorkOS sign-in
-                        window.location.href = "/login";
-                      }}
-                    >
-                      Sign in to Subscribe
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-          );
-        })}
+        {plans.map((plan) => (
+          <PricingCard
+            billingPeriod={billingPeriod}
+            isSelected={selectedPlan === plan.name}
+            key={plan.name}
+            loadingPlan={loadingPlan}
+            onManageSubscription={handleManageSubscription}
+            onSelect={() => setSelectedPlan(plan.name)}
+            onSubscribe={handleSubscribe}
+            plan={plan}
+            subscriptionLoading={subscriptionLoading}
+            subscriptionPlan={subscriptionPlan}
+            userId={userId}
+          />
+        ))}
       </div>
     </div>
   );

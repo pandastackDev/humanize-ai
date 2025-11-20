@@ -81,18 +81,6 @@ export function UserNav({
             </DropdownMenuGroup>
           </>
         )}
-        {isDashboard && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/product" onClick={() => setOpen(false)}>
-                  Product
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </>
-        )}
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>

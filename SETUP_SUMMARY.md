@@ -57,7 +57,7 @@ Your monorepo has been configured to deploy both Next.js and FastAPI to a single
               │ /                      │   │ /api/*                 │
               │ /dashboard             │   │ /api/v1/users          │
               │ /pricing               │   │ /api/v1/items          │
-              │ /product               │   │ /api/docs              │
+              │ /dashboard             │   │ /api/docs              │
               │ ... (all pages)        │   │ /api/scalar            │
               └────────────────────────┘   └────────────────────────┘
                            │                             │

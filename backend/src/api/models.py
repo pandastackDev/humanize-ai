@@ -332,3 +332,169 @@ class UsageTrackingResponse(BaseModel):
     words_used: int
     words_remaining: int
     limit_exceeded: bool
+
+
+# ============================================================================
+# Detection Models
+# ============================================================================
+
+
+class DetectorType(str, Enum):
+    """AI detector types"""
+
+    GPTZERO = "gptzero"
+    COPYLEAKS = "copyleaks"
+    SAPLING = "sapling"
+    WRITER = "writer"
+    ZEROGPT = "zerogpt"
+    ORIGINALITY = "originality"
+    QUILLBOT = "quillbot"
+    TURNITIN = "turnitin"
+    GRAMMARLY = "grammarly"
+    SCRIBBR = "scribbr"
+    INTERNAL = "internal"
+
+
+class DetectRequest(BaseModel):
+    """Request model for AI detection endpoint"""
+
+    text: str = Field(..., min_length=1, description="Text to analyze for AI detection")
+    language: str | None = Field(None, description="Language code (auto-detected if not provided)")
+    detectors: list[DetectorType] | None = Field(
+        None, description="List of detectors to use (all enabled if not specified)"
+    )
+    include_internal_analysis: bool = Field(
+        True, description="Include internal feature analysis (perplexity, entropy, n-grams)"
+    )
+    enable_caching: bool = Field(
+        True, description="Enable caching of detection results for faster repeat queries"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "text": "The utilization of advanced technological systems facilitates enhanced productivity.",
+                    "language": "en",
+                    "detectors": ["gptzero", "internal"],
+                    "include_internal_analysis": True,
+                }
+            ]
+        }
+    )
+
+
+class DetectCompareRequest(BaseModel):
+    """Request model for comparing original vs humanized detection scores."""
+
+    original_text: str = Field(..., min_length=1, description="Original text to evaluate")
+    humanized_text: str = Field(..., min_length=1, description="Humanized text to compare against")
+    detectors: list[DetectorType] | None = Field(
+        None, description="Optional list of detectors to use for both texts"
+    )
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "original_text": "The utilization of advanced technological systems facilitates enhanced productivity.",
+                    "humanized_text": "I can tell the new software really helps the team stay on top of things.",
+                    "detectors": ["gptzero", "internal"],
+                }
+            ]
+        }
+    )
+
+
+class DetectorResult(BaseModel):
+    """Individual detector result"""
+
+    detector: DetectorType
+    ai_probability: float = Field(..., ge=0, le=1, description="Probability of AI-generated (0-1)")
+    human_probability: float = Field(
+        ..., ge=0, le=1, description="Probability of human-written (0-1)"
+    )
+    confidence: float = Field(..., ge=0, le=1, description="Confidence in the result")
+    details: dict | None = Field(None, description="Additional detector-specific details")
+    error: str | None = Field(None, description="Error message if detection failed")
+    response_time_ms: float | None = Field(None, description="API response time in milliseconds")
+
+
+class InternalAnalysis(BaseModel):
+    """Internal linguistic feature analysis"""
+
+    perplexity_score: float | None = Field(
+        None, description="Perplexity score (lower = more AI-like)"
+    )
+    entropy_score: float | None = Field(
+        None, description="Entropy score (lower = more uniform/AI-like)"
+    )
+    ngram_variance: float | None = Field(
+        None, description="N-gram variance (lower = more repetitive/AI-like)"
+    )
+    avg_sentence_length: float | None = Field(None, description="Average sentence length")
+    sentence_length_variance: float | None = Field(
+        None, description="Sentence length variance (higher = more varied/human-like)"
+    )
+    lexical_diversity: float | None = Field(
+        None, description="Lexical diversity (unique words / total words)"
+    )
+    burstiness_score: float | None = Field(
+        None, description="Burstiness score (variation in word usage patterns)"
+    )
+    ai_likelihood_internal: float = Field(
+        ..., ge=0, le=1, description="Overall AI likelihood based on internal analysis"
+    )
+
+
+class DetectResponse(BaseModel):
+    """Response model for AI detection endpoint"""
+
+    text_sample: str = Field(..., description="First 200 characters of analyzed text")
+    language: str | None = Field(None, description="Detected language")
+    human_likelihood_pct: float = Field(
+        ..., ge=0, le=100, description="Overall human likelihood percentage (0-100)"
+    )
+    ai_likelihood_pct: float = Field(
+        ..., ge=0, le=100, description="Overall AI likelihood percentage (0-100)"
+    )
+    confidence: float = Field(..., ge=0, le=1, description="Overall confidence in the assessment")
+    detector_results: list[DetectorResult] = Field(
+        default_factory=list, description="Results from individual detectors"
+    )
+    internal_analysis: InternalAnalysis | None = Field(
+        None, description="Internal linguistic feature analysis"
+    )
+    metadata: dict | None = Field(
+        None,
+        description="Additional metadata (word count, processing time, detectors used, etc.)",
+    )
+    cached: bool = Field(False, description="Whether this result was served from cache")
+
+    model_config = ConfigDict(
+        json_schema_extra={
+            "examples": [
+                {
+                    "text_sample": "The utilization of advanced technological systems...",
+                    "language": "en",
+                    "human_likelihood_pct": 72.5,
+                    "ai_likelihood_pct": 27.5,
+                    "confidence": 0.85,
+                    "detector_results": [
+                        {
+                            "detector": "gptzero",
+                            "ai_probability": 0.28,
+                            "human_probability": 0.72,
+                            "confidence": 0.87,
+                            "response_time_ms": 450,
+                        }
+                    ],
+                    "metadata": {
+                        "word_count": 125,
+                        "processing_time_ms": 1500,
+                        "detectors_used": 3,
+                    },
+                }
+            ]
+        }
+    )

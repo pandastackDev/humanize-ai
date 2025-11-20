@@ -92,8 +92,9 @@ async def humanize_text(
 
                 # Check word limit per request
                 request_limit = settings.REQUEST_LIMITS.get(
-                    subscription_info.plan.value, settings.REQUEST_LIMITS["free"]
+                    subscription_info.plan.value, settings.REQUEST_LIMITS["Pro"]
                 )
+
                 if input_word_count > request_limit:
                     raise HTTPException(
                         status_code=403,

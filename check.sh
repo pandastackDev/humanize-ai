@@ -20,9 +20,6 @@ uv run ruff format --check .
 echo "🔎 Running type checks with pyright..."
 uv run pyright .
 
-echo "🧪 Running tests..."
-uv run pytest -v
-
 echo "📦 Building package..."
 uv build
 

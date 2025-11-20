@@ -45,6 +45,40 @@ type TextDiffViewerProps = {
 };
 
 /**
+ * Extract trailing whitespace after a word, preserving newlines and formatting.
+ */
+function extractTrailingWhitespace(text: string, startPos: number): string {
+  let whitespace = "";
+  let j = startPos;
+  while (j < text.length) {
+    const char = text[j];
+    if (char && SPACE_REGEX.test(char)) {
+      whitespace += char;
+      j++;
+    } else {
+      break;
+    }
+  }
+  return whitespace;
+}
+
+/**
+ * Determine the segment type based on unchanged status and structural analysis.
+ */
+function determineSegmentType(
+  isUnchanged: boolean,
+  isStructural: boolean
+): TextFeatureType {
+  if (isUnchanged && !isStructural) {
+    return "unchanged";
+  }
+  if (isStructural) {
+    return "structural";
+  }
+  return "changed";
+}
+
+/**
  * Simplified diff algorithm to identify text features
  */
 function computeTextFeatures(
@@ -87,8 +121,9 @@ function computeTextFeatures(
 
     const wordStart = wordIndex;
     const wordEnd = wordIndex + word.length;
-    const nextChar = humanText.substring(wordEnd, wordEnd + 1);
-    const spaceAfter = SPACE_REGEX.test(nextChar) ? " " : "";
+
+    // Extract trailing whitespace to preserve formatting
+    const spaceAfter = extractTrailingWhitespace(humanText, wordEnd);
 
     // Check if word is in longest unchanged sequence
     const isUnchanged = unchangedSet.has(wordLower);
@@ -101,14 +136,7 @@ function computeTextFeatures(
       unchangedSet
     );
 
-    let segmentType: TextFeatureType;
-    if (isUnchanged && !isStructural) {
-      segmentType = "unchanged";
-    } else if (isStructural) {
-      segmentType = "structural";
-    } else {
-      segmentType = "changed";
-    }
+    const segmentType = determineSegmentType(isUnchanged, isStructural);
 
     segments.push({
       type: segmentType,

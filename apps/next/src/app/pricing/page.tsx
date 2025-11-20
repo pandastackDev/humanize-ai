@@ -2,7 +2,7 @@ import { withAuth } from "@workos-inc/authkit-nextjs";
 import { Pricing } from "../components/pricing";
 
 export default async function PricingPage() {
-  const { user } = await withAuth();
+  const { user, organizationId } = await withAuth();
 
   return (
     <div className="min-h-screen bg-white dark:bg-white">
@@ -11,7 +11,7 @@ export default async function PricingPage() {
           <h1 className="text-center font-bold text-4xl sm:text-5xl lg:text-6xl">
             Choose the right plan for you
           </h1>
-          <Pricing userId={user?.id} />
+          <Pricing organizationId={organizationId} userId={user?.id} />
         </div>
       </div>
     </div>

@@ -135,6 +135,51 @@ function logWorkOSError(error: unknown, errorMsg: string): void {
   }
 }
 
+async function createOrganizationInConvex(
+  workosId: string,
+  name: string
+): Promise<void> {
+  if (!env.NEXT_PUBLIC_CONVEX_URL) {
+    console.warn(
+      "CONVEX_URL not configured, skipping Convex organization creation"
+    );
+    return;
+  }
+
+  try {
+    console.log("Creating organization in Convex:", { workosId, name });
+    const response = await fetch(`${env.NEXT_PUBLIC_CONVEX_URL}/api/mutation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(env.CONVEX_DEPLOYMENT && {
+          Authorization: `Bearer ${env.CONVEX_DEPLOYMENT}`,
+        }),
+      },
+      body: JSON.stringify({
+        path: "organizations:create",
+        args: {
+          workos_id: workosId,
+          name,
+        },
+        format: "json",
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Convex API error: ${response.status} ${await response.text()}`
+      );
+    }
+
+    console.log("Organization created in Convex successfully");
+  } catch (error) {
+    console.error("Failed to create organization in Convex:", error);
+    // Don't fail the entire request if Convex fails
+    console.warn("Continuing despite Convex creation failure");
+  }
+}
+
 async function createWorkOSOrganization(
   organizationName: string
 ): Promise<WorkOSOrganization | NextResponse> {
@@ -153,6 +198,10 @@ async function createWorkOSOrganization(
       name: organizationName,
     });
     console.log("Organization created:", organization.id);
+
+    // Also create the organization in Convex
+    await createOrganizationInConvex(organization.id, organization.name);
+
     return organization;
   } catch (error: unknown) {
     const { message, statusCode } = parseWorkOSError(error);
@@ -184,18 +233,82 @@ function isRoleError(error: unknown): boolean {
   return false;
 }
 
+async function createOrganizationMembershipInConvex(params: {
+  workosId: string;
+  userId: string;
+  organizationId: string;
+  role: string;
+  status: string;
+}): Promise<void> {
+  if (!env.NEXT_PUBLIC_CONVEX_URL) {
+    console.warn(
+      "CONVEX_URL not configured, skipping Convex membership creation"
+    );
+    return;
+  }
+
+  const { workosId, userId, organizationId, role, status } = params;
+
+  try {
+    console.log("Creating organization membership in Convex");
+    const response = await fetch(`${env.NEXT_PUBLIC_CONVEX_URL}/api/mutation`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(env.CONVEX_DEPLOYMENT && {
+          Authorization: `Bearer ${env.CONVEX_DEPLOYMENT}`,
+        }),
+      },
+      body: JSON.stringify({
+        path: "organizationMemberships:create",
+        args: {
+          workos_id: workosId,
+          user_id: userId,
+          organization_id: organizationId,
+          role,
+          status,
+        },
+        format: "json",
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error(
+        `Convex API error: ${response.status} ${await response.text()}`
+      );
+    }
+
+    console.log("Organization membership created in Convex successfully");
+  } catch (error) {
+    console.error("Failed to create organization membership in Convex:", error);
+    console.warn("Continuing despite Convex membership creation failure");
+  }
+}
+
 async function createOrganizationMembership(
   organizationId: string,
   userId: string
 ): Promise<NextResponse | null> {
   try {
     console.log("Creating organization membership with admin role");
-    await workos.userManagement.createOrganizationMembership({
-      organizationId,
-      userId,
-      roleSlug: "admin",
-    });
+    const membership = await workos.userManagement.createOrganizationMembership(
+      {
+        organizationId,
+        userId,
+        roleSlug: "admin",
+      }
+    );
     console.log("Organization membership created with admin role");
+
+    // Also create in Convex
+    await createOrganizationMembershipInConvex({
+      workosId: membership.id,
+      userId,
+      organizationId,
+      role: "admin",
+      status: "active",
+    });
+
     return null;
   } catch (roleError: unknown) {
     if (isRoleError(roleError)) {
@@ -203,11 +316,22 @@ async function createOrganizationMembership(
         "Admin role not found in WorkOS, creating membership without roleSlug (will use default role)"
       );
       try {
-        await workos.userManagement.createOrganizationMembership({
-          organizationId,
-          userId,
-        });
+        const membership =
+          await workos.userManagement.createOrganizationMembership({
+            organizationId,
+            userId,
+          });
         console.log("Organization membership created without role");
+
+        // Also create in Convex
+        await createOrganizationMembershipInConvex({
+          workosId: membership.id,
+          userId,
+          organizationId,
+          role: "member",
+          status: "active",
+        });
+
         return null;
       } catch (membershipError: unknown) {
         const membershipErrorMsg =
@@ -353,7 +477,7 @@ async function createStripeCheckoutSession(params: {
         },
       ],
       mode: "subscription",
-      success_url: `${env.NEXT_PUBLIC_BASE_URL}/dashboard`,
+      success_url: `${env.NEXT_PUBLIC_BASE_URL}/`,
       cancel_url: `${env.NEXT_PUBLIC_BASE_URL}/pricing`,
       metadata: {
         workOSOrganizationId: organizationId,

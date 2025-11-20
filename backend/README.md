@@ -10,8 +10,6 @@ This CI/CD pipeline uses modern Python tooling:
 - **FastAPI** for building high-performance APIs
 - **Ruff** for linting and formatting
 - **Pyright** for static type checking
-- **Pytest** for testing
-- `pytest-cov` for coverage
 - Checks `uv.lock` for consistency
 - Builds distributable wheels
 
@@ -46,12 +44,6 @@ Visit:
 - Alternative API Docs: http://localhost:8000/redoc
 
 ## Development
-
-### Running Tests
-
-```bash
-uv run pytest
-```
 
 ### Running Linting
 
@@ -123,8 +115,6 @@ backend/
 │       └── main.py          # FastAPI application
 ├── public/
 │   └── favicon.ico          # Static assets
-├── tests/
-│   └── test_main.py         # Tests
 ├── pyproject.toml           # Project configuration
 ├── uv.lock                  # Dependency lock file
 ├── vercel.json              # Vercel deployment config

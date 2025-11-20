@@ -115,5 +115,9 @@
   },
   "[graphql]": {
     "editor.defaultFormatter": "biomejs.biome"
-  }
+  },
+  // python
+  "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
+  "python.analysis.extraPaths": ["${workspaceFolder}/backend/src"],
+  "python.languageServer": "None"
 }

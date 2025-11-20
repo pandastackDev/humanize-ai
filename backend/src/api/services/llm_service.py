@@ -75,16 +75,27 @@ class LLMService:
         model: str | None = None,
         temperature: float = 0.7,
         max_tokens: int | None = None,
+        top_p: float | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
     ) -> str:
         """
-        Generate text using LLM.
+        Generate text using LLM with Claude 3.5 Sonnet as primary for humanization.
+
+        Priority order for humanization:
+        1. Claude 3.5 Sonnet (via OpenRouter or Anthropic) - Best for naturalness
+        2. GPT-4 Turbo (via OpenRouter or OpenAI) - Good fallback
+        3. Claude 3 Opus - Alternative fallback
 
         Args:
             prompt: User prompt
             system_prompt: System prompt/instructions
-            model: Model name (optional, uses defaults if not provided)
+            model: Model name (optional, uses PRIMARY_HUMANIZATION_MODEL if not provided)
             temperature: Sampling temperature (0.0 to 1.0)
             max_tokens: Maximum tokens to generate
+            top_p: Nucleus sampling parameter
+            frequency_penalty: Frequency penalty for token repetition
+            presence_penalty: Presence penalty for topic repetition
 
         Returns:
             Generated text
@@ -92,41 +103,68 @@ class LLMService:
         Raises:
             RuntimeError: If no LLM provider is available
         """
-        # Try OpenRouter first
-        if self.openrouter_enabled:
+        # Use configured primary model if none specified
+        target_model = model or settings.PRIMARY_HUMANIZATION_MODEL
+
+        # Determine which provider to use based on model
+        if "claude" in target_model.lower() or "anthropic" in target_model.lower():
+            # Try Claude models first (best for humanization)
+            providers = [
+                ("anthropic", target_model),
+                ("openrouter", target_model),
+                ("openai", settings.FALLBACK_HUMANIZATION_MODEL),
+            ]
+        else:
+            # OpenAI or other models
+            providers = [
+                ("openrouter", target_model),
+                ("openai", target_model),
+                ("anthropic", settings.PRIMARY_HUMANIZATION_MODEL),
+            ]
+
+        last_error = None
+        for provider_type, model_name in providers:
             try:
-                return self._generate_openrouter(
-                    prompt, system_prompt, model, temperature, max_tokens
+                if provider_type == "anthropic" and self.anthropic_enabled:
+                    logger.info(f"Trying Anthropic with model: {model_name}")
+                    return self._generate_anthropic(
+                        prompt, system_prompt, model_name, temperature, max_tokens
+                    )
+                elif provider_type == "openrouter" and self.openrouter_enabled:
+                    logger.info(f"Trying OpenRouter with model: {model_name}")
+                    return self._generate_openrouter(
+                        prompt,
+                        system_prompt,
+                        model_name,
+                        temperature,
+                        max_tokens,
+                        top_p,
+                        frequency_penalty,
+                        presence_penalty,
+                    )
+                elif provider_type == "openai" and self.openai_enabled:
+                    logger.info(f"Trying OpenAI with model: {model_name}")
+                    return self._generate_openai(
+                        prompt,
+                        system_prompt,
+                        model_name,
+                        temperature,
+                        max_tokens,
+                        top_p,
+                        frequency_penalty,
+                        presence_penalty,
+                    )
+            except Exception as e:
+                logger.warning(
+                    f"{provider_type} generation with {model_name} failed: {e}. Trying next provider."
                 )
-            except Exception as e:
-                logger.warning(f"OpenRouter generation failed: {e}. Trying fallback.")
-                if self.openai_enabled or self.anthropic_enabled:
-                    pass  # Fall through to fallbacks
-                else:
-                    raise
+                last_error = e
+                continue
 
-        # Try OpenAI fallback
-        if self.openai_enabled:
-            try:
-                return self._generate_openai(prompt, system_prompt, model, temperature, max_tokens)
-            except Exception as e:
-                logger.warning(f"OpenAI generation failed: {e}. Trying Anthropic.")
-                if self.anthropic_enabled:
-                    pass  # Fall through to Anthropic
-                else:
-                    raise
-
-        # Try Anthropic fallback
-        if self.anthropic_enabled:
-            try:
-                return self._generate_anthropic(
-                    prompt, system_prompt, model, temperature, max_tokens
-                )
-            except Exception as e:
-                logger.error(f"Anthropic generation failed: {e}")
-                raise RuntimeError("All LLM providers failed") from e
-
-        raise RuntimeError("No LLM provider available. Please configure API keys.")
+        # If all providers failed
+        error_msg = f"All LLM providers failed. Last error: {last_error}"
+        logger.error(error_msg)
+        raise RuntimeError(error_msg)
 
     def _generate_openrouter(
         self,
@@ -135,22 +173,35 @@ class LLMService:
         model: str | None,
         temperature: float,
         max_tokens: int | None,
+        top_p: float | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
     ) -> str:
         """Generate text using OpenRouter."""
-        model_name = model or settings.OPENROUTER_MODEL_GPT4
+        model_name = model or settings.OPENROUTER_MODEL_CLAUDE35
 
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        response = self.openrouter_client.chat.completions.create(
-            model=model_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stop=None,  # Don't use stop sequences that might cut off mid-sentence
-        )
+        # Build kwargs with optional parameters
+        kwargs = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stop": None,  # Don't use stop sequences that might cut off mid-sentence
+        }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+
+        response = self.openrouter_client.chat.completions.create(**kwargs)
 
         content = response.choices[0].message.content
         # Ensure content ends with proper punctuation (don't cut off mid-sentence)
@@ -169,22 +220,39 @@ class LLMService:
         model: str | None,
         temperature: float,
         max_tokens: int | None,
+        top_p: float | None = None,
+        frequency_penalty: float | None = None,
+        presence_penalty: float | None = None,
     ) -> str:
         """Generate text using OpenAI."""
         model_name = model or settings.OPENAI_LLM_MODEL
+
+        # Strip OpenRouter prefix (e.g., "openai/gpt-4-turbo" -> "gpt-4-turbo")
+        if "/" in model_name:
+            model_name = model_name.split("/", 1)[1]
 
         messages = []
         if system_prompt:
             messages.append({"role": "system", "content": system_prompt})
         messages.append({"role": "user", "content": prompt})
 
-        response = self.openai_client.chat.completions.create(
-            model=model_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            stop=None,  # Don't use stop sequences that might cut off mid-sentence
-        )
+        # Build kwargs with optional parameters
+        kwargs = {
+            "model": model_name,
+            "messages": messages,
+            "temperature": temperature,
+            "max_tokens": max_tokens,
+            "stop": None,  # Don't use stop sequences that might cut off mid-sentence
+        }
+
+        if top_p is not None:
+            kwargs["top_p"] = top_p
+        if frequency_penalty is not None:
+            kwargs["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            kwargs["presence_penalty"] = presence_penalty
+
+        response = self.openai_client.chat.completions.create(**kwargs)
 
         content = response.choices[0].message.content
         # Ensure content ends with proper punctuation (don't cut off mid-sentence)
@@ -206,6 +274,10 @@ class LLMService:
     ) -> str:
         """Generate text using Anthropic."""
         model_name = model or settings.ANTHROPIC_LLM_MODEL
+
+        # Strip OpenRouter prefix (e.g., "anthropic/claude-3-5-sonnet" -> "claude-3-5-sonnet")
+        if "/" in model_name:
+            model_name = model_name.split("/", 1)[1]
 
         # Anthropic uses different message format
         system = system_prompt or "You are a helpful assistant."

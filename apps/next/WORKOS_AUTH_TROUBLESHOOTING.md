@@ -42,7 +42,7 @@ export const config = {
     "/",
     "/pricing",
     "/dashboard/:path*",
-    "/product",
+    "/dashboard",
     // Exclude callback, login, API routes, and static files
     "/((?!_next/static|_next/image|favicon.ico|callback|login|api|.*\\.css|.*\\.js|.*\\.png|.*\\.jpg|.*\\.svg).*)",
   ],

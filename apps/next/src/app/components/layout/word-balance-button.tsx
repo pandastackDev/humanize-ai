@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { checkSubscription } from "@/lib/subscription-api";
 import { WordPurchaseDialog } from "../word-purchase-dialog";
 
 type WordBalanceButtonProps = {
@@ -14,51 +15,75 @@ export function WordBalanceButton({
   organizationId,
 }: WordBalanceButtonProps) {
   const [wordBalance, setWordBalance] = useState<number | null>(null);
+  const [subscriptionWords, setSubscriptionWords] = useState<number | null>(
+    null
+  );
+  const [totalAvailable, setTotalAvailable] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-    if (!organizationId) {
+    if (!(organizationId && userId)) {
       setLoading(false);
       return;
     }
 
-    const fetchWordBalance = async () => {
+    const fetchBalances = async () => {
       try {
-        const response = await fetch(
-          `/api/word-balance?organizationId=${encodeURIComponent(organizationId)}`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setWordBalance(data.word_balance || 0);
-        } else {
-          setWordBalance(0);
-        }
+        // Fetch both subscription words and purchase balance in parallel
+        const [subscriptionResponse, balanceResponse] = await Promise.all([
+          // Get subscription words remaining
+          checkSubscription(userId, organizationId).catch(() => null),
+          // Get one-time purchase balance
+          fetch(
+            `/api/word-balance?organizationId=${encodeURIComponent(organizationId)}`
+          )
+            .then((res) => (res.ok ? res.json() : null))
+            .catch(() => null),
+        ]);
+
+        const subWords = subscriptionResponse?.words_remaining || 0;
+        const purchaseBalance = balanceResponse?.word_balance || 0;
+
+        setSubscriptionWords(subWords);
+        setWordBalance(purchaseBalance);
+        // Total = subscription monthly limit remaining + one-time purchases
+        setTotalAvailable(subWords + purchaseBalance);
       } catch (error) {
-        console.error("Error fetching word balance:", error);
+        console.error("Error fetching word balances:", error);
+        setSubscriptionWords(0);
         setWordBalance(0);
+        setTotalAvailable(0);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchWordBalance();
-  }, [organizationId]);
+    fetchBalances();
+  }, [organizationId, userId]);
 
   // Refresh balance when dialog closes (after purchase)
   const handleDialogClose = (open: boolean) => {
     setDialogOpen(open);
-    if (!open && organizationId) {
-      // Refresh balance after purchase
+    if (!open && organizationId && userId) {
+      // Refresh both balances after purchase
       setTimeout(async () => {
         try {
-          const response = await fetch(
-            `/api/word-balance?organizationId=${encodeURIComponent(organizationId)}`
-          );
-          if (response.ok) {
-            const data = await response.json();
-            setWordBalance(data.word_balance || 0);
-          }
+          const [subscriptionResponse, balanceResponse] = await Promise.all([
+            checkSubscription(userId, organizationId).catch(() => null),
+            fetch(
+              `/api/word-balance?organizationId=${encodeURIComponent(organizationId)}`
+            )
+              .then((res) => (res.ok ? res.json() : null))
+              .catch(() => null),
+          ]);
+
+          const subWords = subscriptionResponse?.words_remaining || 0;
+          const purchaseBalance = balanceResponse?.word_balance || 0;
+
+          setSubscriptionWords(subWords);
+          setWordBalance(purchaseBalance);
+          setTotalAvailable(subWords + purchaseBalance);
         } catch (err) {
           console.error("Error refreshing balance:", err);
         }
@@ -74,10 +99,11 @@ export function WordBalanceButton({
     <>
       <div className="flex items-center gap-2">
         <div className="hidden items-center gap-2 rounded-md bg-muted px-3 py-1.5 text-sm sm:flex">
-          <span className="text-muted-foreground">Balance:</span>
+          <span className="text-muted-foreground">Available:</span>
           <span className="font-semibold">
-            {loading ? "..." : (wordBalance ?? 0).toLocaleString()}
+            {loading ? "..." : (totalAvailable ?? 0).toLocaleString()}
           </span>
+          <span className="text-muted-foreground text-xs">words</span>
         </div>
         <Button
           className="hidden sm:flex"

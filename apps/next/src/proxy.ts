@@ -9,7 +9,6 @@ export const config = {
     "/",
     "/pricing",
     "/dashboard/:path*",
-    "/product",
     // Exclude callback and login routes from middleware
     "/((?!_next/static|_next/image|favicon.ico|callback|login|.*\\.css).*)",
   ],

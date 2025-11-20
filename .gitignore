@@ -76,3 +76,6 @@ build/**
 .ruff_cache
 
 *.tsbuildinfo
+
+# FastText models (large binary files)
+models/

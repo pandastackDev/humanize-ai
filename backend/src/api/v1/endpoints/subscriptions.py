@@ -5,7 +5,6 @@ Subscription endpoints for checking subscription status and tracking usage.
 import logging
 from datetime import datetime
 
-import httpx
 from fastapi import APIRouter, HTTPException
 
 from api.config import settings
@@ -17,6 +16,7 @@ from api.models import (
     UsageTrackingRequest,
     UsageTrackingResponse,
 )
+from api.services.convex_client import query_convex
 
 logger = logging.getLogger(__name__)
 
@@ -39,33 +39,21 @@ async def get_subscription_from_convex(user_id: str, organization_id: str | None
         return None
 
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            # Query Convex to get organization subscription info
-            if organization_id:
-                query_url = f"{settings.CONVEX_URL}/api/query"
-                query_data = {
-                    "path": "subscriptions:getByWorkosId",
-                    "args": {"workos_id": organization_id},
-                    "format": "json",
+        if organization_id:
+            # Query Convex using Python client
+            org_data = await query_convex(
+                "subscriptions:getByWorkosId", {"workos_id": organization_id}
+            )
+
+            if org_data and isinstance(org_data, dict):
+                return {
+                    "plan": org_data.get("subscription_plan", "free"),
+                    "status": org_data.get("subscription_status", "active"),
+                    "billing_period": org_data.get("billing_period", "monthly"),
+                    "stripe_customer_id": org_data.get("stripe_customer_id"),
+                    "stripe_subscription_id": org_data.get("stripe_subscription_id"),
+                    "current_period_end": org_data.get("current_period_end"),
                 }
-
-                headers = {}
-                if settings.CONVEX_DEPLOYMENT_KEY:
-                    headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
-
-                response = await client.post(query_url, json=query_data, headers=headers)
-
-                if response.status_code == 200:
-                    org_data = response.json()
-                    if org_data:
-                        return {
-                            "plan": org_data.get("subscription_plan", "free"),
-                            "status": org_data.get("subscription_status", "active"),
-                            "billing_period": org_data.get("billing_period", "monthly"),
-                            "stripe_customer_id": org_data.get("stripe_customer_id"),
-                            "stripe_subscription_id": org_data.get("stripe_subscription_id"),
-                            "current_period_end": org_data.get("current_period_end"),
-                        }
     except Exception as e:
         logger.error(f"Error querying Convex for subscription: {e}")
 
@@ -91,42 +79,31 @@ async def get_usage_from_convex(user_id: str, organization_id: str | None) -> di
     month = now.month
 
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            query_url = f"{settings.CONVEX_URL}/api/query"
-            if organization_id:
-                query_data = {
-                    "path": "usage:getByOrganizationMonth",
-                    "args": {
-                        "organization_id": organization_id,
-                        "year": year,
-                        "month": month,
-                    },
-                    "format": "json",
-                }
-            else:
-                query_data = {
-                    "path": "usage:getByUserMonth",
-                    "args": {
-                        "user_id": user_id,
-                        "year": year,
-                        "month": month,
-                    },
-                    "format": "json",
-                }
+        # Query Convex using Python client
+        if organization_id:
+            usage_data = await query_convex(
+                "usage:getByOrganizationMonth",
+                {
+                    "organization_id": organization_id,
+                    "year": year,
+                    "month": month,
+                },
+            )
+        else:
+            usage_data = await query_convex(
+                "usage:getByUserMonth",
+                {
+                    "user_id": user_id,
+                    "year": year,
+                    "month": month,
+                },
+            )
 
-            headers = {}
-            if settings.CONVEX_DEPLOYMENT_KEY:
-                headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
-
-            response = await client.post(query_url, json=query_data, headers=headers)
-
-            if response.status_code == 200:
-                usage_data = response.json()
-                if usage_data:
-                    return {
-                        "words_used": usage_data.get("words_used", 0),
-                        "requests_count": usage_data.get("requests_count", 0),
-                    }
+        if usage_data and isinstance(usage_data, dict):
+            return {
+                "words_used": usage_data.get("words_used", 0),
+                "requests_count": usage_data.get("requests_count", 0),
+            }
     except Exception as e:
         logger.error(f"Error querying Convex for usage: {e}")
 

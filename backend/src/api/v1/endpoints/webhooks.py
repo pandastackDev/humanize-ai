@@ -4,10 +4,10 @@ Stripe webhook endpoints for handling subscription events.
 
 import logging
 
-import httpx
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from api.config import settings
+from api.services.convex_client import mutate_convex, query_convex
 
 logger = logging.getLogger(__name__)
 
@@ -56,9 +56,61 @@ def verify_stripe_signature(payload: bytes, signature: str, secret: str) -> bool
         return False
 
 
+async def get_organization_from_convex(organization_id: str) -> dict | None:
+    """
+    Get organization from Convex using Python client.
+
+    Args:
+        organization_id: WorkOS organization ID
+
+    Returns:
+        Organization data or None if not found
+    """
+    try:
+        result = await query_convex(
+            "organizations:getPublicByWorkOSId", {"workos_id": organization_id}
+        )
+        return result if isinstance(result, dict) else None
+    except Exception as e:
+        logger.error(f"Error querying organization from Convex: {e}")
+        return None
+
+
+async def create_organization_in_convex(organization_id: str, organization_name: str) -> bool:
+    """
+    Create organization in Convex using Python client.
+
+    Args:
+        organization_id: WorkOS organization ID
+        organization_name: Organization name
+
+    Returns:
+        True if successful
+    """
+    try:
+        result = await mutate_convex(
+            "organizations:create",
+            {
+                "workos_id": organization_id,
+                "name": organization_name,
+            },
+        )
+
+        if result is not None:
+            logger.info(f"Successfully created organization in Convex: {organization_id}")
+            return True
+        else:
+            logger.error("Failed to create organization in Convex: mutation returned None")
+            return False
+    except Exception as e:
+        logger.error(f"Error creating organization in Convex: {e}")
+        return False
+
+
 async def update_subscription_in_convex(organization_id: str, subscription_data: dict) -> bool:
     """
     Update subscription in Convex via mutation.
+    If organization doesn't exist, it will be created first.
 
     Args:
         organization_id: WorkOS organization ID
@@ -67,36 +119,34 @@ async def update_subscription_in_convex(organization_id: str, subscription_data:
     Returns:
         True if successful
     """
-    if not settings.CONVEX_URL:
-        logger.warning("CONVEX_URL not configured, cannot update subscription")
-        return False
-
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            mutation_url = f"{settings.CONVEX_URL}/api/mutation"
-            mutation_data = {
-                "path": "subscriptions:updateSubscription",
-                "args": {
-                    "organization_id": organization_id,
-                    **subscription_data,
-                },
-                "format": "json",
-            }
+        # Check if organization exists in Convex
+        org = await get_organization_from_convex(organization_id)
 
-            headers = {}
-            if settings.CONVEX_DEPLOYMENT_KEY:
-                headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
+        if not org:
+            # Organization doesn't exist, create it first
+            logger.info(f"Organization {organization_id} not found in Convex, creating it")
+            # Try to get organization name from WorkOS or use a default
+            org_name = subscription_data.get(
+                "organization_name", f"Organization {organization_id[:8]}"
+            )
+            await create_organization_in_convex(organization_id, org_name)
 
-            response = await client.post(mutation_url, json=mutation_data, headers=headers)
+        # Update subscription using Python client
+        result = await mutate_convex(
+            "subscriptions:updateSubscription",
+            {
+                "organization_id": organization_id,
+                **subscription_data,
+            },
+        )
 
-            if response.status_code == 200:
-                logger.info(f"Successfully updated subscription in Convex for {organization_id}")
-                return True
-            else:
-                logger.error(
-                    f"Failed to update subscription in Convex: {response.status_code} - {response.text}"
-                )
-                return False
+        if result is not None:
+            logger.info(f"Successfully updated subscription in Convex for {organization_id}")
+            return True
+        else:
+            logger.error("Failed to update subscription in Convex: mutation returned None")
+            return False
     except Exception as e:
         logger.error(f"Error updating subscription in Convex: {e}")
         return False
@@ -202,37 +252,23 @@ async def handle_stripe_webhook(request: Request, stripe_signature: str = Header
                 if organization_id and word_amount:
                     try:
                         word_amount_int = int(word_amount)
-                        # Update word balance in Convex
-                        if settings.CONVEX_URL:
-                            async with httpx.AsyncClient(timeout=10.0) as client:
-                                mutation_url = f"{settings.CONVEX_URL}/api/mutation"
-                                mutation_data = {
-                                    "path": "organizations:addWordBalance",
-                                    "args": {
-                                        "organization_id": organization_id,
-                                        "word_amount": word_amount_int,
-                                    },
-                                    "format": "json",
-                                }
+                        # Update word balance in Convex using Python client
+                        result = await mutate_convex(
+                            "organizations:addWordBalance",
+                            {
+                                "organization_id": organization_id,
+                                "word_amount": word_amount_int,
+                            },
+                        )
 
-                                headers = {}
-                                if settings.CONVEX_DEPLOYMENT_KEY:
-                                    headers["Authorization"] = (
-                                        f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
-                                    )
-
-                                response = await client.post(
-                                    mutation_url, json=mutation_data, headers=headers
-                                )
-
-                                if response.status_code == 200:
-                                    logger.info(
-                                        f"Successfully added {word_amount_int} words to organization {organization_id}"
-                                    )
-                                else:
-                                    logger.error(
-                                        f"Failed to update word balance: {response.status_code} - {response.text}"
-                                    )
+                        if result is not None:
+                            logger.info(
+                                f"Successfully added {word_amount_int} words to organization {organization_id}"
+                            )
+                        else:
+                            logger.error(
+                                f"Failed to update word balance for organization {organization_id}"
+                            )
                     except Exception as e:
                         logger.error(f"Error processing word purchase: {e}")
 

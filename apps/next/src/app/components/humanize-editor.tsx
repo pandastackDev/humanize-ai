@@ -11,6 +11,7 @@ import {
   FileText,
   FileUp,
   Info,
+  Loader2,
   Sparkles,
   Star,
   ThumbsDown,
@@ -32,7 +33,12 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { type DetectResponse, detectAIContent } from "@/lib/detect-api";
 import { humanizeText } from "@/lib/humanize-api";
+import {
+  checkSubscription,
+  type SubscriptionPlan,
+} from "@/lib/subscription-api";
 import { type HistoryItem, HistorySidebar } from "./history-sidebar";
 import { ProUpgradeSidebar } from "./pro-upgrade-sidebar";
 import { TextDiffViewer } from "./text-diff-viewer";
@@ -96,6 +102,42 @@ const lengthModes = [
 
 const WORD_COUNT_REGEX = /\s+/;
 
+// AI detectors for loading screen
+const AI_DETECTORS = [
+  {
+    name: "Turnitin",
+    image: "/logos/humanization-logos/turnitin.png",
+  },
+  {
+    name: "GPTZero",
+    image: "/logos/humanization-logos/gptzero.png",
+  },
+  {
+    name: "Copyleaks",
+    image: "/logos/humanization-logos/copyleaks.png",
+  },
+  {
+    name: "ZeroGPT",
+    image: "/logos/humanization-logos/zerogpt.png",
+  },
+  {
+    name: "Quillbot",
+    image: "/logos/humanization-logos/quillbot.png",
+  },
+  {
+    name: "Writer",
+    image: "/logos/humanization-logos/writer.png",
+  },
+  {
+    name: "Sapling",
+    image: "/logos/humanization-logos/sapling.png",
+  },
+  {
+    name: "Originality",
+    image: "/logos/humanization-logos/originality.png",
+  },
+];
+
 function getLanguageCode(languageName: string): string {
   const languageMap: Record<string, string> = {
     English: "en",
@@ -129,9 +171,13 @@ function getLanguageCode(languageName: string): string {
 // Example text for "Try example" button
 const EXAMPLE_TEXT = `The seaside town was a picturesque blend of old-world charm and modern amenities. Waves crashed gently against the shore, their rhythmic sound providing a soothing backdrop to the bustling boardwalk. Colorful fishing boats bobbed in the harbor, their nets filled with the day's catch. Tourists strolled along the promenade, enjoying the salty sea breeze and the vibrant atmosphere.`;
 
-// Constants for word limits
-const FREE_WORD_LIMIT = 500;
-const PREMIUM_WORD_LIMIT = 25_000;
+// Constants for word limits per request based on subscription tier
+const WORD_LIMITS: Record<SubscriptionPlan, number> = {
+  free: 500,
+  basic: 500,
+  pro: 1500,
+  ultra: 3000,
+};
 
 // History storage key
 const HISTORY_STORAGE_KEY = "humanize_history";
@@ -166,7 +212,9 @@ export function HumanizeEditor({
   const [showProUpgrade, setShowProUpgrade] = useState(false);
   const [humanScore, setHumanScore] = useState<number | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
-  const [isPremium, setIsPremium] = useState(false); // TODO: Get from auth context
+  const [subscriptionPlan, setSubscriptionPlan] =
+    useState<SubscriptionPlan>("free");
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   const [enabledFeatures, setEnabledFeatures] = useState({
     changed: true,
     structural: true,
@@ -179,6 +227,41 @@ export function HumanizeEditor({
     unchanged: false,
     thesaurus: false,
   });
+
+  // AI Detection state
+  const [detectionResult, setDetectionResult] = useState<DetectResponse | null>(
+    null
+  );
+  const [isDetecting, setIsDetecting] = useState(false);
+  const [detectionError, setDetectionError] = useState<string | null>(null);
+
+  // Fetch subscription status on mount
+  useEffect(() => {
+    async function fetchSubscription() {
+      if (!userId) {
+        setSubscriptionLoading(false);
+        return;
+      }
+
+      try {
+        console.log("Fetching subscription for:", { userId, organizationId });
+        const subscriptionInfo = await checkSubscription(
+          userId,
+          organizationId
+        );
+        console.log("Subscription info received:", subscriptionInfo);
+        setSubscriptionPlan(subscriptionInfo.plan);
+      } catch (err) {
+        console.error("Failed to fetch subscription:", err);
+        // Default to free plan on error
+        setSubscriptionPlan("free");
+      } finally {
+        setSubscriptionLoading(false);
+      }
+    }
+
+    fetchSubscription();
+  }, [userId, organizationId]);
 
   // Load history from localStorage on mount
   useEffect(() => {
@@ -216,8 +299,11 @@ export function HumanizeEditor({
     .split(WORD_COUNT_REGEX)
     .filter(Boolean).length;
 
-  // Get word limit based on subscription status
-  const wordLimit = isPremium ? PREMIUM_WORD_LIMIT : FREE_WORD_LIMIT;
+  // Get word limit based on subscription plan
+  console.log("subscriptionPlan", subscriptionPlan);
+  // const wordLimit = WORD_LIMITS[subscriptionPlan];
+  const wordLimit = 3000;
+
   const isOverLimit = wordCount > wordLimit;
 
   // Handle paste from clipboard
@@ -349,7 +435,7 @@ export function HumanizeEditor({
 
     if (isOverLimit) {
       setError(
-        `Word limit exceeded. Free users can humanize up to ${FREE_WORD_LIMIT} words. Upgrade to premium for ${PREMIUM_WORD_LIMIT} words.`
+        `Word limit exceeded. Your ${subscriptionPlan} plan allows up to ${wordLimit} words per request. ${subscriptionPlan === "free" ? "Upgrade to a paid plan for higher limits." : "Upgrade to a higher tier for more words."}`
       );
       router.push("/pricing");
       return;
@@ -406,6 +492,44 @@ export function HumanizeEditor({
     }
   };
 
+  // Handle AI Detection
+  const handleDetectAI = async () => {
+    if (!inputText.trim()) {
+      setDetectionError("Please enter some text to analyze");
+      return;
+    }
+
+    const detectionWordCount = inputText
+      .trim()
+      .split(WORD_COUNT_REGEX)
+      .filter(Boolean).length;
+    if (wordCount < 10) {
+      setDetectionError(
+        "Text must contain at least 10 words for accurate detection"
+      );
+      return;
+    }
+
+    setIsDetecting(true);
+    setDetectionError(null);
+    setDetectionResult(null);
+
+    try {
+      const result = await detectAIContent({
+        text: inputText.trim(),
+        include_internal_analysis: true,
+        enable_caching: true,
+      });
+      setDetectionResult(result);
+    } catch (err) {
+      setDetectionError(
+        err instanceof Error ? err.message : "Detection failed"
+      );
+    } finally {
+      setIsDetecting(false);
+    }
+  };
+
   // Check if PRO item is selected
   const isProReadabilitySelected = readabilityLevels.find(
     (level) => level.value === readabilityLevel && level.pro
@@ -413,6 +537,8 @@ export function HumanizeEditor({
   const isProPurposeSelected = purposes.find(
     (p) => p.value === purpose && p.pro
   );
+  // Pro features are available for pro and ultra plans
+  const isPremium = subscriptionPlan === "pro" || subscriptionPlan === "ultra";
   const isProSelected =
     (isProReadabilitySelected || isProPurposeSelected) && !isPremium;
 
@@ -448,7 +574,7 @@ export function HumanizeEditor({
   // Get word count display text
   const getWordCountText = () => {
     if (isInitialState && activeTab === "humanize") {
-      return isPremium ? "0/25000 words" : "0/2500 words";
+      return `0/${wordLimit} words`;
     }
     if (isOverLimit) {
       return `${wordCount}/${wordLimit} words (Limit exceeded)`;
@@ -487,75 +613,55 @@ export function HumanizeEditor({
       );
     }
     if (isLoading || forceLoading) {
-      const aiDetectors = [
-        {
-          name: "Turnitin",
-          image: "/logos/humanization-logos/turnitin.png",
-        },
-        {
-          name: "GPTZero",
-          image: "/logos/humanization-logos/gptzero.png",
-        },
-        {
-          name: "Copyleaks",
-          image: "/logos/humanization-logos/copyleaks.png",
-        },
-        {
-          name: "ZeroGPT",
-          image: "/logos/humanization-logos/zerogpt.png",
-        },
-        {
-          name: "Quillbot",
-          image: "/logos/humanization-logos/quillbot.png",
-        },
-        {
-          name: "Writer",
-          image: "/logos/humanization-logos/writer.png",
-        },
-        {
-          name: "Sapling",
-          image: "/logos/humanization-logos/sapling.png",
-        },
-        {
-          name: "Originality",
-          image: "/logos/humanization-logos/originality.png",
-        },
-      ];
-
       return (
-        <div className="flex h-[450px] w-full flex-col gap-6 overflow-hidden px-4 py-5 sm:px-6">
-          {/* Loading Spinner */}
-          <div className="flex flex-col items-center justify-center gap-3">
-            <LoadingSpinner size="lg" />
-            <p className="text-slate-600 text-sm dark:text-slate-400">
-              Humanizing your text...
-            </p>
+        <div className="flex h-[450px] w-full flex-col items-center gap-3 overflow-hidden px-4 py-4 sm:px-6">
+          {/* Loading Spinner with Gradient Background */}
+          <div className="flex w-full flex-col items-center justify-center gap-2.5 rounded-lg bg-gradient-to-br from-[#0066ff]/5 via-purple-500/5 to-[#0066ff]/5 p-5 dark:from-[#0066ff]/10 dark:via-purple-500/10 dark:to-[#0066ff]/10">
+            <div className="relative">
+              <div className="absolute inset-0 animate-pulse rounded-full bg-[#0066ff]/20 blur-lg" />
+              <LoadingSpinner className="relative" size="md" />
+            </div>
+            <div className="flex flex-col items-center gap-0.5">
+              <p className="bg-gradient-to-r from-[#0066ff] to-purple-600 bg-clip-text font-semibold text-sm text-transparent">
+                Humanizing your text...
+              </p>
+              <p className="text-slate-500 text-xs dark:text-slate-400">
+                This may take a few seconds
+              </p>
+            </div>
           </div>
 
-          {/* Rating */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-1">
-              {[1, 2, 3, 4, 5].map((starNum) => (
-                <Star
-                  className="h-4 w-4 fill-[#0066ff] text-[#0066ff]"
-                  key={`rating-star-${starNum}`}
-                />
-              ))}
+          {/* Rating Card */}
+          <div className="w-full rounded-lg border border-slate-200 bg-white p-2.5 shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((starNum) => (
+                  <Star
+                    className="h-4 w-4 fill-[#0066ff] text-[#0066ff]"
+                    key={`rating-star-${starNum}`}
+                  />
+                ))}
+              </div>
+              <div className="flex flex-col">
+                <p className="font-bold text-slate-900 text-sm dark:text-slate-100">
+                  4.8/5
+                </p>
+                <p className="text-slate-600 text-xs dark:text-slate-400">
+                  128,743 reviews
+                </p>
+              </div>
             </div>
-            <p className="text-slate-600 text-xs dark:text-slate-400">
-              4.8/5 based on 128,743 reviews
-            </p>
           </div>
 
           {/* AI Detector Bypass Section */}
-          <div className="border border-slate-200 bg-slate-50 p-4 dark:border-slate-700 dark:bg-[#141414]/50">
-            <h3 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
+          <div className="w-full rounded-lg border border-white bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
+            <h3 className="mb-2 font-semibold text-slate-900 text-xs dark:text-slate-100">
               AI Humanizer can bypass these AI detectors
             </h3>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {aiDetectors.map((detector) => (
+            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+              {AI_DETECTORS.map((detector) => (
                 <div
-                  className="flex items-center gap-2 p-2 dark:bg-[#141414]"
+                  className="flex items-center gap-1.5 rounded-md border border-slate-100 bg-slate-50 p-1.5 transition-all hover:border-[#0066ff]/30 hover:bg-[#0066ff]/5 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-[#0066ff]/50 dark:hover:bg-[#0066ff]/10"
                   key={detector.name}
                 >
                   <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
@@ -576,48 +682,60 @@ export function HumanizeEditor({
           </div>
 
           {/* Trust Metrics */}
-          <div className="space-y-2">
-            <div className="flex gap-2">
-              <div className="flex flex-1 items-start gap-3 border border-[#0066ff] bg-[#0066ff]/10 p-3 dark:border-[#0066ff] dark:bg-[#141414]">
-                <Check className="h-4 w-4 shrink-0 text-[#0066ff] dark:text-[#0066ff]" />
+          <div className="w-full space-y-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+              <div className="flex items-center gap-2 rounded-lg border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-[#0066ff]/5 p-2.5 shadow-sm dark:border-[#0066ff]/30 dark:from-[#0066ff]/20 dark:to-[#0066ff]/10">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0066ff]/20 dark:bg-[#0066ff]/30">
+                  <Check className="h-3.5 w-3.5 text-[#0066ff]" />
+                </div>
                 <div>
-                  <p className="font-semibold text-[#0066ff] text-xs dark:text-[#0066ff]">
-                    Trusted by 12 Million+ Users
+                  <p className="font-bold text-[#0066ff] text-xs">
+                    12 Million+
+                  </p>
+                  <p className="text-slate-600 text-xs dark:text-slate-400">
+                    Trusted Users
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-1 items-start gap-3 border border-[#0066ff] bg-[#0066ff]/10 p-3 dark:border-[#0066ff] dark:bg-[#141414]">
-                <FileText className="h-4 w-4 shrink-0 text-[#0066ff] dark:text-[#0066ff]" />
+              <div className="flex items-center gap-2 rounded-lg border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-[#0066ff]/5 p-2.5 shadow-sm dark:border-[#0066ff]/30 dark:from-[#0066ff]/20 dark:to-[#0066ff]/10">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0066ff]/20 dark:bg-[#0066ff]/30">
+                  <FileText className="h-3.5 w-3.5 text-[#0066ff]" />
+                </div>
                 <div>
-                  <p className="whitespace-nowrap font-semibold text-[#0066ff] text-xs dark:text-[#0066ff]">
-                    1.46 Billion+ Words Humanized Monthly
+                  <p className="font-bold text-[#0066ff] text-xs">
+                    1.46 Billion+
+                  </p>
+                  <p className="text-slate-600 text-xs dark:text-slate-400">
+                    Words Monthly
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-0">
-              {/* Success Rate Button */}
-              <div className="flex items-center gap-2 border border-[#0066ff] bg-[#0066ff]/10 px-3 py-2 dark:border-[#0066ff] dark:bg-[#141414]">
-                <Check className="h-4 w-4 shrink-0 text-[#0066ff] dark:text-[#0066ff]" />
-                <p className="font-semibold text-[#0066ff] text-xs dark:text-[#0066ff]">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+              {/* Success Rate */}
+              <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-green-50/50 px-3 py-1.5 shadow-sm dark:border-green-900/50 dark:from-green-950/30 dark:to-green-950/10">
+                <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
+                  <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+                </div>
+                <p className="font-bold text-green-700 text-xs dark:text-green-400">
                   99.54% Success Rate
                 </p>
               </div>
 
-              {/* Stars and Reviews Section */}
-              <div className="ml-auto flex items-center gap-3 border border-slate-200 bg-white px-3 py-2 dark:border-slate-700 dark:bg-[#141414]">
+              {/* Trustpilot Reviews */}
+              <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-slate-200 bg-white px-3 py-1.5 shadow-sm dark:border-slate-800 dark:bg-slate-900/50">
                 <Image
                   alt="4.5 stars on Trustpilot"
-                  className="h-4 w-auto"
-                  height={16}
+                  className="h-3.5 w-auto"
+                  height={14}
                   src="https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-4.5.svg"
                   unoptimized
-                  width={80}
+                  width={70}
                 />
-                <span className="flex items-center gap-1 text-black text-xs dark:text-slate-100">
-                  <span className="gap-4 underline">5,936 reviews on</span>
+                <span className="flex items-center gap-1 text-slate-700 text-xs dark:text-slate-300">
+                  <span className="font-medium">5,936 reviews on</span>
                   <Image
                     alt="Trustpilot"
                     className="h-3 w-3"
@@ -625,7 +743,7 @@ export function HumanizeEditor({
                     src="/logos/trustpilot-star.png"
                     width={12}
                   />
-                  <span>Trustpilot</span>
+                  <span className="font-semibold">Trustpilot</span>
                 </span>
               </div>
             </div>
@@ -660,21 +778,279 @@ export function HumanizeEditor({
     );
   };
 
+  // Render detection output
+  const renderDetectionOutput = () => {
+    const getScoreColor = (score: number) => {
+      if (score >= 70) {
+        return "text-green-600 dark:text-green-400";
+      }
+      if (score >= 40) {
+        return "text-yellow-600 dark:text-yellow-400";
+      }
+      return "text-red-600 dark:text-red-400";
+    };
+
+    if (detectionError) {
+      return (
+        <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+          <X className="mb-4 h-12 w-12 text-red-500" />
+          <h3 className="mb-2 font-semibold text-base text-red-600 dark:text-red-400">
+            Detection Error
+          </h3>
+          <p className="text-center text-slate-600 text-xs sm:text-sm dark:text-slate-400">
+            {detectionError}
+          </p>
+          <Button
+            className="mt-4"
+            onClick={() => setDetectionError(null)}
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      );
+    }
+
+    if (!detectionResult) {
+      // Loading screen with all detectors
+      if (isDetecting) {
+        return (
+          <div className="flex h-[600px] w-full flex-col items-center justify-center bg-white/95 px-4 py-8 backdrop-blur-sm dark:bg-slate-900/95">
+            {/* Purple heading */}
+            <h2 className="mb-2 text-center font-bold text-2xl text-purple-600 dark:text-purple-400">
+              Analyzing your text through all major AI detectors
+            </h2>
+
+            {/* Description */}
+            <p className="mb-8 max-w-2xl text-center text-slate-600 text-sm dark:text-slate-400">
+              This may take a few seconds as we cross-verify results across
+              multiple platforms for maximum accuracy.
+            </p>
+
+            {/* Detector grid - 8 detectors in grid */}
+            <div className="grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
+              {AI_DETECTORS.map((detector, index) => (
+                <div
+                  className="relative flex flex-col items-center justify-center rounded-lg bg-white/50 p-4 shadow-sm backdrop-blur-md transition-all hover:shadow-md dark:bg-slate-800/50"
+                  key={detector.name}
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                  }}
+                >
+                  {/* Logo */}
+                  <div className="relative mb-2 flex h-12 w-12 items-center justify-center">
+                    <Image
+                      alt={detector.name}
+                      className="object-contain"
+                      height={48}
+                      src={detector.image}
+                      width={48}
+                    />
+                  </div>
+
+                  {/* Detector name */}
+                  <span className="mb-1 text-center font-medium text-slate-700 text-xs dark:text-slate-300">
+                    {detector.name}
+                  </span>
+
+                  {/* Loading spinner */}
+                  <Loader2 className="h-4 w-4 animate-spin text-purple-500" />
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      }
+
+      // Default empty state
+      return (
+        <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+          <BarChart3 className="mb-4 h-12 w-12 text-slate-300 dark:text-slate-600" />
+          <h3 className="mb-2 font-semibold text-base text-slate-900 sm:text-lg dark:text-slate-100">
+            AI Detector
+          </h3>
+          <p className="text-center text-slate-600 text-xs sm:text-sm dark:text-slate-400">
+            Click &quot;Detect AI&quot; to analyze your text
+          </p>
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-[450px] w-full overflow-y-auto px-4 py-5 sm:px-6">
+        {/* Overall Score Card */}
+        <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+          <div className="mb-3 flex items-center justify-between">
+            <h3 className="font-semibold text-slate-900 dark:text-slate-100">
+              Detection Results
+            </h3>
+            {detectionResult.cached && (
+              <span className="flex items-center gap-1 text-blue-600 text-xs dark:text-blue-400">
+                <Clock className="h-3 w-3" />
+                Cached
+              </span>
+            )}
+          </div>
+
+          {/* Human Likelihood */}
+          <div className="mb-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-slate-600 text-sm dark:text-slate-400">
+                Human Likelihood
+              </span>
+              <span
+                className={`font-bold text-2xl ${getScoreColor(detectionResult.human_likelihood_pct)}`}
+              >
+                {detectionResult.human_likelihood_pct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-2.5 rounded-full bg-green-600 transition-all"
+                style={{ width: `${detectionResult.human_likelihood_pct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* AI Likelihood */}
+          <div className="mb-3 space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="font-medium text-slate-600 text-sm dark:text-slate-400">
+                AI Likelihood
+              </span>
+              <span
+                className={`font-bold text-2xl ${getScoreColor(100 - detectionResult.ai_likelihood_pct)}`}
+              >
+                {detectionResult.ai_likelihood_pct.toFixed(1)}%
+              </span>
+            </div>
+            <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div
+                className="h-2.5 rounded-full bg-red-600 transition-all"
+                style={{ width: `${detectionResult.ai_likelihood_pct}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Confidence */}
+          <div className="flex items-center justify-between border-slate-200 border-t pt-3 text-sm dark:border-slate-700">
+            <span className="text-slate-600 dark:text-slate-400">
+              Confidence
+            </span>
+            <span className="font-medium text-slate-900 dark:text-slate-100">
+              {(detectionResult.confidence * 100).toFixed(1)}%
+            </span>
+          </div>
+        </div>
+
+        {/* Detector Breakdown */}
+        {detectionResult.detector_results.length > 0 && (
+          <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+            <h4 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
+              Detector Breakdown
+            </h4>
+            <div className="space-y-2">
+              {detectionResult.detector_results.map((detector) => (
+                <div
+                  className="flex items-center justify-between rounded-lg bg-slate-50 p-2 dark:bg-slate-900"
+                  key={detector.detector}
+                >
+                  <div className="space-y-0.5">
+                    <div className="font-medium text-slate-900 text-sm capitalize dark:text-slate-100">
+                      {detector.detector}
+                    </div>
+                    <div className="text-slate-500 text-xs dark:text-slate-400">
+                      Confidence: {(detector.confidence * 100).toFixed(0)}%
+                      {detector.response_time_ms && (
+                        <> • {detector.response_time_ms.toFixed(0)}ms</>
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className={`font-bold text-lg ${getScoreColor(detector.human_probability * 100)}`}
+                  >
+                    {(detector.human_probability * 100).toFixed(0)}%
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Internal Analysis */}
+        {detectionResult.internal_analysis && (
+          <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
+            <h4 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
+              Internal Analysis
+            </h4>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              {detectionResult.internal_analysis.perplexity_score && (
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Perplexity:
+                  </span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
+                    {detectionResult.internal_analysis.perplexity_score.toFixed(
+                      1
+                    )}
+                  </span>
+                </div>
+              )}
+              {detectionResult.internal_analysis.entropy_score && (
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Entropy:
+                  </span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
+                    {detectionResult.internal_analysis.entropy_score.toFixed(2)}
+                  </span>
+                </div>
+              )}
+              {detectionResult.internal_analysis.lexical_diversity && (
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Lexical:
+                  </span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
+                    {detectionResult.internal_analysis.lexical_diversity.toFixed(
+                      2
+                    )}
+                  </span>
+                </div>
+              )}
+              {detectionResult.internal_analysis.burstiness_score && (
+                <div>
+                  <span className="text-slate-600 dark:text-slate-400">
+                    Burstiness:
+                  </span>
+                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
+                    {detectionResult.internal_analysis.burstiness_score.toFixed(
+                      2
+                    )}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Render output for other tabs
   const renderOtherTabOutput = () => {
-    const title =
-      activeTab === "plagiarism" ? "Plagiarism Checker" : "AI Detector";
-    const message =
-      activeTab === "plagiarism"
-        ? 'Click "Check Plagiarism" to analyze your text'
-        : 'Click "Detect AI" to analyze your text';
+    if (activeTab === "detector") {
+      return renderDetectionOutput();
+    }
+
+    // Plagiarism checker placeholder
     return (
       <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
         <h3 className="mb-2 font-semibold text-base text-slate-900 sm:text-lg dark:text-slate-100">
-          {title}
+          Plagiarism Checker
         </h3>
         <p className="text-center text-slate-600 text-xs sm:text-sm dark:text-slate-400">
-          {message}
+          Click &quot;Check Plagiarism&quot; to analyze your text
         </p>
       </div>
     );
@@ -830,35 +1206,62 @@ export function HumanizeEditor({
                         )}
                       </div>
                     </div>
-                    {isInitialState && activeTab === "humanize" ? (
-                      <div className="flex items-center gap-2">
-                        <Button
-                          className="h-8 gap-1.5 rounded-lg bg-slate-100 px-3 font-medium text-slate-500 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:bg-slate-700 dark:text-slate-400"
-                          disabled
-                        >
-                          Humanize
-                        </Button>
-                      </div>
-                    ) : (
-                      !isInitialState && (
-                        <Button
-                          className="h-8 gap-1.5 px-3 text-sm sm:w-auto"
-                          disabled={
-                            !inputText.trim() || isLoading || isProSelected
-                          }
-                          onClick={handleHumanize}
-                        >
-                          {isLoading ? (
-                            <>
-                              <LoadingSpinner size="sm" />
-                              Humanizing...
-                            </>
-                          ) : (
-                            <>Humanize</>
-                          )}
-                        </Button>
-                      )
-                    )}
+                    {(() => {
+                      if (isInitialState && activeTab === "humanize") {
+                        return (
+                          <div className="flex items-center gap-2">
+                            <Button
+                              className="h-8 gap-1.5 rounded-lg bg-slate-100 px-3 font-medium text-slate-500 text-sm transition-all disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto dark:bg-slate-700 dark:text-slate-400"
+                              disabled
+                            >
+                              Humanize
+                            </Button>
+                          </div>
+                        );
+                      }
+                      if (activeTab === "detector") {
+                        return (
+                          <Button
+                            className="h-8 gap-1.5 px-3 text-sm sm:w-auto"
+                            disabled={!inputText.trim() || isDetecting}
+                            onClick={handleDetectAI}
+                          >
+                            {isDetecting ? (
+                              <>
+                                <LoadingSpinner size="sm" />
+                                Detecting...
+                              </>
+                            ) : (
+                              <>
+                                <BarChart3 className="h-4 w-4" />
+                                Detect AI
+                              </>
+                            )}
+                          </Button>
+                        );
+                      }
+                      if (!isInitialState) {
+                        return (
+                          <Button
+                            className="h-8 gap-1.5 px-3 text-sm sm:w-auto"
+                            disabled={
+                              !inputText.trim() || isLoading || isProSelected
+                            }
+                            onClick={handleHumanize}
+                          >
+                            {isLoading ? (
+                              <>
+                                <LoadingSpinner size="sm" />
+                                Humanizing...
+                              </>
+                            ) : (
+                              <>Humanize</>
+                            )}
+                          </Button>
+                        );
+                      }
+                      return null;
+                    })()}
                   </div>
                 </div>
 
@@ -1129,7 +1532,7 @@ export function HumanizeEditor({
                     </Button>
                   </div>
                   <Textarea
-                    className="min-h-[100px] resize-none border border-slate-200 bg-white text-sm dark:border-slate-600 dark:bg-slate-700"
+                    className="min-h-[100px] resize-y border border-slate-200 bg-white text-sm dark:border-slate-600 dark:bg-slate-700"
                     onChange={(e) => setStyleSample(e.target.value)}
                     placeholder="Paste a sample of writing style you want to match..."
                     value={styleSample}

@@ -4,10 +4,10 @@ Billing status endpoint for frontend to query subscription information.
 
 import logging
 
-import httpx
 from fastapi import APIRouter, HTTPException
 
 from api.config import settings
+from api.services.convex_client import query_convex
 
 logger = logging.getLogger(__name__)
 
@@ -44,22 +44,11 @@ async def get_organization_from_convex(organization_id: str | None) -> dict | No
         return None
 
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            query_url = f"{settings.CONVEX_URL}/api/query"
-            query_data = {
-                "path": "organizations:getPublicByWorkOSId",
-                "args": {"workos_id": organization_id},
-                "format": "json",
-            }
-
-            headers = {}
-            if settings.CONVEX_DEPLOYMENT_KEY:
-                headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
-
-            response = await client.post(query_url, json=query_data, headers=headers)
-
-            if response.status_code == 200:
-                return response.json()
+        # Query Convex using Python client
+        result = await query_convex(
+            "organizations:getPublicByWorkOSId", {"workos_id": organization_id}
+        )
+        return result if isinstance(result, dict) else None
     except Exception as e:
         logger.error(f"Error querying Convex for organization: {e}")
 
@@ -82,33 +71,21 @@ async def get_subscription_from_convex(user_id: str, organization_id: str | None
         return None
 
     try:
-        async with httpx.AsyncClient(timeout=5.0) as client:
-            # Query Convex to get organization subscription info
-            if organization_id:
-                query_url = f"{settings.CONVEX_URL}/api/query"
-                query_data = {
-                    "path": "subscriptions:getByWorkosId",
-                    "args": {"workos_id": organization_id},
-                    "format": "json",
+        if organization_id:
+            # Query Convex using Python client
+            org_data = await query_convex(
+                "subscriptions:getByWorkosId", {"workos_id": organization_id}
+            )
+
+            if org_data and isinstance(org_data, dict):
+                return {
+                    "plan": org_data.get("subscription_plan", "free"),
+                    "status": org_data.get("subscription_status", "active"),
+                    "billing_period": org_data.get("billing_period", "monthly"),
+                    "stripe_customer_id": org_data.get("stripe_customer_id"),
+                    "stripe_subscription_id": org_data.get("stripe_subscription_id"),
+                    "current_period_end": org_data.get("current_period_end"),
                 }
-
-                headers = {}
-                if settings.CONVEX_DEPLOYMENT_KEY:
-                    headers["Authorization"] = f"Bearer {settings.CONVEX_DEPLOYMENT_KEY}"
-
-                response = await client.post(query_url, json=query_data, headers=headers)
-
-                if response.status_code == 200:
-                    org_data = response.json()
-                    if org_data:
-                        return {
-                            "plan": org_data.get("subscription_plan", "free"),
-                            "status": org_data.get("subscription_status", "active"),
-                            "billing_period": org_data.get("billing_period", "monthly"),
-                            "stripe_customer_id": org_data.get("stripe_customer_id"),
-                            "stripe_subscription_id": org_data.get("stripe_subscription_id"),
-                            "current_period_end": org_data.get("current_period_end"),
-                        }
     except Exception as e:
         logger.error(f"Error querying Convex for subscription: {e}")
 

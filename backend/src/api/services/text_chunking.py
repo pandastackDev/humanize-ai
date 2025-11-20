@@ -52,7 +52,7 @@ class TextChunkingService:
         text: str,
         max_tokens: int | None = None,
         min_tokens: int | None = None,
-        overlap: int = 50,
+        overlap: int | None = None,
     ) -> list[dict]:
         """
         Chunk text into smaller pieces while preserving sentence boundaries.
@@ -72,6 +72,7 @@ class TextChunkingService:
         """
         max_tokens = max_tokens or settings.MAX_CHUNK_TOKENS
         min_tokens = min_tokens or settings.MIN_CHUNK_TOKENS
+        overlap = overlap if overlap is not None else settings.CHUNK_OVERLAP_TOKENS
 
         if not text or len(text.strip()) == 0:
             return []

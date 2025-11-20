@@ -74,7 +74,7 @@ export const GET = async (request: NextRequest) => {
       return redirect("/dashboard");
 
     case "member":
-      return redirect("/product");
+      return redirect("/dashboard");
 
     default:
       // If there's no role that means the user hasn't subscribed yet, so redirect them to the pricing page

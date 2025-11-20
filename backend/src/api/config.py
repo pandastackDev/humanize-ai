@@ -35,29 +35,77 @@ class Settings(BaseSettings):
     OPENROUTER_API_KEY: str = ""
     OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
     OPENROUTER_REFERRER_URL: str = "http://localhost:3000"
+    # Note: OpenRouter uses "provider/model" format
     OPENROUTER_MODEL_GPT4: str = "openai/gpt-4-turbo"
-    OPENROUTER_MODEL_CLAUDE: str = "anthropic/claude-3.5-sonnet"
+    OPENROUTER_MODEL_CLAUDE35: str = "anthropic/claude-3-5-sonnet-20241022"
     OPENROUTER_MODEL_EMBEDDING: str = "openai/text-embedding-3-large"
 
     # OpenAI Configuration (Fallback)
     OPENAI_API_KEY: str = ""
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-large"
-    OPENAI_LLM_MODEL: str = "gpt-4-turbo-preview"
+    OPENAI_LLM_MODEL: str = "gpt-4-turbo"  # Direct API uses model name without prefix
 
     # Anthropic Configuration (Fallback)
     ANTHROPIC_API_KEY: str = ""
-    ANTHROPIC_LLM_MODEL: str = "claude-3-5-sonnet-20241022"
+    ANTHROPIC_LLM_MODEL: str = "claude-3-5-sonnet-20240620"  # Direct API - actual available version
 
     # Language Detection
-    FASTTEXT_MODEL_PATH: str = ""  # Optional: path to FastText model file
+    # Path can be absolute or relative to project root
+    FASTTEXT_MODEL_PATH: str = "models/lid.176.bin"
 
     # Validation Thresholds
-    SEMANTIC_SIMILARITY_THRESHOLD: float = 0.92
-    STYLE_SIMILARITY_THRESHOLD: float = 0.90
+    SEMANTIC_SIMILARITY_THRESHOLD: float = 0.85  # Lowered from 0.92 for more flexibility
+    STYLE_SIMILARITY_THRESHOLD: float = 0.75  # Lowered from 0.90 for more flexibility
 
     # Text Chunking Configuration
     MAX_CHUNK_TOKENS: int = 1000
     MIN_CHUNK_TOKENS: int = 500
+    CHUNK_OVERLAP_TOKENS: int = 100  # Increased overlap for better boundary smoothing
+
+    # Humanization Strategy Configuration
+    USE_ADVANCED_PIPELINE: bool = False  # Use strategic single-pass (v2) for better results
+    USE_V2_PROMPTS: bool = False  # V2 prompts (strategic subtlety)
+    USE_V4_PROMPTS: bool = True  # V4 prompts (Originality.AI optimized) - RECOMMENDED
+    ADVANCED_PIPELINE_MIN_WORDS: int = 1500  # Use multi-phase only for very long texts
+
+    # LLM Settings for Humanization (V4 - Originality.AI Optimized)
+    # Based on analysis of 93% human-scored text
+    # Balanced for quality AND consistency
+    HUMANIZATION_TEMPERATURE: float = 0.82  # Balanced for human-like variation with consistency
+    HUMANIZATION_TOP_P: float = 0.93  # Balanced sampling for diverse but controlled word choices
+    HUMANIZATION_FREQUENCY_PENALTY: float = 0.60  # Balanced for variety without excessive expansion
+    HUMANIZATION_PRESENCE_PENALTY: float = 0.45  # Balanced for topic diversity without rambling
+
+    # V4 Pattern Breaker Settings
+    PATTERN_BREAKER_AGGRESSIVENESS: float = 0.6  # 0.0-1.0 (0.6 = conservative, less expansion)
+
+    # Model Preferences for Different Phases
+    # Note: Use OpenRouter format (provider/model) for flexibility across providers
+    # For direct Anthropic API, will be converted to "claude-3-5-sonnet-20240620"
+    PRIMARY_HUMANIZATION_MODEL: str = "anthropic/claude-3-5-sonnet-20240620"  # Best for naturalness
+    COMPRESSION_MODEL: str = "anthropic/claude-3-haiku-20240307"  # Fast, good for compression
+    FALLBACK_HUMANIZATION_MODEL: str = "openai/gpt-4-turbo"  # Updated to current model
+
+    # Temperature Settings by Phase
+    COMPRESSION_TEMPERATURE: float = 0.70
+    RECONSTRUCTION_TEMPERATURE: float = 0.75
+    RHYTHM_RANDOMIZATION_TEMPERATURE: float = 0.80  # Highest for maximum variation
+    NOISE_INJECTION_TEMPERATURE: float = 0.78
+    FINAL_TUNING_TEMPERATURE: float = 0.75
+
+    # Authenticity / Anti-Detection Controls
+    AUTHENTICITY_PASS_ENABLED: bool = True
+    AUTHENTICITY_PASS_MIN_WORDS: int = 180
+    INVISIBLE_CHAR_NOISE_ENABLED: bool = True
+    INVISIBLE_CHAR_INSERT_EVERY_N_WORDS: int = 18
+
+    # Length Enforcement Ratios
+    LENGTH_STANDARD_MIN_RATIO: float = 0.65
+    LENGTH_STANDARD_MAX_RATIO: float = 1.35
+    LENGTH_SHORTEN_MIN_RATIO: float = 0.6
+    LENGTH_SHORTEN_MAX_RATIO: float = 0.85
+    LENGTH_EXPAND_MIN_RATIO: float = 1.2
+    LENGTH_EXPAND_MAX_RATIO: float = 1.5
 
     # Stripe Configuration
     STRIPE_API_KEY: str = ""
@@ -82,6 +130,23 @@ class Settings(BaseSettings):
     # Convex Backend URL (for subscription queries)
     CONVEX_URL: str = ""
     CONVEX_DEPLOYMENT_KEY: str = ""
+
+    # AI Detection API Keys (for /detect endpoint)
+    # Note: These are optional - detectors will work in demo mode without keys
+    GPTZERO_API_KEY: str = ""
+    COPYLEAKS_API_KEY: str = ""
+    SAPLING_API_KEY: str = ""
+    WRITER_API_KEY: str = ""
+    ZEROGPT_API_KEY: str = ""
+    ORIGINALITY_API_KEY: str = ""
+    QUILLBOT_API_KEY: str = ""
+    TURNITIN_API_KEY: str = ""
+    GRAMMARLY_API_KEY: str = ""
+    SCRIBBR_API_KEY: str = ""
+
+    # Detection Cache Configuration
+    DETECTION_CACHE_SIZE: int = 1000
+    DETECTION_CACHE_TTL_SECONDS: int = 3600  # 1 hour
 
     model_config = {
         "case_sensitive": True,

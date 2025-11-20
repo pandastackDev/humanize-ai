@@ -1,23 +1,27 @@
 import { Box, Flex, Heading, Text } from "@radix-ui/themes";
 import { withAuth } from "@workos-inc/authkit-nextjs";
-import { redirect } from "next/navigation";
 import { DashboardContainer } from "../components/layout/dashboard-container";
 
 export default async function DashboardPage() {
   const session = await withAuth({ ensureSignedIn: true });
 
-  // This view is restricted to admins
-  if (session.role !== "admin") {
-    return redirect("/product");
-  }
-
   return (
     <Flex direction="column" gap="3" width="100%">
       <Box>
         <Heading>Dashboard</Heading>
+        {session.role === "admin" && (
+          <Text color="gray" size="2">
+            Admin View
+          </Text>
+        )}
       </Box>
       <DashboardContainer>
-        <Text>Use this area to build your dashboard.</Text>
+        <Text>
+          Welcome to your dashboard!
+          {session.role === "admin"
+            ? " You have full admin access to all features."
+            : " Enjoy your premium features."}
+        </Text>
       </DashboardContainer>
     </Flex>
   );
