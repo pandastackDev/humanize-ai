@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
@@ -7,8 +8,6 @@ import type {
   RefObject,
 } from "react";
 import { createContext, useContext, useState } from "react";
-
-import { cn } from "@/lib/utils";
 
 type TabsContextValue = {
   value: string;

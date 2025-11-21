@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { cva, type VariantProps } from "class-variance-authority";
 import { X } from "lucide-react";
@@ -9,8 +10,6 @@ import type {
   HTMLAttributes,
   RefObject,
 } from "react";
-
-import { cn } from "@/lib/utils";
 
 const Sheet = DialogPrimitive.Root;
 

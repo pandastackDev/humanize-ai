@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import * as SeparatorPrimitive from "@radix-ui/react-separator";
 import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
-
-import { cn } from "@/lib/utils";
 
 const Separator = ({
   className,

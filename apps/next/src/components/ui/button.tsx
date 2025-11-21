@@ -1,9 +1,9 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import { cva, type VariantProps } from "class-variance-authority";
 import type { ButtonHTMLAttributes, RefObject } from "react";
 import { Slot } from "@/lib/slot";
-import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
   "inline-flex scale-[0.98] transform cursor-pointer items-center justify-center gap-2 whitespace-nowrap rounded-md font-medium text-sm transition-all duration-200 ease-in-out hover:scale-100 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring active:scale-[0.95] disabled:pointer-events-none disabled:scale-100 disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",

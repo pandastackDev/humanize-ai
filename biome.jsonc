@@ -6,6 +6,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**/*",
+      "!packages/ui/src/components/**/*",
       "!apps/expo/metro.config.js",
       "!playground/**/*",
       "!scripts/**/*",

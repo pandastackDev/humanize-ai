@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
-
-import { cn } from "@/lib/utils";
 
 const Avatar = ({
   className,

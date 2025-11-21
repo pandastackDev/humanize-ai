@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import {
@@ -14,8 +15,6 @@ import {
   useEffect,
   useState,
 } from "react";
-
-import { cn } from "@/lib/utils";
 
 type NavigationMenuContextValue = {
   openItem: string | null;

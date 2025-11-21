@@ -1,7 +1,7 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import { useEffect, useMemo, useState } from "react";
-import { cn } from "@/lib/utils";
 
 export type TextFeatureType =
   | "changed"

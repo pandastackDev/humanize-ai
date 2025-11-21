@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import {
   cloneElement,
   type HTMLAttributes,
@@ -7,7 +8,6 @@ import {
   type ReactElement,
   type Ref,
 } from "react";
-import { cn } from "./utils";
 
 interface SlotProps extends HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;

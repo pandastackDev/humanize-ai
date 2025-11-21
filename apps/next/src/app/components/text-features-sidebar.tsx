@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import { Info } from "lucide-react";
 import {
   Sheet,
@@ -8,7 +9,6 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 
 type TextFeaturesSidebarProps = {
   open: boolean;

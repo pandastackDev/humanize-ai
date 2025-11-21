@@ -1,9 +1,8 @@
 "use client";
 
+import { cn } from "@humanize/ui/lib/utils";
 import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area";
 import type { ComponentPropsWithoutRef, ElementRef, RefObject } from "react";
-
-import { cn } from "@/lib/utils";
 
 const ScrollArea = ({
   className,
