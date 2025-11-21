@@ -9,13 +9,15 @@ import { httpAction } from "./_generated/server";
  * Diagnostic endpoint to check webhook configuration
  * GET /webhook-diagnostics
  */
+// biome-ignore lint/suspicious/useAwait: httpAction requires async function signature
 export const diagnostics = httpAction(async (_ctx) => {
   try {
     const hasWorkOSApiKey = !!process.env.WORKOS_API_KEY;
     const hasWorkOSWebhookSecret = !!process.env.WORKOS_WEBHOOK_SECRET;
-    
+
     // Get deployment URL from environment or use default
-    const siteUrl = process.env.CONVEX_SITE_URL || "https://academic-terrier-140.convex.site";
+    const siteUrl =
+      process.env.CONVEX_SITE_URL || "https://academic-terrier-140.convex.site";
     const webhookUrl = `${siteUrl}/workos-webhook`;
 
     const response = {

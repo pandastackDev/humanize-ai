@@ -33,19 +33,16 @@ def get_convex_client() -> ConvexClient | None:
     if _convex_client is None:
         try:
             # Create client with deployment URL
-            # If access token is provided, use it for authentication
+            _convex_client = ConvexClient(settings.CONVEX_URL)
+
+            # If access token is provided, use it for admin authentication
             if settings.CONVEX_ACCESS_TOKEN:
-                # Use Team Access Token for authentication
-                _convex_client = ConvexClient(
-                    settings.CONVEX_URL,
-                    access_key=settings.CONVEX_ACCESS_TOKEN,
-                )
+                # Use Team Access Token for admin authentication
+                _convex_client.set_admin_auth(settings.CONVEX_ACCESS_TOKEN)
                 logger.info(
-                    f"Initialized Convex client for {settings.CONVEX_URL} with access token"
+                    f"Initialized Convex client for {settings.CONVEX_URL} with admin auth token"
                 )
             else:
-                # Use deployment URL only (default behavior)
-                _convex_client = ConvexClient(settings.CONVEX_URL)
                 logger.info(f"Initialized Convex client for {settings.CONVEX_URL}")
         except Exception as e:
             logger.error(f"Failed to initialize Convex client: {e}")

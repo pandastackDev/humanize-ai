@@ -15,6 +15,9 @@ importers:
       '@biomejs/biome':
         specifier: 2.3.5
         version: 2.3.5
+      convex:
+        specifier: ^1.29.3
+        version: 1.29.3(react@19.2.0)
       turbo:
         specifier: ^2.6.1
         version: 2.6.1
@@ -161,11 +164,11 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       convex:
-        specifier: ^1.15.0
-        version: 1.28.2(react@19.2.0)
+        specifier: ^1.29.3
+        version: 1.29.3(react@19.2.0)
       convex-helpers:
         specifier: ^0.1.58
-        version: 0.1.104(convex@1.28.2(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(zod@4.1.12)
+        version: 0.1.104(convex@1.29.3(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(zod@4.1.12)
       jose:
         specifier: ^6.1.0
         version: 6.1.0
@@ -3564,8 +3567,8 @@ packages:
       zod:
         optional: true
 
-  convex@1.28.2:
-    resolution: {integrity: sha512-KzNsLbcVXb1OhpVQ+vHMgu+hjrsQ1ks5BZwJ2lR8O+nfbeJXE6tHbvsg1H17+ooUDvIDBSMT3vXS+AlodDhTnQ==}
+  convex@1.29.3:
+    resolution: {integrity: sha512-tg5TXzMjpNk9m50YRtdp6US+t7ckxE4E+7DNKUCjJ2MupQs2RBSPF/z5SNN4GUmQLSfg0eMILDySzdAvjTrhnw==}
     engines: {node: '>=18.0.0', npm: '>=7.0.0'}
     hasBin: true
     peerDependencies:
@@ -9970,15 +9973,15 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  convex-helpers@0.1.104(convex@1.28.2(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(zod@4.1.12):
+  convex-helpers@0.1.104(convex@1.29.3(react@19.2.0))(react@19.2.0)(typescript@5.9.3)(zod@4.1.12):
     dependencies:
-      convex: 1.28.2(react@19.2.0)
+      convex: 1.29.3(react@19.2.0)
     optionalDependencies:
       react: 19.2.0
       typescript: 5.9.3
       zod: 4.1.12
 
-  convex@1.28.2(react@19.2.0):
+  convex@1.29.3(react@19.2.0):
     dependencies:
       esbuild: 0.25.4
       prettier: 3.6.2
