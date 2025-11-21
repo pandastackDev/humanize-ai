@@ -26,19 +26,24 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full overflow-visible">
-      <div className="container flex h-16 items-center justify-between gap-3 overflow-visible px-4 md:px-6">
-        <div className="flex flex-1 items-center gap-4">
+      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible px-4 md:px-6 lg:grid-cols-[1fr_auto_1fr]">
+        {/* Logo - Left side */}
+        <div className="flex items-center">
           <Link
             className="flex items-center space-x-2 font-semibold text-lg transition-opacity hover:opacity-80"
             href="/"
           >
             <Logo />
           </Link>
-          <div className="hidden lg:block">
-            <MainNav />
-          </div>
         </div>
-        <div className="flex items-center gap-2 md:gap-3">
+
+        {/* Navigation - Centered on desktop, hidden on mobile */}
+        <div className="hidden justify-center lg:flex">
+          <MainNav />
+        </div>
+
+        {/* Right side controls */}
+        <div className="flex items-center justify-end gap-2 md:gap-3">
           {!user && (
             <>
               <div className="hidden sm:block">

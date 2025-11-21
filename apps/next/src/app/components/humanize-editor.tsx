@@ -636,7 +636,7 @@ export function HumanizeEditor({
 
     if (error && !forceLoading) {
       return (
-        <div className="flex h-[450px] w-full flex-col items-center justify-center gap-4 px-4 py-5 sm:px-6">
+        <div className="flex h-[300px] w-full flex-col items-center justify-center gap-4 px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6">
           <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
             <p className="mb-2 font-semibold text-red-900 text-sm dark:text-red-200">
               Error
@@ -658,7 +658,7 @@ export function HumanizeEditor({
     }
     if (isLoading || forceLoading) {
       return (
-        <div className="flex h-[450px] w-full flex-col items-center gap-3 overflow-hidden px-4 py-4 sm:px-6">
+        <div className="flex h-[300px] w-full flex-col items-center gap-3 overflow-hidden px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6">
           {/* Loading Spinner with Gradient Background */}
           <div className="flex w-full flex-col items-center justify-center gap-2.5 rounded-lg bg-gradient-to-br from-[#0066ff]/5 via-purple-500/5 to-[#0066ff]/5 p-5 dark:from-[#0066ff]/10 dark:via-purple-500/10 dark:to-[#0066ff]/10">
             <div className="relative">
@@ -797,7 +797,7 @@ export function HumanizeEditor({
     }
     if (hasOutputText) {
       return (
-        <div className="h-[450px] overflow-auto px-4 py-4 text-sm sm:px-6 sm:py-5">
+        <div className="h-[300px] overflow-auto px-3 py-3 text-sm sm:h-[400px] sm:px-4 sm:py-4 md:h-[450px] md:px-6 md:py-5">
           <TextDiffViewer
             enabledFeatures={enabledFeatures}
             humanizedText={outputText}
@@ -814,7 +814,7 @@ export function HumanizeEditor({
       );
     }
     return (
-      <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+      <div className="flex h-[300px] w-full flex-col items-center justify-center px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 md:py-5">
         <p className="text-slate-600 text-sm dark:text-slate-400">
           Your humanized text will appear here...
         </p>
@@ -836,7 +836,7 @@ export function HumanizeEditor({
 
     if (detectionError) {
       return (
-        <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+        <div className="flex h-[300px] w-full flex-col items-center justify-center px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 md:py-5">
           <X className="mb-4 h-12 w-12 text-red-500" />
           <h3 className="mb-2 font-semibold text-base text-red-600 dark:text-red-400">
             Detection Error
@@ -859,7 +859,7 @@ export function HumanizeEditor({
       // Loading screen with all detectors
       if (isDetecting) {
         return (
-          <div className="flex h-[450px] w-full flex-col items-center justify-center bg-white px-4 py-4 dark:bg-slate-50">
+          <div className="flex h-[300px] w-full flex-col items-center justify-center bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-slate-50">
             <div className="flex w-full max-w-3xl flex-col items-center justify-center">
               {/* Purple heading - smaller */}
               <h2 className="mb-1 text-center font-bold text-purple-600 text-sm dark:text-purple-500">
@@ -925,7 +925,7 @@ export function HumanizeEditor({
 
       // Default empty state
       return (
-        <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+        <div className="flex h-[300px] w-full flex-col items-center justify-center px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 md:py-5">
           <BarChart3 className="mb-4 h-12 w-12 text-slate-300 dark:text-slate-600" />
           <h3 className="mb-2 font-semibold text-base text-slate-900 sm:text-lg dark:text-slate-100">
             AI Detector
@@ -949,7 +949,7 @@ export function HumanizeEditor({
     };
 
     return (
-      <div className="flex h-[450px] w-full flex-col items-center justify-center overflow-y-auto bg-white px-4 py-4 sm:px-6 dark:bg-slate-50">
+      <div className="flex h-[300px] w-full flex-col items-center justify-center overflow-y-auto bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-slate-50">
         <div className="flex w-full max-w-3xl flex-col items-center justify-center">
           {/* Main Result Header - smaller, centered */}
           <div className="mb-4 text-center">
@@ -1157,7 +1157,7 @@ export function HumanizeEditor({
 
     // Plagiarism checker placeholder
     return (
-      <div className="flex h-[450px] w-full flex-col items-center justify-center px-4 py-5 sm:px-6">
+      <div className="flex h-[300px] w-full flex-col items-center justify-center px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 md:py-5">
         <h3 className="mb-2 font-semibold text-base text-slate-900 sm:text-lg dark:text-slate-100">
           Plagiarism Checker
         </h3>
@@ -1225,7 +1225,7 @@ export function HumanizeEditor({
 
         {/* Main Editor Container */}
         <div className="relative flex gap-3">
-          <div className="flex flex-1 flex-col gap-3 pr-[120px] pl-[120px]">
+          <div className="flex flex-1 flex-col gap-3 px-0 lg:pr-[120px] lg:pl-[120px]">
             {/* Main Editor Content */}
             <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#141414]">
               {/* Text Areas Container */}
@@ -1235,32 +1235,32 @@ export function HumanizeEditor({
                   {/* Text Input Area - Always visible */}
                   <div className="relative flex flex-1 flex-col">
                     <Textarea
-                      className="h-[450px] w-full resize-none border-0 border-b border-b-white px-4 py-4 pr-12 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:px-6 sm:py-5 sm:pr-12"
+                      className="h-[300px] w-full resize-none border-0 border-b border-b-white px-3 py-3 pr-10 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-12 md:h-[450px] md:px-6 md:py-5"
                       onChange={(e) => {
                         setInputText(e.target.value);
                       }}
-                      placeholder="To humanize AI text, enter/paste it here, or upload a fie(.docx, .pdf)"
+                      placeholder="To humanize AI text, enter/paste it here, or upload a file (.docx, .pdf)"
                       ref={textareaRef}
                       value={inputText}
                     />
                     {/* Action Buttons - Only visible when textarea is empty and on humanize tab */}
                     {activeTab === "humanize" && !hasInputText && (
-                      <div className="absolute top-[4.5rem] left-4 flex items-center gap-2 sm:top-[5.5rem] sm:left-6">
+                      <div className="absolute top-16 left-3 flex flex-wrap items-center gap-1.5 sm:top-20 sm:left-4 sm:gap-2 md:top-24 md:left-6">
                         <Button
-                          className="scale-100 gap-3 rounded-full border border-[#0066ff] bg-white px-2 font-medium text-[#0066ff] text-sm transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
+                          className="scale-100 gap-1.5 rounded-full border border-[#0066ff] bg-white px-2 py-1.5 font-medium text-[#0066ff] text-xs transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
                           onClick={handlePasteText}
                           variant="outline"
                         >
-                          <Clipboard className="h-3 w-3" />
-                          Paste text
+                          <Clipboard className="h-3 w-3 shrink-0" />
+                          <span className="whitespace-nowrap">Paste text</span>
                         </Button>
                         <Button
-                          className="scale-100 gap-3 rounded-full border border-[#0066ff] bg-white px-2 font-medium text-[#0066ff] text-sm transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
+                          className="scale-100 gap-1.5 rounded-full border border-[#0066ff] bg-white px-2 py-1.5 font-medium text-[#0066ff] text-xs transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
                           onClick={handleFileUpload}
                           variant="outline"
                         >
-                          <FileUp className="h-3 w-3" />
-                          Upload file
+                          <FileUp className="h-3 w-3 shrink-0" />
+                          <span className="whitespace-nowrap">Upload file</span>
                         </Button>
                         <input
                           accept=".docx,.pdf,.doc"
@@ -1270,12 +1270,12 @@ export function HumanizeEditor({
                           type="file"
                         />
                         <Button
-                          className="scale-100 gap-3 rounded-full border border-[#0066ff] bg-white px-2 font-medium text-[#0066ff] text-sm transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
+                          className="scale-100 gap-1.5 rounded-full border border-[#0066ff] bg-white px-2 py-1.5 font-medium text-[#0066ff] text-xs transition-none hover:scale-100 hover:bg-[#0066ff]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[#0066ff] dark:bg-[#141414] dark:text-[#0066ff] dark:hover:bg-slate-700"
                           onClick={handleTryExample}
                           variant="outline"
                         >
-                          <FileText className="h-3 w-3" />
-                          Try example
+                          <FileText className="h-3 w-3 shrink-0" />
+                          <span className="whitespace-nowrap">Try example</span>
                         </Button>
                       </div>
                     )}
@@ -1292,7 +1292,7 @@ export function HumanizeEditor({
                   </div>
 
                   {/* Left Footer */}
-                  <div className="flex flex-col gap-2 border-white border-t px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-2 dark:border-slate-700 dark:bg-[#141414]/50">
+                  <div className="flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
                     <div className="flex items-center gap-4">
                       <div className="flex flex-col items-start gap-0.5">
                         <span
@@ -1389,7 +1389,7 @@ export function HumanizeEditor({
 
                   {/* Right Footer */}
                   {activeTab === "humanize" && (
-                    <div className="flex flex-col gap-2 border-white border-t bg-white px-4 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-6 sm:py-2 dark:border-slate-700 dark:bg-[#141414]/50">
+                    <div className="flex flex-col gap-2 border-white border-t bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col items-start gap-0.5">
                           <span className="font-semibold text-slate-900 text-sm dark:text-slate-100">
@@ -1451,7 +1451,7 @@ export function HumanizeEditor({
 
               {/* Text Features Legend - Outside textarea area */}
               {activeTab === "humanize" && hasOutputText && (
-                <div className="flex flex-wrap items-center justify-end gap-3 border-slate-200 border-t bg-white px-4 py-2 sm:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
+                <div className="flex flex-wrap items-center justify-end gap-2 border-slate-200 border-t bg-white px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
                   {/* Only show legend items for features that are present AND can be toggled */}
                   {presentFeatures.changed && (
                     <div className="flex items-center gap-1.5">
@@ -1517,7 +1517,7 @@ export function HumanizeEditor({
 
               {/* Bottom Controls - Moved to bottom as per reference */}
               {activeTab === "humanize" && !isInitialState && (
-                <div className="flex flex-col gap-3 border-white border-t bg-slate-50 px-4 py-3 sm:flex-row sm:items-center sm:gap-4 sm:px-6 sm:py-4 dark:border-slate-700 dark:bg-[#141414]/50">
+                <div className="flex flex-col gap-2 border-white border-t bg-slate-50 px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:border-slate-700 dark:bg-[#141414]/50">
                   <Select
                     onValueChange={setReadabilityLevel}
                     value={readabilityLevel || undefined}
@@ -1630,7 +1630,7 @@ export function HumanizeEditor({
 
               {/* Style Sample Input */}
               {activeTab === "humanize" && showStyleSample && (
-                <div className="border-white border-t bg-slate-50 px-4 py-3 sm:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
+                <div className="border-white border-t bg-slate-50 px-3 py-2 sm:px-4 sm:py-3 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
                   <div className="mb-2 flex items-center justify-between">
                     <label className="font-medium text-slate-900 text-sm dark:text-slate-100">
                       Style Sample (Optional, ≥150 words recommended)
