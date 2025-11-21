@@ -57,7 +57,24 @@ extend-select = [
 ]
 
 [tool.pyright]
-exclude = [".venv"]
+exclude = [
+    ".venv",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/*.pyc",
+    "tests",
+    "build",
+    "dist",
+    "*.egg-info"
+]
 pythonVersion = "3.12"
 venvPath = "."
 venv = ".venv"
+typeCheckingMode = "basic"
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnusedImport = true
+reportUnusedClass = false
+reportUnusedFunction = false
+reportUnusedVariable = false
