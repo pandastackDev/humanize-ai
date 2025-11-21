@@ -39,11 +39,11 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontSans.variable} ${fontHeading.variable} font-sans antialiased`}
+        className={`${fontSans.variable} ${fontHeading.variable} bg-background font-sans text-foreground antialiased`}
       >
         <Providers>
           <QueryProvider>
-            <div className="min-h-screen bg-background">
+            <div className="min-h-screen">
               <DynamicBackground>
                 <NextTopLoader showSpinner={false} />
                 <div className="relative z-1 flex min-h-screen flex-col">

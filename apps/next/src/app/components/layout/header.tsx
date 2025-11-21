@@ -4,7 +4,7 @@ import { Logo } from "../logo";
 import { SignInButton } from "../sign-in-button";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
-import ThemeToggle from "./theme-toggle";
+import { ThemeToggle } from "./theme-toggle";
 import { UserNav } from "./user-nav";
 import { WordBalanceButton } from "./word-balance-button";
 
