@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import type { User } from "@workos-inc/node";
 import { Menu } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,

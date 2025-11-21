@@ -1,9 +1,9 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";

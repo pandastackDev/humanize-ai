@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { Clock, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,

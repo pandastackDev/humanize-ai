@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import {
   ArrowDown,
   ArrowUp,
@@ -11,7 +12,6 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,

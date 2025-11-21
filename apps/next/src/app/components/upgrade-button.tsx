@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
-import { Button } from "@/components/ui/button";
 
 export function UpgradeButton({
   children,

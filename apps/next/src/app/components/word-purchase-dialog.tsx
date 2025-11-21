@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { Minus, Plus } from "lucide-react";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,

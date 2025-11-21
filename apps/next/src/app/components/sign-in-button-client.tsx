@@ -6,9 +6,9 @@
  * For server components, use the server version from sign-in-button.tsx
  */
 
+import { Button } from "@humanize/ui/components/button";
 import { useAuth } from "@workos-inc/authkit-nextjs/components";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import signOut from "../../actions/signOut";
 
 export function SignInButtonClient({ large }: { large?: boolean }) {

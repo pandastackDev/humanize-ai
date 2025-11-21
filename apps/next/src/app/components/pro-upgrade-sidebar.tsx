@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { ArrowDown } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import {
   Sheet,
   SheetContent,

@@ -1,7 +1,7 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { checkSubscription } from "@/lib/subscription-api";
 import { WordPurchaseDialog } from "../word-purchase-dialog";
 

@@ -1,3 +1,4 @@
+import { Button } from "@humanize/ui/components/button";
 import {
   getSignInUrl,
   getSignUpUrl,
@@ -6,7 +7,6 @@ import {
 import Link from "next/link";
 import signOut from "@/actions/signOut";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 
 export async function SignInButton({
   large,

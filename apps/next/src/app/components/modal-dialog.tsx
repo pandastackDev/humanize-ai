@@ -1,10 +1,10 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { Info } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,

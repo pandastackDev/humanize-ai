@@ -1,8 +1,8 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import { Check, Copy } from "lucide-react";
 import { type ReactNode, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import {
   BarChart3,
   Download,
@@ -22,7 +23,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,

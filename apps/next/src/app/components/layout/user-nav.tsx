@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import type { User } from "@workos-inc/node";
 import { CreditCard, Settings, User as UserIcon } from "lucide-react";
 import Link from "next/link";
@@ -7,7 +8,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import signOut from "@/actions/signOut";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,

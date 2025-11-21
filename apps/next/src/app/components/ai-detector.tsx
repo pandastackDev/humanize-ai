@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@humanize/ui/components/button";
 import {
   AlertCircle,
   BarChart3,
@@ -14,7 +15,6 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
