@@ -7,6 +7,7 @@ import type {
   ComponentPropsWithoutRef,
   ElementRef,
   HTMLAttributes,
+  ReactNode,
   RefObject,
 } from "react";
 
@@ -93,10 +94,12 @@ DropdownMenuContent.displayName = DropdownMenuPrimitive.Content.displayName;
 const DropdownMenuItem = ({
   className,
   inset,
+  children,
   ref,
   ...props
 }: ComponentPropsWithoutRef<typeof DropdownMenuPrimitive.Item> & {
   inset?: boolean;
+  children?: ReactNode;
 } & {
   ref?: RefObject<ElementRef<typeof DropdownMenuPrimitive.Item> | null>;
 }) => (
@@ -108,7 +111,9 @@ const DropdownMenuItem = ({
     )}
     ref={ref}
     {...props}
-  />
+  >
+    {children}
+  </DropdownMenuPrimitive.Item>
 );
 DropdownMenuItem.displayName = DropdownMenuPrimitive.Item.displayName;
 

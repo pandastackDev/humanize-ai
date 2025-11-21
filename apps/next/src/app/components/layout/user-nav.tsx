@@ -2,9 +2,18 @@
 
 import { Button } from "@humanize/ui/components/button";
 import type { User } from "@workos-inc/node";
-import { CreditCard, Settings, User as UserIcon } from "lucide-react";
+import {
+  HelpCircle,
+  MessageSquare,
+  Monitor,
+  Moon,
+  Settings,
+  Sun,
+  User as UserIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTheme } from "next-themes";
 import { useState } from "react";
 import signOut from "@/actions/signOut";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,7 +30,6 @@ import {
 export function UserNav({
   user,
   role,
-  organizationName,
 }: {
   user: User;
   role: string | undefined;
@@ -29,6 +37,7 @@ export function UserNav({
 }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { setTheme, theme } = useTheme();
 
   const isAdmin = role === "admin";
   const isDashboard = pathname.startsWith("/dashboard");
@@ -48,72 +57,110 @@ export function UserNav({
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56" forceMount>
+      <DropdownMenuContent align="end" className="w-64" forceMount>
+        {/* User Info Section - Simple like third image */}
         <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col space-y-1">
-            <p className="font-medium text-sm leading-none">{user.firstName}</p>
-            <p className="text-muted-foreground text-xs leading-none">
+          <div className="flex flex-col space-y-0.5">
+            <p className="font-semibold text-base leading-none">
+              {user.firstName} {user.lastName}
+            </p>
+            <p className="text-muted-foreground text-sm leading-none">
               {user.email}
             </p>
-            {organizationName && (
-              <div className="mt-2 space-y-1 border-t pt-2">
-                <p className="font-medium text-sm leading-none">
-                  {organizationName}
-                </p>
-                {role && (
-                  <p className="text-muted-foreground text-xs capitalize leading-none">
-                    {role}
-                  </p>
-                )}
-              </div>
-            )}
           </div>
         </DropdownMenuLabel>
-        {!isDashboard && isAdmin && (
-          <>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard" onClick={() => setOpen(false)}>
-                  Dashboard
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-          </>
-        )}
+
+        {/* Theme Toggle Section */}
+        <div className="px-2 py-1">
+          <div className="flex items-center justify-between">
+            {/* <span className="text-muted-foreground text-sm">Theme</span> */}
+            <div className="flex items-center gap-1 rounded-md border p-0.5">
+              <button
+                className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
+                  theme === "light"
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+                onClick={() => setTheme("light")}
+                type="button"
+              >
+                <Sun className="h-4 w-4" />
+              </button>
+              <button
+                className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
+                  theme === "dark"
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+                onClick={() => setTheme("dark")}
+                type="button"
+              >
+                <Moon className="h-4 w-4" />
+              </button>
+              <button
+                className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
+                  theme === "system"
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900"
+                }`}
+                onClick={() => setTheme("system")}
+                type="button"
+              >
+                <Monitor className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
         <DropdownMenuSeparator />
+
+        {/* Menu Items */}
         <DropdownMenuGroup>
-          <DropdownMenuItem asChild>
-            <Link href="/pricing" onClick={() => setOpen(false)}>
-              <CreditCard className="mr-2 h-4 w-4" />
-              Pricing
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link href="/dashboard/profile" onClick={() => setOpen(false)}>
-              <UserIcon className="mr-2 h-4 w-4" />
-              Profile Settings
-            </Link>
-          </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href="/dashboard/settings" onClick={() => setOpen(false)}>
               <Settings className="mr-2 h-4 w-4" />
               Settings
             </Link>
           </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/support" onClick={() => setOpen(false)}>
+              <HelpCircle className="mr-2 h-4 w-4" />
+              Contact Support
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/feedback" onClick={() => setOpen(false)}>
+              <MessageSquare className="mr-2 h-4 w-4" />
+              Leave feedback
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
+
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
-          <form action={signOut} className="w-full">
-            <Button
-              className="w-full justify-start"
-              type="submit"
-              variant="ghost"
-            >
-              Sign Out
-            </Button>
-          </form>
+
+        {/* Log Out */}
+        <DropdownMenuItem
+          className="h-8 cursor-pointer px-2 py-1.5 text-sm"
+          onClick={async () => {
+            await signOut();
+          }}
+        >
+          Log out
         </DropdownMenuItem>
+
+        {/* Upgrade to Pro Button */}
+        <div className="border-t p-2">
+          <Button
+            className="w-full"
+            onClick={() => {
+              setOpen(false);
+              window.location.href = "/pricing";
+            }}
+            variant="outline"
+          >
+            Upgrade to Pro
+          </Button>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

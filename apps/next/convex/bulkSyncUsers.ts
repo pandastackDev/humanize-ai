@@ -1,3 +1,5 @@
+"use node";
+
 /**
  * Bulk sync all WorkOS users to Convex
  * This is useful for syncing existing users that were created before webhooks were set up

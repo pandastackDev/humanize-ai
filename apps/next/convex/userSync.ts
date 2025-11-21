@@ -1,3 +1,5 @@
+"use node";
+
 /**
  * Manual user synchronization functions
  * These can be used to sync users from WorkOS to Convex if webhooks fail

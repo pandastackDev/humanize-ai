@@ -46,6 +46,7 @@ export async function SignInButton({
       size={large ? "lg" : "default"}
     >
       <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link>
+      {/* <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link> */}
     </Button>
   );
 }

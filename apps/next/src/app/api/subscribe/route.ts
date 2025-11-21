@@ -74,8 +74,12 @@ async function getWorkOSUser(userId: string): Promise<User | NextResponse> {
 }
 
 function generateOrganizationName(user: User, orgName?: string): string {
-  if (orgName) {
-    return orgName;
+  if (orgName?.trim()) {
+    const trimmed = orgName.trim();
+    if (trimmed.length > 100) {
+      throw new Error("Organization name must be 100 characters or less");
+    }
+    return trimmed;
   }
   if (user.firstName) {
     return `${user.firstName}'s Organization`;
@@ -184,7 +188,23 @@ async function createWorkOSOrganization(
   organizationName: string
 ): Promise<WorkOSOrganization | NextResponse> {
   try {
-    console.log("Creating WorkOS organization:", organizationName);
+    // Validate organization name
+    const trimmedName = organizationName.trim();
+    if (!trimmedName) {
+      return NextResponse.json(
+        { error: "Organization name is required" },
+        { status: 400 }
+      );
+    }
+
+    if (trimmedName.length > 100) {
+      return NextResponse.json(
+        { error: "Organization name must be 100 characters or less" },
+        { status: 400 }
+      );
+    }
+
+    console.log("Creating WorkOS organization:", trimmedName);
     console.log(
       "WorkOS API Key configured:",
       env.WORKOS_API_KEY ? "Yes" : "No"
@@ -195,7 +215,7 @@ async function createWorkOSOrganization(
     );
 
     const organization = await workos.organizations.createOrganization({
-      name: organizationName,
+      name: trimmedName,
     });
     console.log("Organization created:", organization.id);
 

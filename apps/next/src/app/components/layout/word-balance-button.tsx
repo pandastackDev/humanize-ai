@@ -85,19 +85,18 @@ export function WordBalanceButton({
     }
   };
 
-  if (!organizationId) {
-    return null;
-  }
+  // if (!organizationId) {
+  //   return null;
+  // }
 
   return (
     <>
       <div className="flex items-center gap-2">
         <div className="hidden items-center gap-2 rounded-md bg-muted px-3 py-1.5 text-sm sm:flex">
-          <span className="text-muted-foreground">Available:</span>
+          <span className="text-muted-foreground">Balance:</span>
           <span className="font-semibold">
             {loading ? "..." : (totalAvailable ?? 0).toLocaleString()}
           </span>
-          <span className="text-muted-foreground text-xs">words</span>
         </div>
         <Button
           className="hidden sm:flex"

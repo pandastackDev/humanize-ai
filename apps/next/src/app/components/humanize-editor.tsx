@@ -13,6 +13,7 @@ import {
   FileUp,
   Info,
   Loader2,
+  Pencil,
   Sparkles,
   Star,
   ThumbsDown,
@@ -23,11 +24,20 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -263,7 +273,7 @@ export function HumanizeEditor({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("humanize");
-  const [showStyleSample, setShowStyleSample] = useState(false);
+  const [showStyleSampleModal, setShowStyleSampleModal] = useState(false);
   const [showTextFeatures, setShowTextFeatures] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
   const [showProUpgrade, setShowProUpgrade] = useState(false);
@@ -1122,7 +1132,13 @@ export function HumanizeEditor({
           </div>
 
           {/* Final message - smaller, centered */}
-          <div className="w-full rounded-lg border border-slate-200 bg-white p-2 text-center shadow-sm dark:border-slate-300 dark:bg-white">
+          <div
+            className="w-full rounded-lg border bg-white p-2 text-center dark:bg-white"
+            style={{
+              boxShadow: "none",
+              borderColor: "white",
+            }}
+          >
             <p className="text-[10px] text-slate-700 dark:text-slate-600">
               {(() => {
                 const score = detectionResult.human_likelihood_pct;
@@ -1334,7 +1350,7 @@ export function HumanizeEditor({
                       if (activeTab === "detector") {
                         return (
                           <Button
-                            className="h-8 gap-1.5 px-3 text-sm sm:w-auto"
+                            className="h-8 cursor-pointer gap-1.5 px-3 text-sm sm:w-auto"
                             disabled={!inputText.trim() || isDetecting}
                             onClick={handleDetectAI}
                           >
@@ -1355,7 +1371,7 @@ export function HumanizeEditor({
                       if (!isInitialState) {
                         return (
                           <Button
-                            className="h-8 gap-1.5 px-3 text-sm sm:w-auto"
+                            className="h-8 cursor-pointer gap-1.5 px-3 text-sm sm:w-auto"
                             disabled={
                               !inputText.trim() || isLoading || isProSelected
                             }
@@ -1575,7 +1591,7 @@ export function HumanizeEditor({
                   <Button
                     className="h-9 gap-2 border-slate-200 bg-white px-4 font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
                     onClick={() => {
-                      setShowStyleSample(!showStyleSample);
+                      setShowStyleSampleModal(true);
                     }}
                     variant="outline"
                   >
@@ -1590,17 +1606,25 @@ export function HumanizeEditor({
                     <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white sm:w-[140px] dark:border-slate-600 dark:bg-slate-700">
                       <SelectValue placeholder="Auto-detect" />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="auto">Auto-detect</SelectItem>
-                      {languages.map((lang) => (
-                        <SelectItem
-                          className="cursor-pointer"
-                          key={lang}
-                          value={lang}
-                        >
-                          {lang}
-                        </SelectItem>
-                      ))}
+                    <SelectContent className="min-w-[400px] [&>div>div]:grid [&>div>div]:grid-cols-3 [&>div>div]:gap-0">
+                      <SelectGroup>
+                        {languages.map((lang) => (
+                          <SelectItem
+                            className="cursor-pointer"
+                            key={lang}
+                            value={lang}
+                          >
+                            {lang}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                      <SelectSeparator className="col-span-3" />
+                      <SelectItem
+                        className="col-span-3 cursor-pointer"
+                        value="auto"
+                      >
+                        Auto-detect
+                      </SelectItem>
                     </SelectContent>
                   </Select>
 
@@ -1625,30 +1649,6 @@ export function HumanizeEditor({
                       ))}
                     </SelectContent>
                   </Select>
-                </div>
-              )}
-
-              {/* Style Sample Input */}
-              {activeTab === "humanize" && showStyleSample && (
-                <div className="border-white border-t bg-slate-50 px-3 py-2 sm:px-4 sm:py-3 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
-                  <div className="mb-2 flex items-center justify-between">
-                    <label className="font-medium text-slate-900 text-sm dark:text-slate-100">
-                      Style Sample (Optional, ≥150 words recommended)
-                    </label>
-                    <Button
-                      className="h-6 w-6 rounded p-0 hover:bg-slate-200 dark:hover:bg-slate-600"
-                      onClick={() => setShowStyleSample(false)}
-                      variant="ghost"
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <Textarea
-                    className="min-h-[100px] resize-y border border-slate-200 bg-white text-sm dark:border-slate-600 dark:bg-slate-700"
-                    onChange={(e) => setStyleSample(e.target.value)}
-                    placeholder="Paste a sample of writing style you want to match..."
-                    value={styleSample}
-                  />
                 </div>
               )}
             </div>
@@ -1693,6 +1693,55 @@ export function HumanizeEditor({
         proType={proType}
         proValue={proValue}
       />
+
+      {/* Style Sample Modal */}
+      <Dialog
+        onOpenChange={setShowStyleSampleModal}
+        open={showStyleSampleModal}
+      >
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Pencil className="h-5 w-5 text-slate-900 dark:text-slate-100" />
+              <DialogTitle className="text-left">My Writing Style</DialogTitle>
+            </div>
+            <DialogDescription className="text-left">
+              This feature helps generate content that matches your writing
+              style.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Textarea
+                className="min-h-[200px] resize-y border-2 border-green-500 bg-white text-sm focus:border-green-600 focus:ring-0 dark:bg-slate-800"
+                onChange={(e) => setStyleSample(e.target.value)}
+                placeholder="Add your real text, min 150 words"
+                value={styleSample}
+              />
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-4">
+                  <span className="text-slate-600 text-sm dark:text-slate-400">
+                    {
+                      styleSample.trim().split(WORD_COUNT_REGEX).filter(Boolean)
+                        .length
+                    }{" "}
+                    / 30,000 Words
+                  </span>
+                </div>
+                <button
+                  className="font-medium text-green-600 text-sm hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                  onClick={() => {
+                    setStyleSample(EXAMPLE_TEXT);
+                  }}
+                  type="button"
+                >
+                  Show me an example
+                </button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -193,9 +193,7 @@ const NavigationMenuContent = ({
       ref={ref}
       {...props}
     >
-      <div className="relative rounded-md border bg-popover text-popover-foreground shadow-lg">
-        {children}
-      </div>
+      {children}
     </div>
   );
 };

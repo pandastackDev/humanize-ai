@@ -17,9 +17,19 @@ export async function createOrganization({
     throw new Error("User not authenticated");
   }
 
+  // Validate organization name
+  const trimmedName = name.trim();
+  if (!trimmedName) {
+    throw new Error("Organization name is required");
+  }
+
+  if (trimmedName.length > 100) {
+    throw new Error("Organization name must be 100 characters or less");
+  }
+
   // Create the organization
   const organization = await workos.organizations.createOrganization({
-    name,
+    name: trimmedName,
   });
 
   // Add the current user as an admin of the organization
