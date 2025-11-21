@@ -78,6 +78,4 @@ build/**
 
 # FastText models (large binary files)
 models/
-apps/next/public
-apps/next/public
 .env.local
