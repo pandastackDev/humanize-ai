@@ -5,7 +5,15 @@ export default defineSchema({
   users: defineTable({
     email: v.string(),
     workos_id: v.string(),
-  }),
+    name: v.optional(v.string()),
+    first_name: v.optional(v.string()),
+    last_name: v.optional(v.string()),
+    profile_picture_url: v.optional(v.string()),
+    created_at: v.optional(v.number()), // Unix timestamp
+    updated_at: v.optional(v.number()), // Unix timestamp
+  })
+    .index("by_workos_id", ["workos_id"])
+    .index("by_email", ["email"]),
   organizations: defineTable({
     workos_id: v.string(),
     name: v.string(),
@@ -56,4 +64,18 @@ export default defineSchema({
   })
     .index("by_organization_month", ["organization_id", "year", "month"])
     .index("by_user_month", ["user_id", "year", "month"]),
+  history: defineTable({
+    user_id: v.string(), // WorkOS user ID
+    organization_id: v.optional(v.string()), // WorkOS organization ID (optional)
+    original_text: v.string(),
+    humanized_text: v.string(),
+    word_count: v.number(),
+    // Additional metadata
+    language: v.optional(v.string()),
+    readability_level: v.optional(v.string()),
+    purpose: v.optional(v.string()),
+    length_mode: v.optional(v.string()),
+  })
+    .index("by_user", ["user_id"])
+    .index("by_organization", ["organization_id"]),
 });

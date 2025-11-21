@@ -8,6 +8,9 @@
  * @module
  */
 
+import type * as bulkSyncHttp from "../bulkSyncHttp.js";
+import type * as bulkSyncUsers from "../bulkSyncUsers.js";
+import type * as history from "../history.js";
 import type * as http from "../http.js";
 import type * as organizationMemberships from "../organizationMemberships.js";
 import type * as organizations from "../organizations.js";
@@ -15,7 +18,9 @@ import type * as stripe from "../stripe.js";
 import type * as stripeWebhookHandlers from "../stripeWebhookHandlers.js";
 import type * as subscriptions from "../subscriptions.js";
 import type * as usage from "../usage.js";
+import type * as userSync from "../userSync.js";
 import type * as users from "../users.js";
+import type * as webhookDiagnostics from "../webhookDiagnostics.js";
 import type * as webhookHandlers from "../webhookHandlers.js";
 import type * as workos from "../workos.js";
 
@@ -34,6 +39,9 @@ import type {
  * ```
  */
 declare const fullApi: ApiFromModules<{
+  bulkSyncHttp: typeof bulkSyncHttp;
+  bulkSyncUsers: typeof bulkSyncUsers;
+  history: typeof history;
   http: typeof http;
   organizationMemberships: typeof organizationMemberships;
   organizations: typeof organizations;
@@ -41,7 +49,9 @@ declare const fullApi: ApiFromModules<{
   stripeWebhookHandlers: typeof stripeWebhookHandlers;
   subscriptions: typeof subscriptions;
   usage: typeof usage;
+  userSync: typeof userSync;
   users: typeof users;
+  webhookDiagnostics: typeof webhookDiagnostics;
   webhookHandlers: typeof webhookHandlers;
   workos: typeof workos;
 }>;

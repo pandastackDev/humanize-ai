@@ -16,7 +16,9 @@ import time
 from collections import Counter
 from typing import Any
 
+import httpx
 from anthropic import Anthropic
+from writerai import Writer
 
 from api.config import settings
 from api.models import DetectorResult, DetectorType, InternalAnalysis
@@ -78,6 +80,37 @@ class AIDetectionService:
         self._anthropic_client: Anthropic | None = None
         if settings.ANTHROPIC_API_KEY:
             self._anthropic_client = Anthropic(api_key=settings.ANTHROPIC_API_KEY)
+        self._writer_client: Writer | None = None
+        if settings.WRITER_API_KEY:
+            self._writer_client = Writer(api_key=settings.WRITER_API_KEY)
+
+    def _create_detector_result(
+        self,
+        detector: DetectorType,
+        ai_probability: float,
+        human_probability: float,
+        confidence: float,
+        response_time_ms: float | None = None,
+        details: dict | None = None,
+        error: str | None = None,
+    ) -> DetectorResult:
+        """
+        Helper method to create DetectorResult with percentage fields.
+
+        Automatically calculates percentage fields from 0-1 probability values.
+        """
+        return DetectorResult(
+            detector=detector,
+            ai_probability=ai_probability,
+            human_probability=human_probability,
+            ai_probability_pct=round(ai_probability * 100, 2),
+            human_probability_pct=round(human_probability * 100, 2),
+            confidence=confidence,
+            confidence_pct=round(confidence * 100, 2),
+            response_time_ms=response_time_ms,
+            details=details,
+            error=error,
+        )
 
     async def detect(
         self,
@@ -158,7 +191,7 @@ class AIDetectionService:
             # Simple heuristic for demo: check for AI-like patterns
             ai_score = self._simple_ai_heuristic(text)
 
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.GPTZERO,
                 ai_probability=ai_score,
                 human_probability=1 - ai_score,
@@ -169,7 +202,7 @@ class AIDetectionService:
             )
         except Exception as e:
             logger.error(f"GPTZero detection failed: {e!s}")
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.GPTZERO,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -186,7 +219,7 @@ class AIDetectionService:
             await asyncio.sleep(0.1)
             ai_score = self._simple_ai_heuristic(text)
 
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.COPYLEAKS,
                 ai_probability=ai_score,
                 human_probability=1 - ai_score,
@@ -197,7 +230,7 @@ class AIDetectionService:
             )
         except Exception as e:
             logger.error(f"CopyLeaks detection failed: {e!s}")
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.COPYLEAKS,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -208,24 +241,177 @@ class AIDetectionService:
             )
 
     async def _detect_sapling(self, text: str) -> DetectorResult:
-        """Detect using Sapling AI Detector API."""
+        """
+        Detect using Sapling AI Detector API.
+
+        API: https://api.sapling.ai/api/v1/aidetect
+        Method: POST
+        Body: {"key": API_KEY, "text": text_to_analyze}
+        """
         start_time = time.time()
         try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
+            if not settings.SAPLING_API_KEY:
+                # Fallback to heuristic if API key not configured
+                await asyncio.sleep(0.1)
+                ai_score = self._simple_ai_heuristic(text)
+                return self._create_detector_result(
+                    detector=DetectorType.SAPLING,
+                    ai_probability=ai_score,
+                    human_probability=1 - ai_score,
+                    confidence=0.80,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details={"note": "Demo mode - configure SAPLING_API_KEY for real detection"},
+                    error=None,
+                )
 
-            return DetectorResult(
+            # Call Sapling AI detect API
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                try:
+                    response = await client.post(
+                        "https://api.sapling.ai/api/v1/aidetect",
+                        json={
+                            "key": settings.SAPLING_API_KEY,
+                            "text": text,
+                        },
+                        headers={
+                            "Content-Type": "application/json",
+                        },
+                    )
+
+                    logger.info(f"Sapling API response status: {response.status_code}")
+
+                    if 200 <= response.status_code < 300:
+                        try:
+                            data = response.json()
+                            logger.info(f"Sapling API response data: {data}")
+
+                            # Parse Sapling response format
+                            # Based on API docs, response may contain: score, score_breakdown, etc.
+                            ai_score = 0.5
+                            confidence = 0.0
+
+                            if isinstance(data, dict):
+                                # Try different possible response field names
+                                if "score" in data:
+                                    # Score is typically 0-1 where 1 = AI, 0 = Human
+                                    score = float(data["score"])
+                                    if score > 1:
+                                        ai_score = score / 100.0  # Normalize 0-100 to 0-1
+                                    else:
+                                        ai_score = score
+                                elif "ai_score" in data:
+                                    ai_score = float(data["ai_score"])
+                                elif "probability" in data:
+                                    ai_score = float(data["probability"])
+                                elif "ai_probability" in data:
+                                    ai_score = float(data["ai_probability"])
+                                elif "score_breakdown" in data and isinstance(
+                                    data["score_breakdown"], dict
+                                ):
+                                    # Try to extract from score_breakdown
+                                    breakdown = data["score_breakdown"]
+                                    if "ai" in breakdown:
+                                        ai_score = float(breakdown["ai"])
+                                    elif "score" in breakdown:
+                                        ai_score = float(breakdown["score"])
+                                else:
+                                    # Log the full response for debugging
+                                    logger.warning(
+                                        f"Unexpected Sapling response format. Keys: {list(data.keys())}, Full response: {data}"
+                                    )
+                                    # Try to find any numeric value that might be the score
+                                    for key, value in data.items():
+                                        if isinstance(value, (int, float)) and 0 <= value <= 1:
+                                            ai_score = float(value)
+                                            logger.info(f"Using {key}={value} as AI score")
+                                            break
+                                    if ai_score == 0.5:
+                                        # Fallback to heuristic if we couldn't parse
+                                        logger.warning(
+                                            "Could not parse Sapling response, using heuristic"
+                                        )
+                                        ai_score = self._simple_ai_heuristic(text)
+
+                                # Calculate confidence based on how far from 0.5
+                                confidence = abs(ai_score - 0.5) * 2
+                            else:
+                                # Unexpected response format
+                                logger.warning(
+                                    f"Unexpected Sapling response type: {type(data)}, value: {data}"
+                                )
+                                ai_score = self._simple_ai_heuristic(text)
+                                confidence = 0.5
+
+                            # Ensure scores are in valid range
+                            ai_score = max(0.0, min(1.0, ai_score))
+                            human_probability = 1 - ai_score
+
+                            return self._create_detector_result(
+                                detector=DetectorType.SAPLING,
+                                ai_probability=ai_score,
+                                human_probability=human_probability,
+                                confidence=confidence,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details={
+                                    "raw_response": data,
+                                    "api_version": "v1",
+                                },
+                                error=None,
+                            )
+                        except ValueError as e:
+                            # JSON parsing error
+                            error_msg = f"Failed to parse Sapling response: {e!s}. Response text: {response.text[:200]}"
+                            logger.error(error_msg)
+                            return self._create_detector_result(
+                                detector=DetectorType.SAPLING,
+                                ai_probability=0.5,
+                                human_probability=0.5,
+                                confidence=0.0,
+                                error=error_msg,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details=None,
+                            )
+                    else:
+                        # API returned error status
+                        error_text = response.text[:500]  # Limit error text length
+                        error_msg = f"HTTP {response.status_code}: {error_text}"
+                        logger.error(f"Sapling API error: {error_msg}")
+                        return self._create_detector_result(
+                            detector=DetectorType.SAPLING,
+                            ai_probability=0.5,
+                            human_probability=0.5,
+                            confidence=0.0,
+                            error=error_msg,
+                            response_time_ms=(time.time() - start_time) * 1000,
+                            details=None,
+                        )
+                except httpx.RequestError as e:
+                    error_msg = f"Request error: {e!s}"
+                    logger.error(f"Sapling API request error: {error_msg}")
+                    return self._create_detector_result(
+                        detector=DetectorType.SAPLING,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        error=error_msg,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details=None,
+                    )
+
+        except httpx.TimeoutException as e:
+            logger.error(f"Sapling detection timeout: {e!s}")
+            return self._create_detector_result(
                 detector=DetectorType.SAPLING,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.80,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=f"Request timeout: {e!s}",
                 response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure SAPLING_API_KEY for real detection"},
-                error=None,
+                details=None,
             )
         except Exception as e:
-            logger.error(f"Sapling detection failed: {e!s}")
-            return DetectorResult(
+            logger.error(f"Sapling detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
                 detector=DetectorType.SAPLING,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -236,24 +422,79 @@ class AIDetectionService:
             )
 
     async def _detect_writer(self, text: str) -> DetectorResult:
-        """Detect using Writer.com AI Content Detector API."""
+        """
+        Detect using Writer.com AI Content Detector API.
+
+        API: https://dev.writer.com/reference/ai-detect
+        Response format: {"label": "fake" | "real", "score": float (0-1)}
+        - "fake" = AI-generated (score closer to 1 = more AI-like)
+        - "real" = Human-written (score closer to 1 = more human-like)
+        """
         start_time = time.time()
         try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
+            if not self._writer_client:
+                # Fallback to heuristic if API key not configured
+                await asyncio.sleep(0.1)
+                ai_score = self._simple_ai_heuristic(text)
+                return self._create_detector_result(
+                    detector=DetectorType.WRITER,
+                    ai_probability=ai_score,
+                    human_probability=1 - ai_score,
+                    confidence=0.83,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details={"note": "Demo mode - configure WRITER_API_KEY for real detection"},
+                    error=None,
+                )
 
-            return DetectorResult(
+            # Call Writer AI detect API
+            # Note: writerai library is synchronous, so we run it in executor
+            # Store client in local variable for type checker
+            writer_client = self._writer_client
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None, lambda: writer_client.tools.ai_detect(input=text)
+            )
+
+            # Parse response
+            # Response format: {"label": "fake" | "real", "score": float}
+            # Handle both object and dict responses
+            if isinstance(response, dict):
+                label = response.get("label", "fake")
+                score = response.get("score", 0.5)
+            else:
+                label = getattr(response, "label", "fake")
+                score = getattr(response, "score", 0.5)
+
+            # Convert Writer format to our format
+            # "fake" = AI-generated, "real" = Human-written
+            if label == "fake":
+                # Score represents AI probability (higher = more AI)
+                ai_probability = float(score)
+                human_probability = 1 - ai_probability
+            else:  # "real"
+                # Score represents human probability (higher = more human)
+                human_probability = float(score)
+                ai_probability = 1 - human_probability
+
+            # Confidence based on how far from 0.5 the score is
+            confidence = abs(score - 0.5) * 2  # Scale to 0-1
+
+            return self._create_detector_result(
                 detector=DetectorType.WRITER,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.83,
+                ai_probability=ai_probability,
+                human_probability=human_probability,
+                confidence=confidence,
                 response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure WRITER_API_KEY for real detection"},
+                details={
+                    "label": label,
+                    "raw_score": score,
+                    "api_version": "writerai",
+                },
                 error=None,
             )
         except Exception as e:
-            logger.error(f"Writer detection failed: {e!s}")
-            return DetectorResult(
+            logger.error(f"Writer detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
                 detector=DetectorType.WRITER,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -264,24 +505,202 @@ class AIDetectionService:
             )
 
     async def _detect_zerogpt(self, text: str) -> DetectorResult:
-        """Detect using ZeroGPT API."""
+        """
+        Detect using ZeroGPT API.
+
+        API: https://api.zerogpt.com/api/detect/detectText
+        Method: POST
+        Headers: ApiKey, Content-Type
+        Body: {"input_text": text, "textWords": word_count, ...}
+        """
         start_time = time.time()
         try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
+            if not settings.ZEROGPT_API_KEY:
+                # Fallback to heuristic if API key not configured
+                await asyncio.sleep(0.1)
+                ai_score = self._simple_ai_heuristic(text)
+                return self._create_detector_result(
+                    detector=DetectorType.ZEROGPT,
+                    ai_probability=ai_score,
+                    human_probability=1 - ai_score,
+                    confidence=0.78,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details={"note": "Demo mode - configure ZEROGPT_API_KEY for real detection"},
+                    error=None,
+                )
 
-            return DetectorResult(
+            # Prepare request body
+            word_count = len(text.split())
+            body = {
+                "input_text": text,
+                "textWords": word_count,
+                "aiWords": 0,
+                "fakePercentage": 0,
+                "sentences": [],
+                "h": [],
+                "collection_id": 0,
+                "fileName": "",
+                "feedback": "",
+            }
+
+            # Call ZeroGPT API
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                try:
+                    response = await client.post(
+                        "https://api.zerogpt.com/api/detect/detectText",
+                        headers={
+                            "ApiKey": settings.ZEROGPT_API_KEY,
+                            "Content-Type": "application/json",
+                        },
+                        json=body,
+                    )
+
+                    logger.info(f"ZeroGPT API response status: {response.status_code}")
+
+                    if 200 <= response.status_code < 300:
+                        try:
+                            data = response.json()
+                            logger.info(f"ZeroGPT API response data: {data}")
+
+                            # Parse ZeroGPT response format
+                            # Response typically contains fakePercentage, aiWords, or similar fields
+                            ai_score = 0.5
+                            confidence = 0.0
+
+                            if isinstance(data, dict):
+                                # Try different possible response field names
+                                if "fakePercentage" in data:
+                                    # fakePercentage is likely 0-100 where 100 = fully AI
+                                    fake_pct = float(data["fakePercentage"])
+                                    ai_score = fake_pct / 100.0  # Normalize 0-100 to 0-1
+                                elif "aiPercentage" in data:
+                                    ai_pct = float(data["aiPercentage"])
+                                    ai_score = ai_pct / 100.0
+                                elif "aiWords" in data and "textWords" in data:
+                                    # Calculate percentage from word counts
+                                    ai_words = float(data.get("aiWords", 0))
+                                    text_words = float(data.get("textWords", word_count))
+                                    if text_words > 0:
+                                        ai_score = ai_words / text_words
+                                elif "score" in data:
+                                    score = float(data["score"])
+                                    if score > 1:
+                                        ai_score = score / 100.0
+                                    else:
+                                        ai_score = score
+                                elif "probability" in data:
+                                    ai_score = float(data["probability"])
+                                elif "ai_probability" in data:
+                                    ai_score = float(data["ai_probability"])
+                                elif "result" in data and isinstance(data["result"], dict):
+                                    # Try nested result object
+                                    result = data["result"]
+                                    if "fakePercentage" in result:
+                                        fake_pct = float(result["fakePercentage"])
+                                        ai_score = fake_pct / 100.0
+                                    elif "aiPercentage" in result:
+                                        ai_pct = float(result["aiPercentage"])
+                                        ai_score = ai_pct / 100.0
+                                else:
+                                    # Log the full response for debugging
+                                    logger.warning(
+                                        f"Unexpected ZeroGPT response format. Keys: {list(data.keys())}, Full response: {data}"
+                                    )
+                                    # Try to find any numeric value that might be the score
+                                    for key, value in data.items():
+                                        if isinstance(value, (int, float)) and 0 <= value <= 100:
+                                            ai_score = (
+                                                float(value) / 100.0 if value > 1 else float(value)
+                                            )
+                                            logger.info(f"Using {key}={value} as AI score")
+                                            break
+                                    if ai_score == 0.5:
+                                        # Fallback to heuristic if we couldn't parse
+                                        logger.warning(
+                                            "Could not parse ZeroGPT response, using heuristic"
+                                        )
+                                        ai_score = self._simple_ai_heuristic(text)
+
+                                # Calculate confidence based on how far from 0.5
+                                confidence = abs(ai_score - 0.5) * 2
+                            else:
+                                # Unexpected response format
+                                logger.warning(
+                                    f"Unexpected ZeroGPT response type: {type(data)}, value: {data}"
+                                )
+                                ai_score = self._simple_ai_heuristic(text)
+                                confidence = 0.5
+
+                            # Ensure scores are in valid range
+                            ai_score = max(0.0, min(1.0, ai_score))
+                            human_probability = 1 - ai_score
+
+                            return self._create_detector_result(
+                                detector=DetectorType.ZEROGPT,
+                                ai_probability=ai_score,
+                                human_probability=human_probability,
+                                confidence=confidence,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details={
+                                    "raw_response": data,
+                                    "api_version": "v1",
+                                },
+                                error=None,
+                            )
+                        except ValueError as e:
+                            # JSON parsing error
+                            error_msg = f"Failed to parse ZeroGPT response: {e!s}. Response text: {response.text[:200]}"
+                            logger.error(error_msg)
+                            return self._create_detector_result(
+                                detector=DetectorType.ZEROGPT,
+                                ai_probability=0.5,
+                                human_probability=0.5,
+                                confidence=0.0,
+                                error=error_msg,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details=None,
+                            )
+                    else:
+                        # API returned error status
+                        error_text = response.text[:500]  # Limit error text length
+                        error_msg = f"HTTP {response.status_code}: {error_text}"
+                        logger.error(f"ZeroGPT API error: {error_msg}")
+                        return self._create_detector_result(
+                            detector=DetectorType.ZEROGPT,
+                            ai_probability=0.5,
+                            human_probability=0.5,
+                            confidence=0.0,
+                            error=error_msg,
+                            response_time_ms=(time.time() - start_time) * 1000,
+                            details=None,
+                        )
+                except httpx.RequestError as e:
+                    error_msg = f"Request error: {e!s}"
+                    logger.error(f"ZeroGPT API request error: {error_msg}")
+                    return self._create_detector_result(
+                        detector=DetectorType.ZEROGPT,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        error=error_msg,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details=None,
+                    )
+
+        except httpx.TimeoutException as e:
+            logger.error(f"ZeroGPT detection timeout: {e!s}")
+            return self._create_detector_result(
                 detector=DetectorType.ZEROGPT,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.78,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=f"Request timeout: {e!s}",
                 response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure ZEROGPT_API_KEY for real detection"},
-                error=None,
+                details=None,
             )
         except Exception as e:
-            logger.error(f"ZeroGPT detection failed: {e!s}")
-            return DetectorResult(
+            logger.error(f"ZeroGPT detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
                 detector=DetectorType.ZEROGPT,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -298,7 +717,7 @@ class AIDetectionService:
             await asyncio.sleep(0.1)
             ai_score = self._simple_ai_heuristic(text)
 
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.ORIGINALITY,
                 ai_probability=ai_score,
                 human_probability=1 - ai_score,
@@ -309,7 +728,7 @@ class AIDetectionService:
             )
         except Exception as e:
             logger.error(f"Originality detection failed: {e!s}")
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.ORIGINALITY,
                 ai_probability=0.5,
                 human_probability=0.5,
@@ -326,7 +745,7 @@ class AIDetectionService:
             await asyncio.sleep(0.1)
             ai_score = self._simple_ai_heuristic(text)
 
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.QUILLBOT,
                 ai_probability=ai_score,
                 human_probability=1 - ai_score,
@@ -337,7 +756,7 @@ class AIDetectionService:
             )
         except Exception as e:
             logger.error(f"QuillBot detection failed: {e!s}")
-            return DetectorResult(
+            return self._create_detector_result(
                 detector=DetectorType.QUILLBOT,
                 ai_probability=0.5,
                 human_probability=0.5,
