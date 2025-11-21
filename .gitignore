@@ -80,3 +80,4 @@ build/**
 models/
 apps/next/public
 apps/next/public
+.env.local

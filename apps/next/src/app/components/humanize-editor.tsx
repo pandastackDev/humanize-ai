@@ -168,6 +168,71 @@ function getLanguageCode(languageName: string): string {
   return languageMap[languageName] || "en";
 }
 
+// Get detector-specific colors (matching the image design)
+function getDetectorColor(detectorName: string): string {
+  const name = detectorName.toLowerCase();
+  if (name.includes("turnitin") || name.includes("winston")) {
+    return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
+  }
+  if (name.includes("gptzero")) {
+    return "bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-200 dark:border-blue-400 dark:text-blue-800";
+  }
+  if (name.includes("zerogpt") || name.includes("copyleaks")) {
+    return "bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-200 dark:border-blue-400 dark:text-blue-800";
+  }
+  if (name.includes("smodin")) {
+    return "bg-red-100 border-red-300 text-red-700 dark:bg-red-200 dark:border-red-400 dark:text-red-800";
+  }
+  if (name.includes("quillbot")) {
+    return "bg-green-100 border-green-300 text-green-700 dark:bg-green-200 dark:border-green-400 dark:text-green-800";
+  }
+  if (name.includes("scribbr")) {
+    return "bg-orange-100 border-orange-300 text-orange-700 dark:bg-orange-200 dark:border-orange-400 dark:text-orange-800";
+  }
+  if (name.includes("originality")) {
+    return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
+  }
+  // Default purple
+  return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
+}
+
+// Get detector-specific styles matching HTML exactly
+function getDetectorStyles(detectorName: string): {
+  bgColor: string;
+  borderColor: string;
+  textColor: string;
+} {
+  const name = detectorName.toLowerCase();
+  // Default purple
+  let bgColor = "rgb(245, 243, 255)";
+  let borderColor = "rgb(221, 214, 254)";
+  let textColor = "rgb(91, 33, 182)";
+
+  if (
+    name.includes("gptzero") ||
+    name.includes("zerogpt") ||
+    name.includes("copyleaks")
+  ) {
+    bgColor = "rgb(239, 246, 255)";
+    borderColor = "rgb(191, 219, 254)";
+    textColor = "rgb(30, 64, 175)";
+  } else if (name.includes("smodin")) {
+    bgColor = "rgb(254, 242, 242)";
+    borderColor = "rgb(254, 202, 202)";
+    textColor = "rgb(153, 27, 27)";
+  } else if (name.includes("quillbot")) {
+    bgColor = "rgb(240, 253, 244)";
+    borderColor = "rgb(187, 247, 208)";
+    textColor = "rgb(22, 101, 52)";
+  } else if (name.includes("scribbr")) {
+    bgColor = "rgb(255, 247, 237)";
+    borderColor = "rgb(254, 215, 170)";
+    textColor = "rgb(154, 52, 18)";
+  }
+
+  return { bgColor, borderColor, textColor };
+}
+
 // Example text for "Try example" button
 const EXAMPLE_TEXT = `The seaside town was a picturesque blend of old-world charm and modern amenities. Waves crashed gently against the shore, their rhythmic sound providing a soothing backdrop to the bustling boardwalk. Colorful fishing boats bobbed in the harbor, their nets filled with the day's catch. Tourists strolled along the promenade, enjoying the salty sea breeze and the vibrant atmosphere.`;
 
@@ -794,48 +859,65 @@ export function HumanizeEditor({
       // Loading screen with all detectors
       if (isDetecting) {
         return (
-          <div className="flex h-[600px] w-full flex-col items-center justify-center bg-white/95 px-4 py-8 backdrop-blur-sm dark:bg-slate-900/95">
-            {/* Purple heading */}
-            <h2 className="mb-2 text-center font-bold text-2xl text-purple-600 dark:text-purple-400">
-              Analyzing your text through all major AI detectors
-            </h2>
+          <div className="flex h-[450px] w-full flex-col items-center justify-center bg-white px-4 py-4 dark:bg-slate-50">
+            <div className="flex w-full max-w-3xl flex-col items-center justify-center">
+              {/* Purple heading - smaller */}
+              <h2 className="mb-1 text-center font-bold text-purple-600 text-sm dark:text-purple-500">
+                Analyzing your text through all major AI detectors
+              </h2>
 
-            {/* Description */}
-            <p className="mb-8 max-w-2xl text-center text-slate-600 text-sm dark:text-slate-400">
-              This may take a few seconds as we cross-verify results across
-              multiple platforms for maximum accuracy.
-            </p>
+              {/* Description - smaller */}
+              <p className="mb-4 max-w-2xl text-center text-[10px] text-slate-600 dark:text-slate-500">
+                This may take a few seconds as we cross-verify results across
+                multiple platforms for maximum accuracy.
+              </p>
 
-            {/* Detector grid - 8 detectors in grid */}
-            <div className="grid w-full max-w-4xl grid-cols-2 gap-4 md:grid-cols-4">
-              {AI_DETECTORS.map((detector, index) => (
-                <div
-                  className="relative flex flex-col items-center justify-center rounded-lg bg-white/50 p-4 shadow-sm backdrop-blur-md transition-all hover:shadow-md dark:bg-slate-800/50"
-                  key={detector.name}
-                  style={{
-                    animationDelay: `${index * 50}ms`,
-                  }}
-                >
-                  {/* Logo */}
-                  <div className="relative mb-2 flex h-12 w-12 items-center justify-center">
-                    <Image
-                      alt={detector.name}
-                      className="object-contain"
-                      height={48}
-                      src={detector.image}
-                      width={48}
-                    />
+              {/* Detector grid - Pill-shaped buttons matching HTML exactly */}
+              <div className="flex w-full flex-wrap justify-center gap-2">
+                {AI_DETECTORS.map((detector, index) => (
+                  <div
+                    className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3 py-1.5"
+                    key={detector.name}
+                    style={{
+                      backgroundColor: "rgb(245, 243, 255)",
+                      borderColor: "rgb(221, 214, 254)",
+                      flex: "0 0 calc(25% - 8px)",
+                      maxWidth: "calc(25% - 8px)",
+                      minWidth: "140px",
+                      justifyContent: "center",
+                      animationDelay: `${index * 50}ms`,
+                    }}
+                  >
+                    {/* Logo - 16px exactly as in HTML */}
+                    <div className="shrink-0">
+                      <Image
+                        alt={detector.name}
+                        className="h-4 w-4"
+                        height={16}
+                        src={detector.image}
+                        width={16}
+                      />
+                    </div>
+
+                    {/* Detector name - 12px font, exact styling */}
+                    <span
+                      className="whitespace-nowrap font-semibold"
+                      style={{
+                        fontSize: "12px",
+                        lineHeight: "16px",
+                        color: "rgb(91, 33, 182)",
+                      }}
+                    >
+                      {detector.name}
+                    </span>
+
+                    {/* Spinner - matching the empty div structure */}
+                    <div className="shrink-0">
+                      <Loader2 className="h-3 w-3 animate-spin text-purple-500" />
+                    </div>
                   </div>
-
-                  {/* Detector name */}
-                  <span className="mb-1 text-center font-medium text-slate-700 text-xs dark:text-slate-300">
-                    {detector.name}
-                  </span>
-
-                  {/* Loading spinner */}
-                  <Loader2 className="h-4 w-4 animate-spin text-purple-500" />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         );
@@ -855,163 +937,214 @@ export function HumanizeEditor({
       );
     }
 
+    // Create a map of detector names to their results for quick lookup
+    const detectorMap = new Map(
+      detectionResult.detector_results.map((r) => [r.detector.toLowerCase(), r])
+    );
+
+    // Helper to get detector result or default
+    const getDetectorResult = (detectorName: string) => {
+      const key = detectorName.toLowerCase();
+      return detectorMap.get(key) || null;
+    };
+
     return (
-      <div className="h-[450px] w-full overflow-y-auto px-4 py-5 sm:px-6">
-        {/* Overall Score Card */}
-        <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-          <div className="mb-3 flex items-center justify-between">
-            <h3 className="font-semibold text-slate-900 dark:text-slate-100">
-              Detection Results
-            </h3>
-            {detectionResult.cached && (
-              <span className="flex items-center gap-1 text-blue-600 text-xs dark:text-blue-400">
-                <Clock className="h-3 w-3" />
-                Cached
-              </span>
-            )}
-          </div>
-
-          {/* Human Likelihood */}
-          <div className="mb-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-slate-600 text-sm dark:text-slate-400">
-                Human Likelihood
+      <div className="flex h-[450px] w-full flex-col items-center justify-center overflow-y-auto bg-white px-4 py-4 sm:px-6 dark:bg-slate-50">
+        <div className="flex w-full max-w-3xl flex-col items-center justify-center">
+          {/* Main Result Header - smaller, centered */}
+          <div className="mb-4 text-center">
+            <div className="mb-1 flex flex-col items-center justify-center">
+              <span className="font-bold text-5xl text-slate-900 dark:text-slate-800">
+                {detectionResult.ai_likelihood_pct > 50
+                  ? detectionResult.ai_likelihood_pct.toFixed(0)
+                  : detectionResult.human_likelihood_pct.toFixed(0)}
+                %
               </span>
               <span
-                className={`font-bold text-2xl ${getScoreColor(detectionResult.human_likelihood_pct)}`}
+                className={`font-semibold text-sm ${
+                  detectionResult.ai_likelihood_pct > 50
+                    ? "text-red-600 dark:text-red-500"
+                    : "text-green-600 dark:text-green-500"
+                }`}
               >
-                {detectionResult.human_likelihood_pct.toFixed(1)}%
+                {detectionResult.ai_likelihood_pct > 50
+                  ? "of text likely AI"
+                  : "of text likely Human"}
               </span>
             </div>
-            <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-              <div
-                className="h-2.5 rounded-full bg-green-600 transition-all"
-                style={{ width: `${detectionResult.human_likelihood_pct}%` }}
-              />
-            </div>
+            <p className="text-[10px] text-slate-600 dark:text-slate-500">
+              Your text has been deeply analyzed using the strongest AI
+              detectors in the market.
+            </p>
           </div>
 
-          {/* AI Likelihood */}
-          <div className="mb-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="font-medium text-slate-600 text-sm dark:text-slate-400">
-                AI Likelihood
-              </span>
-              <span
-                className={`font-bold text-2xl ${getScoreColor(100 - detectionResult.ai_likelihood_pct)}`}
-              >
-                {detectionResult.ai_likelihood_pct.toFixed(1)}%
-              </span>
-            </div>
-            <div className="h-2.5 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
-              <div
-                className="h-2.5 rounded-full bg-red-600 transition-all"
-                style={{ width: `${detectionResult.ai_likelihood_pct}%` }}
-              />
-            </div>
-          </div>
+          {/* Detector Grid - Smaller pill-shaped buttons, centered */}
+          <div className="mb-4 flex w-full flex-wrap justify-center gap-1.5">
+            {AI_DETECTORS.map((detector) => {
+              const result = getDetectorResult(detector.name);
+              const humanPct = result
+                ? (result.human_probability * 100).toFixed(0)
+                : "N/A";
+              const hasError = result?.error !== undefined;
 
-          {/* Confidence */}
-          <div className="flex items-center justify-between border-slate-200 border-t pt-3 text-sm dark:border-slate-700">
-            <span className="text-slate-600 dark:text-slate-400">
-              Confidence
-            </span>
-            <span className="font-medium text-slate-900 dark:text-slate-100">
-              {(detectionResult.confidence * 100).toFixed(1)}%
-            </span>
-          </div>
-        </div>
+              const styles = getDetectorStyles(detector.name);
 
-        {/* Detector Breakdown */}
-        {detectionResult.detector_results.length > 0 && (
-          <div className="mb-4 rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-            <h4 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
-              Detector Breakdown
-            </h4>
-            <div className="space-y-2">
-              {detectionResult.detector_results.map((detector) => (
-                <div
-                  className="flex items-center justify-between rounded-lg bg-slate-50 p-2 dark:bg-slate-900"
-                  key={detector.detector}
-                >
-                  <div className="space-y-0.5">
-                    <div className="font-medium text-slate-900 text-sm capitalize dark:text-slate-100">
-                      {detector.detector}
-                    </div>
-                    <div className="text-slate-500 text-xs dark:text-slate-400">
-                      Confidence: {(detector.confidence * 100).toFixed(0)}%
-                      {detector.response_time_ms && (
-                        <> • {detector.response_time_ms.toFixed(0)}ms</>
-                      )}
-                    </div>
-                  </div>
-                  <div
-                    className={`font-bold text-lg ${getScoreColor(detector.human_probability * 100)}`}
+              const getStatusText = () => {
+                if (hasError) {
+                  return (
+                    <span
+                      className="whitespace-nowrap font-semibold"
+                      style={{
+                        fontSize: "12px",
+                        lineHeight: "16px",
+                        color: "rgb(220, 38, 38)",
+                      }}
+                    >
+                      Error
+                    </span>
+                  );
+                }
+                if (result) {
+                  return (
+                    <span
+                      className="whitespace-nowrap font-semibold"
+                      style={{
+                        fontSize: "12px",
+                        lineHeight: "16px",
+                        color: styles.textColor,
+                      }}
+                    >
+                      {humanPct}%
+                    </span>
+                  );
+                }
+                return (
+                  <span
+                    className="whitespace-nowrap font-semibold"
+                    style={{
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                      color: "rgb(148, 163, 184)",
+                    }}
                   >
-                    {(detector.human_probability * 100).toFixed(0)}%
+                    N/A
+                  </span>
+                );
+              };
+
+              return (
+                <div
+                  className="flex shrink-0 items-center gap-1 rounded-full border-[1.5px] px-2 py-1"
+                  key={detector.name}
+                  style={{
+                    backgroundColor: styles.bgColor,
+                    borderColor: styles.borderColor,
+                    flex: "0 0 calc(25% - 6px)",
+                    maxWidth: "calc(25% - 6px)",
+                    minWidth: "120px",
+                    justifyContent: "center",
+                  }}
+                >
+                  {/* Logo - smaller */}
+                  <div className="shrink-0">
+                    <Image
+                      alt={detector.name}
+                      className="h-3 w-3"
+                      height={12}
+                      src={detector.image}
+                      width={12}
+                    />
+                  </div>
+
+                  {/* Detector name - matching processing state font */}
+                  <span
+                    className="whitespace-nowrap font-semibold"
+                    style={{
+                      fontSize: "12px",
+                      lineHeight: "16px",
+                      color: styles.textColor,
+                    }}
+                  >
+                    {detector.name}
+                  </span>
+
+                  {/* Status - matching the empty div structure from HTML */}
+                  <div className="shrink-0">
+                    {hasError || result ? getStatusText() : null}
                   </div>
                 </div>
-              ))}
-            </div>
+              );
+            })}
           </div>
-        )}
 
-        {/* Internal Analysis */}
-        {detectionResult.internal_analysis && (
-          <div className="rounded-lg border border-slate-200 bg-white p-4 dark:border-slate-700 dark:bg-slate-800">
-            <h4 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
-              Internal Analysis
-            </h4>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              {detectionResult.internal_analysis.perplexity_score && (
-                <div>
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Perplexity:
-                  </span>
-                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
-                    {detectionResult.internal_analysis.perplexity_score.toFixed(
-                      1
-                    )}
-                  </span>
+          {/* Score Breakdown - Smaller, centered */}
+          <div className="mb-4 w-full max-w-sm rounded-lg border border-slate-200 bg-slate-50 p-3 shadow-lg dark:border-slate-600 dark:bg-slate-800/50">
+            <div className="relative mb-2 flex items-center justify-between border-slate-200 border-b pb-2 dark:border-slate-600">
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-700 text-xs dark:text-slate-300">
+                  AI-generated
+                </span>
+                <div className="relative">
+                  <Info className="h-3 w-3 cursor-help text-slate-500 dark:text-slate-500" />
                 </div>
-              )}
-              {detectionResult.internal_analysis.entropy_score && (
-                <div>
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Entropy:
-                  </span>
-                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
-                    {detectionResult.internal_analysis.entropy_score.toFixed(2)}
-                  </span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
+                <span className="font-medium text-slate-900 text-xs dark:text-white">
+                  {detectionResult.ai_likelihood_pct.toFixed(0)}%
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5">
+                <span className="text-slate-700 text-xs dark:text-slate-300">
+                  Human-written
+                </span>
+                <div className="relative">
+                  <Info className="h-3 w-3 cursor-help text-slate-500 dark:text-slate-500" />
                 </div>
-              )}
-              {detectionResult.internal_analysis.lexical_diversity && (
-                <div>
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Lexical:
-                  </span>
-                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
-                    {detectionResult.internal_analysis.lexical_diversity.toFixed(
-                      2
-                    )}
-                  </span>
-                </div>
-              )}
-              {detectionResult.internal_analysis.burstiness_score && (
-                <div>
-                  <span className="text-slate-600 dark:text-slate-400">
-                    Burstiness:
-                  </span>
-                  <span className="ml-2 font-medium text-slate-900 dark:text-slate-100">
-                    {detectionResult.internal_analysis.burstiness_score.toFixed(
-                      2
-                    )}
-                  </span>
-                </div>
-              )}
+              </div>
+              <div className="flex items-center gap-1.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
+                <span className="font-medium text-slate-900 text-xs dark:text-white">
+                  {detectionResult.human_likelihood_pct.toFixed(0)}%
+                </span>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Word count and message - smaller, centered */}
+          <div className="mb-3 text-center">
+            <p className="text-[10px] text-slate-500 dark:text-slate-400">
+              Predicted based upon{" "}
+              {String(detectionResult.metadata?.word_count ?? 0)} words.
+            </p>
+          </div>
+
+          {/* Final message - smaller, centered */}
+          <div className="w-full rounded-lg border border-slate-200 bg-white p-2 text-center shadow-sm dark:border-slate-300 dark:bg-white">
+            <p className="text-[10px] text-slate-700 dark:text-slate-600">
+              {(() => {
+                const score = detectionResult.human_likelihood_pct;
+                if (score >= 70) {
+                  return "Excellent! Your content demonstrates natural human writing patterns.";
+                }
+                if (score >= 40) {
+                  return "Good! Your content shows some human characteristics but could be improved.";
+                }
+                return "Warning! Your content may need further humanization to pass AI detection.";
+              })()}
+            </p>
+          </div>
+
+          {/* Cached indicator */}
+          {detectionResult.cached && (
+            <div className="mt-3 flex items-center justify-center gap-1 text-blue-600 text-xs dark:text-blue-500">
+              <Clock className="h-3 w-3" />
+              Cached result
+            </div>
+          )}
+        </div>
       </div>
     );
   };

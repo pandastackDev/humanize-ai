@@ -37,7 +37,7 @@
     "app": "workspace:*",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "convex": "^1.15.0",
+    "convex": "^1.29.3",
     "convex-helpers": "^0.1.58",
     "jose": "^6.1.0",
     "lucide-react": "^0.553.0",

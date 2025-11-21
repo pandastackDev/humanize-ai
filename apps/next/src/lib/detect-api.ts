@@ -4,7 +4,14 @@
  * Client functions for interacting with the /detect endpoint
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+import { env } from "@/env";
+
+/**
+ * Get the backend API base URL.
+ */
+function getApiBaseUrl(): string {
+  return env.NEXT_PUBLIC_PYTHON_API_URL;
+}
 
 export type DetectRequest = {
   text: string;
@@ -78,22 +85,38 @@ export type CompareResponse = {
 export async function detectAIContent(
   request: DetectRequest
 ): Promise<DetectResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/detect/`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request),
-  });
+  try {
+    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      detail: "Detection failed",
-    }));
-    throw new Error(error.detail || "Detection failed");
+    if (!response.ok) {
+      let errorMessage = "Detection failed";
+      try {
+        const error = await response.json();
+        errorMessage = error.detail || error.message || errorMessage;
+      } catch {
+        // If response is not JSON, use status text
+        errorMessage = response.statusText || `HTTP ${response.status}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      // Re-throw with original message
+      throw error;
+    }
+    // Handle network errors or other unexpected errors
+    throw new Error(
+      "Failed to connect to detection service. Please check your connection and try again."
+    );
   }
-
-  return response.json();
 }
 
 /**
@@ -102,20 +125,36 @@ export async function detectAIContent(
 export async function compareDetection(
   request: CompareRequest
 ): Promise<CompareResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/detect/compare`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(request),
-  });
+  try {
+    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect/compare`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
 
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({
-      detail: "Comparison failed",
-    }));
-    throw new Error(error.detail || "Comparison failed");
+    if (!response.ok) {
+      let errorMessage = "Comparison failed";
+      try {
+        const error = await response.json();
+        errorMessage = error.detail || error.message || errorMessage;
+      } catch {
+        // If response is not JSON, use status text
+        errorMessage = response.statusText || `HTTP ${response.status}`;
+      }
+      throw new Error(errorMessage);
+    }
+
+    return response.json();
+  } catch (error) {
+    if (error instanceof Error) {
+      // Re-throw with original message
+      throw error;
+    }
+    // Handle network errors or other unexpected errors
+    throw new Error(
+      "Failed to connect to detection service. Please check your connection and try again."
+    );
   }
-
-  return response.json();
 }

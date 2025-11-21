@@ -414,7 +414,16 @@ class DetectorResult(BaseModel):
     human_probability: float = Field(
         ..., ge=0, le=1, description="Probability of human-written (0-1)"
     )
+    ai_probability_pct: float = Field(
+        ..., ge=0, le=100, description="AI probability as percentage (0-100%)"
+    )
+    human_probability_pct: float = Field(
+        ..., ge=0, le=100, description="Human probability as percentage (0-100%)"
+    )
     confidence: float = Field(..., ge=0, le=1, description="Confidence in the result")
+    confidence_pct: float = Field(
+        ..., ge=0, le=100, description="Confidence as percentage (0-100%)"
+    )
     details: dict | None = Field(None, description="Additional detector-specific details")
     error: str | None = Field(None, description="Error message if detection failed")
     response_time_ms: float | None = Field(None, description="API response time in milliseconds")

@@ -28,6 +28,39 @@ def count_words(text: str) -> int:
     return len(words)
 
 
+def sanitize_text(text: str) -> str:
+    """
+    Sanitize and pre-process text for detection.
+
+    - Remove/nullify control characters and null bytes
+    - Normalize excessive whitespace
+    - Ensure UTF-8 encoding
+    """
+    import re
+
+    # Remove null bytes
+    text = text.replace("\x00", "")
+
+    # Remove control characters except newlines, tabs, and carriage returns
+    text = re.sub(r"[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]", "", text)
+
+    # Normalize excessive whitespace (keep single spaces, newlines, tabs)
+    text = re.sub(r"[ \t]+", " ", text)  # Multiple spaces/tabs to single space
+    text = re.sub(r"\n{3,}", "\n\n", text)  # Multiple newlines to double
+
+    # Strip leading/trailing whitespace
+    text = text.strip()
+
+    # Ensure UTF-8 encoding (decode and re-encode to handle any encoding issues)
+    try:
+        text = text.encode("utf-8", errors="ignore").decode("utf-8")
+    except Exception:
+        # If encoding fails, use error handling
+        text = text.encode("utf-8", errors="replace").decode("utf-8")
+
+    return text
+
+
 @router.post("/", response_model=DetectResponse, summary="Detect AI-generated content")
 async def detect_ai_content(request: DetectRequest) -> DetectResponse:
     """
@@ -37,61 +70,86 @@ async def detect_ai_content(request: DetectRequest) -> DetectResponse:
     - External API detectors (GPTZero, CopyLeaks, Sapling, Writer, etc.)
     - Internal linguistic analysis (perplexity, entropy, n-gram patterns)
 
+    Workflow:
+    1. Validate and sanitize input text
+    2. Pre-process text (normalize encoding, remove control chars)
+    3. Run external detector APIs in parallel
+    4. Compute internal feature metrics
+    5. Aggregate and normalize scores
+    6. Return unified detection results
+
     Returns unified scores and detailed results from each detector.
     """
     start_time = time.time()
 
     try:
-        # Validate input
+        # Step 1: Validate input
         if not request.text or not request.text.strip():
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Text cannot be empty",
             )
 
-        word_count = count_words(request.text)
+        # Step 2: Sanitize & Pre-process text
+        sanitized_text = sanitize_text(request.text)
+
+        if not sanitized_text.strip():
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Text contains only invalid characters",
+            )
+
+        word_count = count_words(sanitized_text)
         if word_count < 10:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Text must contain at least 10 words for accurate detection",
             )
 
-        # Detect language if not provided
+        # Step 3: Extract metadata and detect language
         language = request.language
         if not language:
             # Create language detection service instance
             lang_service = LanguageDetectionService()
-            language, _ = lang_service.detect_language(request.text)
+            language, _ = lang_service.detect_language(sanitized_text)
 
         # Get detection service
         detection_service = get_detection_service()
 
-        # Run detection
+        # Step 4 & 5: Run external detector APIs and compute internal metrics
+        # (This is handled by the detection service)
         detector_results, internal_analysis, cached = await detection_service.detect(
-            text=request.text,
+            text=sanitized_text,
             detectors=request.detectors,
             include_internal=request.include_internal_analysis,
             enable_caching=request.enable_caching,
         )
 
-        # Calculate overall scores
+        # Step 6: Aggregate & Normalize Scores
         human_likelihood_pct, ai_likelihood_pct, confidence = _calculate_overall_scores(
             detector_results, internal_analysis
         )
 
-        # Build response
+        # Step 7: Build response
         processing_time_ms = (time.time() - start_time) * 1000
-        text_sample = request.text[:200] + ("..." if len(request.text) > 200 else "")
+        text_sample = sanitized_text[:200] + ("..." if len(sanitized_text) > 200 else "")
 
         metadata = {
             "word_count": word_count,
-            "character_count": len(request.text),
+            "character_count": len(sanitized_text),
             "processing_time_ms": processing_time_ms,
             "detectors_used": len(detector_results),
             "detectors_succeeded": sum(1 for r in detector_results if r.error is None),
             "detectors_failed": sum(1 for r in detector_results if r.error is not None),
             "internal_analysis_enabled": request.include_internal_analysis,
         }
+
+        # Step 8: Logging (already handled by middleware, but can add specific logging here)
+        logger.info(
+            f"Detection completed: human_likelihood={human_likelihood_pct:.1f}%, "
+            f"word_count={word_count}, detectors_used={len(detector_results)}, "
+            f"processing_time={processing_time_ms:.0f}ms"
+        )
 
         return DetectResponse(
             text_sample=text_sample,

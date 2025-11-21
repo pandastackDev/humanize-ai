@@ -109,7 +109,9 @@ class Settings(BaseSettings):
 
     # Stripe Configuration
     STRIPE_API_KEY: str = ""
-    STRIPE_WEBHOOK_SECRET: str = ""
+    STRIPE_WEBHOOK_SECRET: str = (
+        "whsec_2c43d2dffc60a2f3445332cc33ce9196977bb1c62615ed1014d5fe33a3398c2c"
+    )
 
     # Subscription Limits (words per month)
     SUBSCRIPTION_LIMITS: dict[str, dict[str, int]] = {
@@ -130,6 +132,7 @@ class Settings(BaseSettings):
     # Convex Backend URL (for subscription queries)
     CONVEX_URL: str = ""
     CONVEX_DEPLOYMENT_KEY: str = ""
+    CONVEX_ACCESS_TOKEN: str = ""  # Team Access Token for authentication
 
     # AI Detection API Keys (for /detect endpoint)
     # Note: These are optional - detectors will work in demo mode without keys
