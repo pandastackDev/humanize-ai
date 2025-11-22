@@ -79,8 +79,8 @@ export async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full overflow-visible">
-      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible px-4 md:px-6 lg:grid-cols-[auto_auto_1fr]">
+    <header className="sticky top-0 z-50 w-full border-slate-200 border-b bg-white">
+      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible bg-white px-4 md:px-6 lg:grid-cols-[auto_auto_1fr]">
         {/* Logo - Left side */}
         <div className="flex items-center">
           <Link

@@ -8,15 +8,10 @@ import Link from "next/link";
 import signOut from "@/actions/signOut";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export async function SignInButton({
-  large,
-  signUp,
-}: {
-  large?: boolean;
-  signUp?: boolean;
-}) {
+export async function SignInButton({ large }: { large?: boolean }) {
   const { user } = await withAuth();
-  const authorizationUrl = signUp ? await getSignUpUrl() : await getSignInUrl();
+  const signInUrl = await getSignInUrl();
+  const signUpUrl = await getSignUpUrl();
 
   if (user) {
     return (
@@ -40,13 +35,22 @@ export async function SignInButton({
   }
 
   return (
-    <Button
-      asChild
-      className="font-[900] text-[14px] text-white"
-      size={large ? "lg" : "default"}
-    >
-      <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link>
-      {/* <Link href={authorizationUrl}>{signUp ? "Sign Up" : "Sign In"}</Link> */}
-    </Button>
+    <div className="flex items-center gap-2">
+      <Button
+        asChild
+        className="border border-slate-200 bg-white font-semibold text-slate-900 hover:bg-slate-50"
+        size={large ? "lg" : "default"}
+        variant="outline"
+      >
+        <Link href={signInUrl}>Log in</Link>
+      </Button>
+      <Button
+        asChild
+        className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
+        size={large ? "lg" : "default"}
+      >
+        <Link href={signUpUrl}>Sign up for free</Link>
+      </Button>
+    </div>
   );
 }
