@@ -4,6 +4,7 @@ import { workos } from "@/app/api/workos";
 import { Logo } from "../logo";
 import { SignInButton } from "../sign-in-button";
 import { FeedbackPopover } from "./feedback-popover";
+import { HelpPopover } from "./help-popover";
 import { MainNav } from "./main-nav";
 import { MobileNav } from "./mobile-nav";
 import { ProjectTeamDropdown } from "./project-team-dropdown";
@@ -79,8 +80,8 @@ export async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-slate-200 border-b bg-white">
-      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible bg-white px-4 md:px-6 lg:grid-cols-[auto_auto_1fr]">
+    <header className="sticky top-0 z-50 w-full border-slate-200 border-b bg-white dark:border-[#141414] dark:bg-[#141414]">
+      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible bg-white px-4 md:px-6 lg:grid-cols-[auto_auto_1fr] dark:bg-[#141414]">
         {/* Logo - Left side */}
         <div className="flex items-center">
           <Link
@@ -99,8 +100,9 @@ export async function Header() {
         {/* Right side controls */}
         <div className="flex items-center justify-end gap-2 md:gap-3">
           {!user && (
-            <div className="hidden sm:block">
+            <div className="hidden sm:flex sm:items-center sm:gap-2">
               <SignInButton />
+              <HelpPopover />
             </div>
           )}
           {user && (

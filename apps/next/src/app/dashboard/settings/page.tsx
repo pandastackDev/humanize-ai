@@ -28,9 +28,13 @@ export default async function SettingsPage() {
   });
 
   return (
-    <Flex direction="column" gap="3" width="100%">
+    <Flex
+      direction="column"
+      gap="3"
+      style={{ width: "100%", maxWidth: "1200px" }}
+    >
       <Box>
-        <Heading>Dashboard</Heading>
+        <Heading>Settings</Heading>
       </Box>
       <DashboardContainer>
         <Text size="4">Single Sign-On</Text>

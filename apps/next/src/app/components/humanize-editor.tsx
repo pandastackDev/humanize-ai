@@ -24,10 +24,12 @@ import {
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -270,6 +272,7 @@ export function HumanizeEditor({
     "shorten" | "expand" | "standard"
   >("standard");
   const [styleSample, setStyleSample] = useState("");
+  const [tempStyleSample, setTempStyleSample] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState("humanize");
@@ -468,6 +471,17 @@ export function HumanizeEditor({
       humanizedText: humanized,
       timestamp: new Date(),
       wordCount,
+      readabilityLevel,
+      purpose,
+      language: selectedLanguage,
+      lengthMode,
+      humanScore: score,
+      detectionResult: detectionResult
+        ? {
+            humanLikelihoodPct: detectionResult.human_likelihood_pct,
+            aiLikelihoodPct: detectionResult.ai_likelihood_pct,
+          }
+        : undefined,
     };
     setHistory((prev) => [historyItem, ...prev].slice(0, 50));
     // Reset present features when new output is generated
@@ -545,9 +559,50 @@ export function HumanizeEditor({
     }
     try {
       await navigator.clipboard.writeText(outputText);
+      toast.success("Copied to clipboard!");
     } catch (err) {
       console.error("Failed to copy:", err);
+      toast.error("Failed to copy text");
     }
+  };
+
+  // Handle download output
+  const handleDownloadOutput = () => {
+    if (!outputText) {
+      return;
+    }
+    try {
+      const blob = new Blob([outputText], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `humanized-text-${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      toast.success("File downloaded successfully!");
+    } catch (err) {
+      console.error("Failed to download:", err);
+      toast.error("Failed to download file");
+    }
+  };
+
+  // Handle thumbs up feedback
+  const handleThumbsUp = () => {
+    // Store feedback or send to API
+    console.log("Thumbs up feedback for output:", outputText.substring(0, 50));
+    toast.success("Thank you for your feedback!");
+  };
+
+  // Handle thumbs down feedback
+  const handleThumbsDown = () => {
+    // Store feedback or send to API
+    console.log(
+      "Thumbs down feedback for output:",
+      outputText.substring(0, 50)
+    );
+    toast.success("Thank you for your feedback! We'll work to improve.");
   };
 
   // Handle AI Detection
@@ -739,7 +794,7 @@ export function HumanizeEditor({
           <div className="w-full space-y-2">
             <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <div className="flex items-center gap-2 rounded-lg border border-[#0066ff]/20 bg-gradient-to-br from-[#0066ff]/10 to-[#0066ff]/5 p-2.5 shadow-sm dark:border-[#0066ff]/30 dark:from-[#0066ff]/20 dark:to-[#0066ff]/10">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#0066ff]/20 dark:bg-[#0066ff]/30">
+                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-[#0066ff] bg-[#0066ff]/20 dark:bg-[#0066ff]/30">
                   <Check className="h-3.5 w-3.5 text-[#0066ff]" />
                 </div>
                 <div>
@@ -1205,31 +1260,31 @@ export function HumanizeEditor({
             onValueChange={setActiveTab}
             value={activeTab}
           >
-            <TabsList className="relative grid h-8 w-full grid-cols-3 gap-0.5 rounded-[32px] bg-slate-100 p-0.5 sm:h-9 sm:gap-0.5 sm:p-0.5 dark:bg-[#141414] [&_button]:min-h-0">
+            <TabsList className="relative grid h-8 w-full grid-cols-3 gap-0.5 rounded-[32px] bg-slate-100 p-0.5 sm:h-9 sm:gap-0.5 sm:p-0.5 dark:bg-[#262626] [&_button]:min-h-0">
               {/* Sliding indicator */}
               <div
-                className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[var(--primary)] transition-all duration-300 ease-in-out sm:top-0.5 sm:bottom-0.5"
+                className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[hsl(216_100%_50%/1)] transition-all duration-300 ease-in-out sm:top-0.5 sm:bottom-0.5"
                 style={{
                   left: getIndicatorLeft(),
                   width: "calc(33.333% - 0.1875rem)",
                 }}
               />
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-gray-300"
+                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
                 value="humanize"
               >
                 <Sparkles className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
                 <span className="whitespace-nowrap">AI Humanizer</span>
               </TabsTrigger>
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-gray-300"
+                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
                 value="detector"
               >
                 <BarChart3 className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
                 <span className="whitespace-nowrap">AI Detector</span>
               </TabsTrigger>
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-gray-300"
+                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
                 value="plagiarism"
               >
                 <FileCheck className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
@@ -1241,17 +1296,19 @@ export function HumanizeEditor({
 
         {/* Main Editor Container */}
         <div className="relative flex gap-3">
-          <div className="flex flex-1 flex-col gap-3 px-0 lg:pr-[120px] lg:pl-[120px]">
+          <div className="relative flex flex-1 flex-col gap-3 px-0 lg:pr-[120px] lg:pl-[120px]">
+            {/* History Button - Outside textarea at top right */}
+
             {/* Main Editor Content */}
-            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-slate-700 dark:bg-[#141414]">
+            <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
               {/* Text Areas Container */}
               <div className="flex flex-col md:flex-row">
                 {/* Left Text Area - Original */}
-                <div className="flex w-full flex-col md:w-1/2 md:border-r dark:border-slate-700">
+                <div className="box-border flex w-full flex-col border-0 md:w-1/2 md:border-r dark:border-white-700">
                   {/* Text Input Area - Always visible */}
                   <div className="relative flex flex-1 flex-col">
                     <Textarea
-                      className="h-[300px] w-full resize-none border-0 border-b border-b-white px-3 py-3 pr-10 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-12 md:h-[450px] md:px-6 md:py-5"
+                      className="h-[300px] w-full resize-none border-0 border-b border-b-white px-3 py-3 pr-12 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-14 md:h-[450px] md:px-6 md:py-5 md:pr-14 dark:border-b-[#1d1d1d]"
                       onChange={(e) => {
                         setInputText(e.target.value);
                       }}
@@ -1297,7 +1354,7 @@ export function HumanizeEditor({
                     )}
                     {hasInputText && (
                       <Button
-                        className="absolute top-4 right-4 h-8 w-8 cursor-pointer rounded p-0 hover:bg-slate-200 dark:hover:bg-slate-600"
+                        className="absolute top-4 right-1 h-8 w-8 cursor-pointer rounded p-0 hover:bg-slate-200 dark:hover:bg-slate-600"
                         onClick={handleClearInput}
                         title="Clear text"
                         variant="ghost"
@@ -1308,7 +1365,7 @@ export function HumanizeEditor({
                   </div>
 
                   {/* Left Footer */}
-                  <div className="flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
+                  <div className="flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
                     <div className="flex items-center gap-4">
                       <div className="flex flex-col items-start gap-0.5">
                         <span
@@ -1405,7 +1462,7 @@ export function HumanizeEditor({
 
                   {/* Right Footer */}
                   {activeTab === "humanize" && (
-                    <div className="flex flex-col gap-2 border-white border-t bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
+                    <div className="flex flex-col gap-2 border-white border-t bg-white px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
                       <div className="flex items-center gap-4">
                         <div className="flex flex-col items-start gap-0.5">
                           <span className="font-semibold text-slate-900 text-sm dark:text-slate-100">
@@ -1427,26 +1484,27 @@ export function HumanizeEditor({
                       <div className="flex items-center gap-1">
                         <Button
                           className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-slate-200 dark:hover:bg-slate-600"
-                          onClick={() => setShowHistory(true)}
-                          title="History"
-                          variant="ghost"
-                        >
-                          <Clock className="h-4 w-4 text-[#141414] dark:text-slate-100" />
-                        </Button>
-                        <Button
-                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-slate-200 dark:hover:bg-slate-600"
+                          disabled={!hasOutputText}
+                          onClick={handleThumbsUp}
+                          title="Like this output"
                           variant="ghost"
                         >
                           <ThumbsUp className="h-4 w-4 text-[#141414] dark:text-slate-100" />
                         </Button>
                         <Button
                           className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-slate-200 dark:hover:bg-slate-600"
+                          disabled={!hasOutputText}
+                          onClick={handleThumbsDown}
+                          title="Dislike this output"
                           variant="ghost"
                         >
                           <ThumbsDown className="h-4 w-4 text-[#141414] dark:text-slate-100" />
                         </Button>
                         <Button
                           className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-slate-200 dark:hover:bg-slate-600"
+                          disabled={!hasOutputText}
+                          onClick={handleDownloadOutput}
+                          title="Download text"
                           variant="ghost"
                         >
                           <Download className="h-4 w-4 text-[#141414] dark:text-slate-100" />
@@ -1455,6 +1513,7 @@ export function HumanizeEditor({
                           className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-slate-200 dark:hover:bg-slate-600"
                           disabled={!hasOutputText}
                           onClick={handleCopyOutput}
+                          title="Copy to clipboard"
                           variant="ghost"
                         >
                           <Copy className="h-4 w-4 text-[#141414] dark:text-slate-100" />
@@ -1533,18 +1592,18 @@ export function HumanizeEditor({
 
               {/* Bottom Controls - Moved to bottom as per reference */}
               {activeTab === "humanize" && !isInitialState && (
-                <div className="flex flex-col gap-2 border-white border-t bg-slate-50 px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:border-slate-700 dark:bg-[#141414]/50">
+                <div className="flex flex-col gap-2 border-white border-t bg-slate-50 px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:border-t-[#1d1d1d] dark:bg-[#141414]/50">
                   <Select
                     onValueChange={setReadabilityLevel}
                     value={readabilityLevel || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white sm:w-[160px] dark:border-slate-600 dark:bg-slate-700">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white text-slate-900 sm:w-[160px] dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
                       <SelectValue placeholder="Select Readability Level" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f]">
                       {readabilityLevels.map((level) => (
                         <SelectItem
-                          className="cursor-pointer"
+                          className="cursor-pointer text-slate-900 dark:text-white dark:focus:bg-[#282828]"
                           key={level.value}
                           value={level.value}
                         >
@@ -1565,13 +1624,13 @@ export function HumanizeEditor({
                     onValueChange={setPurpose}
                     value={purpose || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white sm:w-[160px] dark:border-slate-600 dark:bg-slate-700">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white text-slate-900 sm:w-[160px] dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
                       <SelectValue placeholder="Select Purpose" />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f]">
                       {purposes.map((p) => (
                         <SelectItem
-                          className="cursor-pointer"
+                          className="cursor-pointer text-slate-900 dark:text-white dark:focus:bg-[#282828]"
                           key={p.value}
                           value={p.value}
                         >
@@ -1589,13 +1648,13 @@ export function HumanizeEditor({
                   </Select>
 
                   <Button
-                    className="h-9 gap-2 border-slate-200 bg-white px-4 font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600"
+                    className="h-9 gap-2 border-slate-200 bg-white px-4 font-medium text-slate-700 hover:bg-slate-50 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:hover:bg-[#282828]"
                     onClick={() => {
                       setShowStyleSampleModal(true);
                     }}
                     variant="outline"
                   >
-                    <Sparkles className="h-4 w-4" />
+                    <Sparkles className="h-4 w-4 dark:text-white" />
                     Personalize
                   </Button>
 
@@ -1603,14 +1662,14 @@ export function HumanizeEditor({
                     onValueChange={setSelectedLanguage}
                     value={selectedLanguage || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white sm:w-[140px] dark:border-slate-600 dark:bg-slate-700">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white text-slate-900 sm:w-[140px] dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
                       <SelectValue placeholder="Auto-detect" />
                     </SelectTrigger>
-                    <SelectContent className="min-w-[400px] [&>div>div]:grid [&>div>div]:grid-cols-3 [&>div>div]:gap-0">
+                    <SelectContent className="min-w-[400px] border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f] [&>div>div]:grid [&>div>div]:grid-cols-3 [&>div>div]:gap-0">
                       <SelectGroup>
                         {languages.map((lang) => (
                           <SelectItem
-                            className="cursor-pointer"
+                            className="cursor-pointer text-slate-900 dark:text-white dark:focus:bg-[#282828]"
                             key={lang}
                             value={lang}
                           >
@@ -1618,9 +1677,9 @@ export function HumanizeEditor({
                           </SelectItem>
                         ))}
                       </SelectGroup>
-                      <SelectSeparator className="col-span-3" />
+                      <SelectSeparator className="col-span-3 dark:bg-[#2a2a2a]" />
                       <SelectItem
-                        className="col-span-3 cursor-pointer"
+                        className="col-span-3 cursor-pointer text-slate-900 dark:text-white dark:focus:bg-[#282828]"
                         value="auto"
                       >
                         Auto-detect
@@ -1634,13 +1693,13 @@ export function HumanizeEditor({
                     }
                     value={lengthMode}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white sm:w-[160px] dark:border-slate-600 dark:bg-slate-700">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-slate-200 bg-white text-slate-900 sm:w-[160px] dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f]">
                       {lengthModes.map((mode) => (
                         <SelectItem
-                          className="cursor-pointer"
+                          className="cursor-pointer text-slate-900 dark:text-white dark:focus:bg-[#282828]"
                           key={mode.value}
                           value={mode.value}
                         >
@@ -1653,7 +1712,21 @@ export function HumanizeEditor({
               )}
             </div>
           </div>
-
+          {activeTab === "humanize" && (
+            <div className="absolute top-2 right-16 z-10 flex flex-col items-center gap-1">
+              <Button
+                className="h-8 w-8 cursor-pointer rounded-full bg-black p-0 hover:bg-slate-800 dark:hover:bg-slate-800"
+                onClick={() => setShowHistory(true)}
+                title="History"
+                variant="ghost"
+              >
+                <Clock className="h-4 w-4 text-white" />
+              </Button>
+              <p className="text-slate-900 text-xs dark:text-slate-100">
+                History
+              </p>
+            </div>
+          )}
           {/* Right Sidebar - Trust Indicators */}
           {/* <TrustSidebar /> */}
         </div>
@@ -1696,7 +1769,16 @@ export function HumanizeEditor({
 
       {/* Style Sample Modal */}
       <Dialog
-        onOpenChange={setShowStyleSampleModal}
+        onOpenChange={(open) => {
+          setShowStyleSampleModal(open);
+          if (open) {
+            // Initialize temp state when opening
+            setTempStyleSample(styleSample);
+          } else {
+            // Reset temp state when closing without saving
+            setTempStyleSample("");
+          }
+        }}
         open={showStyleSampleModal}
       >
         <DialogContent className="max-w-2xl">
@@ -1714,16 +1796,18 @@ export function HumanizeEditor({
             <div className="space-y-2">
               <Textarea
                 className="min-h-[200px] resize-y border-2 border-green-500 bg-white text-sm focus:border-green-600 focus:ring-0 dark:bg-slate-800"
-                onChange={(e) => setStyleSample(e.target.value)}
+                onChange={(e) => setTempStyleSample(e.target.value)}
                 placeholder="Add your real text, min 150 words"
-                value={styleSample}
+                value={tempStyleSample}
               />
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
                   <span className="text-slate-600 text-sm dark:text-slate-400">
                     {
-                      styleSample.trim().split(WORD_COUNT_REGEX).filter(Boolean)
-                        .length
+                      tempStyleSample
+                        .trim()
+                        .split(WORD_COUNT_REGEX)
+                        .filter(Boolean).length
                     }{" "}
                     / 30,000 Words
                   </span>
@@ -1731,7 +1815,7 @@ export function HumanizeEditor({
                 <button
                   className="font-medium text-green-600 text-sm hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
                   onClick={() => {
-                    setStyleSample(EXAMPLE_TEXT);
+                    setTempStyleSample(EXAMPLE_TEXT);
                   }}
                   type="button"
                 >
@@ -1740,6 +1824,43 @@ export function HumanizeEditor({
               </div>
             </div>
           </div>
+          <DialogFooter>
+            <Button
+              className="border-slate-300 bg-white text-slate-900 hover:bg-slate-50"
+              onClick={() => {
+                setShowStyleSampleModal(false);
+                setTempStyleSample("");
+              }}
+              type="button"
+              variant="outline"
+            >
+              Cancel
+            </Button>
+            <Button
+              className="bg-green-600 text-white hover:bg-green-700"
+              onClick={() => {
+                const styleWordCount = tempStyleSample
+                  .trim()
+                  .split(WORD_COUNT_REGEX)
+                  .filter(Boolean).length;
+
+                if (styleWordCount < 150) {
+                  setError(
+                    "Please enter at least 150 words for the writing style sample."
+                  );
+                  return;
+                }
+
+                // Save the style sample
+                setStyleSample(tempStyleSample);
+                setShowStyleSampleModal(false);
+                setError(null);
+              }}
+              type="button"
+            >
+              Save
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>

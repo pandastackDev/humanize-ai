@@ -38,7 +38,7 @@ export async function SignInButton({ large }: { large?: boolean }) {
     <div className="flex items-center gap-2">
       <Button
         asChild
-        className="border border-slate-200 bg-white font-semibold text-slate-900 hover:bg-slate-50"
+        className="border border-slate-200 bg-white font-semibold text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#343434] dark:text-white"
         size={large ? "lg" : "default"}
         variant="outline"
       >

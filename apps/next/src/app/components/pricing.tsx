@@ -89,7 +89,7 @@ function PricingCard({
 
     return (
       <Button
-        className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+        className="mt-auto w-full cursor-pointer bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
         disabled={isCurrentPlanLoading}
         onClick={() => onSubscribe(plan.name)}
       >
@@ -119,23 +119,25 @@ function PricingCard({
         className={`flex h-full cursor-pointer flex-col transition-all ${
           isSelected
             ? "border-2 border-[var(--primary)] shadow-lg"
-            : "border-slate-200"
-        }`}
+            : "border-slate-200 dark:border-[#2a2a2a]"
+        } dark:bg-[#1d1d1d]`}
         onClick={onSelect}
       >
         <CardHeader>
           <CardTitle
-            className={`text-xl ${
+            className={`text-xl dark:text-white ${
               isSelected ? "text-[var(--primary)]" : "text-slate-900"
             }`}
           >
             {plan.name}
           </CardTitle>
-          <p className="text-muted-foreground text-sm">{plan.description}</p>
+          <p className="text-muted-foreground text-sm dark:text-slate-400">
+            {plan.description}
+          </p>
         </CardHeader>
         <CardContent className="flex flex-1 flex-col gap-4">
           <div className="flex flex-wrap items-baseline gap-2">
-            <p className="font-bold text-3xl sm:text-4xl">
+            <p className="font-bold text-3xl sm:text-4xl dark:text-white">
               {plan.currency}
               {plan.price.toFixed(2)}
             </p>
@@ -410,7 +412,7 @@ export function Pricing({
           }
           value={billingPeriod}
         >
-          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0.5 rounded-[32px] bg-slate-100 p-0.5 dark:bg-[#141414] [&_button]:min-h-0">
+          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0.5 rounded-[32px] bg-slate-100 p-0.5 dark:bg-[#262626] [&_button]:min-h-0">
             {/* Sliding indicator */}
             <div
               className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[var(--primary)] transition-all duration-300 ease-in-out"

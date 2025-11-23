@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Minus, Plus } from "lucide-react";
+import { Check, Minus, Plus, X } from "lucide-react";
 import { useState } from "react";
 import {
   Dialog,
@@ -38,9 +38,35 @@ export function WordPurchaseDialog({
   const [wordAmount, setWordAmount] = useState(MIN_WORDS);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [promoCode, setPromoCode] = useState("");
+  const [showPromoInput, setShowPromoInput] = useState(false);
+  const [validatingPromo, setValidatingPromo] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
+  const [promoDiscount, setPromoDiscount] = useState<{
+    valid: boolean;
+    id: string;
+    code: string;
+    couponId: string;
+    discountType: "percentage" | "fixed";
+    discountValue: number;
+    name: string;
+  } | null>(null);
 
   const packages = Math.floor(wordAmount / WORDS_PER_PACKAGE);
-  const totalPrice = packages * PRICE_PER_PACKAGE;
+  const subtotal = packages * PRICE_PER_PACKAGE;
+
+  // Calculate discount
+  let discountAmount = 0;
+  if (promoDiscount?.valid) {
+    if (promoDiscount.discountType === "percentage") {
+      discountAmount = (subtotal * promoDiscount.discountValue) / 100;
+    } else {
+      // Fixed amount discount
+      discountAmount = Math.min(promoDiscount.discountValue, subtotal);
+    }
+  }
+
+  const totalPrice = Math.max(0, subtotal - discountAmount);
 
   const handleSliderChange = (value: number[]) => {
     setWordAmount(value[0] ?? MIN_WORDS);
@@ -73,6 +99,141 @@ export function WordPurchaseDialog({
     }
   };
 
+  const handleValidatePromoCode = async () => {
+    if (!promoCode.trim()) {
+      setPromoError("Please enter a promotion code");
+      return;
+    }
+
+    setValidatingPromo(true);
+    setPromoError(null);
+
+    try {
+      const response = await fetch("/api/validate-promo-code", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code: promoCode.trim() }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid) {
+        setPromoDiscount(data);
+        setPromoError(null);
+      } else {
+        setPromoError(data.error || "Invalid promotion code");
+        setPromoDiscount(null);
+      }
+    } catch (err) {
+      setPromoError(
+        err instanceof Error ? err.message : "Failed to validate promotion code"
+      );
+      setPromoDiscount(null);
+    } finally {
+      setValidatingPromo(false);
+    }
+  };
+
+  const handleRemovePromoCode = () => {
+    setPromoCode("");
+    setPromoDiscount(null);
+    setPromoError(null);
+    setShowPromoInput(false);
+  };
+
+  const renderPromoCodeSection = () => {
+    if (promoDiscount?.valid) {
+      return (
+        <div className="flex items-center justify-between rounded-md bg-green-50 p-2 dark:bg-green-950/20">
+          <div className="flex items-center gap-2">
+            <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
+            <span className="font-medium text-green-700 text-sm dark:text-green-400">
+              {promoDiscount.code}
+            </span>
+            {promoDiscount.discountType === "percentage" && (
+              <span className="text-green-600 text-xs dark:text-green-500">
+                -{promoDiscount.discountValue}% off
+              </span>
+            )}
+            {promoDiscount.discountType === "fixed" && (
+              <span className="text-green-600 text-xs dark:text-green-500">
+                -${promoDiscount.discountValue.toFixed(2)} off
+              </span>
+            )}
+          </div>
+          <Button
+            className="h-6 w-6 p-0"
+            onClick={handleRemovePromoCode}
+            size="sm"
+            variant="ghost"
+          >
+            <X className="h-3 w-3" />
+          </Button>
+        </div>
+      );
+    }
+
+    if (showPromoInput) {
+      return (
+        <div className="space-y-2">
+          <div className="flex gap-2">
+            <Input
+              className="h-9 flex-1 text-sm"
+              disabled={validatingPromo}
+              onChange={(e) => {
+                setPromoCode(e.target.value.toUpperCase());
+                setPromoError(null);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleValidatePromoCode();
+                }
+              }}
+              placeholder="Enter promotion code"
+              value={promoCode}
+            />
+            <Button
+              className="h-9 cursor-pointer"
+              disabled={validatingPromo || !promoCode.trim()}
+              onClick={handleValidatePromoCode}
+              size="sm"
+              variant="outline"
+            >
+              {validatingPromo ? <LoadingSpinner size="sm" /> : "Apply"}
+            </Button>
+            <Button
+              className="h-9"
+              onClick={() => {
+                setShowPromoInput(false);
+                setPromoCode("");
+                setPromoError(null);
+              }}
+              size="sm"
+              variant="ghost"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+          {promoError && (
+            <p className="text-destructive text-xs">{promoError}</p>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Button
+        className="h-auto p-0 text-sm"
+        onClick={() => setShowPromoInput(true)}
+        variant="link"
+      >
+        Add promotion code
+      </Button>
+    );
+  };
+
   const handlePurchase = async () => {
     setLoading(true);
     setError(null);
@@ -88,6 +249,8 @@ export function WordPurchaseDialog({
           organizationId,
           wordAmount,
           packages,
+          promotionCodeId: promoDiscount?.id,
+          couponId: promoDiscount?.couponId,
         }),
       });
 
@@ -195,7 +358,7 @@ export function WordPurchaseDialog({
 
               {/* Purchase Button */}
               <Button
-                className="h-12 w-full font-semibold text-base"
+                className="h-12 w-full cursor-pointer font-semibold text-base"
                 disabled={loading || wordAmount < MIN_WORDS}
                 onClick={handlePurchase}
                 size="lg"
@@ -239,10 +402,27 @@ export function WordPurchaseDialog({
                   </div>
                   <div className="flex justify-between text-sm">
                     <span>Subtotal</span>
-                    <span className="font-medium">
-                      ${totalPrice.toFixed(2)}
-                    </span>
+                    <span className="font-medium">${subtotal.toFixed(2)}</span>
                   </div>
+                  {promoDiscount?.valid && discountAmount > 0 && (
+                    <div className="flex justify-between text-green-600 text-sm dark:text-green-500">
+                      <div className="flex items-center gap-1">
+                        <span>Discount ({promoDiscount.code})</span>
+                        {promoDiscount.discountType === "percentage" ? (
+                          <span className="text-xs">
+                            -{promoDiscount.discountValue}%
+                          </span>
+                        ) : (
+                          <span className="text-xs">
+                            -${promoDiscount.discountValue.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                      <span className="font-medium">
+                        -${discountAmount.toFixed(2)}
+                      </span>
+                    </div>
+                  )}
                   <div className="flex justify-between text-muted-foreground text-sm">
                     <span>Tax</span>
                     <span>$0.00</span>
@@ -253,17 +433,7 @@ export function WordPurchaseDialog({
                   </div>
                 </div>
 
-                <div className="pt-2">
-                  <Button
-                    className="h-auto p-0 text-sm"
-                    onClick={() => {
-                      // TODO: Implement promotion code
-                    }}
-                    variant="link"
-                  >
-                    Add promotion code
-                  </Button>
-                </div>
+                <div className="pt-2">{renderPromoCodeSection()}</div>
               </div>
             </div>
 

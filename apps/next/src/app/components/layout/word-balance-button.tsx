@@ -99,7 +99,7 @@ export function WordBalanceButton({
           </span>
         </div>
         <Button
-          className="hidden sm:flex"
+          className="hidden cursor-pointer sm:flex"
           onClick={() => setDialogOpen(true)}
           size="sm"
         >

@@ -72,7 +72,7 @@ export function Footer() {
   return (
     <footer className="mt-auto bg-black">
       {/* Layer 1: Help Center Section */}
-      <div className="bg-black py-4">
+      <div className="bg-black py-2">
         <div className="container mx-auto px-4 text-center text-gray-300 text-sm md:px-6">
           Still have more questions? Find answers in our{" "}
           <Link
@@ -86,7 +86,7 @@ export function Footer() {
       </div>
 
       {/* Layer 2: Trademark Policy Section */}
-      <div className="bg-black py-3">
+      <div className="bg-black py-2">
         <div className="container mx-auto px-4 text-center text-gray-300 text-sm md:px-6">
           <Link
             className="transition-colors hover:text-white"
@@ -98,12 +98,12 @@ export function Footer() {
       </div>
 
       {/* Layer 3: Main Footer Navigation & Copyright */}
-      <div className="bg-black py-8">
+      <div className="bg-black py-4">
         <div className="container mx-auto px-4 md:px-6">
           {/* Navigation and Social Media Row */}
-          <div className="flex flex-col items-center justify-between gap-6 pb-6 lg:flex-row">
+          <div className="flex flex-col items-center justify-between gap-4 pb-4 lg:flex-row">
             {/* Navigation Links */}
-            <nav className="flex flex-wrap items-center justify-center gap-6 text-sm text-white lg:justify-start">
+            <nav className="flex flex-wrap items-center justify-center gap-4 text-sm text-white lg:justify-start">
               <Link className="transition-colors hover:text-gray-300" href="/">
                 Home
               </Link>
@@ -199,7 +199,7 @@ export function Footer() {
           </div>
 
           {/* Copyright */}
-          <div className="border-gray-800 border-t pt-4">
+          <div className="border-gray-800 border-t pt-3">
             <p className="text-center text-gray-400 text-xs">
               Copyright © {new Date().getFullYear()} Humanize. All rights
               reserved.

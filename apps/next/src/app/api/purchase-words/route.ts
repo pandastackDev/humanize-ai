@@ -12,6 +12,8 @@ type RequestBody = {
   organizationId?: string;
   wordAmount: number;
   packages: number;
+  promotionCodeId?: string;
+  couponId?: string;
 };
 
 async function findCustomerByMetadata(
@@ -149,7 +151,14 @@ export const POST = async (req: NextRequest) => {
     return envError;
   }
 
-  const { userId, organizationId, wordAmount, packages } = body as RequestBody;
+  const {
+    userId,
+    organizationId,
+    wordAmount,
+    packages,
+    promotionCodeId,
+    couponId,
+  } = body as RequestBody;
 
   try {
     const customerId = await getOrCreateCustomer(userId, organizationId);
@@ -159,6 +168,8 @@ export const POST = async (req: NextRequest) => {
       organizationId,
       wordAmount,
       packages,
+      promotionCodeId,
+      couponId,
     });
 
     return NextResponse.json({
@@ -182,8 +193,18 @@ async function createCheckoutSession(params: {
   organizationId: string | undefined;
   wordAmount: number;
   packages: number;
+  promotionCodeId?: string;
+  couponId?: string;
 }): Promise<Stripe.Checkout.Session> {
-  const { customerId, userId, organizationId, wordAmount, packages } = params;
+  const {
+    customerId,
+    userId,
+    organizationId,
+    wordAmount,
+    packages,
+    promotionCodeId,
+    couponId,
+  } = params;
   const totalPrice = packages * PRICE_PER_PACKAGE;
   const amountInCents = Math.round(totalPrice * 100);
 
@@ -193,9 +214,11 @@ async function createCheckoutSession(params: {
     organizationId: organizationId || "",
     wordAmount: wordAmount.toString(),
     packages: packages.toString(),
+    ...(promotionCodeId && { promotionCodeId }),
+    ...(couponId && { couponId }),
   };
 
-  return await stripe.checkout.sessions.create({
+  const sessionConfig: Stripe.Checkout.SessionCreateParams = {
     customer: customerId,
     payment_method_types: ["card"],
     line_items: [
@@ -218,5 +241,23 @@ async function createCheckoutSession(params: {
     payment_intent_data: {
       metadata,
     },
-  });
+  };
+
+  // Apply promotion code if provided
+  if (promotionCodeId) {
+    sessionConfig.discounts = [
+      {
+        promotion_code: promotionCodeId,
+      },
+    ];
+  } else if (couponId) {
+    // Fallback to coupon if promotion code ID is not available
+    sessionConfig.discounts = [
+      {
+        coupon: couponId,
+      },
+    ];
+  }
+
+  return await stripe.checkout.sessions.create(sessionConfig);
 }

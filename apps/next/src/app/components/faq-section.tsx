@@ -60,32 +60,32 @@ const FAQ_ITEMS = [
 
 export function FAQSection() {
   return (
-    <div className="w-full bg-white py-12 sm:py-16 md:py-20">
+    <div className="w-full bg-white py-12 sm:py-16 md:py-20 dark:bg-[#141414]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-center font-semibold text-2xl text-slate-900 sm:text-3xl md:text-4xl">
+          <h2 className="mb-8 text-center font-semibold text-2xl text-slate-900 sm:text-3xl md:text-4xl dark:text-white">
             Frequently asked questions
           </h2>
           <Accordion className="space-y-2" collapsible type="single">
             {FAQ_ITEMS.map((item) => (
               <AccordionItem
-                className="rounded-lg border-slate-200 bg-white px-4"
+                className="rounded-lg border-slate-200 bg-white px-4 dark:border-[#343434] dark:bg-[#1d1d1d]"
                 key={item.id}
                 value={item.id}
               >
-                <AccordionTrigger className="py-4 text-slate-900 hover:text-slate-700">
+                <AccordionTrigger className="py-4 text-slate-900 hover:text-slate-700 dark:text-white dark:hover:text-slate-300">
                   <span className="text-left font-medium">{item.question}</span>
                 </AccordionTrigger>
-                <AccordionContent className="pb-4 text-slate-600">
+                <AccordionContent className="pb-4 text-slate-600 dark:text-slate-300">
                   {item.answer}
                 </AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
-          <p className="mt-8 text-center text-slate-600 text-sm sm:text-base">
+          <p className="mt-8 text-center text-slate-600 text-sm sm:text-base dark:text-slate-300">
             Still have more questions? Find answers in our{" "}
             <a
-              className="text-slate-900 underline hover:text-slate-700"
+              className="text-slate-900 underline hover:text-slate-700 dark:text-white dark:hover:text-slate-300"
               href="/help"
             >
               help center
