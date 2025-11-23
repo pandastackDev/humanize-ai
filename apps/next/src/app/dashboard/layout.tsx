@@ -24,7 +24,9 @@ export default function DashboardLayout({
       }}
     >
       <DashboardNav />
-      {children}
+      <Flex direction="column" style={{ flex: 1, minWidth: 0 }}>
+        {children}
+      </Flex>
     </Flex>
   );
 }

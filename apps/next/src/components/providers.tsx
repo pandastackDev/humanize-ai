@@ -1,5 +1,6 @@
 "use client";
 
+import { Toaster } from "@humanize/ui/components/sonner";
 import { ThemeProvider as NextThemesProvider } from "next-themes";
 import type { ReactNode } from "react";
 
@@ -13,6 +14,7 @@ export function Providers({ children }: { children: ReactNode }) {
       enableSystem
     >
       {children}
+      <Toaster />
     </NextThemesProvider>
   );
 }

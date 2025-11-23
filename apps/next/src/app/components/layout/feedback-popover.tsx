@@ -69,7 +69,7 @@ export function FeedbackPopover() {
     <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
-          className="h-9 bg-black text-white hover:bg-slate-800"
+          className="h-9 cursor-pointer bg-black text-white hover:bg-slate-800 dark:bg-[#282828] dark:text-white"
           size="sm"
           variant="default"
         >
@@ -79,25 +79,27 @@ export function FeedbackPopover() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[420px] border-slate-200 bg-white p-4"
+        className="w-[420px] border-slate-200 bg-white p-4 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]"
         side="bottom"
         sideOffset={8}
       >
         {/* Title */}
         <div className="mb-4">
-          <h3 className="font-semibold text-lg text-slate-900">Feedback</h3>
+          <h3 className="font-semibold text-lg text-slate-900 dark:text-white">
+            Feedback
+          </h3>
         </div>
 
         {/* Topic Selection */}
         <div className="mb-4">
           <Select onValueChange={setTopic} value={topic}>
-            <SelectTrigger className="w-full border-slate-200 bg-white text-slate-900">
+            <SelectTrigger className="w-full border-slate-200 bg-white text-slate-900 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
               <SelectValue placeholder="Select a topic..." />
             </SelectTrigger>
-            <SelectContent className="border-slate-200 bg-white">
+            <SelectContent className="border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f]">
               {FEEDBACK_TOPICS.map((feedbackTopic) => (
                 <SelectItem
-                  className="text-slate-900"
+                  className="text-slate-900 dark:text-white"
                   key={feedbackTopic}
                   value={feedbackTopic.toLowerCase().replace(/\s+/g, "_")}
                 >
@@ -111,7 +113,7 @@ export function FeedbackPopover() {
         {/* Feedback Text Area */}
         <div className="mb-4">
           <Textarea
-            className="min-h-[120px] resize-none border-slate-200 bg-white text-slate-900 placeholder:text-slate-400"
+            className="min-h-[120px] resize-none border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:placeholder:text-slate-400"
             onChange={(e) => setFeedback(e.target.value)}
             placeholder="Your feedback..."
             value={feedback}
@@ -121,7 +123,7 @@ export function FeedbackPopover() {
         {/* Footer with attachment indicator and emoji reactions */}
         <div className="mb-4 flex items-center justify-between">
           {/* Attachment indicator */}
-          <div className="flex items-center gap-1.5 text-slate-500 text-xs">
+          <div className="flex items-center gap-1.5 text-slate-500 text-xs dark:text-slate-400">
             <Paperclip className="h-3.5 w-3.5" />
             <span>supported.</span>
           </div>
@@ -148,7 +150,7 @@ export function FeedbackPopover() {
         {/* Send Button */}
         <div className="flex justify-end">
           <Button
-            className="bg-slate-900 text-white hover:bg-slate-800"
+            className="cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-[#282828] dark:text-white dark:hover:bg-[#343434]"
             disabled={loading || !feedback.trim()}
             onClick={handleSend}
             size="sm"
