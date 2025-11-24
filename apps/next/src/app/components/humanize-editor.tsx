@@ -60,29 +60,59 @@ import { TextFeaturesSidebar } from "./text-features-sidebar";
 
 const languages = [
   "English",
+  "Chinese (Simplified)",
+  "Hindi",
   "Spanish",
+  "Arabic",
+  "Bengali",
+  "Portuguese",
+  "Russian",
+  "Urdu",
+  "Indonesian",
   "French",
   "German",
+  "Japanese",
+  "Swahili",
+  "Marathi",
+  "Telugu",
+  "Turkish",
+  "Vietnamese",
+  "Korean",
+  "Tamil",
+  "Italian",
+  "Thai",
+  "Gujarati",
+  "Polish",
+  "Ukrainian",
+  "Persian",
+  "Malayalam",
+  "Chinese (Traditional)",
+  "Afrikaans",
+  "Albanian",
   "Bulgarian",
+  "Catalan",
+  "Croatian",
   "Czech",
   "Danish",
-  "Greek",
-  "Estonian",
-  "Finnish",
-  "Hungarian",
-  "Italian",
-  "Japanese",
-  "Latvian",
   "Dutch",
-  "Polish",
-  "Portuguese",
-  "Brazilian (Pr)",
+  "Estonian",
+  "Tagalog",
+  "Finnish",
+  "Greek",
+  "Hungarian",
+  "Kannada",
+  "Latvian",
+  "Lithuanian",
+  "Macedonian",
+  "Nepali",
+  "Norwegian",
+  "Punjabi",
   "Romanian",
-  "Russian",
   "Slovak",
   "Slovenian",
+  "Somali",
   "Swedish",
-  "Chinese",
+  "Welsh",
 ];
 
 const readabilityLevels = [
@@ -181,13 +211,48 @@ function getLanguageCode(languageName: string): string {
 }
 
 // Get detector-specific styles matching HTML exactly
-function getDetectorStyles(detectorName: string): {
+function getDetectorStyles(
+  detectorName: string,
+  isDark = false
+): {
   bgColor: string;
   borderColor: string;
   textColor: string;
 } {
   const name = detectorName.toLowerCase();
-  // Default purple
+
+  if (isDark) {
+    // Dark mode styles
+    let bgColor = "rgb(30, 27, 75)";
+    let borderColor = "rgb(59, 51, 128)";
+    let textColor = "rgb(196, 181, 253)";
+
+    if (
+      name.includes("gptzero") ||
+      name.includes("zerogpt") ||
+      name.includes("copyleaks")
+    ) {
+      bgColor = "rgb(15, 23, 42)";
+      borderColor = "rgb(30, 58, 138)";
+      textColor = "rgb(147, 197, 253)";
+    } else if (name.includes("smodin")) {
+      bgColor = "rgb(69, 10, 10)";
+      borderColor = "rgb(127, 29, 29)";
+      textColor = "rgb(248, 113, 113)";
+    } else if (name.includes("quillbot")) {
+      bgColor = "rgb(6, 44, 22)";
+      borderColor = "rgb(20, 83, 45)";
+      textColor = "rgb(134, 239, 172)";
+    } else if (name.includes("scribbr")) {
+      bgColor = "rgb(69, 26, 3)";
+      borderColor = "rgb(154, 52, 18)";
+      textColor = "rgb(251, 191, 36)";
+    }
+
+    return { bgColor, borderColor, textColor };
+  }
+
+  // Light mode styles (original)
   let bgColor = "rgb(245, 243, 255)";
   let borderColor = "rgb(221, 214, 254)";
   let textColor = "rgb(91, 33, 182)";
@@ -275,6 +340,34 @@ export function HumanizeEditor({
   );
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectionError, setDetectionError] = useState<string | null>(null);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  // Detect dark mode
+  useEffect(() => {
+    const checkDarkMode = () => {
+      setIsDarkMode(
+        document.documentElement.classList.contains("dark") ||
+          window.matchMedia("(prefers-color-scheme: dark)").matches
+      );
+    };
+
+    checkDarkMode();
+
+    // Watch for changes
+    const observer = new MutationObserver(checkDarkMode);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    mediaQuery.addEventListener("change", checkDarkMode);
+
+    return () => {
+      observer.disconnect();
+      mediaQuery.removeEventListener("change", checkDarkMode);
+    };
+  }, []);
 
   // Fetch subscription status on mount
   useEffect(() => {
@@ -888,64 +981,77 @@ export function HumanizeEditor({
       // Loading screen with all detectors
       if (isDetecting) {
         return (
-          <div className="flex h-[300px] w-full flex-col items-center justify-center bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-slate-50">
+          <div className="flex h-[300px] w-full flex-col items-center justify-center bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-[#1d1d1d]">
             <div className="flex w-full max-w-3xl flex-col items-center justify-center">
               {/* Purple heading - smaller */}
-              <h2 className="mb-1 text-center font-bold text-purple-600 text-sm dark:text-purple-500">
+              <h2 className="mb-1 text-center font-bold text-purple-600 text-sm dark:text-purple-400">
                 Analyzing your text through all major AI detectors
               </h2>
 
               {/* Description - smaller */}
-              <p className="mb-4 max-w-2xl text-center text-[10px] text-slate-600 dark:text-slate-500">
+              <p className="mb-4 max-w-2xl text-center text-[10px] text-slate-600 dark:text-slate-400">
                 This may take a few seconds as we cross-verify results across
                 multiple platforms for maximum accuracy.
               </p>
 
               {/* Detector grid - Pill-shaped buttons matching HTML exactly */}
               <div className="flex w-full flex-wrap justify-center gap-2">
-                {AI_DETECTORS.map((detector, index) => (
-                  <div
-                    className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3 py-1.5"
-                    key={detector.name}
-                    style={{
-                      backgroundColor: "rgb(245, 243, 255)",
-                      borderColor: "rgb(221, 214, 254)",
-                      flex: "0 0 calc(25% - 8px)",
-                      maxWidth: "calc(25% - 8px)",
-                      minWidth: "140px",
-                      justifyContent: "center",
-                      animationDelay: `${index * 50}ms`,
-                    }}
-                  >
-                    {/* Logo - 16px exactly as in HTML */}
-                    <div className="shrink-0">
-                      <Image
-                        alt={detector.name}
-                        className="h-4 w-4"
-                        height={16}
-                        src={detector.image}
-                        width={16}
-                      />
-                    </div>
+                {AI_DETECTORS.map((detector, index) => {
+                  // Apply dark mode colors conditionally
+                  const pillStyle: React.CSSProperties = {
+                    backgroundColor: isDarkMode
+                      ? "rgb(30, 27, 75)"
+                      : "rgb(245, 243, 255)",
+                    borderColor: isDarkMode
+                      ? "rgb(59, 51, 128)"
+                      : "rgb(221, 214, 254)",
+                    flex: "0 0 calc(25% - 8px)",
+                    maxWidth: "calc(25% - 8px)",
+                    minWidth: "140px",
+                    justifyContent: "center",
+                    animationDelay: `${index * 50}ms`,
+                  };
 
-                    {/* Detector name - 12px font, exact styling */}
-                    <span
-                      className="whitespace-nowrap font-semibold"
-                      style={{
-                        fontSize: "12px",
-                        lineHeight: "16px",
-                        color: "rgb(91, 33, 182)",
-                      }}
+                  const textStyle: React.CSSProperties = {
+                    fontSize: "12px",
+                    lineHeight: "16px",
+                    color: isDarkMode
+                      ? "rgb(196, 181, 253)"
+                      : "rgb(91, 33, 182)",
+                  };
+
+                  return (
+                    <div
+                      className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3 py-1.5"
+                      key={detector.name}
+                      style={pillStyle}
                     >
-                      {detector.name}
-                    </span>
+                      {/* Logo - 16px exactly as in HTML */}
+                      <div className="shrink-0">
+                        <Image
+                          alt={detector.name}
+                          className="h-4 w-4"
+                          height={16}
+                          src={detector.image}
+                          width={16}
+                        />
+                      </div>
 
-                    {/* Spinner - matching the empty div structure */}
-                    <div className="shrink-0">
-                      <Loader2 className="h-3 w-3 animate-spin text-purple-500" />
+                      {/* Detector name - 12px font, exact styling */}
+                      <span
+                        className="whitespace-nowrap font-semibold"
+                        style={textStyle}
+                      >
+                        {detector.name}
+                      </span>
+
+                      {/* Spinner - matching the empty div structure */}
+                      <div className="shrink-0">
+                        <Loader2 className="h-3 w-3 animate-spin text-purple-500 dark:text-purple-400" />
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -978,12 +1084,12 @@ export function HumanizeEditor({
     };
 
     return (
-      <div className="flex h-[300px] w-full flex-col items-center justify-center overflow-y-auto bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-slate-50">
+      <div className="flex h-[300px] w-full flex-col items-center justify-center overflow-y-auto bg-white px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 dark:bg-[#1d1d1d]">
         <div className="flex w-full max-w-3xl flex-col items-center justify-center">
           {/* Main Result Header - smaller, centered */}
           <div className="mb-4 text-center">
             <div className="mb-1 flex flex-col items-center justify-center">
-              <span className="font-bold text-5xl text-slate-900 dark:text-slate-800">
+              <span className="font-bold text-5xl text-slate-900 dark:text-slate-100">
                 {detectionResult.ai_likelihood_pct > 50
                   ? detectionResult.ai_likelihood_pct.toFixed(0)
                   : detectionResult.human_likelihood_pct.toFixed(0)}
@@ -1016,7 +1122,12 @@ export function HumanizeEditor({
                 : "N/A";
               const hasError = result?.error !== undefined;
 
-              const styles = getDetectorStyles(detector.name);
+              const styles = getDetectorStyles(detector.name, isDarkMode);
+
+              const statusTextStyle: React.CSSProperties = {
+                fontSize: "12px",
+                lineHeight: "16px",
+              };
 
               const getStatusText = () => {
                 if (hasError) {
@@ -1024,9 +1135,10 @@ export function HumanizeEditor({
                     <span
                       className="whitespace-nowrap font-semibold"
                       style={{
-                        fontSize: "12px",
-                        lineHeight: "16px",
-                        color: "rgb(220, 38, 38)",
+                        ...statusTextStyle,
+                        color: isDarkMode
+                          ? "rgb(248, 113, 113)"
+                          : "rgb(220, 38, 38)",
                       }}
                     >
                       Error
@@ -1038,8 +1150,7 @@ export function HumanizeEditor({
                     <span
                       className="whitespace-nowrap font-semibold"
                       style={{
-                        fontSize: "12px",
-                        lineHeight: "16px",
+                        ...statusTextStyle,
                         color: styles.textColor,
                       }}
                     >
@@ -1051,8 +1162,7 @@ export function HumanizeEditor({
                   <span
                     className="whitespace-nowrap font-semibold"
                     style={{
-                      fontSize: "12px",
-                      lineHeight: "16px",
+                      ...statusTextStyle,
                       color: "rgb(148, 163, 184)",
                     }}
                   >
@@ -1152,13 +1262,12 @@ export function HumanizeEditor({
 
           {/* Final message - smaller, centered */}
           <div
-            className="w-full rounded-lg border bg-white p-2 text-center dark:bg-white"
+            className="w-full rounded-lg border border-slate-200 bg-white p-2 text-center dark:border-slate-700 dark:bg-slate-800"
             style={{
               boxShadow: "none",
-              borderColor: "white",
             }}
           >
-            <p className="text-[10px] text-slate-700 dark:text-slate-600">
+            <p className="text-[10px] text-slate-700 dark:text-slate-300">
               {(() => {
                 const score = detectionResult.human_likelihood_pct;
                 if (score >= 70) {

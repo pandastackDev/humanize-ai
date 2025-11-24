@@ -1,7 +1,7 @@
 """
 Language-specific prompt templates for humanization.
 
-Supports 12 primary languages with localized templates.
+Supports 55+ languages with localized templates.
 Falls back to English if language not supported.
 """
 
@@ -10,19 +10,61 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Supported languages (ISO 639-1 codes)
+# Comprehensive list of all supported languages for humanization
 SUPPORTED_LANGUAGES = {
     "en",  # English
+    "zh",  # Chinese (Simplified/Traditional)
+    "hi",  # Hindi
     "es",  # Spanish
+    "ar",  # Arabic
+    "bn",  # Bengali
+    "pt",  # Portuguese
+    "ru",  # Russian
+    "ur",  # Urdu
+    "id",  # Indonesian
     "fr",  # French
     "de",  # German
-    "pl",  # Polish
-    "it",  # Italian
-    "pt",  # Portuguese
-    "nl",  # Dutch
-    "zh",  # Chinese (Simplified)
     "ja",  # Japanese
+    "sw",  # Swahili
+    "mr",  # Marathi
+    "te",  # Telugu
+    "tr",  # Turkish
+    "vi",  # Vietnamese
     "ko",  # Korean
-    "ar",  # Arabic
+    "ta",  # Tamil
+    "it",  # Italian
+    "th",  # Thai
+    "gu",  # Gujarati
+    "pl",  # Polish
+    "uk",  # Ukrainian
+    "fa",  # Persian
+    "ml",  # Malayalam
+    "af",  # Afrikaans
+    "sq",  # Albanian
+    "bg",  # Bulgarian
+    "ca",  # Catalan
+    "hr",  # Croatian
+    "cs",  # Czech
+    "da",  # Danish
+    "nl",  # Dutch
+    "et",  # Estonian
+    "tl",  # Tagalog
+    "fi",  # Finnish
+    "el",  # Greek
+    "hu",  # Hungarian
+    "kn",  # Kannada
+    "lv",  # Latvian
+    "lt",  # Lithuanian
+    "mk",  # Macedonian
+    "ne",  # Nepali
+    "no",  # Norwegian
+    "pa",  # Punjabi
+    "ro",  # Romanian
+    "sk",  # Slovak
+    "sl",  # Slovene
+    "so",  # Somali
+    "sv",  # Swedish
+    "cy",  # Welsh
 }
 
 

@@ -148,7 +148,7 @@ export function HistorySidebar({
 
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent className="w-full overflow-y-auto bg-white sm:max-w-md dark:bg-[#1d1d1d]">
+      <SheetContent className="w-full overflow-y-auto bg-white px-6 sm:max-w-md dark:bg-[#1d1d1d]">
         <SheetHeader>
           <SheetTitle className="dark:text-white">History</SheetTitle>
           <SheetDescription className="dark:text-slate-400">
@@ -162,7 +162,7 @@ export function HistorySidebar({
             <div className="relative">
               <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <Input
-                className="h-9 border-slate-200 bg-white pr-9 pl-9 text-slate-900 placeholder:text-slate-400 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:placeholder:text-slate-400"
+                className="h-9 w-full border-slate-200 bg-white pr-9 pl-9 text-slate-900 placeholder:text-slate-400 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:placeholder:text-slate-400"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search history..."
                 value={searchQuery}
@@ -257,7 +257,7 @@ export function HistorySidebar({
         }}
         open={detailViewOpen}
       >
-        <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto bg-white dark:bg-[#1d1d1d]">
+        <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto bg-white dark:bg-[#1d1d1d]">
           {selectedItem && (
             <>
               <DialogHeader className="border-b pb-4 dark:border-[#2a2a2a]">
