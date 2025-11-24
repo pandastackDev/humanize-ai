@@ -43,12 +43,12 @@ class Settings(BaseSettings):
     # Language Detection
     # Path can be absolute or relative to project root
     FASTTEXT_MODEL_PATH: str = "models/lid.176.bin"
-    
+
     # Cloud Language Detection API (optional - for languages outside Lingua's support or high scalability)
     # Google Cloud Translation API
     GOOGLE_CLOUD_TRANSLATE_API_KEY: str = ""
     USE_CLOUD_LANGUAGE_DETECTION: bool = False  # Enable cloud API as fallback
-    
+
     # Language Detection Benchmarking
     ENABLE_LANGUAGE_DETECTION_METRICS: bool = True  # Track accuracy and latency metrics
 
@@ -73,7 +73,9 @@ class Settings(BaseSettings):
     HUMANIZATION_TEMPERATURE: float = 0.70  # Lower for more consistent output (was 0.82)
     HUMANIZATION_TOP_P: float = 0.90  # Tighter sampling for more consistent word choices (was 0.93)
     HUMANIZATION_FREQUENCY_PENALTY: float = 0.50  # Reduced for more consistent phrasing (was 0.60)
-    HUMANIZATION_PRESENCE_PENALTY: float = 0.35  # Reduced for more consistent topic coverage (was 0.45)
+    HUMANIZATION_PRESENCE_PENALTY: float = (
+        0.35  # Reduced for more consistent topic coverage (was 0.45)
+    )
 
     # V4 Pattern Breaker Settings
     PATTERN_BREAKER_AGGRESSIVENESS: float = 0.6  # 0.0-1.0 (0.6 = conservative, less expansion)

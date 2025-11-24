@@ -56,10 +56,13 @@ export function UserNav({
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "system") {
-      setIsSystemMode(true);
-      const isNight = getIsNightTime();
-      setIsNightTime(isNight);
-      setTheme(isNight ? "dark" : "light");
+      // Use setTimeout to avoid synchronous setState in effect
+      setTimeout(() => {
+        setIsSystemMode(true);
+        const isNight = getIsNightTime();
+        setIsNightTime(isNight);
+        setTheme(isNight ? "dark" : "light");
+      }, 0);
     }
   }, [setTheme]);
 
@@ -87,7 +90,10 @@ export function UserNav({
     if (theme === "light" || theme === "dark") {
       const storedTheme = localStorage.getItem("theme");
       if (storedTheme !== "system") {
-        setIsSystemMode(false);
+        // Use setTimeout to avoid synchronous setState in effect
+        setTimeout(() => {
+          setIsSystemMode(false);
+        }, 0);
       }
     }
   }, [theme]);

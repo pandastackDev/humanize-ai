@@ -34,7 +34,104 @@ try:
 
     LANGID_AVAILABLE = True
     # Set language detection to use all languages for best accuracy
-    langid.set_languages(["af", "am", "an", "ar", "as", "az", "be", "bg", "bn", "br", "bs", "ca", "cs", "cy", "da", "de", "dz", "el", "en", "es", "et", "fa", "fi", "fr", "ga", "gl", "gu", "he", "hi", "hr", "ht", "hu", "hy", "id", "is", "it", "ja", "jv", "ka", "kk", "km", "kn", "ko", "ku", "ky", "la", "lb", "lo", "lt", "lv", "mg", "mk", "ml", "mn", "mr", "ms", "mt", "nb", "ne", "nl", "nn", "no", "oc", "or", "pa", "pl", "ps", "pt", "qu", "ro", "ru", "rw", "se", "si", "sk", "sl", "sq", "sr", "sv", "sw", "ta", "te", "th", "tl", "tr", "ug", "uk", "ur", "vi", "vo", "wa", "xh", "zh", "zu"])
+    langid.set_languages(
+        [
+            "af",
+            "am",
+            "an",
+            "ar",
+            "as",
+            "az",
+            "be",
+            "bg",
+            "bn",
+            "br",
+            "bs",
+            "ca",
+            "cs",
+            "cy",
+            "da",
+            "de",
+            "dz",
+            "el",
+            "en",
+            "es",
+            "et",
+            "fa",
+            "fi",
+            "fr",
+            "ga",
+            "gl",
+            "gu",
+            "he",
+            "hi",
+            "hr",
+            "ht",
+            "hu",
+            "hy",
+            "id",
+            "is",
+            "it",
+            "ja",
+            "jv",
+            "ka",
+            "kk",
+            "km",
+            "kn",
+            "ko",
+            "ku",
+            "ky",
+            "la",
+            "lb",
+            "lo",
+            "lt",
+            "lv",
+            "mg",
+            "mk",
+            "ml",
+            "mn",
+            "mr",
+            "ms",
+            "mt",
+            "nb",
+            "ne",
+            "nl",
+            "nn",
+            "no",
+            "oc",
+            "or",
+            "pa",
+            "pl",
+            "ps",
+            "pt",
+            "qu",
+            "ro",
+            "ru",
+            "rw",
+            "se",
+            "si",
+            "sk",
+            "sl",
+            "sq",
+            "sr",
+            "sv",
+            "sw",
+            "ta",
+            "te",
+            "th",
+            "tl",
+            "tr",
+            "ug",
+            "uk",
+            "ur",
+            "vi",
+            "vo",
+            "wa",
+            "xh",
+            "zh",
+            "zu",
+        ]
+    )
 except ImportError:
     LANGID_AVAILABLE = False
     logging.warning("langid not available. Install with: pip install langid")
@@ -229,44 +326,60 @@ class LanguageDetectionService:
     def _detect_with_cloud_api(self, text: str) -> tuple[str, float] | None:
         """
         Detect language using Google Cloud Translation API.
-        
+
         Useful for:
         - Languages outside Lingua's supported set
         - High scalability scenarios
         - When cloud API is preferred
-        
+
         Returns None if API call fails or is not configured.
         """
         if not self.use_cloud_api:
             return None
 
         try:
-            from google.cloud import translate_v2 as translate
+            # Try v2 first, fallback to v3
+            try:
+                from google.cloud import translate_v2 as translate  # type: ignore[import-untyped]
+            except ImportError:
+                from google.cloud import translate  # type: ignore[import-untyped]
 
             client = translate.Client(api_key=settings.GOOGLE_CLOUD_TRANSLATE_API_KEY)
 
             # Detect language
             result = client.detect_language(text)
-            lang_code = result["language"]
-            confidence = result.get("confidence", 0.9)
+            lang_code = result.get("language") if isinstance(result, dict) else None
+
+            if not lang_code:
+                logger.warning("Google Cloud API did not return a language code")
+                return None
+
+            confidence = result.get("confidence", 0.9) if isinstance(result, dict) else 0.9
 
             # Normalize to ISO 639-1
             lang_code = LANGUAGE_CODE_MAP.get(lang_code, lang_code)
-            if len(lang_code) > 2:
+            if lang_code and len(lang_code) > 2:
                 lang_code = lang_code[:2]  # Take first 2 chars (ISO 639-1)
+
+            if not lang_code:
+                return None
 
             logger.info(
                 f"Google Cloud API detected language: {lang_code} (confidence: {confidence:.2f})"
             )
             return lang_code, float(confidence)
         except ImportError:
-            logger.warning("google-cloud-translate not installed. Install with: pip install google-cloud-translate")
+            logger.warning(
+                "google-cloud-translate not installed. Install with: pip install google-cloud-translate"
+            )
             return None
         except Exception as e:
             logger.warning(f"Google Cloud API detection failed: {e}")
             return None
 
-    def _track_metrics(self, method: str, latency_ms: float, success: bool = True, fallback: bool = False) -> None:
+    def _track_metrics(
+        self, method: str, latency_ms: float, success: bool = True, fallback: bool = False
+    ) -> None:
         """Track detection metrics for benchmarking."""
         if not self.metrics_enabled:
             return
@@ -283,7 +396,7 @@ class LanguageDetectionService:
     def get_metrics_summary(self) -> dict[str, Any]:
         """
         Get summary of detection metrics for benchmarking.
-        
+
         Returns:
             Dictionary with average latency, success rates, fallback rates per method
         """
@@ -327,11 +440,11 @@ class LanguageDetectionService:
             Language.ARABIC: "ar",
             Language.ENGLISH: "en",
         }
-        
+
         # Try direct mapping first
         if lingua_lang in lingua_code_map:
             return lingua_code_map[lingua_lang]
-        
+
         # Try to get ISO code from enum attribute
         try:
             # Try different possible attribute names
@@ -354,14 +467,16 @@ class LanguageDetectionService:
                     return lang_name[:2]
         except Exception as e:
             logger.debug(f"Failed to extract ISO code from Lingua Language: {e}")
-        
+
         # Ultimate fallback: try to use string representation
         lang_str = str(lingua_lang).lower()
         if lang_str in lingua_code_map.values():
             return lang_str
-        
+
         # Last resort: default to English
-        logger.warning(f"Could not convert Lingua Language {lingua_lang} to ISO 639-1. Defaulting to 'en'")
+        logger.warning(
+            f"Could not convert Lingua Language {lingua_lang} to ISO 639-1. Defaulting to 'en'"
+        )
         return "en"
 
     def detect_language(self, text: str) -> tuple[str, float]:
@@ -404,7 +519,10 @@ class LanguageDetectionService:
                         detected_lang = self.lingua_detector.detect_language_of(text)
                         # Check for UNKNOWN language (if it exists in this version)
                         try:
-                            if detected_lang is not None and detected_lang != Language.UNKNOWN:
+                            unknown_lang = getattr(Language, "UNKNOWN", None)
+                            if detected_lang is not None and (
+                                unknown_lang is None or detected_lang != unknown_lang
+                            ):
                                 lang_code = self._lingua_to_iso639(detected_lang)
                                 # Lower confidence for short texts
                                 confidence = 0.6 + (word_count / 30) * 0.2
@@ -441,8 +559,15 @@ class LanguageDetectionService:
         if self.lingua_detector is not None:
             try:
                 # Lingua-py returns Language enum or None
+                method_start = time.time()
                 detected_lang = self.lingua_detector.detect_language_of(text)
-                if detected_lang is not None and detected_lang != Language.UNKNOWN:
+                latency_ms = (time.time() - method_start) * 1000
+
+                # Check for UNKNOWN language (if it exists in this version)
+                unknown_lang = getattr(Language, "UNKNOWN", None)
+                if detected_lang is not None and (
+                    unknown_lang is None or detected_lang != unknown_lang
+                ):
                     lang_code = self._lingua_to_iso639(detected_lang)
                     # For longer texts, confidence is higher
                     # Lingua-py is very accurate, so we use high confidence
@@ -451,8 +576,9 @@ class LanguageDetectionService:
                     logger.info(
                         f"Lingua-py detected language: {lang_code} (confidence: {confidence:.2f})"
                     )
+                    self._track_metrics("lingua", latency_ms, success=True, fallback=False)
                     return lang_code, confidence
-                elif detected_lang == Language.UNKNOWN:
+                elif unknown_lang is not None and detected_lang == unknown_lang:
                     logger.debug("Lingua-py returned UNKNOWN language. Trying langid.py.")
                     self._track_metrics("lingua", latency_ms, success=False, fallback=True)
             except AttributeError:
@@ -516,10 +642,12 @@ class LanguageDetectionService:
 
                 if labels and len(labels) > 0:
                     # FastText returns labels like "__label__en", remove prefix
-                    lang_code = labels[0].replace("__label__", "")
+                    raw_lang_code = labels[0].replace("__label__", "")
                     confidence = float(confidences[0])
                     # Normalize to ISO 639-1 if needed
-                    lang_code = LANGUAGE_CODE_MAP.get(lang_code, lang_code)
+                    lang_code = LANGUAGE_CODE_MAP.get(raw_lang_code, raw_lang_code)
+                    if not lang_code:
+                        lang_code = raw_lang_code
                     self._track_metrics("fasttext", latency_ms, success=True, fallback=True)
                     logger.info(
                         f"FastText detected language: {lang_code} (confidence: {confidence:.2f}, latency: {latency_ms:.2f}ms)"

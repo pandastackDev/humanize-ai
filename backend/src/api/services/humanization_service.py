@@ -79,13 +79,13 @@ def remove_ai_patterns(text: str) -> str:
 def remove_invisible_characters(text: str) -> str:
     """
     Remove all invisible Unicode characters from text.
-    
+
     This includes zero-width spaces, zero-width non-joiners, zero-width joiners,
     and other invisible formatting characters that can appear in output.
-    
+
     Args:
         text: Text to clean
-        
+
     Returns:
         Text with all invisible characters removed
     """
@@ -118,157 +118,200 @@ def remove_invisible_characters(text: str) -> str:
         "\u206e",  # national digit shapes
         "\u206f",  # nominal digit shapes
     ]
-    
+
     # Remove all invisible characters
     for char in invisible_chars:
         text = text.replace(char, "")
-    
+
     return text
 
 
 def fix_common_grammar_errors(text: str) -> str:
     """
     Fix common grammar errors that are flagged by AI detectors.
-    
+
     Fixes:
     - Double punctuation (e.g., "After that,." → "After that.")
     - Double commas (e.g., "Asia,," → "Asia,")
     - Grammar errors like "helped dragged" → "helped bring"
     - Missing "On" before dates (e.g., "December 7, 1941, they" → "On December 7, 1941, they")
     - Fragments starting with lowercase (e.g., "devastating war" → "The devastating war")
-    
+
     Args:
         text: Text to fix
-        
+
     Returns:
         Text with common grammar errors fixed
     """
     # Fix double punctuation (e.g., "After that,." → "After that.")
-    text = re.sub(r"([,;:])\s*([.!?])", r"\1", text)  # Remove punctuation after comma/semicolon/colon
+    text = re.sub(
+        r"([,;:])\s*([.!?])", r"\1", text
+    )  # Remove punctuation after comma/semicolon/colon
     text = re.sub(r"([.!?])\s*([.!?])", r"\1", text)  # Remove duplicate sentence endings
-    
+
     # Fix double commas
     text = re.sub(r",\s*,", ",", text)
-    
+
     # Fix "helped dragged" → "helped bring" or "brought"
     text = re.sub(r"\bhelped\s+dragged\b", "helped bring", text, flags=re.IGNORECASE)
-    
+
     # Fix "helped opened" → "helped open" or "opened"
     text = re.sub(r"\bhelped\s+opened\b", "helped open", text, flags=re.IGNORECASE)
-    
+
     # Fix "hopped in" → "joined" or "allied with"
     text = re.sub(r"\bhopped\s+in\s+as\b", "joined as", text, flags=re.IGNORECASE)
-    
+
     # Remove "After that," at sentence start (too formulaic)
     text = re.sub(r"^After that,\s+", "", text, flags=re.MULTILINE)
     text = re.sub(r"\.\s+After that,\s+", ". ", text)
-    
+
     # Remove "When it came to" (too formulaic)
     text = re.sub(r"\bWhen it came to\s+([A-Z][a-z]+),", r"In \1,", text)
-    
+
     # Remove "And," at sentence start (flagged as AI pattern)
     text = re.sub(r"^And,\s+", "", text, flags=re.MULTILINE)
     text = re.sub(r"\.\s+And,\s+", ". ", text)
-    
+
     # Fix "executed the Holocaust" → "carried out the Holocaust"
-    text = re.sub(r"\bexecuted\s+the\s+Holocaust\b", "carried out the Holocaust", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\bexecuted\s+the\s+Holocaust\b", "carried out the Holocaust", text, flags=re.IGNORECASE
+    )
+
     # Fix "into Italy itself" → "into Italy"
     text = re.sub(r"\binto\s+Italy\s+itself\b", "into Italy", text, flags=re.IGNORECASE)
-    
+
     # Fix "brutally intense" → "brutal" or "intense"
     text = re.sub(r"\bbrutally\s+intense\b", "brutal", text, flags=re.IGNORECASE)
-    
+
     # Fix missing "On" before dates at sentence start (e.g., "December 7, 1941, they" → "On December 7, 1941, they")
-    text = re.sub(r"^([A-Z][a-z]+\s+\d{1,2},\s+\d{4}),\s+([a-z])", r"On \1, \2", text, flags=re.MULTILINE)
-    
+    text = re.sub(
+        r"^([A-Z][a-z]+\s+\d{1,2},\s+\d{4}),\s+([a-z])", r"On \1, \2", text, flags=re.MULTILINE
+    )
+
     # Fix fragments starting sentences without capital article (e.g., "devastating war stemmed" → "The devastating war stemmed")
     # Only fix if it's a common pattern and starts a sentence
     text = re.sub(r"^([a-z]+\s+war\s+stemmed)", r"The \1", text, flags=re.MULTILINE | re.IGNORECASE)
-    text = re.sub(r"^([a-z]+\s+war\s+stemmed)", r"This \1", text, flags=re.MULTILINE | re.IGNORECASE)
-    
+    text = re.sub(
+        r"^([a-z]+\s+war\s+stemmed)", r"This \1", text, flags=re.MULTILINE | re.IGNORECASE
+    )
+
     # Fix "terrible war stemmed" → "The terrible war stemmed" or "This terrible war stemmed"
-    text = re.sub(r"^terrible\s+war\s+stemmed", "The terrible war stemmed", text, flags=re.MULTILINE | re.IGNORECASE)
-    text = re.sub(r"\.\s+terrible\s+war\s+stemmed", ". The terrible war stemmed", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"^terrible\s+war\s+stemmed",
+        "The terrible war stemmed",
+        text,
+        flags=re.MULTILINE | re.IGNORECASE,
+    )
+    text = re.sub(
+        r"\.\s+terrible\s+war\s+stemmed", ". The terrible war stemmed", text, flags=re.IGNORECASE
+    )
+
     # Fix "fiercely bloody" → "bloody" or "fierce"
     text = re.sub(r"\bfiercely\s+bloody\b", "bloody", text, flags=re.IGNORECASE)
-    
+
     # Fix "intense resistance against defeat" → "determination to resist defeat"
-    text = re.sub(r"\bintense\s+resistance\s+against\s+defeat\b", "determination to resist defeat", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\bintense\s+resistance\s+against\s+defeat\b",
+        "determination to resist defeat",
+        text,
+        flags=re.IGNORECASE,
+    )
+
     # Fix "quickly surrendered soon after" → "surrendered shortly after"
-    text = re.sub(r"\bquickly\s+surrendered\s+soon\s+after\b", "surrendered shortly after", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\bquickly\s+surrendered\s+soon\s+after\b",
+        "surrendered shortly after",
+        text,
+        flags=re.IGNORECASE,
+    )
+
     # Fix "went through a heavy burden" → "endured heavy losses"
-    text = re.sub(r"\bwent\s+through\s+a\s+heavy\s+burden\s+of\b", "endured heavy", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\bwent\s+through\s+a\s+heavy\s+burden\s+of\b", "endured heavy", text, flags=re.IGNORECASE
+    )
+
     # Fix "The move created" → "This established" or "This opened"
     text = re.sub(r"\bThe\s+move\s+created\b", "This established", text, flags=re.IGNORECASE)
-    
+
     # Fix "on the planet" → "worldwide" or "globally"
     text = re.sub(r"\bon\s+the\s+planet\b", "worldwide", text, flags=re.IGNORECASE)
-    
+
     # Fix "hungry for" → "sought" or "desired"
     text = re.sub(r"\bhungry\s+for\b", "sought", text, flags=re.IGNORECASE)
-    
+
     # Fix "sidestep" → "avoid"
     text = re.sub(r"\bsidestep\b", "avoid", text, flags=re.IGNORECASE)
-    
+
     # Fix "dragged" → "brought" or "drew" (too colloquial)
-    text = re.sub(r"\bdragged\s+the\s+U\.S\.\s+into\b", "brought the United States into", text, flags=re.IGNORECASE)
-    text = re.sub(r"\bdragged\s+([A-Z][a-z]+)\s+into\b", r"brought \1 into", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\bdragged\s+the\s+U\.S\.\s+into\b",
+        "brought the United States into",
+        text,
+        flags=re.IGNORECASE,
+    )
+    text = re.sub(
+        r"\bdragged\s+([A-Z][a-z]+)\s+into\b", r"brought \1 into", text, flags=re.IGNORECASE
+    )
+
     # Fix "kicked off" → "began" or "started" (and prevent repetition)
     # Replace all instances to avoid repetition
     text = re.sub(r"\bkicked\s+off\b", "began", text, flags=re.IGNORECASE)
-    
+
     # Remove "Later," at sentence start (too formulaic)
     text = re.sub(r"^Later,\s+", "", text, flags=re.MULTILINE)
     text = re.sub(r"\.\s+Later,\s+", ". ", text)
-    
+
     # Remove "Also," at sentence start (too formulaic)
     text = re.sub(r"^Also,\s+", "", text, flags=re.MULTILINE)
     text = re.sub(r"\.\s+Also,\s+", ". ", text)
-    
+
     # Standardize naming: "U.S." → "United States" (for consistency and formality)
     text = re.sub(r"\bU\.S\.\b", "United States", text)
     text = re.sub(r"\bUSA\b", "United States", text)
-    
+
     # Fix "devastating war stemmed" → "The devastating war stemmed"
     text = re.sub(r"^([a-z]+\s+war\s+stemmed)", r"The \1", text, flags=re.MULTILINE | re.IGNORECASE)
     text = re.sub(r"\.\s+([a-z]+\s+war\s+stemmed)", r". The \1", text, flags=re.IGNORECASE)
-    
+
     # Fix fragment sentences like "The aftermath was immense." - try to combine
-    text = re.sub(r"\.\s+(The\s+aftermath\s+was\s+immense)\.\s+", r". \1, ", text, flags=re.IGNORECASE)
-    text = re.sub(r"\.\s+(The\s+impact\s+was\s+staggering)\.\s+", r". \1, ", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\.\s+(The\s+aftermath\s+was\s+immense)\.\s+", r". \1, ", text, flags=re.IGNORECASE
+    )
+    text = re.sub(
+        r"\.\s+(The\s+impact\s+was\s+staggering)\.\s+", r". \1, ", text, flags=re.IGNORECASE
+    )
+
     # Fix "Reacting swiftly" fragment → "Britain and France reacted swiftly"
-    text = re.sub(r"\.\s+Reacting\s+swiftly,\s+([A-Z][a-z]+\s+and\s+[A-Z][a-z]+)\s+declared", r". \1 quickly declared", text, flags=re.IGNORECASE)
-    
+    text = re.sub(
+        r"\.\s+Reacting\s+swiftly,\s+([A-Z][a-z]+\s+and\s+[A-Z][a-z]+)\s+declared",
+        r". \1 quickly declared",
+        text,
+        flags=re.IGNORECASE,
+    )
+
     # Fix missing "On" before dates mid-sentence: "December 7, 1941, they" → "On December 7, 1941, they"
     text = re.sub(r"\.\s+([A-Z][a-z]+\s+\d{1,2},\s+\d{4}),\s+([a-z])", r". On \1, \2", text)
-    
+
     # Remove "To be fair," - flagged as AI pattern
     text = re.sub(r"\bTo be fair,\s*", "", text, flags=re.IGNORECASE)
-    
+
     # Fix capitalization of "The" mid-sentence (e.g., "defined The war" → "defined the war")
     # But preserve if it's at sentence start
     text = re.sub(r"([a-z])\s+The\s+(war|nazis|holocaust)", r"\1 the \2", text, flags=re.IGNORECASE)
-    
+
     return text
 
 
 def prevent_phrase_repetition(text: str) -> str:
     """
     Prevent repetition of the same phrases in close proximity.
-    
+
     This helps avoid patterns like "kicked off" appearing twice,
     which are flagged by AI detectors.
-    
+
     Args:
         text: Text to check for repetition
-        
+
     Returns:
         Text with repeated phrases varied
     """
@@ -278,40 +321,40 @@ def prevent_phrase_repetition(text: str) -> str:
         "dragged": ["brought", "drew", "pulled", "forced"],
         "hungry for": ["sought", "desired", "wanted", "coveted"],
     }
-    
+
     # Split into sentences for better context
     sentences = re.split(r"([.!?]\s+)", text)
     result_parts = []
     phrase_counts = {}  # Track phrase usage
-    
+
     for i, sentence in enumerate(sentences):
         if not sentence.strip() or sentence.strip() in ".!? ":
             result_parts.append(sentence)
             continue
-            
+
         modified_sentence = sentence
-        
+
         # Check for repeated phrases
         for phrase, alternatives in phrases_to_vary.items():
             # Count occurrences in current sentence and nearby context
             pattern = re.compile(r"\b" + re.escape(phrase) + r"\b", re.IGNORECASE)
             matches = pattern.findall(sentence)
-            
+
             if len(matches) > 0:
                 phrase_key = phrase.lower()
                 if phrase_key not in phrase_counts:
                     phrase_counts[phrase_key] = 0
                 phrase_counts[phrase_key] += len(matches)
-                
+
                 # If phrase appears multiple times or was used recently, replace with alternative
                 if phrase_counts[phrase_key] > 1:
                     # Replace with alternative
                     alternative = alternatives[phrase_counts[phrase_key] % len(alternatives)]
                     modified_sentence = pattern.sub(alternative, modified_sentence, count=1)
                     phrase_counts[phrase_key] = 0  # Reset after replacement
-        
+
         result_parts.append(modified_sentence)
-    
+
     return "".join(result_parts)
 
 

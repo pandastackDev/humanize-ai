@@ -105,7 +105,9 @@ class LLMService:
                 providers.append(("anthropic", settings.PRIMARY_HUMANIZATION_MODEL))
 
         if not providers:
-            raise RuntimeError("No LLM providers are enabled. Please configure at least one API key.")
+            raise RuntimeError(
+                "No LLM providers are enabled. Please configure at least one API key."
+            )
 
         last_error = None
         for provider_type, model_name in providers:
