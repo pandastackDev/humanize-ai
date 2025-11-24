@@ -2,6 +2,21 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@humanize/ui/components/navigation-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@humanize/ui/components/sheet";
+import {
   BarChart3,
   Download,
   Eye,
@@ -23,22 +38,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
-} from "@humanize/ui/components/navigation-menu";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@humanize/ui/components/sheet";
 
 const freeTools = {
   "YouTube Tools": [
@@ -155,15 +154,18 @@ export function MainNav() {
   }
 
   return (
-    <NavigationMenu>
+    <NavigationMenu viewport={false}>
       <NavigationMenuList className="flex-wrap gap-4 xl:gap-6">
         <NavigationMenuItem value="free-tools">
-          <NavigationMenuTrigger value="free-tools">
+          <NavigationMenuTrigger
+            className="bg-transparent text-slate-900 hover:bg-transparent hover:text-slate-900 focus:bg-transparent data-[state=open]:bg-transparent dark:text-white dark:hover:text-white"
+            value="free-tools"
+          >
             Free Tools
           </NavigationMenuTrigger>
-          <NavigationMenuContent value="free-tools">
-            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-100 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7">
-              <div className="mb-4 font-bold text-sm sm:text-base">
+          <NavigationMenuContent className="!left-0 !top-full !mt-1.5 !w-auto !p-0 !bg-transparent !border-0 !shadow-none !rounded-none">
+            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-200 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
+              <div className="mb-4 font-bold text-slate-900 text-sm sm:text-base dark:text-white">
                 Free Tools
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:gap-6">
@@ -172,17 +174,19 @@ export function MainNav() {
                     className="w-full min-w-[160px] sm:w-[200px]"
                     key={category}
                   >
-                    <div className="mb-3 font-semibold text-slate-800 text-xs sm:text-sm">
+                    <div className="mb-3 font-semibold text-slate-800 text-xs sm:text-sm dark:text-white">
                       {category}
                     </div>
                     <ul className="list-none space-y-2">
                       {tools.map((tool) => (
                         <li key={tool.title}>
-                          <NavigationMenuLink
-                            className="block scale-[0.98] transform text-slate-600 text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-indigo-600 active:scale-[0.95] sm:text-sm"
-                            href={tool.href}
-                          >
-                            {tool.title}
+                          <NavigationMenuLink asChild>
+                            <Link
+                              className="block scale-[0.98] transform text-slate-600 text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-indigo-600 active:scale-[0.95] sm:text-sm dark:text-slate-300 dark:hover:text-white"
+                              href={tool.href}
+                            >
+                              {tool.title}
+                            </Link>
                           </NavigationMenuLink>
                         </li>
                       ))}
@@ -195,20 +199,24 @@ export function MainNav() {
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle}
-            href="/pricing"
-          >
-            Pricing
+          <NavigationMenuLink asChild>
+            <Link
+              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-slate-900 text-sm hover:bg-transparent hover:text-slate-900 focus:bg-transparent focus:text-slate-900 focus-visible:outline-none dark:text-white dark:focus:text-white dark:hover:text-white"
+              href="/pricing"
+            >
+              Pricing
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
 
         <NavigationMenuItem>
-          <NavigationMenuLink
-            className={navigationMenuTriggerStyle}
-            href="/affiliate"
-          >
-            Become an affiliate
+          <NavigationMenuLink asChild>
+            <Link
+              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-slate-900 text-sm hover:bg-transparent hover:text-slate-900 focus:bg-transparent focus:text-slate-900 focus-visible:outline-none dark:text-white dark:focus:text-white dark:hover:text-white"
+              href="/affiliate"
+            >
+              Become an affiliate
+            </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
       </NavigationMenuList>

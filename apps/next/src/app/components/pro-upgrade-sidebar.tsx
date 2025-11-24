@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { ArrowDown } from "lucide-react";
-import { useRouter } from "next/navigation";
 import {
   Sheet,
   SheetContent,
@@ -10,6 +8,8 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@humanize/ui/components/sheet";
+import { ArrowDown } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 type ProUpgradeSidebarProps = {
   open: boolean;

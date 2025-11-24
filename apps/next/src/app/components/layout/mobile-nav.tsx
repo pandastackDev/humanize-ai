@@ -1,10 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import type { User } from "@workos-inc/node";
-import { Menu } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
 import {
   Sheet,
   SheetContent,
@@ -12,6 +8,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@humanize/ui/components/sheet";
+import type { User } from "@workos-inc/node";
+import { Menu } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 import { SignInButton } from "../sign-in-button";
 
 export function MobileNav({ user }: { user: User | null }) {

@@ -1,13 +1,13 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Loader2 } from "lucide-react";
-import { useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@humanize/ui/components/dropdown-menu";
+import { Loader2 } from "lucide-react";
+import { useState } from "react";
 
 type ThesaurusPopoverProps = {
   word: string;

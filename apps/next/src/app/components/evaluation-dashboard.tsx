@@ -2,6 +2,14 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@humanize/ui/components/card";
+import { Textarea } from "@humanize/ui/components/textarea";
+import {
   ArrowDown,
   ArrowUp,
   BarChart3,
@@ -12,14 +20,6 @@ import {
   XCircle,
 } from "lucide-react";
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@humanize/ui/components/card";
-import { Textarea } from "@humanize/ui/components/textarea";
 import { type CompareResponse, compareDetection } from "@/lib/detect-api";
 
 // Top-level regex constant for word counting

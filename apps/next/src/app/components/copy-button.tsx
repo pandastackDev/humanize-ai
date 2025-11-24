@@ -1,14 +1,14 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Check, Copy } from "lucide-react";
-import { type ReactNode, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@humanize/ui/components/tooltip";
+import { Check, Copy } from "lucide-react";
+import { type ReactNode, useState } from "react";
 
 export default function CopyButton({
   children,

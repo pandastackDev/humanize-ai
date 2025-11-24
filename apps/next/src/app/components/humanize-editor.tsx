@@ -180,34 +180,6 @@ function getLanguageCode(languageName: string): string {
   return languageMap[languageName] || "en";
 }
 
-// Get detector-specific colors (matching the image design)
-function getDetectorColor(detectorName: string): string {
-  const name = detectorName.toLowerCase();
-  if (name.includes("turnitin") || name.includes("winston")) {
-    return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
-  }
-  if (name.includes("gptzero")) {
-    return "bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-200 dark:border-blue-400 dark:text-blue-800";
-  }
-  if (name.includes("zerogpt") || name.includes("copyleaks")) {
-    return "bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-200 dark:border-blue-400 dark:text-blue-800";
-  }
-  if (name.includes("smodin")) {
-    return "bg-red-100 border-red-300 text-red-700 dark:bg-red-200 dark:border-red-400 dark:text-red-800";
-  }
-  if (name.includes("quillbot")) {
-    return "bg-green-100 border-green-300 text-green-700 dark:bg-green-200 dark:border-green-400 dark:text-green-800";
-  }
-  if (name.includes("scribbr")) {
-    return "bg-orange-100 border-orange-300 text-orange-700 dark:bg-orange-200 dark:border-orange-400 dark:text-orange-800";
-  }
-  if (name.includes("originality")) {
-    return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
-  }
-  // Default purple
-  return "bg-purple-100 border-purple-300 text-purple-700 dark:bg-purple-200 dark:border-purple-400 dark:text-purple-800";
-}
-
 // Get detector-specific styles matching HTML exactly
 function getDetectorStyles(detectorName: string): {
   bgColor: string;
@@ -889,15 +861,7 @@ export function HumanizeEditor({
 
   // Render detection output
   const renderDetectionOutput = () => {
-    const getScoreColor = (score: number) => {
-      if (score >= 70) {
-        return "text-green-600 dark:text-green-400";
-      }
-      if (score >= 40) {
-        return "text-yellow-600 dark:text-yellow-400";
-      }
-      return "text-red-600 dark:text-red-400";
-    };
+    // Removed unused function: getScoreColor
 
     if (detectionError) {
       return (

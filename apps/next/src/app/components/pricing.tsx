@@ -1,12 +1,17 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@humanize/ui/components/card";
+import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
+import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
-import { Card, CardContent, CardHeader, CardTitle } from "@humanize/ui/components/card";
-import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
-import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import {
   checkSubscription,
   type SubscriptionPlan,
@@ -432,14 +437,12 @@ export function Pricing({
               value="annual"
             >
               <span className="whitespace-nowrap">Annual</span>
-              {billingPeriod === "annual" && (
-                <span
-                  className="ml-1 rounded-full px-2 py-0.5 font-semibold text-white text-xs"
-                  style={{ backgroundColor: "#0066ff" }}
-                >
-                  SAVE 50%
-                </span>
-              )}
+              <span
+                className="ml-1 inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 font-semibold text-[10px] text-white leading-none"
+                style={{ backgroundColor: "#0066ff" }}
+              >
+                SAVE 50%
+              </span>
             </TabsTrigger>
           </TabsList>
         </Tabs>

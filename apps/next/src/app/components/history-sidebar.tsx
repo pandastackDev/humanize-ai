@@ -2,17 +2,6 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
-  BarChart3,
-  Clock,
-  Copy,
-  Download,
-  Search,
-  Sparkles,
-  Trash2,
-  X,
-} from "lucide-react";
-import { useEffect, useState } from "react";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -27,7 +16,23 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@humanize/ui/components/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@humanize/ui/components/tabs";
+import {
+  BarChart3,
+  Clock,
+  Copy,
+  Download,
+  Search,
+  Sparkles,
+  Trash2,
+  X,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 export type HistoryItem = {
   id: string;
@@ -70,7 +75,11 @@ export function HistorySidebar({
   // Reset search when sidebar closes
   useEffect(() => {
     if (!open) {
-      setSearchQuery("");
+      // Use setTimeout to avoid synchronous setState in effect
+      const timeoutId = setTimeout(() => {
+        setSearchQuery("");
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
   }, [open]);
 
@@ -135,70 +144,7 @@ export function HistorySidebar({
     return date.toLocaleDateString();
   };
 
-  const renderHistoryContent = () => {
-    if (history.length === 0) {
-      return (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Clock className="mb-4 h-12 w-12 text-slate-400 dark:text-slate-500" />
-          <p className="text-slate-600 text-sm dark:text-slate-400">
-            No history yet. Your humanizations will appear here.
-          </p>
-        </div>
-      );
-    }
-
-    if (filteredHistory.length === 0) {
-      return (
-        <div className="flex flex-col items-center justify-center py-12 text-center">
-          <Search className="mb-4 h-12 w-12 text-slate-400 dark:text-slate-500" />
-          <p className="text-slate-600 text-sm dark:text-slate-400">
-            No results found for &quot;{searchQuery}&quot;
-          </p>
-        </div>
-      );
-    }
-
-    return filteredHistory.map((item) => (
-      <div
-        className="group relative rounded-lg border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-sm dark:border-[#2a2a2a] dark:bg-[#141414] dark:hover:border-[#3a3a3a]"
-        key={item.id}
-      >
-        <Button
-          className="absolute top-2 right-2 h-7 w-7 rounded p-0 opacity-0 transition-opacity hover:bg-slate-100 group-hover:opacity-100 dark:text-slate-400 dark:hover:bg-slate-700"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDeleteHistory(item.id);
-          }}
-          title="Delete"
-          variant="ghost"
-        >
-          <X className="h-4 w-4" />
-        </Button>
-        <button
-          className="w-full cursor-pointer text-left"
-          onClick={() => {
-            setSelectedItem(item);
-            setDetailViewOpen(true);
-            setActiveTab("input");
-          }}
-          type="button"
-        >
-          <div className="mb-2 flex items-center justify-between">
-            <span className="font-medium text-slate-900 text-xs dark:text-slate-100">
-              {formatDate(item.timestamp)}
-            </span>
-            <span className="text-slate-500 text-xs dark:text-slate-400">
-              {item.wordCount} words
-            </span>
-          </div>
-          <p className="line-clamp-2 text-slate-600 text-xs dark:text-slate-400">
-            {item.originalText.substring(0, 150)}
-            {item.originalText.length > 150 ? "..." : ""}
-          </p>
-        </button>
-      </div>
-    ));
-  };
+  // Removed unused function: renderHistoryContent (replaced with inline IIFE)
 
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>

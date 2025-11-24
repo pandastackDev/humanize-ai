@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Check, Edit2, Plus, Trash2, X } from "lucide-react";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +10,8 @@ import {
   DialogTitle,
 } from "@humanize/ui/components/dialog";
 import { Input } from "@humanize/ui/components/input";
+import { Check, Edit2, Plus, Trash2, X } from "lucide-react";
+import { useState } from "react";
 
 type Team = {
   id: string;

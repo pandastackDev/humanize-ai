@@ -2,6 +2,11 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@humanize/ui/components/popover";
+import {
   Cookie,
   HelpCircle,
   Hexagon,
@@ -14,11 +19,6 @@ import {
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@humanize/ui/components/popover";
 import { ManageCookiesDialog } from "./manage-cookies-dialog";
 
 // Helper function to detect if it's night time (6 PM to 6 AM)
@@ -34,16 +34,17 @@ export function HelpPopover() {
   const [cookiesDialogOpen, setCookiesDialogOpen] = useState(false);
   const { setTheme, theme } = useTheme();
   const [isSystemMode, setIsSystemMode] = useState(false);
-  const [isNightTime, setIsNightTime] = useState(getIsNightTime());
 
   // Check if system mode is active on mount
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "system") {
-      setIsSystemMode(true);
-      const isNight = getIsNightTime();
-      setIsNightTime(isNight);
-      setTheme(isNight ? "dark" : "light");
+      // Use setTimeout to avoid synchronous setState in effect
+      setTimeout(() => {
+        setIsSystemMode(true);
+        const isNight = getIsNightTime();
+        setTheme(isNight ? "dark" : "light");
+      }, 0);
     }
   }, [setTheme]);
 
@@ -52,7 +53,6 @@ export function HelpPopover() {
     if (isSystemMode) {
       const checkTime = () => {
         const isNight = getIsNightTime();
-        setIsNightTime(isNight);
         setTheme(isNight ? "dark" : "light");
       };
 
@@ -71,7 +71,10 @@ export function HelpPopover() {
     if (theme === "light" || theme === "dark") {
       const storedTheme = localStorage.getItem("theme");
       if (storedTheme !== "system") {
-        setIsSystemMode(false);
+        // Use setTimeout to avoid synchronous setState in effect
+        setTimeout(() => {
+          setIsSystemMode(false);
+        }, 0);
       }
     }
   }, [theme]);
@@ -138,7 +141,6 @@ export function HelpPopover() {
               className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${systemButtonClass}`}
               onClick={() => {
                 const isNight = getIsNightTime();
-                setIsNightTime(isNight);
                 setIsSystemMode(true);
                 localStorage.setItem("theme", "system");
                 setTheme(isNight ? "dark" : "light");

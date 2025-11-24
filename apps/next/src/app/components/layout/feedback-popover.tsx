@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { MessageSquare, Paperclip, Send } from "lucide-react";
-import { useState } from "react";
 import {
   Popover,
   PopoverContent,
@@ -16,6 +14,8 @@ import {
   SelectValue,
 } from "@humanize/ui/components/select";
 import { Textarea } from "@humanize/ui/components/textarea";
+import { MessageSquare, Paperclip, Send } from "lucide-react";
+import { useState } from "react";
 
 const EMOJI_REACTIONS = [
   { emoji: "😭", value: "very_sad" },

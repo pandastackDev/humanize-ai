@@ -41,7 +41,7 @@ const getIsNightTime = (): boolean => {
 
 export function UserNav({
   user,
-  role,
+  role: _role,
 }: {
   user: User;
   role: string | undefined;
@@ -53,8 +53,7 @@ export function UserNav({
   const [isSystemMode, setIsSystemMode] = useState(false);
   const [isNightTime, setIsNightTime] = useState(getIsNightTime());
 
-  const isAdmin = role === "admin";
-  const isDashboard = pathname.startsWith("/dashboard");
+  // Removed unused variables: isAdmin, isDashboard
 
   // Check if system mode is active on mount
   useEffect(() => {

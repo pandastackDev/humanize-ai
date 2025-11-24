@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Check, ChevronDown, Plus, RefreshCw, Settings } from "lucide-react";
-import { useEffect, useState } from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,6 +8,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@humanize/ui/components/dropdown-menu";
+import { Check, ChevronDown, Plus, RefreshCw, Settings } from "lucide-react";
+import { useEffect, useState } from "react";
 import { CreateTeamDialog } from "./create-team-dialog";
 import { ManageTeamsDialog } from "./manage-teams-dialog";
 

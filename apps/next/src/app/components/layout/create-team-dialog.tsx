@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +11,7 @@ import {
 } from "@humanize/ui/components/dialog";
 import { Input } from "@humanize/ui/components/input";
 import { Label } from "@humanize/ui/components/label";
+import { useState } from "react";
 
 type CreateTeamDialogProps = {
   open: boolean;

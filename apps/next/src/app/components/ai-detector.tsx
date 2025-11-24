@@ -2,20 +2,6 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
-  AlertCircle,
-  BarChart3,
-  CheckCircle,
-  Clock,
-  Copy,
-  Info,
-  Loader2,
-  Search,
-  Shield,
-  XCircle,
-} from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
-import {
   Card,
   CardContent,
   CardDescription,
@@ -31,6 +17,20 @@ import {
   SelectValue,
 } from "@humanize/ui/components/select";
 import { Textarea } from "@humanize/ui/components/textarea";
+import {
+  AlertCircle,
+  BarChart3,
+  CheckCircle,
+  Clock,
+  Copy,
+  Info,
+  Loader2,
+  Search,
+  Shield,
+  XCircle,
+} from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
 import { detectAIContent } from "@/lib/detect-api";
 
 // Top-level regex constant for word counting

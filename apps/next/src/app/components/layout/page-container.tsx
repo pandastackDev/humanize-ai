@@ -1,5 +1,5 @@
-import type React from "react";
 import { ScrollArea } from "@humanize/ui/components/scroll-area";
+import type React from "react";
 
 export default function PageContainer({
   children,

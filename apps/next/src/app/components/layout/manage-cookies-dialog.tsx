@@ -1,10 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Switch } from "@humanize/ui/components/switch";
-import { Cookie } from "lucide-react";
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +10,10 @@ import {
   DialogTitle,
 } from "@humanize/ui/components/dialog";
 import { Label } from "@humanize/ui/components/label";
+import { Switch } from "@humanize/ui/components/switch";
+import { Cookie } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 type CookieCategory = {
   id: string;
@@ -84,19 +84,23 @@ export function ManageCookiesDialog({
   // Load preferences from localStorage on mount
   useEffect(() => {
     if (open) {
-      const saved = localStorage.getItem("cookiePreferences");
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved);
-          setCookiePreferences(parsed);
-        } catch {
-          // If parsing fails, use default
+      // Use setTimeout to avoid synchronous setState in effect
+      const timeoutId = setTimeout(() => {
+        const saved = localStorage.getItem("cookiePreferences");
+        if (saved) {
+          try {
+            const parsed = JSON.parse(saved);
+            setCookiePreferences(parsed);
+          } catch {
+            // If parsing fails, use default
+            setCookiePreferences(getDefaultPreferences());
+          }
+        } else {
+          // Set defaults
           setCookiePreferences(getDefaultPreferences());
         }
-      } else {
-        // Set defaults
-        setCookiePreferences(getDefaultPreferences());
-      }
+      }, 0);
+      return () => clearTimeout(timeoutId);
     }
   }, [open]);
 

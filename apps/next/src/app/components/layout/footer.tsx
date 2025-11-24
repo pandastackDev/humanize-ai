@@ -1,6 +1,12 @@
 "use client";
 
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@humanize/ui/components/dropdown-menu";
+import {
   ChevronDown,
   Facebook,
   Instagram,
@@ -9,12 +15,6 @@ import {
   Youtube,
 } from "lucide-react";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@humanize/ui/components/dropdown-menu";
 
 // TikTok Icon Component
 const TikTokIcon = ({ className }: { className?: string }) => (

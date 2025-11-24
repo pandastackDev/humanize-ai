@@ -1,5 +1,10 @@
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@humanize/ui/components/tabs";
 import type { Metadata } from "next";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import { AIDetector } from "../components/ai-detector";
 import { EvaluationDashboard } from "../components/evaluation-dashboard";
 

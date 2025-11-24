@@ -1,8 +1,6 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import { Check, Minus, Plus, X } from "lucide-react";
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +12,8 @@ import { Input } from "@humanize/ui/components/input";
 import { Label } from "@humanize/ui/components/label";
 import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
 import { Slider } from "@humanize/ui/components/slider";
+import { Check, Minus, Plus, X } from "lucide-react";
+import { useState } from "react";
 
 type WordPurchaseDialogProps = {
   open: boolean;

@@ -651,7 +651,7 @@ class HumanizationService:
         # Final cleanup: Fix grammar errors and prevent repetition
         humanized_text = fix_common_grammar_errors(humanized_text)
         humanized_text = prevent_phrase_repetition(humanized_text)
-        
+
         # Inject invisible characters for AI detection bypass (like the sample output)
         humanized_text = self._inject_invisible_noise(humanized_text, detected_language)
 
@@ -810,7 +810,7 @@ class HumanizationService:
         # Always fix grammar errors and prevent phrase repetition regardless of pipeline version
         final_output = fix_common_grammar_errors(humanized_text)
         final_output = prevent_phrase_repetition(final_output)
-        
+
         # Step 15: Inject invisible characters for AI detection bypass (like the sample output)
         # This is done AFTER validation to ensure quality, but BEFORE final output
         final_output = self._inject_invisible_noise(final_output, detected_language)
@@ -1503,7 +1503,7 @@ class HumanizationService:
             elif word_counter % (interval + random.randint(-3, 3)) == 0 and random.random() < 0.25:
                 # Occasional early/late insertion for natural variation
                 should_insert = True
-            
+
             if should_insert:
                 # Randomly choose a combination, with preference for longer combinations (like sample)
                 if random.random() < 0.35:

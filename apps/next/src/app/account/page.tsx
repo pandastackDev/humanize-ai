@@ -1,6 +1,6 @@
-import { withAuth } from "@workos-inc/authkit-nextjs";
 import { Input } from "@humanize/ui/components/input";
 import { Label } from "@humanize/ui/components/label";
+import { withAuth } from "@workos-inc/authkit-nextjs";
 
 export default async function AccountPage() {
   const { user, role, permissions } = await withAuth({ ensureSignedIn: true });
