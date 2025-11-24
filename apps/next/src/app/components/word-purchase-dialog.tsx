@@ -278,7 +278,7 @@ export function WordPurchaseDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-[1400px] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="font-bold text-2xl">
             Get more words - One time payment
