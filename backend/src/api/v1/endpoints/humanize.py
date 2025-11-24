@@ -50,7 +50,7 @@ async def humanize_text(
     2. Language detection (auto or provided)
     3. Text chunking (if needed for long texts)
     4. Style conditioning (if style_sample provided)
-    5. LLM rewriting (OpenRouter -> OpenAI/Anthropic fallback)
+    5. LLM rewriting (Anthropic -> OpenAI fallback)
     6. Smoothing and reassembly
     7. Semantic/style validation
 

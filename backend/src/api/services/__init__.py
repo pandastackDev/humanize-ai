@@ -4,7 +4,7 @@ Services layer for humanization features.
 This module contains business logic for:
 - Language detection
 - Text chunking
-- LLM interactions (OpenRouter, OpenAI, Anthropic)
+- LLM interactions (OpenAI, Anthropic)
 - Embedding generation and similarity calculations
 - Text validation (semantic, style)
 - Main humanization orchestration

@@ -23,7 +23,6 @@ class EmbeddingService:
     def __init__(self):
         """Initialize embedding service."""
         self.openai_enabled = bool(settings.OPENAI_API_KEY)
-        self.openrouter_enabled = bool(settings.OPENROUTER_API_KEY)
 
         # Initialize clients
         self._init_clients()
@@ -41,24 +40,6 @@ class EmbeddingService:
                 logger.error(f"Failed to initialize OpenAI embedding client: {e}")
                 self.openai_enabled = False
 
-        # OpenRouter client (fallback for embeddings)
-        if self.openrouter_enabled and not self.openai_enabled:
-            try:
-                from openai import OpenAI
-
-                self.openrouter_client = OpenAI(
-                    base_url=settings.OPENROUTER_BASE_URL,
-                    api_key=settings.OPENROUTER_API_KEY,
-                    default_headers={
-                        "HTTP-Referer": settings.OPENROUTER_REFERRER_URL,
-                        "X-Title": "Humanize AI",
-                    },
-                )
-                logger.info("OpenRouter embedding client initialized")
-            except Exception as e:
-                logger.error(f"Failed to initialize OpenRouter embedding client: {e}")
-                self.openrouter_enabled = False
-
     def get_embedding(self, text: str, model: str | None = None) -> ndarray:
         """
         Get embedding vector for text.
@@ -73,42 +54,21 @@ class EmbeddingService:
         Raises:
             RuntimeError: If no embedding provider is available
         """
-        # Try OpenAI first (best for embeddings)
+        # Use OpenAI for embeddings
         if self.openai_enabled:
             try:
                 return self._get_openai_embedding(text, model)
             except Exception as e:
-                logger.warning(f"OpenAI embedding failed: {e}. Trying OpenRouter.")
-                if self.openrouter_enabled:
-                    pass  # Fall through to OpenRouter
-                else:
-                    raise
+                logger.error(f"OpenAI embedding failed: {e}")
+                raise RuntimeError("Embedding provider failed") from e
 
-        # Try OpenRouter fallback
-        if self.openrouter_enabled:
-            try:
-                return self._get_openrouter_embedding(text, model)
-            except Exception as e:
-                logger.error(f"OpenRouter embedding failed: {e}")
-                raise RuntimeError("All embedding providers failed") from e
-
-        raise RuntimeError("No embedding provider available. Please configure API keys.")
+        raise RuntimeError("No embedding provider available. Please configure OpenAI API key.")
 
     def _get_openai_embedding(self, text: str, model: str | None) -> ndarray:
         """Get embedding using OpenAI."""
         model_name = model or settings.OPENAI_EMBEDDING_MODEL
 
         response = self.openai_client.embeddings.create(
-            model=model_name, input=text.replace("\n", " ")
-        )
-
-        return np.array(response.data[0].embedding)
-
-    def _get_openrouter_embedding(self, text: str, model: str | None) -> ndarray:
-        """Get embedding using OpenRouter."""
-        model_name = model or settings.OPENROUTER_MODEL_EMBEDDING
-
-        response = self.openrouter_client.embeddings.create(
             model=model_name, input=text.replace("\n", " ")
         )
 

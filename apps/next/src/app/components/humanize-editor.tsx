@@ -1526,7 +1526,7 @@ export function HumanizeEditor({
 
               {/* Text Features Legend - Outside textarea area */}
               {activeTab === "humanize" && hasOutputText && (
-                <div className="flex flex-wrap items-center justify-end gap-2 border-slate-200 border-t bg-white px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-slate-700 dark:bg-[#141414]/50">
+                <div className="flex flex-wrap items-center justify-end gap-2 border-slate-200 border-t bg-white px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-t-[#1d1d1d] dark:bg-[#141414]/50">
                   {/* Only show legend items for features that are present AND can be toggled */}
                   {presentFeatures.changed && (
                     <div className="flex items-center gap-1.5">

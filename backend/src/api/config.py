@@ -31,27 +31,26 @@ class Settings(BaseSettings):
     # Environment
     ENVIRONMENT: str = "development"
 
-    # OpenRouter Configuration (Primary LLM Provider)
-    OPENROUTER_API_KEY: str = ""
-    OPENROUTER_BASE_URL: str = "https://openrouter.ai/api/v1"
-    OPENROUTER_REFERRER_URL: str = "http://localhost:3000"
-    # Note: OpenRouter uses "provider/model" format
-    OPENROUTER_MODEL_GPT4: str = "openai/gpt-4-turbo"
-    OPENROUTER_MODEL_CLAUDE35: str = "anthropic/claude-3-5-sonnet-20241022"
-    OPENROUTER_MODEL_EMBEDDING: str = "openai/text-embedding-3-large"
-
-    # OpenAI Configuration (Fallback)
+    # OpenAI Configuration
     OPENAI_API_KEY: str = ""
     OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-large"
     OPENAI_LLM_MODEL: str = "gpt-4-turbo"  # Direct API uses model name without prefix
 
-    # Anthropic Configuration (Fallback)
+    # Anthropic Configuration
     ANTHROPIC_API_KEY: str = ""
-    ANTHROPIC_LLM_MODEL: str = "claude-3-5-sonnet-20240620"  # Direct API - actual available version
+    ANTHROPIC_LLM_MODEL: str = "claude-3-5-sonnet-20241022"  # Direct API - latest version
 
     # Language Detection
     # Path can be absolute or relative to project root
     FASTTEXT_MODEL_PATH: str = "models/lid.176.bin"
+    
+    # Cloud Language Detection API (optional - for languages outside Lingua's support or high scalability)
+    # Google Cloud Translation API
+    GOOGLE_CLOUD_TRANSLATE_API_KEY: str = ""
+    USE_CLOUD_LANGUAGE_DETECTION: bool = False  # Enable cloud API as fallback
+    
+    # Language Detection Benchmarking
+    ENABLE_LANGUAGE_DETECTION_METRICS: bool = True  # Track accuracy and latency metrics
 
     # Validation Thresholds
     SEMANTIC_SIMILARITY_THRESHOLD: float = 0.85  # Lowered from 0.92 for more flexibility
@@ -70,19 +69,19 @@ class Settings(BaseSettings):
 
     # LLM Settings for Humanization (V4 - Originality.AI Optimized)
     # Based on analysis of 93% human-scored text
-    # Balanced for quality AND consistency
-    HUMANIZATION_TEMPERATURE: float = 0.82  # Balanced for human-like variation with consistency
-    HUMANIZATION_TOP_P: float = 0.93  # Balanced sampling for diverse but controlled word choices
-    HUMANIZATION_FREQUENCY_PENALTY: float = 0.60  # Balanced for variety without excessive expansion
-    HUMANIZATION_PRESENCE_PENALTY: float = 0.45  # Balanced for topic diversity without rambling
+    # Optimized for consistency AND quality (lower temperature for more consistent output)
+    HUMANIZATION_TEMPERATURE: float = 0.70  # Lower for more consistent output (was 0.82)
+    HUMANIZATION_TOP_P: float = 0.90  # Tighter sampling for more consistent word choices (was 0.93)
+    HUMANIZATION_FREQUENCY_PENALTY: float = 0.50  # Reduced for more consistent phrasing (was 0.60)
+    HUMANIZATION_PRESENCE_PENALTY: float = 0.35  # Reduced for more consistent topic coverage (was 0.45)
 
     # V4 Pattern Breaker Settings
     PATTERN_BREAKER_AGGRESSIVENESS: float = 0.6  # 0.0-1.0 (0.6 = conservative, less expansion)
 
     # Model Preferences for Different Phases
-    # Note: Use OpenRouter format (provider/model) for flexibility across providers
-    # For direct Anthropic API, will be converted to "claude-3-5-sonnet-20240620"
-    PRIMARY_HUMANIZATION_MODEL: str = "anthropic/claude-3-5-sonnet-20240620"  # Best for naturalness
+    # Note: Model names may include provider prefix (e.g., "anthropic/claude-3-5-sonnet-20241022")
+    # For direct Anthropic API, prefix will be stripped to "claude-3-5-sonnet-20241022"
+    PRIMARY_HUMANIZATION_MODEL: str = "anthropic/claude-3-5-sonnet-20241022"  # Best for naturalness
     COMPRESSION_MODEL: str = "anthropic/claude-3-haiku-20240307"  # Fast, good for compression
     FALLBACK_HUMANIZATION_MODEL: str = "openai/gpt-4-turbo"  # Updated to current model
 
@@ -96,7 +95,8 @@ class Settings(BaseSettings):
     # Authenticity / Anti-Detection Controls
     AUTHENTICITY_PASS_ENABLED: bool = True
     AUTHENTICITY_PASS_MIN_WORDS: int = 180
-    INVISIBLE_CHAR_NOISE_ENABLED: bool = True
+    # DISABLED: Invisible characters are easily detected by modern AI detectors and create visible artifacts
+    INVISIBLE_CHAR_NOISE_ENABLED: bool = False
     INVISIBLE_CHAR_INSERT_EVERY_N_WORDS: int = 18
 
     # Length Enforcement Ratios

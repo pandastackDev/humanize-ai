@@ -238,7 +238,7 @@ AI_WORD_REPLACEMENTS = {
     r"\bfacilitated\b": "helped",
     r"\bfacilitating\b": "helping",
     # Overused transitions → Casual transitions
-    r"\bSubsequently,?\b": lambda: random.choice(["Then", "So", "After that,"]),
+        r"\bSubsequently,?\b": lambda: random.choice(["Then", "Later", "Next"]),
     r"\bMoreover,?\b": lambda: random.choice(["Also,", "Plus,", "And"]),
     r"\bFurthermore,?\b": lambda: random.choice(["Also,", "And", "What's more,"]),
     r"\bNevertheless,?\b": lambda: random.choice(["But", "Still,", "Even so,"]),
@@ -268,7 +268,7 @@ AI_WORD_REPLACEMENTS = {
     r"\bpursued a program of\b": lambda: random.choice(["started", "used", "began"]),
     r"\bengaged in\b": "got into",
     r"\bcharacterized by\b": lambda: random.choice(["marked by", "known for", "full of"]),
-    r"\bIn response,?\b": lambda: random.choice(["So", "Then", "After that,"]),
+        r"\bIn response,?\b": lambda: random.choice(["Then", "Later", "Next"]),
     r"\bin response to\b": lambda: random.choice(["after", "when", "because"]),
     # Passive voice formal patterns
     r"\bwas characterized by\b": "was marked by",
@@ -307,16 +307,15 @@ AI_WORD_REPLACEMENTS = {
 # ============================================================================
 
 CASUAL_INTENSIFIERS = [
-    "really",  # Moved "really" first to reduce "totally" overuse
+    "really",  # Preferred - less casual
     "quite",
     "very",
     "pretty",
     "actually",
     "basically",
-    "literally",
     "completely",
     "absolutely",
-    "totally",  # Moved "totally" last to reduce frequency
+    # Removed "totally" and "literally" - too casual, easily detected by AI detectors
 ]
 
 # ============================================================================
@@ -324,15 +323,14 @@ CASUAL_INTENSIFIERS = [
 # ============================================================================
 
 CONVERSATIONAL_BREAKS = [
-    "Well,",
-    "Now,",
-    "So,",
-    "Or, at least,",
-    "In fact,",
-    "To be fair,",
-    "Honestly,",
-    "Here's the thing:",
-    "For what it's worth,",
+    "Now,",  # Preferred - less casual
+    "In fact,",  # Mid-sentence breaks only
+    "To be fair,",  # Mid-sentence breaks only
+    # Removed "Well," and "So," - too casual, detectors flag these immediately
+    # Removed "Or, at least," - too formulaic
+    # Removed "Honestly," - too casual
+    # Removed "Here's the thing:" - too casual
+    # Removed "For what it's worth," - too casual
 ]
 
 # ============================================================================
@@ -340,14 +338,14 @@ CONVERSATIONAL_BREAKS = [
 # ============================================================================
 
 EMOTIONAL_ENHANCEMENTS = {
-    # Neutral → Emotional (context-dependent)
-    "leader": ["mad dictator", "the man himself", "notorious leader"],
-    "country": ["helpless {country}", "the {country} itself"],
-    "war": ["terrible war", "devastating conflict", "horrific war"],
+    # Neutral → Emotional (context-dependent, but SUBTLE - avoid overly casual patterns)
+    "leader": ["ruthless dictator", "the man himself", "notorious leader"],  # Removed "mad dictator" - too casual
+    "country": ["vulnerable {country}", "the {country} itself"],  # Removed "helpless {country}" - too dramatic
+    "war": ["devastating war", "terrible conflict", "horrific war"],
     "battle": ["fierce battle", "bloody clash", "terrible fighting"],
     "victory": ["amazing victory", "stunning triumph"],
     "defeat": ["crushing defeat", "terrible loss"],
-    "event": ["dramatic event", "shocking incident"],
+    "event": ["dramatic event", "tragic incident"],  # Changed "shocking" to "tragic" - less sensational
 }
 
 # ============================================================================
@@ -434,9 +432,10 @@ class PatternBreaker:
         if random.random() < aggressiveness * 0.7:
             text = self._prefer_active_voice(text)
 
-        # Phase 6.10: Add rhetorical questions (very sparingly)
-        if random.random() < aggressiveness * 0.3:  # Very low probability
-            text = self._add_rhetorical_questions(text, frequency=0.02)  # 2% of sentences
+        # Phase 6.10: Add rhetorical questions (DISABLED - flagged by detectors)
+        # DISABLED: Rhetorical questions are easily detected as AI patterns by Originality.ai
+        # if random.random() < aggressiveness * 0.3:  # Very low probability
+        #     text = self._add_rhetorical_questions(text, frequency=0.02)  # 2% of sentences
 
         # Phase 6.11: Add direct address ("you might notice")
         if random.random() < aggressiveness * 0.5:
@@ -493,7 +492,8 @@ class PatternBreaker:
 
     def _add_casual_intensifiers(self, text: str, frequency: float = 0.015) -> str:
         """
-        Add casual intensifiers like "totally", "really", "quite" before verbs/adjectives.
+        Add casual intensifiers like "really", "quite", "actually" before verbs/adjectives.
+        NOTE: Does NOT use "totally" or "literally" - these are too casual and easily detected.
 
         Args:
             text: Input text
@@ -897,6 +897,33 @@ class PatternBreaker:
         # 5. Normalize quotes, dashes, arrows, ellipsis to simple ASCII
         # Separate single-character mappings (for translate) from multi-character replacements
         # IMPORTANT: str.maketrans() requires BOTH keys AND values to be single characters
+        
+        # Preserve en-dashes in ranges (e.g., 1939–1945, (1939–1945))
+        # Use a placeholder to protect range en-dashes before translation
+        en_dash_placeholder_prefix = "\uE000"  # Private Use Area character as prefix
+        en_dash_placeholder_suffix = "\uE001"  # Private Use Area character as suffix
+        
+        # Store protected ranges with their placeholders
+        protected_ranges = {}
+        range_counter = 0
+        
+        # Pattern to match ranges: (1939–1945) or 1939–1945
+        def protect_range(match):
+            nonlocal range_counter
+            full_match = match.group(0)
+            # Create unique placeholder
+            placeholder = f"{en_dash_placeholder_prefix}RANGE{range_counter}{en_dash_placeholder_suffix}"
+            protected_ranges[placeholder] = full_match
+            range_counter += 1
+            return placeholder
+        
+        # Match ranges: either (1939–1945) with parentheses or 1939–1945 without
+        # Pattern 1: Numbers in parentheses with en-dash
+        text = re.sub(r"\((\d+)\u2013(\d+)\)", protect_range, text)
+        # Pattern 2: Numbers with en-dash (not in parentheses, to avoid double-matching)
+        # Use word boundary to ensure we're matching standalone number ranges
+        text = re.sub(r"(?<!\()(\d+)\u2013(\d+)(?!\))", protect_range, text)
+        
         single_char_map = {}
         # Quotes (single char -> single char)
         single_char_map["\u201c"] = '"'  # LEFT DOUBLE QUOTATION MARK
@@ -908,7 +935,7 @@ class PatternBreaker:
         single_char_map["\u2019"] = "'"  # RIGHT SINGLE QUOTATION MARK
         single_char_map["\u201a"] = "'"  # SINGLE LOW-9 QUOTATION MARK
         # Dashes (single char -> single char)
-        single_char_map["\u2013"] = "-"  # EN DASH
+        # Note: En-dash (\u2013) is NOT in the map - we'll handle it separately after restoring ranges
         single_char_map["\u2014"] = "-"  # EM DASH
         single_char_map["\u2212"] = "-"  # MINUS SIGN
 
@@ -925,6 +952,13 @@ class PatternBreaker:
                 text = text.translate(str.maketrans(single_char_map))
         except (ValueError, TypeError) as e:
             logger.error(f"Error in character translation: {e}. Skipping translation step.")
+        
+        # Convert remaining en-dashes (not in ranges) to regular hyphens
+        text = text.replace("\u2013", "-")
+        
+        # Restore protected ranges with their original en-dashes
+        for placeholder, original_range in protected_ranges.items():
+            text = text.replace(placeholder, original_range)
 
         # Handle multi-character replacements separately (cannot use maketrans)
         multi_char_replacements = {
@@ -938,6 +972,7 @@ class PatternBreaker:
             text = text.replace(old_char, new_str)
 
         # 6. Remove zero-width and odd whitespace, normalize spaces
+        # Comprehensive list of invisible Unicode characters
         invisible_chars = [
             "\u200b",  # zero width space
             "\u200c",  # zero width non-joiner
@@ -945,6 +980,26 @@ class PatternBreaker:
             "\ufeff",  # BOM
             "\u200e",  # left-to-right mark
             "\u200f",  # right-to-left mark
+            "\u202a",  # left-to-right embedding
+            "\u202b",  # right-to-left embedding
+            "\u202c",  # pop directional formatting
+            "\u202d",  # left-to-right override
+            "\u202e",  # right-to-left override
+            "\u2060",  # word joiner
+            "\u2061",  # function application
+            "\u2062",  # invisible times
+            "\u2063",  # invisible separator
+            "\u2064",  # invisible plus
+            "\u2066",  # left-to-right isolate
+            "\u2067",  # right-to-left isolate
+            "\u2068",  # first strong isolate
+            "\u2069",  # pop directional isolate
+            "\u206a",  # inhibit symmetric swapping
+            "\u206b",  # activate symmetric swapping
+            "\u206c",  # inhibit arabic form shaping
+            "\u206d",  # activate arabic form shaping
+            "\u206e",  # national digit shapes
+            "\u206f",  # nominal digit shapes
         ]
         for ch in invisible_chars:
             if ch in text:
@@ -1083,48 +1138,28 @@ class PatternBreaker:
 
             result_paragraphs.append(modified_paragraph)
 
-        # Also check for "totally" overuse - STRICTER THRESHOLD
+        # Also check for "totally" and "literally" overuse - REMOVE ALL instances
         text_result = "\n\n".join(result_paragraphs)
+        
+        # Remove ALL instances of "literally" - it's too casual and easily detected
+        literally_count = len(list(re.finditer(r"\bliterally\b", text_result, re.IGNORECASE)))
+        if literally_count > 0:
+            # Remove all instances of "literally"
+            text_result = re.sub(r"\s*\bliterally\s+", " ", text_result, flags=re.IGNORECASE)
+            text_result = re.sub(r"\s+\bliterally\b", "", text_result, flags=re.IGNORECASE)
+            # Clean up any double spaces created
+            text_result = re.sub(r"  +", " ", text_result)
+            pattern_breaks += literally_count
+        
+        # Remove ALL instances of "totally" - it's too casual and easily detected
         totally_matches = list(re.finditer(r"\btotally\b", text_result, re.IGNORECASE))
-        word_count = len(text_result.split())
-        # Reduced threshold: 1.5% instead of 3% (very aggressive removal)
-        if word_count > 0 and len(totally_matches) > word_count * 0.015:  # More than 1.5% of words
-            # Too many "totally" - replace MOST with other intensifiers or remove
-            # Keep max 1 "totally" per 150 words
-            max_allowed = max(1, word_count // 150)
-            if len(totally_matches) > max_allowed:
-                replace_count = len(totally_matches) - max_allowed
-                # Replace in reverse order to maintain indices
-                for match in reversed(totally_matches[:replace_count]):
-                    if random.random() < 0.6:  # 60% remove entirely, 40% replace
-                        # Remove entirely (handle spacing)
-                        # Check space before and after
-                        before = text_result[match.start() - 1] if match.start() > 0 else " "
-                        after = text_result[match.end()] if match.end() < len(text_result) else " "
-                        if before == " " and after == " ":
-                            # Remove word and one space
-                            text_result = (
-                                text_result[: match.start() - 1] + text_result[match.end() :]
-                            )
-                        elif before == " ":
-                            text_result = (
-                                text_result[: match.start() - 1] + text_result[match.end() :]
-                            )
-                        elif after == " ":
-                            text_result = text_result[: match.start()] + text_result[match.end() :]
-                        else:
-                            text_result = (
-                                text_result[: match.start()] + " " + text_result[match.end() :]
-                            )
-                    else:
-                        # Replace with different intensifier
-                        replacement = random.choice(
-                            [w for w in CASUAL_INTENSIFIERS if w != "totally"]
-                        )
-                        text_result = (
-                            text_result[: match.start()] + replacement + text_result[match.end() :]
-                        )
-                    pattern_breaks += 1
+        if totally_matches:
+            # Remove all instances of "totally"
+            text_result = re.sub(r"\s*\btotally\s+", " ", text_result, flags=re.IGNORECASE)
+            text_result = re.sub(r"\s+\btotally\b", "", text_result, flags=re.IGNORECASE)
+            # Clean up any double spaces created
+            text_result = re.sub(r"  +", " ", text_result)
+            pattern_breaks += len(totally_matches)
 
         if pattern_breaks > 0:
             logger.info(f"Broke {pattern_breaks} repetitive patterns")
@@ -1172,7 +1207,7 @@ class PatternBreaker:
 
                 # Pattern 1: "It started in [location]"
                 if re.search(r"\bIt started in\b", modified):
-                    # Vary the structure
+                    # Vary the structure - AVOID "That's where it all started" (formulaic!)
                     match = re.search(r"\bIt started in\s+([A-Z]\w+)", modified)
                     if match:
                         location = match.group(1)
@@ -1180,11 +1215,26 @@ class PatternBreaker:
                             f"{location} was where it started",
                             f"The war began in {location}",
                             f"In {location} is where it began",
-                            f"{location}. That's where it all started",
+                            f"{location} was the starting point",
+                            f"The conflict originated in {location}",
                         ]
                         replacement = random.choice(variations)
                         modified = modified.replace(match.group(0), replacement, 1)
                         patterns_broken += 1
+                
+                # Pattern 1b: "[Location]. That's where it all started" - REMOVE this formulaic pattern
+                match = re.search(r"([A-Z]\w+)\.\s*That's where it all started", modified)
+                if match:
+                    location = match.group(1)
+                    variations = [
+                        f"{location} was where it began",
+                        f"{location} was the starting point",
+                        f"The war began in {location}",
+                        f"{location} was where the conflict started",
+                    ]
+                    replacement = random.choice(variations)
+                    modified = modified.replace(match.group(0), replacement, 1)
+                    patterns_broken += 1
 
                 # Pattern 2: "At its heart, this"
                 if re.search(r"\bAt its heart,\s*this\b", modified):
@@ -1219,18 +1269,46 @@ class PatternBreaker:
                     modified = modified.replace(match.group(0), replacement, 1)
                     patterns_broken += 1
 
-                # Pattern 3b: "This bold move dragged the United States..."
+                # Pattern 3b: "This bold move/attack dragged/opened" - REMOVE "bold" entirely
                 match = re.search(
-                    r"\bThis (\w+) move (dragged|led|brought|pulled|sent)\s+", modified
+                    r"\bThis bold (move|attack|action)\s+(\w+)\s+", modified
                 )
-                if match and "This bold move dragged" in modified:
-                    # Simplify or restructure
-                    if random.random() < 0.5:
-                        modified = modified.replace("This bold move dragged", "This move led", 1)
-                    else:
-                        modified = modified.replace(
-                            "This bold move dragged", "That action brought", 1
-                        )
+                if match:
+                    noun = match.group(1)
+                    verb = match.group(2)
+                    # Remove "bold" entirely - it's a formulaic pattern
+                    variations = [
+                        f"This {noun} {verb}",
+                        f"That {noun} {verb}",
+                        f"The {noun} {verb}",
+                        f"This {noun} helped {verb}",
+                    ]
+                    replacement = random.choice(variations)
+                    modified = modified.replace(match.group(0), replacement + " ", 1)
+                    patterns_broken += 1
+                
+                # Pattern 3c: "This bold attack dragged" - specific pattern
+                if re.search(r"\bThis bold attack dragged\b", modified):
+                    variations = [
+                        "That attack led",
+                        "This attack brought",
+                        "The attack resulted in",
+                        "This action led",
+                    ]
+                    replacement = random.choice(variations)
+                    modified = re.sub(r"\bThis bold attack dragged\b", replacement, modified, 1)
+                    patterns_broken += 1
+                
+                # Pattern 3d: "This bold move opened up" - specific pattern
+                if re.search(r"\bThis bold move opened up\b", modified):
+                    variations = [
+                        "This action created",
+                        "That move established",
+                        "This led to",
+                        "The action opened",
+                    ]
+                    replacement = random.choice(variations)
+                    modified = re.sub(r"\bThis bold move opened up\b", replacement, modified, 1)
                     patterns_broken += 1
 
                 # Pattern 4: "Then, on [date]" or "Then on [date]" - MORE AGGRESSIVE
@@ -1248,6 +1326,36 @@ class PatternBreaker:
                             f"Later, on {date_part}",
                             f"Finally, on {date_part}",
                         ]
+                    replacement = random.choice(variations)
+                    modified = modified.replace(match.group(0), replacement, 1)
+                    patterns_broken += 1
+                
+                # Pattern 4b: "Then came [event]" - formulaic pattern
+                match = re.search(r"\bThen came\s+([A-Z][^.]{0,50})", modified)
+                if match:
+                    event_part = match.group(1)
+                    # Remove "Then" and restructure
+                    variations = [
+                        f"{event_part}",
+                        f"Later came {event_part}",
+                        f"Next came {event_part}",
+                        f"This was followed by {event_part.lower()}",
+                    ]
+                    replacement = random.choice(variations)
+                    modified = modified.replace(match.group(0), replacement, 1)
+                    patterns_broken += 1
+                
+                # Pattern 4c: "Meanwhile, over in [location]" - formulaic pattern
+                match = re.search(r"\bMeanwhile, over in\s+([A-Z]\w+)", modified)
+                if match:
+                    location = match.group(1)
+                    # Remove "over in" - it's formulaic
+                    variations = [
+                        f"Meanwhile, in {location}",
+                        f"In {location}",
+                        f"{location}, meanwhile,",
+                        f"At the same time, in {location}",
+                    ]
                     replacement = random.choice(variations)
                     modified = modified.replace(match.group(0), replacement, 1)
                     patterns_broken += 1
@@ -1302,7 +1410,7 @@ class PatternBreaker:
                     variations = [
                         f"In {location}",  # Simplest
                         f"{location} saw",  # Different structure
-                        f"When it came to {location},",  # Different phrasing
+                        f"In {location},",  # Different phrasing
                         f"{location} experienced",  # Different verb
                     ]
                     replacement = random.choice(variations)

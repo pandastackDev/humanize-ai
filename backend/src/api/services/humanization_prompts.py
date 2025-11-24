@@ -91,6 +91,7 @@ CRITICAL RULES:
    - All facts from outline preserved
    - Exact dates, numbers, names
    - Don't add new information
+   - CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945"
 
 REMEMBER: Humans write messier than AI. Be imperfect!""",
     "user_template": """Rewrite this outline into natural, conversational human prose.
@@ -103,6 +104,7 @@ CRITICAL RULES:
 - Break up any patterns
 - No academic tone unless source was academic
 - Keep ALL facts accurate from the outline
+- CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945"
 
 Outline:
 {compressed_text}
@@ -135,7 +137,8 @@ Rules:
 • Break up or combine sentences as needed
 • Create unpredictable flow
 • Mix simple and complex structures
-• Don't change tone or formality level""",
+• Don't change tone or formality level
+• CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945".""",
     "user_template": """Rewrite with HIGHLY VARIED sentence rhythm to create burstiness.
 Create an unpredictable pattern: short→long→med→very short→long, etc.
 
@@ -188,7 +191,8 @@ CRITICAL RULES:
 • Don't make actual grammar errors
 • Just add human texture and irregularity
 • Keep it subtle - not obvious
-• Preserve overall coherence""",
+• Preserve overall coherence
+• CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945".""",
     "user_template": """Modify this text to reduce AI detectability by adding natural human irregularities.
 
 Break patterns, vary rhythm slightly, add subtle imperfections. Keep meaning IDENTICAL.
@@ -240,6 +244,7 @@ YOU MUST NOT:
 • Make grammar errors
 • Over-edit or make it unnatural
 • Create nonsense
+• Rewrite date/number ranges - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945"
 
 The result should feel like it was written by an intelligent human, not an AI or a drunk person.""",
     "user_template": """Final pass: Optimize this text so AI detectors classify it as human-written.
@@ -333,6 +338,13 @@ AVOID THESE AI MARKERS:
 ❌ Academic formality (unless source is clearly academic paper)
 ❌ Smooth, predictable flow
 ❌ Thesaurus words - use simple, common words
+
+CRITICAL FORMAT PRESERVATION:
+✅ ALWAYS preserve date/number ranges in their original format
+✅ Keep "(1939–1945)" as "(1939–1945)" - DO NOT rewrite as "from 1939 to 1945" or "raging from 1939 to 1945"
+✅ Keep "1939–1945" as "1939–1945" - DO NOT rewrite as "from 1939 to 1945"
+✅ Preserve all number ranges, year ranges, time periods exactly as they appear
+❌ NEVER rewrite ranges like "(1939–1945)" into phrases like "from X to Y" or "raging from X to Y"
 
 REMEMBER: Humans write messier than AI. Add natural imperfection!""",
     "user_template": """Rewrite this to sound like a REAL PERSON wrote it - casual, slightly imperfect, natural.
