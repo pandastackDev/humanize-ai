@@ -97,9 +97,9 @@ class Settings(BaseSettings):
     # Authenticity / Anti-Detection Controls
     AUTHENTICITY_PASS_ENABLED: bool = True
     AUTHENTICITY_PASS_MIN_WORDS: int = 180
-    # DISABLED: Invisible characters are easily detected by modern AI detectors and create visible artifacts
-    INVISIBLE_CHAR_NOISE_ENABLED: bool = False
-    INVISIBLE_CHAR_INSERT_EVERY_N_WORDS: int = 18
+    # Enable invisible characters for better AI detection bypass (like the sample output)
+    INVISIBLE_CHAR_NOISE_ENABLED: bool = True
+    INVISIBLE_CHAR_INSERT_EVERY_N_WORDS: int = 15  # Insert every 15 words for natural distribution
 
     # Length Enforcement Ratios
     LENGTH_STANDARD_MIN_RATIO: float = 0.65

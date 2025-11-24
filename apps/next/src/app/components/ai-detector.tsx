@@ -21,16 +21,16 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
+} from "@humanize/ui/components/card";
+import { Label } from "@humanize/ui/components/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from "@humanize/ui/components/select";
+import { Textarea } from "@humanize/ui/components/textarea";
 import { detectAIContent } from "@/lib/detect-api";
 
 // Top-level regex constant for word counting

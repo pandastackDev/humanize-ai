@@ -12,8 +12,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
+} from "@humanize/ui/components/dialog";
+import { Label } from "@humanize/ui/components/label";
 
 type CookieCategory = {
   id: string;

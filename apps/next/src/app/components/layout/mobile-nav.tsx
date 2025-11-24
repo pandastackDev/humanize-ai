@@ -11,7 +11,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
+} from "@humanize/ui/components/sheet";
 import { SignInButton } from "../sign-in-button";
 
 export function MobileNav({ user }: { user: User | null }) {

@@ -6,7 +6,7 @@ import {
 } from "@workos-inc/authkit-nextjs";
 import Link from "next/link";
 import signOut from "@/actions/signOut";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@humanize/ui/components/avatar";
 
 export async function SignInButton({ large }: { large?: boolean }) {
   const { user } = await withAuth();

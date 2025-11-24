@@ -4,7 +4,7 @@ import { Button } from "@humanize/ui/components/button";
 import { Info } from "lucide-react";
 import type React from "react";
 import { useState } from "react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription, AlertTitle } from "@humanize/ui/components/alert";
 import {
   Dialog,
   DialogContent,
@@ -13,10 +13,10 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
+} from "@humanize/ui/components/dialog";
+import { Input } from "@humanize/ui/components/input";
+import { Label } from "@humanize/ui/components/label";
+import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
 
 /**
  * The 'subscriptionLevel' prop is the name of the subscription plan and is directly tied to the Stripe price lookup key.

@@ -8,7 +8,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "@/components/ui/tooltip";
+} from "@humanize/ui/components/tooltip";
 
 export default function CopyButton({
   children,

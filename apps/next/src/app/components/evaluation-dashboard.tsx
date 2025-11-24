@@ -18,8 +18,8 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+} from "@humanize/ui/components/card";
+import { Textarea } from "@humanize/ui/components/textarea";
 import { type CompareResponse, compareDetection } from "@/lib/detect-api";
 
 // Top-level regex constant for word counting

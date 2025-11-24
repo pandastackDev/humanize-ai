@@ -648,10 +648,12 @@ class HumanizationService:
 
         validation_results = self._validate_output(input_text, humanized_text, style_embedding)
 
-        # Final cleanup: Fix grammar errors, prevent repetition, and remove invisible characters
+        # Final cleanup: Fix grammar errors and prevent repetition
         humanized_text = fix_common_grammar_errors(humanized_text)
         humanized_text = prevent_phrase_repetition(humanized_text)
-        humanized_text = remove_invisible_characters(humanized_text)
+        
+        # Inject invisible characters for AI detection bypass (like the sample output)
+        humanized_text = self._inject_invisible_noise(humanized_text, detected_language)
 
         processing_time = (time.time() - start_time) * 1000
 
@@ -804,11 +806,14 @@ class HumanizationService:
                 stats = self.pattern_breaker.get_statistics(humanized_text)
                 logger.debug(f"Advanced pipeline pattern breaker stats: {stats}")
 
-        # Step 14: Fix grammar errors, prevent repetition, and remove invisible characters (CRITICAL - errors are easily detected)
-        # Always fix grammar errors, prevent phrase repetition, and remove invisible characters regardless of pipeline version
+        # Step 14: Fix grammar errors and prevent repetition (CRITICAL - errors are easily detected)
+        # Always fix grammar errors and prevent phrase repetition regardless of pipeline version
         final_output = fix_common_grammar_errors(humanized_text)
         final_output = prevent_phrase_repetition(final_output)
-        final_output = remove_invisible_characters(final_output)
+        
+        # Step 15: Inject invisible characters for AI detection bypass (like the sample output)
+        # This is done AFTER validation to ensure quality, but BEFORE final output
+        final_output = self._inject_invisible_noise(final_output, detected_language)
 
         processing_time = (time.time() - start_time) * 1000
 
@@ -1445,13 +1450,14 @@ class HumanizationService:
     def _inject_invisible_noise(self, text: str, language: str) -> str:
         """
         Insert zero-width characters to break up detector-friendly token patterns.
+        Uses combinations of zero-width characters like in the sample output.
 
         Args:
             text: Text that already passed validation
             language: Language code (only applied to English to avoid harming CJK scripts)
 
         Returns:
-            Text with subtle invisible characters inserted.
+            Text with subtle invisible characters inserted (like the sample output).
         """
         if (
             not settings.INVISIBLE_CHAR_NOISE_ENABLED
@@ -1465,9 +1471,20 @@ class HumanizationService:
             return text
 
         interval = max(4, settings.INVISIBLE_CHAR_INSERT_EVERY_N_WORDS)
-        zero_width_chars = ["\u200b", "\u200c", "\u200d"]
+        # Use combinations of zero-width characters like in the sample output
+        # Sample shows patterns like: ​‍​‌‍​‍‌ (combinations of \u200b, \u200c, \u200d)
+        zero_width_combinations = [
+            "\u200b\u200d\u200b\u200c\u200d\u200b\u200c",  # ​‍​‌‍​‍‌ pattern
+            "\u200b\u200c\u200d",  # Simple combination
+            "\u200b\u200d\u200b",  # Alternating pattern
+            "\u200c\u200d\u200b\u200c",  # Another pattern
+            "\u200b\u200c",  # Two-char combo
+            "\u200d\u200b",  # Two-char combo
+            "\u200b",  # Single char
+            "\u200c",  # Single char
+            "\u200d",  # Single char
+        ]
         word_counter = 0
-
         insertions = 0
 
         for idx in range(0, len(words_and_spaces), 2):
@@ -1478,13 +1495,32 @@ class HumanizationService:
             if token.strip().startswith(("➜", "•", "-", "*", "#")):
                 continue
             word_counter += 1
+            # Use interval with some random variation for more natural distribution
+            # This creates a pattern similar to the sample output
+            should_insert = False
             if word_counter % interval == 0:
-                words_and_spaces[idx] = token + random.choice(zero_width_chars)
+                should_insert = True
+            elif word_counter % (interval + random.randint(-3, 3)) == 0 and random.random() < 0.25:
+                # Occasional early/late insertion for natural variation
+                should_insert = True
+            
+            if should_insert:
+                # Randomly choose a combination, with preference for longer combinations (like sample)
+                if random.random() < 0.35:
+                    # 35% chance of longer combination (like sample: ​‍​‌‍​‍‌)
+                    noise = random.choice(zero_width_combinations[:4])
+                elif random.random() < 0.6:
+                    # 25% chance of medium combination
+                    noise = random.choice(zero_width_combinations[4:7])
+                else:
+                    # 40% chance of shorter/single combination
+                    noise = random.choice(zero_width_combinations)
+                words_and_spaces[idx] = token + noise
                 insertions += 1
 
         if insertions:
             logger.info(
-                "Inserted %s invisible noise characters to disrupt detector patterns",
+                "Inserted %s invisible noise character combinations to disrupt detector patterns",
                 insertions,
             )
         return "".join(words_and_spaces)

@@ -8,7 +8,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
+} from "@humanize/ui/components/sheet";
 
 type TextFeaturesSidebarProps = {
   open: boolean;

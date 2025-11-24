@@ -9,9 +9,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "@humanize/ui/components/dialog";
+import { Input } from "@humanize/ui/components/input";
+import { Label } from "@humanize/ui/components/label";
 
 type CreateTeamDialogProps = {
   open: boolean;

@@ -7,15 +7,15 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@humanize/ui/components/popover";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
+} from "@humanize/ui/components/select";
+import { Textarea } from "@humanize/ui/components/textarea";
 
 const EMOJI_REACTIONS = [
   { emoji: "😭", value: "very_sad" },

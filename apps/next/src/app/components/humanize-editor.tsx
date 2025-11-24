@@ -2,6 +2,26 @@
 
 import { Button } from "@humanize/ui/components/button";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@humanize/ui/components/dialog";
+import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "@humanize/ui/components/select";
+import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
+import { Textarea } from "@humanize/ui/components/textarea";
+import {
   BarChart3,
   Check,
   Clipboard,
@@ -25,26 +45,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { type DetectResponse, detectAIContent } from "@/lib/detect-api";
 import { humanizeText } from "@/lib/humanize-api";
 import {

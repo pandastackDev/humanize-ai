@@ -10,8 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@humanize/ui/components/dialog";
+import { Input } from "@humanize/ui/components/input";
 
 type Team = {
   id: string;

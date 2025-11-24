@@ -9,11 +9,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Slider } from "@/components/ui/slider";
+} from "@humanize/ui/components/dialog";
+import { Input } from "@humanize/ui/components/input";
+import { Label } from "@humanize/ui/components/label";
+import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
+import { Slider } from "@humanize/ui/components/slider";
 
 type WordPurchaseDialogProps = {
   open: boolean;

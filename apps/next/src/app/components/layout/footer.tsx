@@ -14,7 +14,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@humanize/ui/components/dropdown-menu";
 
 // TikTok Icon Component
 const TikTokIcon = ({ className }: { className?: string }) => (

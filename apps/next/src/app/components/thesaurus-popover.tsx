@@ -7,7 +7,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@humanize/ui/components/dropdown-menu";
 
 type ThesaurusPopoverProps = {
   word: string;

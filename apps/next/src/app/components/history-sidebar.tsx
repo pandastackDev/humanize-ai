@@ -18,16 +18,16 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
+} from "@humanize/ui/components/dialog";
+import { Input } from "@humanize/ui/components/input";
 import {
   Sheet,
   SheetContent,
   SheetDescription,
   SheetHeader,
   SheetTitle,
-} from "@/components/ui/sheet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+} from "@humanize/ui/components/sheet";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 
 export type HistoryItem = {
   id: string;

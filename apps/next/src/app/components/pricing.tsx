@@ -4,9 +4,9 @@ import { Button } from "@humanize/ui/components/button";
 import { Check } from "lucide-react";
 import { useEffect, useState } from "react";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@humanize/ui/components/card";
+import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
+import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import {
   checkSubscription,
   type SubscriptionPlan,

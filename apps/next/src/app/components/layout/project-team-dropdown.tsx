@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@humanize/ui/components/dropdown-menu";
 import { CreateTeamDialog } from "./create-team-dialog";
 import { ManageTeamsDialog } from "./manage-teams-dialog";
 

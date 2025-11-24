@@ -18,7 +18,7 @@ import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@humanize/ui/components/popover";
 import { ManageCookiesDialog } from "./manage-cookies-dialog";
 
 // Helper function to detect if it's night time (6 PM to 6 AM)
