@@ -1375,18 +1375,23 @@ export function HumanizeEditor({
             {/* Main Editor Content */}
             <div className="relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
               {/* Text Areas Container */}
-              <div className="flex flex-col md:flex-row">
+              <div className="flex min-w-0 flex-col md:flex-row">
                 {/* Left Text Area - Original */}
-                <div className="box-border flex w-full flex-col border-0 md:w-1/2 md:border-r dark:border-white-700">
+                <div className="box-border flex w-full min-w-0 flex-col border-0 md:w-1/2 md:border-r dark:border-white-700">
                   {/* Text Input Area - Always visible */}
-                  <div className="relative flex flex-1 flex-col">
+                  <div className="relative flex min-w-0 flex-1 flex-col">
                     <Textarea
-                      className="h-[300px] w-full resize-none border-0 border-b border-b-white px-3 py-3 pr-12 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-14 md:h-[450px] md:px-6 md:py-5 md:pr-14 dark:border-b-[#1d1d1d]"
+                      className="h-[300px] w-full min-w-0 resize-none border-0 border-b border-b-white px-3 py-3 pr-12 text-sm shadow-none outline-none focus:ring-0 focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-14 md:h-[450px] md:px-6 md:py-5 md:pr-14 dark:border-b-[#1d1d1d]"
                       onChange={(e) => {
                         setInputText(e.target.value);
                       }}
                       placeholder="To humanize AI text, enter/paste it here, or upload a file (.docx, .pdf)"
                       ref={textareaRef}
+                      style={{
+                        wordBreak: "break-word",
+                        overflowWrap: "break-word",
+                        maxWidth: "100%",
+                      }}
                       value={inputText}
                     />
                     {/* Action Buttons - Only visible when textarea is empty and on humanize tab */}
@@ -1524,8 +1529,8 @@ export function HumanizeEditor({
                 </div>
 
                 {/* Right Text Area - Humanized */}
-                <div className="flex w-full flex-col md:w-1/2">
-                  <div className="relative flex flex-1 flex-col">
+                <div className="flex w-full min-w-0 flex-col md:w-1/2">
+                  <div className="relative flex min-w-0 flex-1 flex-col">
                     <div className="flex-1 overflow-auto">
                       {activeTab === "humanize"
                         ? renderHumanizeOutput()
