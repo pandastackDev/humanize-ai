@@ -1,4 +1,6 @@
+import { Button } from "@humanize/ui/components/button";
 import { withAuth } from "@workos-inc/authkit-nextjs";
+import { Settings } from "lucide-react";
 import Link from "next/link";
 import { workos } from "@/app/api/workos";
 import { Logo } from "../logo";
@@ -118,14 +120,19 @@ export async function Header() {
                 organizationId={organizationId}
                 userId={user.id}
               />
-              {/* Default Project Dropdown */}
               <ProjectTeamDropdown
-                currentProject="Default project"
+                currentProject="Vadym's Team"
                 selectedTeamId="default"
               />
 
               {/* Feedback Popover */}
               <FeedbackPopover />
+
+              <Button asChild size="icon" variant="outline">
+                <Link href="/dashboard/settings">
+                  <Settings />
+                </Link>
+              </Button>
 
               <UserNav
                 organizationName={organizationName}

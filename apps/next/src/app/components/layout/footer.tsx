@@ -71,32 +71,6 @@ const SOCIAL_LINKS = [
 export function Footer() {
   return (
     <footer className="mt-auto bg-black">
-      {/* Layer 1: Help Center Section */}
-      <div className="bg-black py-2">
-        <div className="container mx-auto px-4 text-center text-gray-300 text-sm md:px-6">
-          Still have more questions? Find answers in our{" "}
-          <Link
-            className="underline transition-colors hover:text-white"
-            href="/help"
-          >
-            help center
-          </Link>
-          .
-        </div>
-      </div>
-
-      {/* Layer 2: Trademark Policy Section */}
-      <div className="bg-black py-2">
-        <div className="container mx-auto px-4 text-center text-gray-300 text-sm md:px-6">
-          <Link
-            className="transition-colors hover:text-white"
-            href="/legal/trademark"
-          >
-            Trademark Policy
-          </Link>
-        </div>
-      </div>
-
       {/* Layer 3: Main Footer Navigation & Copyright */}
       <div className="bg-black py-4">
         <div className="container mx-auto px-4 md:px-6">
@@ -196,14 +170,6 @@ export function Footer() {
                 );
               })}
             </div>
-          </div>
-
-          {/* Copyright */}
-          <div className="border-gray-800 border-t pt-3">
-            <p className="text-center text-gray-400 text-xs">
-              Copyright © {new Date().getFullYear()} Humanize. All rights
-              reserved.
-            </p>
           </div>
         </div>
       </div>
