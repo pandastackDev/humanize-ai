@@ -2,7 +2,7 @@
 /*
 
 # Don't ignore these
-!src
+!src/*
 !vercel.json
 !pyproject.toml
 !uv.lock
