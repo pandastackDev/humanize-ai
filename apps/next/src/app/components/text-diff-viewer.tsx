@@ -20,6 +20,8 @@ export type TextSegment = {
   start: number;
   end: number;
   originalWord?: string;
+  isStructural?: boolean;
+  isChanged?: boolean;
 };
 
 type TextDiffViewerProps = {
@@ -137,12 +139,15 @@ function computeTextFeatures(
     );
 
     const segmentType = determineSegmentType(isUnchanged, isStructural);
+    const isChanged = !(isUnchanged || isStructural);
 
     segments.push({
       type: segmentType,
       text: word + spaceAfter,
       start: wordStart,
       end: wordEnd,
+      isStructural,
+      isChanged,
     });
 
     currentPos = wordEnd + spaceAfter.length;
@@ -352,17 +357,26 @@ export function TextDiffViewer({
       ];
     }
 
-    const grouped: Array<{
+    // First pass: group consecutive segments, preserving structural and changed flags
+    const initialGrouped: Array<{
       type: TextFeatureType;
       text: string;
       start: number;
       end: number;
+      segmentCount?: number;
+      isStructural?: boolean;
+      isChanged?: boolean;
+      segments: TextSegment[];
     }> = [];
     let currentGroup: {
       type: TextFeatureType;
       text: string;
       start: number;
       end: number;
+      segmentCount?: number;
+      isStructural?: boolean;
+      isChanged?: boolean;
+      segments: TextSegment[];
     } | null = null;
 
     for (const segment of segments) {
@@ -379,24 +393,89 @@ export function TextDiffViewer({
         displayType = "plain";
       }
 
-      if (currentGroup && currentGroup.type === displayType) {
+      // For structural segments, we need to preserve individual segment info
+      // Don't group structural segments if they have different changed status
+      const canGroup =
+        currentGroup &&
+        currentGroup.type === displayType &&
+        (displayType !== "structural" ||
+          (currentGroup.isChanged === segment.isChanged &&
+            currentGroup.isStructural === segment.isStructural));
+
+      if (canGroup && currentGroup) {
         currentGroup.text += segment.text;
         currentGroup.end = segment.end;
+        currentGroup.segments.push(segment);
+        // Count segments (each segment is one word)
+        if (
+          currentGroup.type === "unchanged" &&
+          currentGroup.segmentCount !== undefined
+        ) {
+          currentGroup.segmentCount += 1;
+        }
       } else {
         if (currentGroup) {
-          grouped.push(currentGroup);
+          initialGrouped.push(currentGroup);
         }
         currentGroup = {
           type: displayType,
           text: segment.text,
           start: segment.start,
           end: segment.end,
+          segmentCount: displayType === "unchanged" ? 1 : undefined,
+          isStructural: segment.isStructural,
+          isChanged: segment.isChanged,
+          segments: [segment],
         };
       }
     }
 
     if (currentGroup) {
-      grouped.push(currentGroup);
+      initialGrouped.push(currentGroup);
+    }
+
+    // Second pass: Only mark unchanged runs of 5+ words as "unchanged", others as "plain"
+    // Preserve structural and changed flags for styling
+    const grouped: Array<{
+      type: TextFeatureType;
+      text: string;
+      start: number;
+      end: number;
+      isStructural?: boolean;
+      isChanged?: boolean;
+    }> = [];
+
+    for (const group of initialGrouped) {
+      if (group.type === "unchanged" && group.segmentCount !== undefined) {
+        // Only highlight if it's a run of 5+ consecutive unchanged words
+        if (group.segmentCount >= 5) {
+          grouped.push({
+            type: "unchanged",
+            text: group.text,
+            start: group.start,
+            end: group.end,
+            isStructural: group.isStructural,
+            isChanged: group.isChanged,
+          });
+        } else {
+          // Convert to plain text if less than 5 words
+          grouped.push({
+            type: "plain",
+            text: group.text,
+            start: group.start,
+            end: group.end,
+          });
+        }
+      } else {
+        grouped.push({
+          type: group.type,
+          text: group.text,
+          start: group.start,
+          end: group.end,
+          isStructural: group.isStructural,
+          isChanged: group.isChanged,
+        });
+      }
     }
 
     return grouped;
@@ -435,79 +514,115 @@ export function TextDiffViewer({
     return "";
   };
 
+  const getDynamicClasses = (segment: {
+    type: TextFeatureType;
+    isStructural?: boolean;
+    isChanged?: boolean;
+  }): string => {
+    const typeClasses: Record<TextFeatureType, string> = {
+      changed: "text-red-600 dark:text-red-300",
+      structural: "underline decoration-yellow-400 dark:decoration-yellow-500",
+      unchanged: "text-blue-700 dark:text-blue-300",
+      thesaurus:
+        "bg-purple-100 text-purple-900 underline decoration-purple-300 cursor-pointer hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-200 dark:decoration-purple-700 dark:hover:bg-purple-900/50",
+      plain: "",
+    };
+
+    // Build dynamic classes based on segment properties
+    let dynamicClasses = typeClasses[segment.type] || "";
+
+    // If structural, ensure underline is present
+    if (segment.isStructural && !dynamicClasses.includes("underline")) {
+      dynamicClasses +=
+        " underline decoration-yellow-400 dark:decoration-yellow-500";
+    }
+
+    // If changed, ensure red color is present (override default black for structural)
+    if (segment.isChanged && !dynamicClasses.includes("text-red")) {
+      // Remove any existing text color classes first if it's structural
+      if (segment.type === "structural") {
+        dynamicClasses =
+          "underline decoration-yellow-400 dark:decoration-yellow-500";
+      }
+      dynamicClasses += " text-red-600 dark:text-red-300";
+    }
+
+    return dynamicClasses;
+  };
+
+  const renderSegment = (
+    segment: {
+      type: TextFeatureType;
+      text: string;
+      start: number;
+      end: number;
+      isStructural?: boolean;
+      isChanged?: boolean;
+    },
+    index: number
+  ) => {
+    const baseClasses = "px-0.5 transition-colors";
+    const dynamicClasses = getDynamicClasses(segment);
+    const isSelected =
+      selectedWord &&
+      segment.start >= selectedWord.start &&
+      segment.end <= selectedWord.end;
+    const isClickable =
+      segment.type === "thesaurus" || enabledFeatures.thesaurus;
+    const isPlain = segment.type === "plain";
+
+    // Plain text segments don't need any special styling or classes
+    if (isPlain) {
+      return (
+        <span key={`segment-${segment.start}-${segment.end}-${index}`}>
+          {segment.text}
+        </span>
+      );
+    }
+
+    if (isClickable) {
+      return (
+        <button
+          className={cn(
+            baseClasses,
+            dynamicClasses,
+            isSelected && "ring-2 ring-purple-500 ring-offset-1",
+            "cursor-pointer"
+          )}
+          key={`segment-${segment.start}-${segment.end}-${index}`}
+          onClick={() => {
+            handleWordClick(segment);
+          }}
+          title={getSegmentTitle(segment.type)}
+          type="button"
+        >
+          {segment.text}
+        </button>
+      );
+    }
+
+    return (
+      <span
+        className={cn(
+          baseClasses,
+          dynamicClasses,
+          isSelected && "ring-2 ring-purple-500 ring-offset-1"
+        )}
+        key={`segment-${segment.start}-${segment.end}-${index}`}
+        title={getSegmentTitle(segment.type)}
+      >
+        {segment.text}
+      </span>
+    );
+  };
+
   if (!hasText) {
     return null;
   }
 
   return (
     <div className={cn("whitespace-pre-wrap break-words", className)}>
-      {groupedSegments.map((segment, index) => {
-        const baseClasses = "px-0.5 rounded transition-colors";
-        const typeClasses: Record<TextFeatureType, string> = {
-          changed:
-            "bg-red-100 text-red-900 underline decoration-red-300 dark:bg-red-900/30 dark:text-red-200 dark:decoration-red-700",
-          structural:
-            "bg-yellow-100 text-yellow-900 underline decoration-yellow-300 dark:bg-yellow-900/30 dark:text-yellow-200 dark:decoration-yellow-700",
-          unchanged:
-            "bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-200",
-          thesaurus:
-            "bg-purple-100 text-purple-900 underline decoration-purple-300 cursor-pointer hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-200 dark:decoration-purple-700 dark:hover:bg-purple-900/50",
-          plain: "",
-        };
-
-        const isSelected =
-          selectedWord &&
-          segment.start >= selectedWord.start &&
-          segment.end <= selectedWord.end;
-
-        const isClickable =
-          segment.type === "thesaurus" || enabledFeatures.thesaurus;
-        const isPlain = segment.type === "plain";
-
-        // Plain text segments don't need any special styling or classes
-        if (isPlain) {
-          return (
-            <span key={`segment-${segment.start}-${segment.end}-${index}`}>
-              {segment.text}
-            </span>
-          );
-        }
-
-        if (isClickable) {
-          return (
-            <button
-              className={cn(
-                baseClasses,
-                typeClasses[segment.type],
-                isSelected && "ring-2 ring-purple-500 ring-offset-1",
-                "cursor-pointer"
-              )}
-              key={`segment-${segment.start}-${segment.end}-${index}`}
-              onClick={() => {
-                handleWordClick(segment);
-              }}
-              title={getSegmentTitle(segment.type)}
-              type="button"
-            >
-              {segment.text}
-            </button>
-          );
-        }
-
-        return (
-          <span
-            className={cn(
-              baseClasses,
-              typeClasses[segment.type],
-              isSelected && "ring-2 ring-purple-500 ring-offset-1"
-            )}
-            key={`segment-${segment.start}-${segment.end}-${index}`}
-            title={getSegmentTitle(segment.type)}
-          >
-            {segment.text}
-          </span>
-        );
-      })}
+      {groupedSegments.map((segment, index) => renderSegment(segment, index))}
     </div>
   );
 }

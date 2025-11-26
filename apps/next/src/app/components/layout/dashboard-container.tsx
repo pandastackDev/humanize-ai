@@ -1,6 +1,7 @@
 "use client";
 
 import { useTheme } from "next-themes";
+import { useEffect, useState } from "react";
 
 export function DashboardContainer({
   children,
@@ -8,7 +9,14 @@ export function DashboardContainer({
   children: React.ReactNode;
 }) {
   const { resolvedTheme } = useTheme();
-  const bgColor = resolvedTheme === "light" ? "bg-background" : "";
+  const [mounted, setMounted] = useState(false);
+
+  // Only apply theme-dependent classes after hydration to avoid mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const bgColor = mounted && resolvedTheme === "light" ? "bg-background" : "";
 
   return (
     <div

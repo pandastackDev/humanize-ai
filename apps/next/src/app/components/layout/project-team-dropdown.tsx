@@ -112,26 +112,26 @@ export function ProjectTeamDropdown({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-[240px] border-slate-200 bg-white dark:border-[#1d1d1d] dark:bg-[#1d1d1d]"
+          className="w-[240px] border-border bg-popover"
         >
           {/* TEAMS Section */}
           <div className="px-2 py-1.5">
-            <div className="mb-2 px-2 font-semibold text-slate-500 text-xs uppercase tracking-wider dark:text-white">
+            <div className="mb-2 px-2 font-semibold text-muted-foreground text-xs uppercase tracking-wider">
               TEAMS
             </div>
             <div className="space-y-0.5">
               {localTeams.map((team) => (
                 <DropdownMenuItem
-                  className="cursor-pointer rounded-md px-2 py-1.5 text-slate-900 hover:bg-slate-100 focus:bg-slate-100 dark:text-white dark:focus:bg-[#282828] dark:hover:bg-[#282828]"
+                  className="cursor-pointer rounded-md px-2 py-1.5 text-popover-foreground hover:bg-accent focus:bg-accent"
                   key={team.id}
                   onClick={() => handleTeamSelect(team.id)}
                 >
                   <div className="flex w-full items-center gap-2">
                     {selectedTeam === team.id && (
-                      <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
+                      <Check className="h-4 w-4 text-green-600" />
                     )}
                     {selectedTeam !== team.id && <div className="h-4 w-4" />}
-                    <span className="flex-1 text-sm dark:text-white">
+                    <span className="flex-1 text-popover-foreground text-sm">
                       {team.name}
                     </span>
                   </div>
@@ -140,27 +140,31 @@ export function ProjectTeamDropdown({
             </div>
           </div>
 
-          <DropdownMenuSeparator className="bg-slate-200 dark:bg-[#343434]" />
+          <DropdownMenuSeparator />
 
           {/* Create Team */}
           <DropdownMenuItem
-            className="cursor-pointer rounded-md px-2 py-1.5 text-slate-900 hover:bg-slate-100 focus:bg-slate-100 dark:text-white dark:focus:bg-slate-700 dark:hover:bg-slate-700"
+            className="cursor-pointer rounded-md px-2 py-1.5 text-popover-foreground hover:bg-accent focus:bg-accent"
             onClick={() => setCreateTeamOpen(true)}
           >
             <div className="flex w-full items-center gap-2">
-              <Plus className="h-4 w-4 dark:text-white" />
-              <span className="text-sm dark:text-white">Create team</span>
+              <Plus className="h-4 w-4 text-popover-foreground" />
+              <span className="text-popover-foreground text-sm">
+                Create team
+              </span>
             </div>
           </DropdownMenuItem>
 
           {/* Manage Teams */}
           <DropdownMenuItem
-            className="cursor-pointer rounded-md px-2 py-1.5 text-slate-900 hover:bg-slate-100 focus:bg-slate-100 dark:text-white dark:focus:bg-slate-700 dark:hover:bg-slate-700"
+            className="cursor-pointer rounded-md px-2 py-1.5 text-popover-foreground hover:bg-accent focus:bg-accent"
             onClick={handleManageTeams}
           >
             <div className="flex w-full items-center gap-2">
-              <Settings className="h-4 w-4 dark:text-white" />
-              <span className="text-sm dark:text-white">Manage teams</span>
+              <Settings className="h-4 w-4 text-popover-foreground" />
+              <span className="text-popover-foreground text-sm">
+                Manage teams
+              </span>
             </div>
           </DropdownMenuItem>
         </DropdownMenuContent>

@@ -29,8 +29,13 @@ export type SubscriptionInfo = {
 /**
  * Get the backend API base URL.
  */
-function getApiBaseUrl(): string {
-  return env.NEXT_PUBLIC_PYTHON_API_URL;
+function getApiBaseUrl(): string | null {
+  try {
+    return env.NEXT_PUBLIC_PYTHON_API_URL;
+  } catch {
+    // Environment variable not configured
+    return null;
+  }
 }
 
 /**
@@ -46,6 +51,24 @@ export async function checkSubscription(
   organizationId?: string
 ): Promise<SubscriptionInfo> {
   const baseUrl = getApiBaseUrl();
+
+  // If API URL is not configured, return default free plan
+  if (!baseUrl) {
+    console.warn(
+      "NEXT_PUBLIC_PYTHON_API_URL is not configured. Using default free plan."
+    );
+    return {
+      plan: "free",
+      status: "active",
+      word_limit: 3000,
+      words_used: 0,
+      words_remaining: 3000,
+      request_limit: 10,
+      requests_used: 0,
+      billing_period: "monthly",
+    };
+  }
+
   const url = `${baseUrl}/api/v1/subscriptions/check`;
 
   try {
@@ -72,6 +95,24 @@ export async function checkSubscription(
     const data: SubscriptionInfo = await response.json();
     return data;
   } catch (error) {
+    // If it's a network error (API not available), return default free plan
+    if (error instanceof TypeError && error.message.includes("fetch")) {
+      console.warn(
+        "Backend API is not available. Using default free plan.",
+        error.message
+      );
+      return {
+        plan: "free",
+        status: "active",
+        word_limit: 3000,
+        words_used: 0,
+        words_remaining: 3000,
+        request_limit: 10,
+        requests_used: 0,
+        billing_period: "monthly",
+      };
+    }
+
     if (error instanceof Error) {
       throw error;
     }

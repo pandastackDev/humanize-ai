@@ -82,70 +82,78 @@ export async function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-slate-200 border-b bg-white dark:border-[#141414] dark:bg-[#141414]">
-      <div className="container grid h-16 grid-cols-[auto_1fr_auto] items-center gap-3 overflow-visible bg-white px-4 md:px-6 lg:grid-cols-[auto_auto_1fr] dark:bg-[#141414]">
-        {/* Logo - Left side */}
-        <div className="flex items-center">
-          <Link
-            className="flex items-center space-x-2 font-semibold text-lg transition-opacity hover:opacity-80"
-            href="/"
-          >
-            <Logo />
-          </Link>
+    <header className="sticky top-0 z-50 w-full border-border border-b bg-background">
+      <div className="container mx-auto flex h-16 items-center gap-3 overflow-visible bg-background px-4 md:px-6">
+        {/* Left section: Logo and Navigation */}
+        <div className="flex items-center gap-6">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link
+              className="-ml-2 md:-ml-4 flex items-center space-x-2 font-semibold text-lg transition-opacity hover:opacity-80"
+              href="/"
+            >
+              <Logo />
+            </Link>
+          </div>
+
+          {/* Navigation - Center, hidden on mobile */}
+          <div className="hidden justify-start lg:flex">
+            <MainNav />
+          </div>
         </div>
 
-        {/* Navigation - Left of center, hidden on mobile */}
-        <div className="hidden justify-start lg:flex lg:pl-20 xl:pl-28">
-          <MainNav />
-        </div>
+        {/* Middle section: Balance button */}
+        {user && (
+          <div className="ml-8 flex items-center md:ml-48">
+            <WordBalanceButton
+              organizationId={organizationId}
+              userId={user.id}
+            />
+          </div>
+        )}
 
         {/* Right side controls */}
-        <div className="flex items-center justify-end gap-2 md:gap-3">
-          {!user && (
-            <div className="hidden sm:flex sm:items-center sm:gap-2">
-              <SignInButton />
-              <HelpPopover />
-            </div>
-          )}
-          {user && (
-            <>
-              {/* {organizationId && (
-                <WordBalanceButton
-                  organizationId={organizationId}
-                  userId={user.id}
-                />
-              )} */}
-
-              <WordBalanceButton
-                organizationId={organizationId}
-                userId={user.id}
-              />
-              <ProjectTeamDropdown
-                currentProject="Vadym's Team"
-                selectedTeamId="default"
-              />
-
-              {/* Feedback Popover */}
-              <FeedbackPopover />
-
-              <Button asChild size="icon" variant="outline">
-                <Link href="/dashboard/settings">
-                  <Settings />
-                </Link>
-              </Button>
-
-              <UserNav
-                organizationName={organizationName}
-                role={role}
-                user={user}
-              />
-            </>
-          )}
+        <div className="ml-auto flex items-center gap-2 md:gap-3">
           <div className="lg:hidden">
             <MobileNav user={user} />
           </div>
         </div>
       </div>
+
+      {/* Right edge controls - positioned at absolute right */}
+      {!user && (
+        <div className="absolute top-0 right-8 flex h-16 items-center gap-2 md:gap-3">
+          <div className="hidden sm:flex sm:items-center sm:gap-2">
+            <SignInButton />
+            <HelpPopover />
+          </div>
+        </div>
+      )}
+
+      {/* Right edge controls - positioned at absolute right */}
+      {user && (
+        <div className="absolute top-0 right-8 flex h-16 items-center gap-2 md:gap-3">
+          <ProjectTeamDropdown
+            currentProject="Vadym's Team"
+            selectedTeamId="default"
+          />
+
+          {/* Feedback Popover */}
+          <FeedbackPopover />
+
+          <Button asChild size="icon" variant="outline">
+            <Link href="/dashboard/settings">
+              <Settings />
+            </Link>
+          </Button>
+
+          <UserNav
+            organizationName={organizationName}
+            role={role}
+            user={user}
+          />
+        </div>
+      )}
     </header>
   );
 }
