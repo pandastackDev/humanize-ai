@@ -26,7 +26,7 @@ export function TrustSidebar() {
             />
           ))}
         </div>
-        <p className="text-muted-foreground text-sm dark:text-muted-foreground">
+        <p className="text-slate-600 text-sm dark:text-slate-400">
           4.8/5 based on 128,743 reviews
         </p>
       </div>
@@ -39,13 +39,13 @@ export function TrustSidebar() {
         <div className="grid grid-cols-2 gap-3">
           {aiDetectors.map((detector) => (
             <div
-              className="flex items-center gap-2 rounded-md bg-card p-2 shadow-sm dark:bg-card"
+              className="flex items-center gap-2 rounded-md bg-white p-2 shadow-sm dark:bg-[#141414]"
               key={detector.name}
             >
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
                 {detector.logo}
               </div>
-              <span className="font-medium text-foreground text-xs dark:text-foreground">
+              <span className="font-medium text-slate-700 text-xs dark:text-slate-300">
                 {detector.name}
               </span>
             </div>
@@ -55,28 +55,28 @@ export function TrustSidebar() {
 
       {/* Trust Metrics */}
       <div className="space-y-3">
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
+        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-white p-3 dark:border-green-600 dark:bg-[#141414]">
           <Check className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
           <div>
-            <p className="font-semibold text-foreground text-sm dark:text-foreground">
+            <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
               Trusted by 12 Million+ Users
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
+        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-white p-3 dark:border-green-600 dark:bg-[#141414]">
           <FileText className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
           <div>
-            <p className="font-semibold text-foreground text-sm dark:text-foreground">
+            <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
               1.46 Billion+ Words Humanized Monthly
             </p>
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
+        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-white p-3 dark:border-green-600 dark:bg-[#141414]">
           <Check className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
           <div>
-            <p className="font-semibold text-foreground text-sm dark:text-foreground">
+            <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
               99.54% Success Rate
             </p>
             <div className="mt-2 flex items-center gap-1">
@@ -87,7 +87,7 @@ export function TrustSidebar() {
                 />
               ))}
             </div>
-            <p className="mt-1 text-muted-foreground text-xs dark:text-muted-foreground">
+            <p className="mt-1 text-slate-600 text-xs dark:text-slate-400">
               5,936 reviews on Trustpilot
             </p>
           </div>

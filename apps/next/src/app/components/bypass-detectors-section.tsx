@@ -12,10 +12,10 @@ const DETECTOR_LOGOS = [
 
 export function BypassDetectorsSection() {
   return (
-    <div className="w-full bg-background py-12 sm:py-16 md:py-20">
+    <div className="w-full bg-gradient-to-r from-yellow-50 via-white to-green-50 py-12 sm:py-16 md:py-20 dark:from-[#1a1a1a] dark:via-[#141414] dark:to-[#1a1a1a]">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-7xl text-center">
-          <h2 className="mb-12 font-semibold text-foreground text-xl sm:text-2xl md:text-3xl">
+          <h2 className="mb-12 font-semibold text-slate-900 text-xl sm:text-2xl md:text-3xl dark:text-white">
             Bypass AI content detectors
           </h2>
           <div className="flex flex-wrap items-center justify-center gap-12 sm:gap-14 md:gap-16 lg:gap-20 xl:gap-24">

@@ -17,6 +17,14 @@ const EMOJI_REACTIONS = [
   { emoji: "🤩", value: "very_happy" },
 ];
 
+const FEEDBACK_TOPICS = [
+  "Bug Report",
+  "Feature Request",
+  "General Feedback",
+  "Question",
+  "Other",
+];
+
 export function FeedbackPopover() {
   const [open, setOpen] = useState(false);
   const [topic, setTopic] = useState<string>("");
@@ -60,7 +68,7 @@ export function FeedbackPopover() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[420px] border-border bg-popover p-4"
+        className="w-[420px] border-slate-200 bg-white p-4 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]"
         side="bottom"
         sideOffset={8}
       >
@@ -77,7 +85,7 @@ export function FeedbackPopover() {
         {/* Footer with attachment indicator and emoji reactions */}
         <div className="mb-4 flex items-center justify-between">
           {/* Attachment indicator */}
-          <div className="flex items-center gap-1.5 text-muted-foreground text-xs">
+          <div className="flex items-center gap-1.5 text-slate-500 text-xs dark:text-slate-400">
             <Paperclip className="h-3.5 w-3.5" />
           </div>
 
@@ -103,7 +111,7 @@ export function FeedbackPopover() {
         {/* Send Button */}
         <div className="flex justify-end">
           <Button
-            className="cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
+            className="cursor-pointer bg-slate-900 text-white hover:bg-slate-800 dark:bg-[#282828] dark:text-white dark:hover:bg-[#343434]"
             disabled={loading || !feedback.trim()}
             onClick={handleSend}
             size="sm"

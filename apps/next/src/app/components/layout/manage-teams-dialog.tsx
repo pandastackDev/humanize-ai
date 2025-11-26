@@ -104,12 +104,12 @@ export function ManageTeamsDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="border-border bg-background text-left dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+      <DialogContent className="border-slate-200 bg-white text-left dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
         <DialogHeader className="text-left">
-          <DialogTitle className="font-semibold text-foreground text-xl dark:text-foreground">
+          <DialogTitle className="font-semibold text-slate-900 text-xl dark:text-white">
             Manage teams
           </DialogTitle>
-          <DialogDescription className="mt-2 text-muted-foreground text-sm leading-relaxed dark:text-muted-foreground">
+          <DialogDescription className="mt-2 text-slate-600 text-sm leading-relaxed dark:text-slate-300">
             View, edit, and manage your teams. Teams are shared environments
             where members can collaborate and share API resources.
           </DialogDescription>
@@ -119,8 +119,8 @@ export function ManageTeamsDialog({
           {/* Teams List */}
           <div className="space-y-2">
             {teams.length === 0 ? (
-              <div className="rounded-md border border-border bg-muted p-8 text-center dark:border-border dark:bg-card">
-                <p className="text-muted-foreground text-sm dark:text-muted-foreground">
+              <div className="rounded-md border border-slate-200 bg-slate-50 p-8 text-center dark:border-[#343434] dark:bg-[#141414]">
+                <p className="text-slate-600 text-sm dark:text-slate-400">
                   No teams yet. Create your first team to get started.
                 </p>
               </div>
@@ -128,13 +128,13 @@ export function ManageTeamsDialog({
               <div className="space-y-1">
                 {teams.map((team) => (
                   <div
-                    className="group flex items-center gap-2 rounded-md border border-border bg-card p-3 transition-all hover:border-border hover:shadow-sm dark:border-border dark:bg-card dark:hover:border-border/50"
+                    className="group flex items-center gap-2 rounded-md border border-slate-200 bg-white p-3 transition-all hover:border-slate-300 hover:shadow-sm dark:border-[#343434] dark:bg-[#141414] dark:hover:border-[#3a3a3a]"
                     key={team.id}
                   >
                     {editingTeamId === team.id ? (
                       <>
                         <Input
-                          className="flex-1 border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-border focus-visible:ring-ring dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:focus-visible:border-border dark:focus-visible:ring-ring dark:placeholder:text-muted-foreground"
+                          className="flex-1 border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus-visible:border-slate-400 focus-visible:ring-slate-400 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:focus-visible:border-slate-500 dark:focus-visible:ring-slate-500 dark:placeholder:text-slate-500"
                           disabled={loading}
                           onChange={(e) => setEditName(e.target.value)}
                           onKeyDown={(e) => {
@@ -162,7 +162,7 @@ export function ManageTeamsDialog({
                           size="sm"
                           variant="ghost"
                         >
-                          <X className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+                          <X className="h-4 w-4 text-slate-500 dark:text-slate-400" />
                         </Button>
                       </>
                     ) : (
@@ -172,7 +172,7 @@ export function ManageTeamsDialog({
                             <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
                           )}
                           <button
-                            className="flex-1 cursor-pointer text-left font-medium text-foreground text-sm dark:text-foreground"
+                            className="flex-1 cursor-pointer text-left font-medium text-slate-900 text-sm dark:text-white"
                             onClick={() => handleTeamSelect(team.id)}
                             type="button"
                           >
@@ -181,13 +181,13 @@ export function ManageTeamsDialog({
                         </div>
                         <div className="flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                           <Button
-                            className="h-8 w-8 rounded p-0 hover:bg-muted dark:hover:bg-muted"
+                            className="h-8 w-8 rounded p-0 hover:bg-slate-100 dark:hover:bg-[#282828]"
                             disabled={loading}
                             onClick={() => handleStartEdit(team)}
                             size="sm"
                             variant="ghost"
                           >
-                            <Edit2 className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
+                            <Edit2 className="h-4 w-4 text-slate-600 dark:text-slate-400" />
                           </Button>
                           <Button
                             className="h-8 w-8 rounded p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
@@ -214,7 +214,7 @@ export function ManageTeamsDialog({
 
           {/* Create Team Button */}
           <Button
-            className="w-full border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-muted"
+            className="w-full border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:hover:bg-[#282828]"
             onClick={handleCreateTeam}
             variant="outline"
           >
@@ -225,7 +225,7 @@ export function ManageTeamsDialog({
 
         <DialogFooter className="gap-2 sm:justify-end">
           <Button
-            className="border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-muted"
+            className="border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:hover:bg-[#282828]"
             disabled={loading}
             onClick={() => onOpenChange(false)}
             type="button"

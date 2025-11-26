@@ -41,33 +41,10 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.708 0 0);
-  --brand-primary: #0066ff;
-  --editor-bg: oklch(1 0 0);
-  --editor-border: oklch(1 0 0);
-  --tabs-bg: oklch(0.967 0.001 286.375);
-  --select-bg: oklch(1 0 0);
-  --select-hover: oklch(0.967 0.001 286.375);
-  --separator-bg: oklch(0.92 0.004 286.32);
-  /* Detector button colors - Light mode */
-  --detector-default-bg: rgb(245, 243, 255);
-  --detector-default-border: rgb(221, 214, 254);
-  --detector-default-text: rgb(91, 33, 182);
-  --detector-blue-bg: rgb(239, 246, 255);
-  --detector-blue-border: rgb(191, 219, 254);
-  --detector-blue-text: rgb(30, 64, 175);
-  --detector-red-bg: rgb(254, 242, 242);
-  --detector-red-border: rgb(254, 202, 202);
-  --detector-red-text: rgb(153, 27, 27);
-  --detector-green-bg: rgb(240, 253, 244);
-  --detector-green-border: rgb(187, 247, 208);
-  --detector-green-text: rgb(22, 101, 52);
-  --detector-orange-bg: rgb(255, 247, 237);
-  --detector-orange-border: rgb(254, 215, 170);
-  --detector-orange-text: rgb(154, 52, 18);
 }
 
 .dark {
-  --background: #141414;
+  --background: oklch(0.141 0.005 285.823);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.21 0.006 285.885);
   --card-foreground: oklch(0.985 0 0);
@@ -99,29 +76,6 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.439 0 0);
-  --brand-primary: #0066ff;
-  --editor-bg: #1d1d1d;
-  --editor-border: #1d1d1d;
-  --tabs-bg: #262626;
-  --select-bg: #1f1f1f;
-  --select-hover: #282828;
-  --separator-bg: #2a2a2a;
-  /* Detector button colors - Dark mode */
-  --detector-default-bg: rgb(30, 27, 75);
-  --detector-default-border: rgb(59, 51, 128);
-  --detector-default-text: rgb(196, 181, 253);
-  --detector-blue-bg: rgb(15, 23, 42);
-  --detector-blue-border: rgb(30, 58, 138);
-  --detector-blue-text: rgb(147, 197, 253);
-  --detector-red-bg: rgb(69, 10, 10);
-  --detector-red-border: rgb(127, 29, 29);
-  --detector-red-text: rgb(248, 113, 113);
-  --detector-green-bg: rgb(6, 44, 22);
-  --detector-green-border: rgb(20, 83, 45);
-  --detector-green-text: rgb(134, 239, 172);
-  --detector-orange-bg: rgb(69, 26, 3);
-  --detector-orange-border: rgb(154, 52, 18);
-  --detector-orange-text: rgb(251, 191, 36);
 }
 
 @theme inline {
@@ -161,29 +115,6 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --color-brand-primary: var(--brand-primary);
-  --color-editor-bg: var(--editor-bg);
-  --color-editor-border: var(--editor-border);
-  --color-vertical-border: #5f5e5e4a;
-  --color-tabs-bg: var(--tabs-bg);
-  --color-select-bg: var(--select-bg);
-  --color-select-hover: var(--select-hover);
-  --color-separator-bg: var(--separator-bg);
-  --color-detector-default-bg: var(--detector-default-bg);
-  --color-detector-default-border: var(--detector-default-border);
-  --color-detector-default-text: var(--detector-default-text);
-  --color-detector-blue-bg: var(--detector-blue-bg);
-  --color-detector-blue-border: var(--detector-blue-border);
-  --color-detector-blue-text: var(--detector-blue-text);
-  --color-detector-red-bg: var(--detector-red-bg);
-  --color-detector-red-border: var(--detector-red-border);
-  --color-detector-red-text: var(--detector-red-text);
-  --color-detector-green-bg: var(--detector-green-bg);
-  --color-detector-green-border: var(--detector-green-border);
-  --color-detector-green-text: var(--detector-green-text);
-  --color-detector-orange-bg: var(--detector-orange-bg);
-  --color-detector-orange-border: var(--detector-orange-border);
-  --color-detector-orange-text: var(--detector-orange-text);
   --font-family-sans: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   --font-family-heading:
     var(--font-heading), var(--font-sans), ui-sans-serif, system-ui, sans-serif;

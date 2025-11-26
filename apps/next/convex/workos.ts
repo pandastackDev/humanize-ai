@@ -62,7 +62,7 @@ export const verifyWebhook = internalAction({
       const parsed = JSON.parse(args.payload);
       console.log("[verifyWebhook] Signature verified successfully");
       return parsed;
-    } catch {
+    } catch (e) {
       throw new Error("Invalid JSON payload");
     }
   },

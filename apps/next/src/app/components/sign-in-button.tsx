@@ -42,7 +42,7 @@ export async function SignInButton({ large }: { large?: boolean }) {
     <div className="flex items-center gap-2">
       <Button
         asChild
-        className="border-border bg-background font-semibold text-foreground hover:bg-muted dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-foreground"
+        className="border border-slate-200 bg-white font-semibold text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#343434] dark:text-white"
         size={large ? "lg" : "default"}
         variant="outline"
       >
@@ -50,7 +50,7 @@ export async function SignInButton({ large }: { large?: boolean }) {
       </Button>
       <Button
         asChild
-        className="bg-[var(--color-brand-primary)] font-semibold text-white hover:bg-[var(--color-brand-primary)]/90"
+        className="bg-blue-600 font-semibold text-white hover:bg-blue-700"
         size={large ? "lg" : "default"}
       >
         <Link href={signUpUrl}>Sign up for free</Link>

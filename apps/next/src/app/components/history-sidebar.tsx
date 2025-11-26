@@ -148,10 +148,10 @@ export function HistorySidebar({
 
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent className="w-full overflow-y-auto bg-background px-6 sm:max-w-md">
+      <SheetContent className="w-full overflow-y-auto bg-white px-6 sm:max-w-md dark:bg-[#1d1d1d]">
         <SheetHeader>
-          <SheetTitle>History</SheetTitle>
-          <SheetDescription>
+          <SheetTitle className="dark:text-white">History</SheetTitle>
+          <SheetDescription className="dark:text-slate-400">
             View and restore your previous humanizations
           </SheetDescription>
         </SheetHeader>
@@ -160,21 +160,21 @@ export function HistorySidebar({
         {history.length > 0 && (
           <div className="mt-6">
             <div className="relative">
-              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-muted-foreground" />
+              <Search className="-translate-y-1/2 absolute top-1/2 left-3 h-4 w-4 text-slate-400 dark:text-slate-500" />
               <Input
-                className="h-9 w-full border-input bg-background pr-9 pl-9 text-foreground placeholder:text-muted-foreground"
+                className="h-9 w-full border-slate-200 bg-white pr-9 pl-9 text-slate-900 placeholder:text-slate-400 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:placeholder:text-slate-400"
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search history..."
                 value={searchQuery}
               />
               {searchQuery && (
                 <Button
-                  className="-translate-y-1/2 absolute top-1/2 right-1 h-7 w-7 rounded p-0 hover:bg-muted"
+                  className="-translate-y-1/2 absolute top-1/2 right-1 h-7 w-7 rounded p-0 hover:bg-slate-100 dark:hover:bg-slate-700"
                   onClick={() => setSearchQuery("")}
                   size="sm"
                   variant="ghost"
                 >
-                  <X className="h-3 w-3 text-muted-foreground" />
+                  <X className="h-3 w-3 dark:text-slate-400" />
                 </Button>
               )}
             </div>
@@ -186,8 +186,8 @@ export function HistorySidebar({
             if (history.length === 0) {
               return (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Clock className="mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground text-sm">
+                  <Clock className="mb-4 h-12 w-12 text-slate-400 dark:text-slate-500" />
+                  <p className="text-slate-600 text-sm dark:text-slate-400">
                     No history yet. Your humanizations will appear here.
                   </p>
                 </div>
@@ -196,8 +196,8 @@ export function HistorySidebar({
             if (filteredHistory.length === 0) {
               return (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
-                  <Search className="mb-4 h-12 w-12 text-muted-foreground" />
-                  <p className="text-muted-foreground text-sm">
+                  <Search className="mb-4 h-12 w-12 text-slate-400 dark:text-slate-500" />
+                  <p className="text-slate-600 text-sm dark:text-slate-400">
                     No results found for &quot;{searchQuery}&quot;
                   </p>
                 </div>
@@ -205,11 +205,11 @@ export function HistorySidebar({
             }
             return filteredHistory.map((item) => (
               <div
-                className="group relative rounded-lg border border-border bg-card p-4 transition-all hover:border-border hover:shadow-sm"
+                className="group relative rounded-lg border border-slate-200 bg-white p-4 transition-all hover:border-slate-300 hover:shadow-sm dark:border-[#2a2a2a] dark:bg-[#141414] dark:hover:border-[#3a3a3a]"
                 key={item.id}
               >
                 <Button
-                  className="absolute top-2 right-2 h-7 w-7 rounded p-0 text-muted-foreground opacity-0 transition-opacity hover:bg-muted group-hover:opacity-100"
+                  className="absolute top-2 right-2 h-7 w-7 rounded p-0 opacity-0 transition-opacity hover:bg-slate-100 group-hover:opacity-100 dark:text-slate-400 dark:hover:bg-slate-700"
                   onClick={(e) => {
                     e.stopPropagation();
                     onDeleteHistory(item.id);
@@ -229,14 +229,14 @@ export function HistorySidebar({
                   type="button"
                 >
                   <div className="mb-2 flex items-center justify-between">
-                    <span className="font-medium text-card-foreground text-xs">
+                    <span className="font-medium text-slate-900 text-xs dark:text-slate-100">
                       {formatDate(item.timestamp)}
                     </span>
-                    <span className="text-muted-foreground text-xs">
+                    <span className="text-slate-500 text-xs dark:text-slate-400">
                       {item.wordCount} words
                     </span>
                   </div>
-                  <p className="line-clamp-2 text-muted-foreground text-xs">
+                  <p className="line-clamp-2 text-slate-600 text-xs dark:text-slate-400">
                     {item.originalText.substring(0, 150)}
                     {item.originalText.length > 150 ? "..." : ""}
                   </p>
@@ -257,14 +257,16 @@ export function HistorySidebar({
         }}
         open={detailViewOpen}
       >
-        <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto bg-background">
+        <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto bg-white dark:bg-[#1d1d1d]">
           {selectedItem && (
             <>
-              <DialogHeader className="border-border border-b pb-4">
+              <DialogHeader className="border-b pb-4 dark:border-[#2a2a2a]">
                 <div className="flex items-center justify-between">
                   <div>
-                    <DialogTitle>History command popup</DialogTitle>
-                    <DialogDescription>
+                    <DialogTitle className="dark:text-white">
+                      History command popup
+                    </DialogTitle>
+                    <DialogDescription className="dark:text-slate-400">
                       {formatDate(selectedItem.timestamp)} •{" "}
                       {selectedItem.wordCount} words
                     </DialogDescription>
@@ -280,7 +282,7 @@ export function HistorySidebar({
                       title="Delete"
                       variant="ghost"
                     >
-                      <Trash2 className="h-4 w-4 text-muted-foreground" />
+                      <Trash2 className="h-4 w-4 dark:text-slate-400" />
                     </Button>
                     <Button
                       className="h-8 w-8 p-0"
@@ -288,7 +290,7 @@ export function HistorySidebar({
                       title="Close"
                       variant="ghost"
                     >
-                      <X className="h-4 w-4 text-muted-foreground" />
+                      <X className="h-4 w-4 dark:text-slate-400" />
                     </Button>
                   </div>
                 </div>
@@ -302,15 +304,15 @@ export function HistorySidebar({
                   }
                   value={activeTab}
                 >
-                  <TabsList className="grid w-full grid-cols-2 bg-muted">
+                  <TabsList className="grid w-full grid-cols-2 bg-slate-100 dark:bg-[#141414]">
                     <TabsTrigger
-                      className="text-muted-foreground data-[state=active]:text-foreground"
+                      className="dark:text-slate-400 dark:data-[state=active]:text-white"
                       value="input"
                     >
                       Input Text
                     </TabsTrigger>
                     <TabsTrigger
-                      className="text-muted-foreground data-[state=active]:text-foreground"
+                      className="dark:text-slate-400 dark:data-[state=active]:text-white"
                       value="humanized"
                     >
                       Humanized
@@ -318,16 +320,16 @@ export function HistorySidebar({
                   </TabsList>
 
                   <TabsContent className="mt-4" value="input">
-                    <div className="rounded-lg border border-border bg-muted p-4">
-                      <p className="whitespace-pre-wrap break-words text-foreground text-sm leading-relaxed">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-[#2a2a2a] dark:bg-[#141414]">
+                      <p className="whitespace-pre-wrap break-words text-slate-900 text-sm leading-relaxed dark:text-slate-200">
                         {selectedItem.originalText}
                       </p>
                     </div>
                   </TabsContent>
 
                   <TabsContent className="mt-4" value="humanized">
-                    <div className="rounded-lg border border-border bg-muted p-4">
-                      <p className="whitespace-pre-wrap break-words text-foreground text-sm leading-relaxed">
+                    <div className="rounded-lg border border-slate-200 bg-slate-50 p-4 dark:border-[#2a2a2a] dark:bg-[#141414]">
+                      <p className="whitespace-pre-wrap break-words text-slate-900 text-sm leading-relaxed dark:text-slate-200">
                         {selectedItem.humanizedText}
                       </p>
                     </div>
@@ -384,24 +386,24 @@ export function HistorySidebar({
                 )}
 
                 {/* Stats and Actions Row */}
-                <div className="space-y-4 border-border border-t pt-4">
+                <div className="space-y-4 border-t pt-4 dark:border-[#2a2a2a]">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-6">
                       {selectedItem.humanScore && (
                         <div className="flex flex-col">
-                          <span className="font-semibold text-foreground text-sm">
+                          <span className="font-semibold text-slate-900 text-sm dark:text-slate-100">
                             {selectedItem.humanScore}%
                           </span>
-                          <span className="text-muted-foreground text-xs">
+                          <span className="text-slate-500 text-xs dark:text-slate-400">
                             HUMAN WRITTEN
                           </span>
                         </div>
                       )}
                       <div className="flex flex-col">
-                        <span className="font-semibold text-foreground text-sm">
+                        <span className="font-semibold text-slate-900 text-sm dark:text-slate-100">
                           {selectedItem.wordCount}
                         </span>
-                        <span className="text-muted-foreground text-xs">
+                        <span className="text-slate-500 text-xs dark:text-slate-400">
                           Words
                         </span>
                       </div>
@@ -420,7 +422,7 @@ export function HistorySidebar({
                         title="Copy"
                         variant="ghost"
                       >
-                        <Copy className="h-4 w-4 text-muted-foreground" />
+                        <Copy className="h-4 w-4 dark:text-slate-400" />
                       </Button>
                       <Button
                         className="h-8 w-8 p-0"
@@ -437,7 +439,7 @@ export function HistorySidebar({
                         title="Download"
                         variant="ghost"
                       >
-                        <Download className="h-4 w-4 text-muted-foreground" />
+                        <Download className="h-4 w-4 dark:text-slate-400" />
                       </Button>
                     </div>
                   </div>
@@ -463,7 +465,7 @@ export function HistorySidebar({
                       Check for AI
                     </Button>
                     <Button
-                      className="flex-1 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
+                      className="flex-1 cursor-pointer bg-[#0066ff] text-white hover:bg-[#0052cc] dark:bg-[#0066ff] dark:hover:bg-[#0052cc]"
                       onClick={() => handleRestoreToEditor(selectedItem)}
                       size="sm"
                     >

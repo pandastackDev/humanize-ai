@@ -17,9 +17,7 @@ import {
 } from "@humanize/ui/components/dropdown-menu";
 import type { User } from "@workos-inc/node";
 import {
-  Cookie,
   HelpCircle,
-  LogOut,
   MessageSquare,
   Monitor,
   Moon,
@@ -28,10 +26,10 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "next-themes";
 import { useEffect, useState } from "react";
 import signOut from "@/actions/signOut";
-import { ManageCookiesDialog } from "./manage-cookies-dialog";
 
 // Helper function to detect if it's night time (6 PM to 6 AM)
 const getIsNightTime = (): boolean => {
@@ -43,13 +41,14 @@ const getIsNightTime = (): boolean => {
 
 export function UserNav({
   user,
+  role: _role,
 }: {
   user: User;
-  role?: string | undefined;
+  role: string | undefined;
   organizationName?: string;
 }) {
+  const pathname = usePathname();
   const [open, setOpen] = useState(false);
-  const [cookiesDialogOpen, setCookiesDialogOpen] = useState(false);
   const { setTheme, theme } = useTheme();
   const [isSystemMode, setIsSystemMode] = useState(false);
   const [isNightTime, setIsNightTime] = useState(getIsNightTime());
@@ -103,11 +102,11 @@ export function UserNav({
   }, [theme]);
 
   // Compute system button active state class
-  let systemButtonClass = "text-muted-foreground hover:text-foreground";
+  let systemButtonClass = "text-slate-500 hover:text-slate-900";
   if (isSystemMode) {
     systemButtonClass = isNightTime
-      ? "bg-muted text-foreground"
-      : "bg-muted text-foreground";
+      ? "bg-slate-100 text-slate-900 dark:bg-[#282828] dark:text-white"
+      : "bg-slate-100 text-slate-900 dark:bg-[#282828] dark:text-white";
   }
 
   return (
@@ -128,7 +127,11 @@ export function UserNav({
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-64" forceMount>
+      <DropdownMenuContent
+        align="end"
+        className="w-64 dark:bg-[#1d1d1d]"
+        forceMount
+      >
         {/* User Info Section - Simple like third image */}
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-0.5">
@@ -145,12 +148,12 @@ export function UserNav({
         <div className="px-2 py-1">
           <div className="flex items-center justify-between">
             {/* <span className="text-muted-foreground text-sm">Theme</span> */}
-            <div className="flex items-center gap-1 rounded-md border border-border bg-muted p-0.5">
+            <div className="flex items-center gap-1 rounded-md border p-0.5 dark:border-[#343434] dark:bg-[#343434]">
               <button
                 className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                   !isSystemMode && theme === "light"
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-slate-100 text-slate-900"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
                 onClick={() => {
                   setIsSystemMode(false);
@@ -158,19 +161,13 @@ export function UserNav({
                 }}
                 type="button"
               >
-                <Sun
-                  className={`h-5 w-5 cursor-pointer ${
-                    !isSystemMode && theme === "light"
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                />
+                <Sun className="h-5 w-5 cursor-pointer dark:text-[#7a7a7a]" />
               </button>
               <button
                 className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                   !isSystemMode && theme === "dark"
-                    ? "bg-muted text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
+                    ? "bg-slate-100 text-slate-900 dark:bg-[#282828] dark:text-white"
+                    : "text-slate-500 hover:text-slate-900"
                 }`}
                 onClick={() => {
                   setIsSystemMode(false);
@@ -178,13 +175,7 @@ export function UserNav({
                 }}
                 type="button"
               >
-                <Moon
-                  className={`h-5 w-5 cursor-pointer ${
-                    !isSystemMode && theme === "dark"
-                      ? "text-foreground"
-                      : "text-muted-foreground"
-                  }`}
-                />
+                <Moon className="h-5 w-5 cursor-pointer dark:text-white" />
               </button>
               <button
                 className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${systemButtonClass}`}
@@ -199,17 +190,13 @@ export function UserNav({
                 }}
                 type="button"
               >
-                <Monitor
-                  className={`h-5 w-5 cursor-pointer ${
-                    isSystemMode ? "text-foreground" : "text-muted-foreground"
-                  }`}
-                />
+                <Monitor className="h-5 w-5 cursor-pointer dark:text-[#7a7a7a]" />
               </button>
             </div>
           </div>
         </div>
 
-        <DropdownMenuSeparator className="mx-[-4px]" />
+        <DropdownMenuSeparator />
 
         {/* Menu Items */}
         <DropdownMenuGroup>
@@ -243,33 +230,22 @@ export function UserNav({
               Leave feedback
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => {
-              setOpen(false);
-              setCookiesDialogOpen(true);
-            }}
-          >
-            <Cookie className="mr-2 h-4 w-4" />
-            Manage cookies
-          </DropdownMenuItem>
         </DropdownMenuGroup>
 
-        <DropdownMenuSeparator className="mx-[-4px]" />
+        <DropdownMenuSeparator />
 
         {/* Log Out */}
         <DropdownMenuItem
-          className="mb-1 h-8 cursor-pointer px-2 py-1.5 text-sm"
+          className="h-8 cursor-pointer px-2 py-1.5 text-sm"
           onClick={async () => {
             await signOut();
           }}
         >
-          <LogOut className="mr-2 h-4 w-4" />
           Log out
         </DropdownMenuItem>
 
         {/* Upgrade to Pro Button */}
-        <div className="mx-[-4px] border-t px-2 pt-2 pb-2">
+        <div className="border-t p-2">
           <Button
             className="w-full cursor-pointer"
             onClick={() => {
@@ -282,10 +258,6 @@ export function UserNav({
           </Button>
         </div>
       </DropdownMenuContent>
-      <ManageCookiesDialog
-        onOpenChange={setCookiesDialogOpen}
-        open={cookiesDialogOpen}
-      />
     </DropdownMenu>
   );
 }

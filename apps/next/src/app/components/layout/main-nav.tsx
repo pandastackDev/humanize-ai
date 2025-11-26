@@ -158,14 +158,14 @@ export function MainNav() {
       <NavigationMenuList className="flex-wrap gap-4 xl:gap-6">
         <NavigationMenuItem value="free-tools">
           <NavigationMenuTrigger
-            className="bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent/50 data-[state=open]:text-accent-foreground"
+            className="bg-transparent text-slate-900 hover:bg-transparent hover:text-slate-900 focus:bg-transparent data-[state=open]:bg-transparent dark:text-white dark:hover:text-white"
             value="free-tools"
           >
             Free Tools
           </NavigationMenuTrigger>
           <NavigationMenuContent className="!left-0 !top-full !mt-1.5 !w-auto !p-0 !bg-transparent !border-0 !shadow-none !rounded-none">
-            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-border bg-card px-4 py-5 shadow-xl sm:px-8 sm:py-7">
-              <div className="mb-4 font-bold text-card-foreground text-sm sm:text-base">
+            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-slate-200 bg-white px-4 py-5 shadow-xl sm:px-8 sm:py-7 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
+              <div className="mb-4 font-bold text-slate-900 text-sm sm:text-base dark:text-white">
                 Free Tools
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:gap-6">
@@ -174,7 +174,7 @@ export function MainNav() {
                     className="w-full min-w-[160px] sm:w-[200px]"
                     key={category}
                   >
-                    <div className="mb-3 font-semibold text-card-foreground text-xs sm:text-sm">
+                    <div className="mb-3 font-semibold text-slate-800 text-xs sm:text-sm dark:text-white">
                       {category}
                     </div>
                     <ul className="list-none space-y-2">
@@ -182,7 +182,7 @@ export function MainNav() {
                         <li key={tool.title}>
                           <NavigationMenuLink asChild>
                             <Link
-                              className="block scale-[0.98] transform text-muted-foreground text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-primary active:scale-[0.95] sm:text-sm"
+                              className="block scale-[0.98] transform text-slate-600 text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-indigo-600 active:scale-[0.95] sm:text-sm dark:text-slate-300 dark:hover:text-white"
                               href={tool.href}
                             >
                               {tool.title}
@@ -201,10 +201,10 @@ export function MainNav() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
-              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:outline-none"
-              href="/faq"
+              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-slate-900 text-sm hover:bg-transparent hover:text-slate-900 focus:bg-transparent focus:text-slate-900 focus-visible:outline-none dark:text-white dark:focus:text-white dark:hover:text-white"
+              href="/pricing"
             >
-              FAQ
+              Pricing
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -212,32 +212,10 @@ export function MainNav() {
         <NavigationMenuItem>
           <NavigationMenuLink asChild>
             <Link
-              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:outline-none"
+              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-slate-900 text-sm hover:bg-transparent hover:text-slate-900 focus:bg-transparent focus:text-slate-900 focus-visible:outline-none dark:text-white dark:focus:text-white dark:hover:text-white"
               href="/affiliate"
             >
               Become an affiliate
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link
-              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:outline-none"
-              href="/api"
-            >
-              API
-            </Link>
-          </NavigationMenuLink>
-        </NavigationMenuItem>
-
-        <NavigationMenuItem>
-          <NavigationMenuLink asChild>
-            <Link
-              className="inline-flex h-9 w-max items-center justify-center rounded-md bg-transparent px-4 py-2 font-medium text-foreground text-sm transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus-visible:outline-none"
-              href="/contact"
-            >
-              Contact
             </Link>
           </NavigationMenuLink>
         </NavigationMenuItem>
@@ -289,27 +267,15 @@ function CompactNav() {
 
       <Link
         className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
-        href="/faq"
+        href="/pricing"
       >
-        FAQ
+        Pricing
       </Link>
       <Link
         className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
         href="/affiliate"
       >
         Become an affiliate
-      </Link>
-      <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
-        href="/api"
-      >
-        API
-      </Link>
-      <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
-        href="/contact"
-      >
-        Contact
       </Link>
     </div>
   );

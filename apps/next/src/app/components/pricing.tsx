@@ -10,7 +10,6 @@ import {
 import { LoadingSpinner } from "@humanize/ui/components/loading-spinner";
 import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import { Check } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import redirectToBillingPortal from "@/actions/redirectToBillingPortal";
 import {
@@ -60,12 +59,12 @@ function PricingCard({
     if (!userId) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
           onClick={() => {
             window.location.href = "/login";
           }}
         >
-          Subscribe
+          Sign in to Subscribe
         </Button>
       );
     }
@@ -73,7 +72,7 @@ function PricingCard({
     if (subscriptionLoading) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
           disabled
         >
           <LoadingSpinner className="mr-2" size="sm" />
@@ -85,7 +84,7 @@ function PricingCard({
     if (hasActiveSubscription) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="mt-auto w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
           onClick={onManageSubscription}
         >
           Manage Subscription
@@ -95,7 +94,7 @@ function PricingCard({
 
     return (
       <Button
-        className="w-full cursor-pointer bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+        className="mt-auto w-full cursor-pointer bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
         disabled={isCurrentPlanLoading}
         onClick={() => onSubscribe(plan.name)}
       >
@@ -125,22 +124,25 @@ function PricingCard({
         className={`flex h-full cursor-pointer flex-col transition-all ${
           isSelected
             ? "border-2 border-[var(--primary)] shadow-lg"
-            : "border-border"
-        } bg-card`}
+            : "border-slate-200 dark:border-[#2a2a2a]"
+        } dark:bg-[#1d1d1d]`}
         onClick={onSelect}
       >
         <CardHeader>
           <CardTitle
-            className={`text-xl ${
-              isSelected ? "text-primary" : "text-card-foreground"
+            className={`text-xl dark:text-white ${
+              isSelected ? "text-[var(--primary)]" : "text-slate-900"
             }`}
           >
             {plan.name}
           </CardTitle>
+          <p className="text-muted-foreground text-sm dark:text-slate-400">
+            {plan.description}
+          </p>
         </CardHeader>
         <CardContent className="flex flex-1 flex-col gap-4">
           <div className="flex flex-wrap items-baseline gap-2">
-            <p className="font-bold text-3xl text-card-foreground sm:text-4xl">
+            <p className="font-bold text-3xl sm:text-4xl dark:text-white">
               {plan.currency}
               {plan.price.toFixed(2)}
             </p>
@@ -154,11 +156,7 @@ function PricingCard({
               Per month, billed{" "}
               {billingPeriod === "annual" ? "annually" : "monthly"}
             </p>
-            <p className="text-black text-sm dark:text-white">
-              {plan.description}
-            </p>
           </div>
-          {renderButton()}
           <div className="flex flex-1 flex-col gap-3">
             {plan.features.map((feature, index) => (
               <div
@@ -166,10 +164,13 @@ function PricingCard({
                 key={`${plan.name}-${index}`}
               >
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
-                <p className="text-card-foreground text-sm">{feature}</p>
+                <p className="text-slate-700 text-sm dark:text-slate-300">
+                  {feature}
+                </p>
               </div>
             ))}
           </div>
+          {renderButton()}
         </CardContent>
       </Card>
     </div>
@@ -416,7 +417,7 @@ export function Pricing({
           }
           value={billingPeriod}
         >
-          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0.5 rounded-[32px] bg-muted p-0.5 [&_button]:min-h-0">
+          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0.5 rounded-[32px] bg-slate-100 p-0.5 dark:bg-[#262626] [&_button]:min-h-0">
             {/* Sliding indicator */}
             <div
               className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[var(--primary)] transition-all duration-300 ease-in-out"
@@ -426,13 +427,13 @@ export function Pricing({
               }}
             />
             <TabsTrigger
-              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white dark:text-gray-300"
+              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:text-white dark:text-gray-300"
               value="monthly"
             >
               <span className="whitespace-nowrap">Monthly</span>
             </TabsTrigger>
             <TabsTrigger
-              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white dark:text-gray-300"
+              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:text-white dark:text-gray-300"
               value="annual"
             >
               <span className="whitespace-nowrap">Annual</span>
@@ -464,39 +465,6 @@ export function Pricing({
             userId={userId}
           />
         ))}
-      </div>
-
-      {/* Footer Section */}
-      <div className="flex flex-col items-center gap-4 text-center text-muted-foreground text-sm">
-        <p>
-          Need more?{" "}
-          <Link
-            className="text-foreground underline hover:text-muted-foreground"
-            href="/contact"
-          >
-            Contact Us
-          </Link>
-        </p>
-        <p>
-          By continuing to use this website, you acknowledge agreement to the{" "}
-          <Link
-            className="text-foreground underline hover:text-muted-foreground"
-            href="/terms"
-          >
-            Terms of Use
-          </Link>
-          .
-        </p>
-        <p>
-          Natural Write is not a tool for academic dishonesty or cheating.{" "}
-          <Link
-            className="text-foreground underline hover:text-muted-foreground"
-            href="/academic-integrity"
-          >
-            Read more
-          </Link>
-          .
-        </p>
       </div>
     </div>
   );

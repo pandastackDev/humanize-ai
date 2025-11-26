@@ -181,7 +181,7 @@ ${result.detector_results
 
   // Loading screen component with all detectors
   const renderLoadingScreen = () => (
-    <Card className="flex h-[600px] flex-col items-center justify-center bg-card/95 px-4 py-8 backdrop-blur-sm dark:bg-editor-bg/95">
+    <Card className="flex h-[600px] flex-col items-center justify-center bg-white/95 px-4 py-8 backdrop-blur-sm dark:bg-slate-900/95">
       <CardContent className="w-full max-w-4xl">
         {/* Purple heading */}
         <h2 className="mb-2 text-center font-bold text-2xl text-purple-600 dark:text-purple-400">
@@ -189,7 +189,7 @@ ${result.detector_results
         </h2>
 
         {/* Description */}
-        <p className="mx-auto mb-8 max-w-2xl text-center text-muted-foreground text-sm">
+        <p className="mx-auto mb-8 max-w-2xl text-center text-slate-600 text-sm dark:text-slate-400">
           This may take a few seconds as we cross-verify results across multiple
           platforms for maximum accuracy.
         </p>
@@ -198,7 +198,7 @@ ${result.detector_results
         <div className="grid w-full grid-cols-2 gap-4 md:grid-cols-4">
           {ALL_DETECTORS.map((detector, index) => (
             <div
-              className="relative flex flex-col items-center justify-center rounded-lg bg-card/50 p-4 shadow-sm backdrop-blur-md transition-all hover:shadow-md dark:bg-editor-bg/50"
+              className="relative flex flex-col items-center justify-center rounded-lg bg-white/50 p-4 shadow-sm backdrop-blur-md transition-all hover:shadow-md dark:bg-slate-800/50"
               key={detector.name}
               style={{
                 animationDelay: `${index * 50}ms`,
@@ -216,7 +216,7 @@ ${result.detector_results
               </div>
 
               {/* Detector name */}
-              <span className="mb-1 text-center font-medium text-card-foreground text-xs">
+              <span className="mb-1 text-center font-medium text-slate-700 text-xs dark:text-slate-300">
                 {detector.name}
               </span>
 
@@ -266,7 +266,7 @@ ${result.detector_results
                   {result.human_likelihood_pct.toFixed(1)}%
                 </span>
               </div>
-              <div className="h-2.5 w-full rounded-full bg-muted dark:bg-editor-bg">
+              <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                 <div
                   className="h-2.5 rounded-full bg-green-600 transition-all"
                   style={{ width: `${result.human_likelihood_pct}%` }}
@@ -283,7 +283,7 @@ ${result.detector_results
                   {result.ai_likelihood_pct.toFixed(1)}%
                 </span>
               </div>
-              <div className="h-2.5 w-full rounded-full bg-muted dark:bg-editor-bg">
+              <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
                 <div
                   className="h-2.5 rounded-full bg-red-600 transition-all"
                   style={{ width: `${result.ai_likelihood_pct}%` }}
@@ -475,7 +475,7 @@ ${result.detector_results
                 <label className="flex cursor-pointer items-center gap-2">
                   <input
                     checked={includeInternal}
-                    className="h-4 w-4 rounded border-border"
+                    className="h-4 w-4 rounded border-gray-300"
                     onChange={(e) => setIncludeInternal(e.target.checked)}
                     type="checkbox"
                   />

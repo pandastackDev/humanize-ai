@@ -29,8 +29,7 @@
         "NODE_ENV",
         "WORKOS_WEBHOOK_SECRET",
         "STRIPE_WEBHOOK_SECRET",
-        "SKIP_ENV_VALIDATION",
-        "CONVEX_SITE_URL"
+        "SKIP_ENV_VALIDATION"
       ]
     },
     "lint-ci": {
