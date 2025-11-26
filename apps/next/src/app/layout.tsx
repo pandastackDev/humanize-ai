@@ -8,6 +8,7 @@ import "@workos-inc/widgets/styles.css";
 import type { Metadata } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
+import { CookieConsentBanner } from "./components/layout/cookie-consent-banner";
 import { DynamicBackground } from "./components/layout/dynamic-background";
 import { Footer } from "./components/layout/footer";
 import { Header } from "./components/layout/header";
@@ -54,6 +55,7 @@ export default function RootLayout({
                       <main className="relative z-1">{children}</main>
                     </div>
                     <Footer />
+                    <CookieConsentBanner />
                   </AuthKitProvider>
                 </div>
               </DynamicBackground>

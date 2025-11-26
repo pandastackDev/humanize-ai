@@ -80,13 +80,13 @@ export function ThesaurusPopover({
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="w-64 p-3">
         <div className="mb-2">
-          <p className="font-semibold text-slate-900 text-sm dark:text-slate-100">
+          <p className="font-semibold text-foreground text-sm dark:text-foreground">
             Synonyms for &ldquo;{word}&rdquo;
           </p>
         </div>
         {isLoading ? (
           <div className="flex items-center justify-center py-4">
-            <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+            <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
           </div>
         ) : (
           <div className="flex flex-wrap gap-2">

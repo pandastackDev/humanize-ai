@@ -51,17 +51,17 @@ export function CreateTeamDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="border-slate-200 bg-white text-left dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
+      <DialogContent className="border-border bg-card text-left">
         <DialogHeader className="text-left">
-          <DialogTitle className="font-semibold text-slate-900 text-xl dark:text-white">
+          <DialogTitle className="font-semibold text-card-foreground text-xl">
             Create a new team
           </DialogTitle>
-          <DialogDescription className="mt-2 text-slate-600 text-sm leading-relaxed dark:text-slate-300">
+          <DialogDescription className="mt-2 text-muted-foreground text-sm leading-relaxed">
             Teams are shared environments where members can collaborate and
             share API resources. You can set custom rate limits and manage
             access to resources.{" "}
             <button
-              className="text-slate-900 underline hover:text-slate-700 dark:text-white dark:hover:text-slate-300"
+              className="text-card-foreground underline hover:text-primary"
               onClick={(e) => {
                 e.preventDefault();
                 // Handle learn more click
@@ -77,17 +77,17 @@ export function CreateTeamDialog({
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label
-              className="font-semibold text-slate-900 text-sm dark:text-white"
+              className="font-semibold text-card-foreground text-sm"
               htmlFor="team-name"
             >
               Name
             </Label>
-            <p className="text-slate-500 text-xs dark:text-slate-400">
+            <p className="text-muted-foreground text-xs">
               Human-friendly label for your team, shown in user interfaces and
               on exports
             </p>
             <Input
-              className="border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus-visible:border-slate-400 focus-visible:ring-slate-400 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:focus-visible:border-slate-500 dark:focus-visible:ring-slate-500 dark:placeholder:text-slate-500"
+              className="border-border bg-background text-card-foreground placeholder:text-muted-foreground focus-visible:border-primary focus-visible:ring-primary"
               id="team-name"
               onChange={(e) => setTeamName(e.target.value)}
               onKeyDown={(e) => {
@@ -103,7 +103,7 @@ export function CreateTeamDialog({
 
         <DialogFooter className="gap-2 sm:justify-end">
           <Button
-            className="border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:hover:bg-[#282828]"
+            className="border-border bg-background text-card-foreground hover:bg-muted"
             disabled={loading}
             onClick={handleCancel}
             type="button"
@@ -112,7 +112,7 @@ export function CreateTeamDialog({
             Cancel
           </Button>
           <Button
-            className="bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
             disabled={loading || !teamName.trim()}
             onClick={handleCreate}
             type="button"
