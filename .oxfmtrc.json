@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "ignorePatterns": [
+    "apps/next/convex/_generated/**/*",
+    "packages/ui/src/components/**/*",
+    "playground/**/*",
+    "backend/**/*",
+    "*.gen.ts"
+  ],
+  "printWidth": 80,
+  "trailingComma": "es5"
+}
