@@ -6,6 +6,7 @@
     "ignoreUnknown": true,
     "includes": [
       "**/*",
+      "!apps/next/convex/_generated/**/*",
       "!packages/ui/src/components/**/*",
       "!apps/expo/metro.config.js",
       "!playground/**/*",
