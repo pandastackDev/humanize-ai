@@ -1,0 +1,24 @@
+# Secrets / env files
+.env
+*.env
+*.key
+*.pem
+
+# Editor / tooling
+.vscode
+.idea
+*.log
+
+# Python caches / tooling
+.pytest_cache
+.mypy_cache
+.ruff_cache
+.tox
+.coverage
+htmlcov/
+
+# Local-only data / assets
+docs/
+playground/
+scripts/
+tmp/
