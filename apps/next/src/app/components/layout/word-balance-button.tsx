@@ -101,7 +101,7 @@ export function WordBalanceButton({
         <Button onClick={() => setDialogOpen(true)}>Get more words</Button>
       </div>
       <WordPurchaseDialog
-        currentBalance={wordBalance ?? 0}
+        currentBalance={totalAvailable ?? 0}
         onOpenChange={handleDialogClose}
         open={dialogOpen}
         organizationId={organizationId}

@@ -34,6 +34,7 @@ export function HelpPopover() {
   const [cookiesDialogOpen, setCookiesDialogOpen] = useState(false);
   const { setTheme, theme } = useTheme();
   const [isSystemMode, setIsSystemMode] = useState(false);
+  const [isNightTime, setIsNightTime] = useState(getIsNightTime());
 
   // Check if system mode is active on mount
   useEffect(() => {
@@ -43,6 +44,7 @@ export function HelpPopover() {
       setTimeout(() => {
         setIsSystemMode(true);
         const isNight = getIsNightTime();
+        setIsNightTime(isNight);
         setTheme(isNight ? "dark" : "light");
       }, 0);
     }
@@ -53,6 +55,7 @@ export function HelpPopover() {
     if (isSystemMode) {
       const checkTime = () => {
         const isNight = getIsNightTime();
+        setIsNightTime(isNight);
         setTheme(isNight ? "dark" : "light");
       };
 
@@ -80,18 +83,18 @@ export function HelpPopover() {
   }, [theme]);
 
   // Compute system button active state class
-  let systemButtonClass =
-    "text-slate-500 hover:text-slate-900 dark:text-slate-400";
+  let systemButtonClass = "text-muted-foreground hover:text-foreground";
   if (isSystemMode) {
-    systemButtonClass =
-      "bg-slate-100 text-slate-900 dark:bg-[#282828] dark:text-white border border-slate-300 dark:border-[#3a3a3a]";
+    systemButtonClass = isNightTime
+      ? "bg-muted text-foreground"
+      : "bg-muted text-foreground";
   }
 
   return (
     <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
         <Button
-          className="h-9 w-9 rounded-full border border-slate-200 bg-white p-0 text-slate-600 hover:bg-slate-50 hover:text-slate-900 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-slate-400 dark:hover:bg-[#282828] dark:hover:text-white"
+          className="h-9 w-9 rounded-full border border-input bg-background p-0 text-muted-foreground hover:bg-accent hover:text-foreground"
           size="icon"
           variant="outline"
         >
@@ -100,54 +103,71 @@ export function HelpPopover() {
       </PopoverTrigger>
       <PopoverContent
         align="end"
-        className="w-[240px] border-slate-200 bg-white p-3 dark:border-[#1d1d1d] dark:bg-[#1d1d1d]"
+        className="w-[240px] border-border bg-popover p-3"
         side="bottom"
         sideOffset={8}
       >
         {/* Theme Toggle Section */}
         <div className="mb-3">
-          <div className="flex items-center justify-center gap-1 rounded-md border border-slate-200 bg-slate-50 p-0.5 dark:border-[#343434] dark:bg-[#141414]">
+          <div className="flex items-center justify-center gap-1 rounded-md border border-border bg-muted p-0.5">
             <button
               className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                 !isSystemMode && theme === "light"
-                  ? "border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-[#3a3a3a]"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
               onClick={() => {
                 setIsSystemMode(false);
-                localStorage.setItem("theme", "light");
                 setTheme("light");
               }}
               type="button"
             >
-              <Sun className="h-4 w-4" />
+              <Sun
+                className={`h-5 w-5 cursor-pointer ${
+                  !isSystemMode && theme === "light"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                }`}
+              />
             </button>
             <button
               className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                 !isSystemMode && theme === "dark"
-                  ? "border border-slate-200 bg-white text-slate-900 shadow-sm dark:border-[#3a3a3a] dark:bg-[#282828] dark:text-white"
-                  : "text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white"
+                  ? "bg-muted text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
               }`}
               onClick={() => {
                 setIsSystemMode(false);
-                localStorage.setItem("theme", "dark");
                 setTheme("dark");
               }}
               type="button"
             >
-              <Moon className="h-4 w-4" />
+              <Moon
+                className={`h-5 w-5 cursor-pointer ${
+                  !isSystemMode && theme === "dark"
+                    ? "text-foreground"
+                    : "text-muted-foreground"
+                }`}
+              />
             </button>
             <button
               className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${systemButtonClass}`}
               onClick={() => {
                 const isNight = getIsNightTime();
+                setIsNightTime(isNight);
                 setIsSystemMode(true);
+                // Store preference as system
                 localStorage.setItem("theme", "system");
+                // Apply time-based theme immediately
                 setTheme(isNight ? "dark" : "light");
               }}
               type="button"
             >
-              <Monitor className="h-4 w-4" />
+              <Monitor
+                className={`h-5 w-5 cursor-pointer ${
+                  isSystemMode ? "text-foreground" : "text-muted-foreground"
+                }`}
+              />
             </button>
           </div>
         </div>
@@ -155,7 +175,7 @@ export function HelpPopover() {
         {/* Main Menu Items */}
         <div className="space-y-1">
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-slate-600 text-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-[#282828] dark:hover:text-white"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
             href="/pricing"
             onClick={() => setOpen(false)}
           >
@@ -163,7 +183,7 @@ export function HelpPopover() {
             See plans and pricing
           </Link>
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-slate-600 text-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-[#282828] dark:hover:text-white"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
             href="/support"
             onClick={() => setOpen(false)}
           >
@@ -173,9 +193,9 @@ export function HelpPopover() {
         </div>
 
         {/* Secondary Menu Items */}
-        <div className="mt-3 space-y-1 border-slate-200 border-t pt-3 dark:border-[#343434]">
+        <div className="mt-3 space-y-1 border-border border-t pt-3">
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-slate-600 text-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-[#282828] dark:hover:text-white"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
             href="/feedback"
             onClick={() => setOpen(false)}
           >
@@ -183,7 +203,7 @@ export function HelpPopover() {
             Leave feedback
           </Link>
           <button
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-slate-600 text-sm transition-colors hover:bg-slate-50 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-[#282828] dark:hover:text-white"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground dark:text-muted-foreground dark:hover:bg-[var(--color-select-hover)] dark:hover:text-foreground"
             onClick={() => {
               setOpen(false);
               setCookiesDialogOpen(true);

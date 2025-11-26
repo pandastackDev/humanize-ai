@@ -10,7 +10,7 @@ import { httpAction } from "./_generated/server";
  * GET /webhook-diagnostics
  */
 // biome-ignore lint/suspicious/useAwait: httpAction requires async function signature
-export const diagnostics = httpAction(async (_ctx) => {
+export const diagnostics = httpAction(async () => {
   try {
     const hasWorkOSApiKey = !!process.env.WORKOS_API_KEY;
     const hasWorkOSWebhookSecret = !!process.env.WORKOS_WEBHOOK_SECRET;

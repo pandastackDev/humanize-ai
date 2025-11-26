@@ -129,9 +129,7 @@ export function ProUpgradeSidebar({
         <div className="mt-6 space-y-6">
           {/* Uses Section */}
           <div>
-            <h3 className="mb-3 font-semibold text-slate-900 text-sm dark:text-slate-100">
-              Uses
-            </h3>
+            <h3 className="mb-3 font-semibold text-foreground text-sm">Uses</h3>
             <div className="flex flex-wrap gap-2">
               {config.uses.map((use) => (
                 <span
@@ -147,11 +145,11 @@ export function ProUpgradeSidebar({
           {/* Examples Section */}
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="font-medium text-slate-700 text-xs dark:text-slate-300">
+              <label className="font-medium text-muted-foreground text-xs">
                 Input Example
               </label>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
-                <p className="text-slate-700 text-sm dark:text-slate-300">
+              <div className="rounded-lg border border-border bg-muted p-3">
+                <p className="text-muted-foreground text-sm">
                   {config.inputExample}
                 </p>
               </div>
@@ -162,11 +160,11 @@ export function ProUpgradeSidebar({
             </div>
 
             <div className="space-y-2">
-              <label className="font-medium text-slate-700 text-xs dark:text-slate-300">
+              <label className="font-medium text-muted-foreground text-xs">
                 Humanized Output
               </label>
-              <div className="rounded-lg border border-slate-200 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-800/50">
-                <p className="text-slate-700 text-sm dark:text-slate-300">
+              <div className="rounded-lg border border-border bg-muted p-3">
+                <p className="text-muted-foreground text-sm">
                   {config.outputExample}
                 </p>
               </div>
@@ -181,7 +179,7 @@ export function ProUpgradeSidebar({
             >
               Unlock With Free Trial
             </Button>
-            <p className="text-center text-slate-600 text-xs dark:text-slate-400">
+            <p className="text-center text-muted-foreground text-xs">
               3 day refund guarantee
             </p>
           </div>

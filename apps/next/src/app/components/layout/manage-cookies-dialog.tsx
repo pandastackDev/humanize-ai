@@ -189,17 +189,17 @@ export function ManageCookiesDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-w-lg border-slate-200 bg-white text-left dark:border-[#1d1d1d] dark:bg-[#1d1d1d]">
+      <DialogContent className="max-w-lg border-border bg-background text-left dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
         <DialogHeader className="text-left">
-          <DialogTitle className="flex items-center gap-2 font-semibold text-slate-900 text-xl dark:text-white">
+          <DialogTitle className="flex items-center gap-2 font-semibold text-foreground text-xl dark:text-foreground">
             <Cookie className="h-5 w-5" />
             Manage cookies
           </DialogTitle>
-          <DialogDescription className="mt-2 text-slate-600 text-sm leading-relaxed dark:text-slate-300">
+          <DialogDescription className="mt-2 text-muted-foreground text-sm leading-relaxed dark:text-muted-foreground">
             We use cookies to improve your experience and analyze site traffic.
             For more information, read our{" "}
             <Link
-              className="text-slate-900 underline hover:text-slate-700 dark:text-white dark:hover:text-slate-300"
+              className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
               href="/cookie-policy"
               onClick={(e) => {
                 e.stopPropagation();
@@ -214,19 +214,19 @@ export function ManageCookiesDialog({
         <div className="space-y-6 py-4">
           {COOKIE_CATEGORIES.map((category) => (
             <div
-              className="space-y-2 border-slate-200 border-b pb-4 last:border-b-0 dark:border-[#343434]"
+              className="space-y-2 border-border border-b pb-4 last:border-b-0 dark:border-[var(--color-select-hover)]"
               key={category.id}
             >
               <div className="flex items-center justify-between">
                 <Label
-                  className="font-semibold text-slate-900 text-sm dark:text-white"
+                  className="font-semibold text-foreground text-sm dark:text-foreground"
                   htmlFor={`cookie-${category.id}`}
                 >
                   {category.name}
                 </Label>
                 <Switch
                   checked={cookiePreferences[category.id] ?? category.enabled}
-                  className="data-[state=checked]:bg-blue-600 dark:data-[state=checked]:bg-blue-600"
+                  className="data-[state=checked]:bg-[var(--color-brand-primary)] dark:data-[state=checked]:bg-[var(--color-brand-primary)]"
                   disabled={category.required}
                   id={`cookie-${category.id}`}
                   onCheckedChange={(checked) =>
@@ -234,11 +234,11 @@ export function ManageCookiesDialog({
                   }
                 />
               </div>
-              <p className="text-slate-500 text-xs dark:text-slate-400">
+              <p className="text-muted-foreground text-xs dark:text-muted-foreground">
                 {category.description}
               </p>
               {category.required && (
-                <p className="text-slate-400 text-xs dark:text-slate-500">
+                <p className="text-muted-foreground text-xs dark:text-muted-foreground">
                   This cookie is required and cannot be disabled.
                 </p>
               )}
@@ -248,7 +248,7 @@ export function ManageCookiesDialog({
 
         <DialogFooter className="gap-2 sm:justify-end">
           <Button
-            className="border-slate-300 bg-white text-slate-900 hover:bg-slate-50 dark:border-[#343434] dark:bg-[#1d1d1d] dark:text-white dark:hover:bg-[#282828]"
+            className="border-border bg-background text-foreground hover:bg-muted dark:border-[var(--color-select-hover)] dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-[var(--color-select-hover)]"
             onClick={handleDeclineAll}
             type="button"
             variant="outline"
@@ -256,7 +256,7 @@ export function ManageCookiesDialog({
             Decline all
           </Button>
           <Button
-            className="bg-slate-900 text-white hover:bg-slate-800 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-100"
+            className="bg-foreground text-background hover:bg-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted"
             onClick={hasChanges ? handleSave : handleAcceptAll}
             type="button"
           >
