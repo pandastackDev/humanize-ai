@@ -1,0 +1,10 @@
+# Ignore everything at root
+/*
+
+# Include only these
+!/backend/src/
+!/backend/src/**/*.py
+!/backend/public/
+!/backend/vercel.json
+!/backend/pyproject.toml
+!/backend/uv.lock
