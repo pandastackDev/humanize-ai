@@ -1,8 +1,10 @@
-# Ignore everything (folders and files) on root only
+# Ignore everything at root
 /*
 
-# Don't ignore these
-!src/*
+# Include only these
+!src/
+!src/**/*.py
+!public/
 !vercel.json
 !pyproject.toml
 !uv.lock
