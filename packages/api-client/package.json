@@ -23,8 +23,8 @@
     "@humanize/configs": "workspace:*",
     "@types/node": "^22.15.3",
     "eslint": "^9.39.1",
-    "oxlint": "^1.29.0",
-    "oxlint-tsgolint": "^0.8.0",
+    "oxlint": "^1.30.0",
+    "oxlint-tsgolint": "^0.8.2",
     "typescript": "5.9.2"
   }
 }

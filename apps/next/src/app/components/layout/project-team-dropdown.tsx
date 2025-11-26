@@ -8,7 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@humanize/ui/components/dropdown-menu";
-import { Check, ChevronDown, Plus, RefreshCw, Settings } from "lucide-react";
+import { Check, ChevronDown, Plus, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { CreateTeamDialog } from "./create-team-dialog";
 import { ManageTeamsDialog } from "./manage-teams-dialog";
@@ -27,9 +27,9 @@ type ProjectTeamDropdownProps = {
 };
 
 export function ProjectTeamDropdown({
-  currentProject = "Default project",
+  currentProject,
   teams = [
-    { id: "default", name: "Default team" },
+    { id: "default", name: "Vadym's Team" },
     { id: "finapp", name: "Finapp" },
   ],
   selectedTeamId = "default",
@@ -105,32 +105,15 @@ export function ProjectTeamDropdown({
     <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button
-            className="h-9 w-[140px] cursor-pointer border-slate-200 bg-white text-slate-900 hover:bg-slate-50 dark:border-[#1d1d1d] dark:bg-[#1d1d1d] dark:hover:bg-[#282828]"
-            variant="outline"
-          >
-            <span className="flex-1 text-left dark:text-white">
-              {currentProject}
-            </span>
-            <ChevronDown className="ml-0 h-4 w-4 opacity-50 dark:text-white" />
+          <Button variant="outline">
+            {currentProject}
+            <ChevronDown className="opacity-50" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
           className="w-[240px] border-slate-200 bg-white dark:border-[#1d1d1d] dark:bg-[#1d1d1d]"
         >
-          {/* Header with title and refresh icon */}
-          <div className="flex items-center justify-between px-2 py-1.5">
-            <div className="flex items-center gap-2">
-              <span className="font-medium text-slate-900 text-sm dark:text-white">
-                {currentProject}
-              </span>
-              <RefreshCw className="h-3.5 w-3.5 text-slate-500 dark:text-slate-400" />
-            </div>
-          </div>
-
-          <DropdownMenuSeparator className="bg-slate-200 dark:bg-[#343434]" />
-
           {/* TEAMS Section */}
           <div className="px-2 py-1.5">
             <div className="mb-2 px-2 font-semibold text-slate-500 text-xs uppercase tracking-wider dark:text-white">

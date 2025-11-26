@@ -6,13 +6,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@humanize/ui/components/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@humanize/ui/components/select";
 import { Textarea } from "@humanize/ui/components/textarea";
 import { MessageSquare, Paperclip, Send } from "lucide-react";
 import { useState } from "react";
@@ -68,12 +61,8 @@ export function FeedbackPopover() {
   return (
     <Popover onOpenChange={setOpen} open={open}>
       <PopoverTrigger asChild>
-        <Button
-          className="h-9 cursor-pointer bg-black text-white hover:bg-slate-800 dark:bg-[#282828] dark:text-white"
-          size="sm"
-          variant="default"
-        >
-          <MessageSquare className="mr-2 h-4 w-4" />
+        <Button variant="outline">
+          <MessageSquare />
           Feedback
         </Button>
       </PopoverTrigger>
@@ -83,37 +72,10 @@ export function FeedbackPopover() {
         side="bottom"
         sideOffset={8}
       >
-        {/* Title */}
-        <div className="mb-4">
-          <h3 className="font-semibold text-lg text-slate-900 dark:text-white">
-            Feedback
-          </h3>
-        </div>
-
-        {/* Topic Selection */}
-        <div className="mb-4">
-          <Select onValueChange={setTopic} value={topic}>
-            <SelectTrigger className="w-full border-slate-200 bg-white text-slate-900 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white">
-              <SelectValue placeholder="Select a topic..." />
-            </SelectTrigger>
-            <SelectContent className="border-slate-200 bg-white dark:border-[#1f1f1f] dark:bg-[#1f1f1f]">
-              {FEEDBACK_TOPICS.map((feedbackTopic) => (
-                <SelectItem
-                  className="text-slate-900 dark:text-white"
-                  key={feedbackTopic}
-                  value={feedbackTopic.toLowerCase().replace(/\s+/g, "_")}
-                >
-                  {feedbackTopic}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
         {/* Feedback Text Area */}
         <div className="mb-4">
           <Textarea
-            className="min-h-[120px] resize-none border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 dark:border-[#1f1f1f] dark:bg-[#1f1f1f] dark:text-white dark:placeholder:text-slate-400"
+            className="min-h-[100px]"
             onChange={(e) => setFeedback(e.target.value)}
             placeholder="Your feedback..."
             value={feedback}
@@ -125,7 +87,6 @@ export function FeedbackPopover() {
           {/* Attachment indicator */}
           <div className="flex items-center gap-1.5 text-slate-500 text-xs dark:text-slate-400">
             <Paperclip className="h-3.5 w-3.5" />
-            <span>supported.</span>
           </div>
 
           {/* Emoji Reactions */}

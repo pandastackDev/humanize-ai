@@ -26,17 +26,18 @@
     "bump-deps": "pnpm up -iLr",
     "bump-next": "cd apps/next && pnpx @next/codemod@canary upgrade latest",
     "bump-biome": "pnpm update @biomejs/biome --latest && biome migrate --write",
+    "shadcn-add": "pnpm dlx shadcn@latest add -c apps/next",
     "clean": "turbo clean && rm -rf .turbo",
     "reinstall": "rm -rf node_modules **/node_modules pnpm-lock.yaml **/pnpm-lock.yaml && pnpm install"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.6",
+    "@biomejs/biome": "2.3.7",
     "convex": "^1.29.3",
     "turbo": "^2.6.1"
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "19.2.4",
+      "@types/react": "19.2.7",
       "@types/react-dom": "19.2.3"
     }
   }
