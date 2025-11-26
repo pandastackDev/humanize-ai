@@ -2,9 +2,9 @@
 /*
 
 # Include only these
-!src/
-!src/**/*.py
-!public/
-!vercel.json
-!pyproject.toml
-!uv.lock
+!/backend/src/
+!/backend/src/**/*.py
+!/backend/public/
+!/backend/vercel.json
+!/backend/pyproject.toml
+!/backend/uv.lock
