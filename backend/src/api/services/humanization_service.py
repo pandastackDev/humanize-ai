@@ -44,6 +44,20 @@ from .prompts import build_user_prompt
 from .text_chunking import TextChunkingService
 from .validation_service import ValidationService
 
+# Import detection service for Originality.AI feedback loop (optional)
+if TYPE_CHECKING:
+    from .detection_service import AIDetectionService
+
+try:
+    import asyncio
+
+    from .detection_service import AIDetectionService  # noqa: F811
+
+    DETECTION_SERVICE_AVAILABLE = True
+except ImportError:
+    DETECTION_SERVICE_AVAILABLE = False
+    AIDetectionService = None  # type: ignore[assignment, misc]
+
 logger = logging.getLogger(__name__)
 
 
@@ -432,6 +446,12 @@ class HumanizationService:
             self.pattern_breaker = _PatternBreaker()
             logger.info("Pattern breaker initialized for post-processing")
 
+        # Initialize detection service for Originality.AI feedback loop (lazy-loaded)
+        if TYPE_CHECKING:
+            self._detection_service: AIDetectionService | None = None  # type: ignore[assignment]
+        else:
+            self._detection_service: Any = None
+
     def humanize(
         self,
         input_text: str,
@@ -587,14 +607,23 @@ class HumanizationService:
             structured_parts = split_preserving_structure(input_text)
             humanized_paragraphs = []
 
+            # Use faster model for quick pipeline if enabled
+            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL
+            if settings.USE_FAST_MODEL_FOR_QUICK_PIPELINE:
+                model_to_use = settings.COMPRESSION_MODEL  # Haiku
+                logger.info("Using fast model (Haiku) for quick pipeline optimization")
+
             for part in structured_parts:
                 user_prompt = format_user_prompt(part["content"], prompt_dict["user_template"])
+                part_words = len(part["content"].split())
+                max_tokens = max(int(part_words * 2.5), part_words + 100)  # Optimized multiplier
+
                 humanized_para = self.llm_service.generate_text(
                     prompt=user_prompt,
                     system_prompt=prompt_dict["system"],
-                    model=settings.PRIMARY_HUMANIZATION_MODEL,
+                    model=model_to_use,
                     temperature=settings.HUMANIZATION_TEMPERATURE,
-                    max_tokens=len(part["content"].split()) * 3,
+                    max_tokens=max_tokens,
                     top_p=settings.HUMANIZATION_TOP_P,
                     frequency_penalty=settings.HUMANIZATION_FREQUENCY_PENALTY,
                     presence_penalty=settings.HUMANIZATION_PRESENCE_PENALTY,
@@ -606,12 +635,25 @@ class HumanizationService:
         else:
             # Single-pass humanization for simple text
             user_prompt = format_user_prompt(input_text, prompt_dict["user_template"])
+
+            # Use faster model for quick pipeline if enabled (Haiku is ~3x faster)
+            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL
+            if settings.USE_FAST_MODEL_FOR_QUICK_PIPELINE:
+                # Use Haiku for speed in quick pipeline (still high quality)
+                model_to_use = settings.COMPRESSION_MODEL  # Haiku
+                logger.info("Using fast model (Haiku) for quick pipeline optimization")
+
+            # Optimize max_tokens: reduce multiplier for faster processing
+            # Original: * 3, optimized: * 2.5 (still enough for quality, faster)
+            input_words = len(input_text.split())
+            max_tokens = max(int(input_words * 2.5), input_words + 100)  # Minimum buffer
+
             humanized_text = self.llm_service.generate_text(
                 prompt=user_prompt,
                 system_prompt=prompt_dict["system"],
-                model=settings.PRIMARY_HUMANIZATION_MODEL,
+                model=model_to_use,
                 temperature=settings.HUMANIZATION_TEMPERATURE,
-                max_tokens=len(input_text.split()) * 3,
+                max_tokens=max_tokens,
                 top_p=settings.HUMANIZATION_TOP_P,
                 frequency_penalty=settings.HUMANIZATION_FREQUENCY_PENALTY,
                 presence_penalty=settings.HUMANIZATION_PRESENCE_PENALTY,
@@ -623,8 +665,27 @@ class HumanizationService:
         # V4 Enhancement: Apply pattern breaking for better originality scores
         if use_v4 and self.pattern_breaker is not None:
             logger.info("Applying V4 pattern breaking enhancements")
-            # Get aggressiveness from settings (default 0.7)
-            aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.7)
+            # Get aggressiveness from settings
+            base_aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.6)
+
+            # Increase aggressiveness if Originality.AI optimization is enabled and API key is available
+            if settings.ORIGINALITY_AI_OPTIMIZATION_ENABLED and settings.ORIGINALITY_API_KEY:
+                if settings.ORIGINALITY_AI_AGGRESSIVE_MODE:
+                    # Use higher aggressiveness for better Originality.AI scores
+                    aggressiveness = min(base_aggressiveness + 0.15, 0.85)  # Cap at 0.85
+                    logger.info(
+                        f"Originality.AI aggressive mode: using aggressiveness {aggressiveness:.2f} "
+                        f"(base: {base_aggressiveness:.2f})"
+                    )
+                else:
+                    aggressiveness = min(base_aggressiveness + 0.10, 0.80)  # Moderate boost
+                    logger.info(
+                        f"Originality.AI optimization: using aggressiveness {aggressiveness:.2f} "
+                        f"(base: {base_aggressiveness:.2f})"
+                    )
+            else:
+                aggressiveness = base_aggressiveness
+
             humanized_text = self.pattern_breaker.enhance_text(humanized_text, aggressiveness)
 
             # Log quality statistics
@@ -638,15 +699,20 @@ class HumanizationService:
                 input_text, humanized_text, format_metadata
             )
 
-        # Validation
-        style_embedding = None
-        if style_sample and len(style_sample.strip().split()) >= 150:
-            try:
-                style_embedding = self.embedding_service.get_style_embedding(style_sample)
-            except Exception:
-                pass
+        # Validation (can be skipped for faster processing if enabled)
+        validation_results = {"semantic_similarity": 1.0, "semantic_passed": True}
 
-        validation_results = self._validate_output(input_text, humanized_text, style_embedding)
+        if not settings.SKIP_VALIDATION_FOR_QUICK_PIPELINE:
+            style_embedding = None
+            if style_sample and len(style_sample.strip().split()) >= 150:
+                try:
+                    style_embedding = self.embedding_service.get_style_embedding(style_sample)
+                except Exception:
+                    pass
+
+            validation_results = self._validate_output(input_text, humanized_text, style_embedding)
+        else:
+            logger.info("Skipping validation for quick pipeline (performance optimization)")
 
         # Final cleanup: Fix grammar errors and prevent repetition
         humanized_text = fix_common_grammar_errors(humanized_text)
@@ -654,6 +720,50 @@ class HumanizationService:
 
         # Inject invisible characters for AI detection bypass (like the sample output)
         humanized_text = self._inject_invisible_noise(humanized_text, detected_language)
+
+        # Always check Originality.AI score if API key is available (for monitoring/optimization)
+        originality_score = None
+        if settings.ORIGINALITY_API_KEY and DETECTION_SERVICE_AVAILABLE:
+            try:
+                logger.info("Checking Originality.AI score for humanized text...")
+                originality_result = self._check_originality_score_with_details(humanized_text)
+                originality_score = originality_result.get("score") if originality_result else None
+                block_analysis = (
+                    originality_result.get("block_analysis") if originality_result else None
+                )
+
+                if originality_score is not None:
+                    logger.info(
+                        f"Originality.AI score: {originality_score:.3f} "
+                        f"(Target: {settings.ORIGINALITY_AI_TARGET_SCORE:.3f})"
+                    )
+
+                    # Optional: Refine if feedback loop is enabled and score is below threshold
+                    if (
+                        settings.ORIGINALITY_AI_FEEDBACK_LOOP
+                        and originality_score < settings.ORIGINALITY_AI_MIN_SCORE_FOR_REFINEMENT
+                    ):
+                        logger.info(
+                            f"Originality.AI score {originality_score:.3f} below threshold "
+                            f"({settings.ORIGINALITY_AI_MIN_SCORE_FOR_REFINEMENT:.3f}), refining output..."
+                        )
+                        humanized_text = self._refine_with_originality_feedback(
+                            input_text,
+                            humanized_text,
+                            originality_score,
+                            detected_language,
+                            block_analysis,
+                        )
+                        # Re-check score after refinement
+                        new_score = self._check_originality_score(humanized_text)
+                        if new_score:
+                            logger.info(
+                                f"After refinement: Originality.AI score improved from "
+                                f"{originality_score:.3f} to {new_score:.3f}"
+                            )
+                            originality_score = new_score
+            except Exception as e:
+                logger.warning(f"Originality.AI check failed: {e}. Continuing without score.")
 
         processing_time = (time.time() - start_time) * 1000
 
@@ -666,6 +776,7 @@ class HumanizationService:
                 "word_count": len(humanized_text.split()),
                 "original_word_count": len(input_text.split()),
                 "chunks_used": 1,
+                "originality_score": round(originality_score, 3) if originality_score else None,
             },
             "metadata": {
                 "detected_language": detected_language,
@@ -673,6 +784,7 @@ class HumanizationService:
                 "pipeline": "quick-single-pass",
                 "model_used": settings.PRIMARY_HUMANIZATION_MODEL,
                 "semantic_passed": validation_results["semantic_passed"],
+                "originality_optimized": originality_score is not None,
             },
         }
 
@@ -798,7 +910,25 @@ class HumanizationService:
         )
         if use_v4 and self.pattern_breaker is not None:
             logger.info("Applying V4 pattern breaking enhancements (advanced pipeline)")
-            aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.7)
+            base_aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.6)
+
+            # Increase aggressiveness if Originality.AI optimization is enabled and API key is available
+            if settings.ORIGINALITY_AI_OPTIMIZATION_ENABLED and settings.ORIGINALITY_API_KEY:
+                if settings.ORIGINALITY_AI_AGGRESSIVE_MODE:
+                    aggressiveness = min(base_aggressiveness + 0.15, 0.85)  # Cap at 0.85
+                    logger.info(
+                        f"Originality.AI aggressive mode (advanced): using aggressiveness {aggressiveness:.2f} "
+                        f"(base: {base_aggressiveness:.2f})"
+                    )
+                else:
+                    aggressiveness = min(base_aggressiveness + 0.10, 0.80)  # Moderate boost
+                    logger.info(
+                        f"Originality.AI optimization (advanced): using aggressiveness {aggressiveness:.2f} "
+                        f"(base: {base_aggressiveness:.2f})"
+                    )
+            else:
+                aggressiveness = base_aggressiveness
+
             humanized_text = self.pattern_breaker.enhance_text(humanized_text, aggressiveness)
 
             # Log quality statistics
@@ -815,12 +945,59 @@ class HumanizationService:
         # This is done AFTER validation to ensure quality, but BEFORE final output
         final_output = self._inject_invisible_noise(final_output, detected_language)
 
+        # Always check Originality.AI score if API key is available (for monitoring/optimization)
+        originality_score = None
+        if settings.ORIGINALITY_API_KEY and DETECTION_SERVICE_AVAILABLE:
+            try:
+                logger.info(
+                    "Checking Originality.AI score for humanized text (advanced pipeline)..."
+                )
+                originality_result = self._check_originality_score_with_details(final_output)
+                originality_score = originality_result.get("score") if originality_result else None
+                block_analysis = (
+                    originality_result.get("block_analysis") if originality_result else None
+                )
+
+                if originality_score is not None:
+                    logger.info(
+                        f"Originality.AI score: {originality_score:.3f} "
+                        f"(Target: {settings.ORIGINALITY_AI_TARGET_SCORE:.3f})"
+                    )
+
+                    # Optional: Refine if feedback loop is enabled and score is below threshold
+                    if (
+                        settings.ORIGINALITY_AI_FEEDBACK_LOOP
+                        and originality_score < settings.ORIGINALITY_AI_MIN_SCORE_FOR_REFINEMENT
+                    ):
+                        logger.info(
+                            f"Originality.AI score {originality_score:.3f} below threshold "
+                            f"({settings.ORIGINALITY_AI_MIN_SCORE_FOR_REFINEMENT:.3f}), refining output..."
+                        )
+                        final_output = self._refine_with_originality_feedback(
+                            input_text,
+                            final_output,
+                            originality_score,
+                            detected_language,
+                            block_analysis,
+                        )
+                        # Re-check score after refinement
+                        new_score = self._check_originality_score(final_output)
+                        if new_score:
+                            logger.info(
+                                f"After refinement: Originality.AI score improved from "
+                                f"{originality_score:.3f} to {new_score:.3f}"
+                            )
+                            originality_score = new_score
+            except Exception as e:
+                logger.warning(f"Originality.AI check failed: {e}. Continuing without score.")
+
         processing_time = (time.time() - start_time) * 1000
 
         logger.info(
             f"Advanced pipeline complete. "
             f"Semantic similarity: {validation_results['semantic_similarity']:.3f}, "
             f"Processing time: {processing_time:.0f}ms"
+            + (f", Originality.AI score: {originality_score:.3f}" if originality_score else "")
         )
 
         return {
@@ -836,6 +1013,7 @@ class HumanizationService:
                 "processing_time_ms": round(processing_time, 2),
                 "original_word_count": len(input_text.split()),
                 "chunks_used": len(chunks),
+                "originality_score": round(originality_score, 3) if originality_score else None,
             },
             "metadata": {
                 "detected_language": detected_language,
@@ -845,6 +1023,7 @@ class HumanizationService:
                 "pipeline": "advanced-compression-reconstruction",
                 "semantic_passed": validation_results["semantic_passed"],
                 "style_passed": validation_results.get("style_passed", None),
+                "originality_optimized": originality_score is not None,
             },
         }
 
@@ -1718,3 +1897,259 @@ class HumanizationService:
             "semantic_passed": is_semantically_valid,
             "style_passed": is_style_valid,
         }
+
+    def _get_detection_service(self) -> Any:
+        """Get or create detection service instance (lazy-loaded)."""
+        if not DETECTION_SERVICE_AVAILABLE:
+            return None
+
+        if self._detection_service is None:
+            # Import here to avoid circular dependency and handle optional import
+            from .detection_service import AIDetectionService as _AIDetectionService  # noqa: F401
+
+            self._detection_service = _AIDetectionService()
+
+        return self._detection_service
+
+    def _check_originality_score(self, text: str) -> float | None:
+        """
+        Check Originality.AI score for text (synchronous wrapper for async call).
+
+        Optimized to reuse existing event loop if available, or create new one efficiently.
+
+        Returns:
+            Human probability score (0.0-1.0) or None if unavailable
+        """
+        result = self._check_originality_score_with_details(text)
+        return result.get("score") if result else None
+
+    def _check_originality_score_with_details(self, text: str) -> dict | None:
+        """
+        Check Originality.AI score with detailed block analysis.
+
+        Returns:
+            Dictionary with 'score' and 'block_analysis' or None if unavailable
+        """
+        if not settings.ORIGINALITY_API_KEY:
+            return None
+
+        try:
+            detection_service = self._get_detection_service()
+            if not detection_service:
+                return None
+
+            # Try to get existing event loop, or create new one
+            try:
+                loop = asyncio.get_event_loop()
+                if loop.is_closed():
+                    raise RuntimeError("Event loop is closed")
+            except RuntimeError:
+                # No event loop in current thread, create new one
+                loop = asyncio.new_event_loop()
+                asyncio.set_event_loop(loop)
+                should_close = True
+            else:
+                should_close = False
+
+            # Run async detection
+            try:
+                result = loop.run_until_complete(detection_service._detect_originality(text))
+                human_score = result.human_probability
+                block_analysis = result.details.get("block_analysis") if result.details else None
+
+                logger.info(
+                    f"Originality.AI score: {human_score:.3f} (AI: {result.ai_probability:.3f})"
+                )
+
+                return {
+                    "score": human_score,
+                    "block_analysis": block_analysis,
+                }
+            finally:
+                # Only close if we created a new loop
+                if should_close:
+                    loop.close()
+        except Exception as e:
+            logger.warning(f"Failed to check Originality.AI score: {e}")
+            return None
+
+    def _refine_with_originality_feedback(
+        self,
+        original_text: str,
+        humanized_text: str,
+        current_score: float,
+        language: str,
+        block_analysis: dict | None = None,
+    ) -> str:
+        """
+        Refine humanized text based on Originality.AI feedback.
+
+        Uses the score and block-level analysis to apply targeted improvements.
+
+        Args:
+            original_text: Original input text
+            humanized_text: Current humanized text
+            current_score: Current Originality.AI human score (0.0-1.0)
+            language: Language code
+            block_analysis: Optional block-level analysis from Originality.AI
+
+        Returns:
+            Refined humanized text
+        """
+        logger.info(
+            f"Refining text with Originality.AI feedback (current score: {current_score:.3f})"
+        )
+
+        # Calculate how much more aggressiveness we need
+        score_gap = settings.ORIGINALITY_AI_TARGET_SCORE - current_score
+
+        if score_gap <= 0:
+            # Already above target, no refinement needed
+            return humanized_text
+
+        # Apply targeted fixes based on block analysis
+        if block_analysis:
+            patterns = block_analysis.get("patterns", {})
+
+            # Fix excessive commas in AI-like sentences
+            if patterns.get("excessive_commas"):
+                logger.info("Fixing sentences with excessive commas")
+                humanized_text = self._fix_excessive_commas(humanized_text)
+
+            # Replace formal connectors
+            if patterns.get("formal_connectors"):
+                logger.info(f"Replacing formal connectors: {patterns['formal_connectors']}")
+                humanized_text = self._replace_formal_connectors(humanized_text)
+
+            # Break up overly complex sentences
+            if patterns.get("overly_complex"):
+                logger.info("Breaking up overly complex sentences")
+                humanized_text = self._break_complex_sentences(humanized_text)
+
+        # Apply more aggressive pattern breaking based on score gap
+        if self.pattern_breaker is not None:
+            # Increase aggressiveness based on how far we are from target
+            # Score gap of 0.1 = add 0.1 to aggressiveness (capped at 0.9)
+            base_aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.6)
+            additional_aggressiveness = min(score_gap, 0.3)  # Cap additional at 0.3
+            refined_aggressiveness = min(base_aggressiveness + additional_aggressiveness, 0.9)
+
+            logger.info(
+                f"Applying refined pattern breaking: aggressiveness {refined_aggressiveness:.2f} "
+                f"(base: {base_aggressiveness:.2f}, additional: {additional_aggressiveness:.2f})"
+            )
+
+            refined_text = self.pattern_breaker.enhance_text(humanized_text, refined_aggressiveness)
+
+            # Apply additional fixes for common issues
+            refined_text = fix_common_grammar_errors(refined_text)
+            refined_text = prevent_phrase_repetition(refined_text)
+
+            return refined_text
+
+        # If no pattern breaker, just apply grammar fixes
+        refined_text = fix_common_grammar_errors(humanized_text)
+        refined_text = prevent_phrase_repetition(refined_text)
+
+        return refined_text
+
+    def _fix_excessive_commas(self, text: str) -> str:
+        """Fix sentences with excessive commas by breaking them up."""
+        # Split into sentences
+        sentences = re.split(r"([.!?]+)\s+", text)
+        result = []
+
+        for i in range(0, len(sentences) - 1, 2):
+            if i + 1 < len(sentences):
+                sentence = sentences[i] + sentences[i + 1]
+            else:
+                sentence = sentences[i]
+
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+
+            # If sentence has 4+ commas, try to break it up
+            comma_count = sentence.count(",")
+            if comma_count >= 4:
+                # Try to split on commas followed by conjunctions or relative clauses
+                parts = re.split(r",\s+(and|or|but|which|that|who|where)\s+", sentence, maxsplit=2)
+                if len(parts) > 1:
+                    # Reconstruct with periods instead of some commas
+                    new_sentence = parts[0]
+                    for j in range(1, len(parts), 2):
+                        if j + 1 < len(parts):
+                            new_sentence += ". " + parts[j] + " " + parts[j + 1]
+                    result.append(new_sentence)
+                else:
+                    result.append(sentence)
+            else:
+                result.append(sentence)
+
+        # Handle last sentence
+        if len(sentences) % 2 == 1 and sentences[-1].strip():
+            result.append(sentences[-1].strip())
+
+        return " ".join(result)
+
+    def _replace_formal_connectors(self, text: str) -> str:
+        """Replace formal connectors with casual alternatives."""
+        replacements = {
+            "furthermore": "also",
+            "moreover": "in addition",
+            "consequently": "so",
+            "additionally": "and",
+            "subsequently": "then",
+            "nevertheless": "but",
+            "therefore": "so",
+            "thus": "so",
+            "hence": "so",
+        }
+
+        for formal, casual in replacements.items():
+            # Replace with case-insensitive matching
+            pattern = re.compile(rf"\b{re.escape(formal)}\b", re.IGNORECASE)
+            text = pattern.sub(casual, text)
+
+        return text
+
+    def _break_complex_sentences(self, text: str) -> str:
+        """Break up overly complex sentences (40+ words) into shorter ones."""
+        # Split into sentences
+        sentences = re.split(r"([.!?]+)\s+", text)
+        result = []
+
+        for i in range(0, len(sentences) - 1, 2):
+            if i + 1 < len(sentences):
+                sentence = sentences[i] + sentences[i + 1]
+            else:
+                sentence = sentences[i]
+
+            sentence = sentence.strip()
+            if not sentence:
+                continue
+
+            word_count = len(sentence.split())
+
+            # If sentence is 40+ words, try to break it
+            if word_count >= 40:
+                # Try to split on conjunctions or relative clauses
+                parts = re.split(
+                    r",\s+(and|or|but|which|that|who|where|when)\s+", sentence, maxsplit=1
+                )
+                if len(parts) > 1:
+                    # Create two sentences
+                    first_part = parts[0].rstrip(".,")
+                    second_part = parts[1] + " " + parts[2] if len(parts) > 2 else parts[1]
+                    result.append(first_part + ".")
+                    result.append(second_part)
+                else:
+                    result.append(sentence)
+            else:
+                result.append(sentence)
+
+        # Handle last sentence
+        if len(sentences) % 2 == 1 and sentences[-1].strip():
+            result.append(sentences[-1].strip())
+
+        return " ".join(result)

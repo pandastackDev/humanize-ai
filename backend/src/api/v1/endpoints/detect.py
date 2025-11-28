@@ -180,33 +180,55 @@ def _calculate_overall_scores(
     """
     Calculate overall human/AI likelihood and confidence.
 
-    Uses weighted average of detector results and internal analysis.
+    Uses weighted average of ONLY successful API detector results (excludes internal analysis).
+    Only includes detectors that have no errors and confidence > 0.
     """
-    # Collect valid detector scores
+    # Collect valid detector scores (only from successful API calls)
     human_scores = []
     confidences = []
+    detector_names = []
 
     for result in detector_results:
+        # Only include detectors with no errors and positive confidence
         if result.error is None and result.confidence > 0:
             human_scores.append(result.human_probability)
             confidences.append(result.confidence)
+            detector_names.append(result.detector.value)
 
-    # Add internal analysis if available
-    if internal_analysis and internal_analysis.ai_likelihood_internal is not None:
-        human_from_internal = 1.0 - internal_analysis.ai_likelihood_internal
-        human_scores.append(human_from_internal)
-        confidences.append(0.85)  # Internal analysis has decent confidence
+    # Log what detectors are being used for calculation
+    if detector_names:
+        logger.info(
+            f"Calculating overall score from {len(detector_names)} detectors: {', '.join(detector_names)}"
+        )
+        logger.info(
+            f"Detector scores: {[(name, f'{h * 100:.1f}% Human') for name, h in zip(detector_names, human_scores)]}"
+        )
+    else:
+        logger.warning("No valid detector results found for overall score calculation")
+
+    # NOTE: Internal analysis is excluded to rely only on real API results
+    # If you want to include it, uncomment below:
+    # if internal_analysis and internal_analysis.ai_likelihood_internal is not None:
+    #     human_from_internal = 1.0 - internal_analysis.ai_likelihood_internal
+    #     human_scores.append(human_from_internal)
+    #     confidences.append(0.85)
+    #     logger.info(f"Internal analysis included: {human_from_internal*100:.1f}% Human")
 
     # If no valid scores, return neutral
     if not human_scores:
+        logger.warning("No valid detector scores available, returning neutral 50/50")
         return 50.0, 50.0, 0.0
 
     # Calculate weighted average
     total_weight = sum(confidences)
     if total_weight == 0:
         weighted_human = sum(human_scores) / len(human_scores)
+        logger.info(f"Using unweighted average: {weighted_human * 100:.1f}% Human")
     else:
         weighted_human = sum(s * c for s, c in zip(human_scores, confidences)) / total_weight
+        logger.info(
+            f"Using weighted average (weights: {[f'{c:.2f}' for c in confidences]}): {weighted_human * 100:.1f}% Human"
+        )
 
     # Calculate overall confidence (average of individual confidences)
     overall_confidence = sum(confidences) / len(confidences) if confidences else 0.0
@@ -214,6 +236,10 @@ def _calculate_overall_scores(
     # Convert to percentages
     human_likelihood_pct = weighted_human * 100
     ai_likelihood_pct = (1 - weighted_human) * 100
+
+    logger.info(
+        f"Final overall score: {human_likelihood_pct:.1f}% Human, {ai_likelihood_pct:.1f}% AI, Confidence: {overall_confidence * 100:.1f}%"
+    )
 
     return human_likelihood_pct, ai_likelihood_pct, overall_confidence
 

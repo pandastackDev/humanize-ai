@@ -213,27 +213,33 @@ const SOCIAL_LINKS = [
 export function Footer() {
   const { setTheme, theme } = useTheme();
   const [isSystemMode, setIsSystemMode] = useState(false);
-  const [isNightTime, setIsNightTime] = useState(getIsNightTime());
+  const [mounted, setMounted] = useState(false);
+
+  // Set mounted state after component mounts to avoid hydration mismatch
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Check if system mode is active on mount
   useEffect(() => {
+    if (!mounted) {
+      return;
+    }
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "system") {
       setTimeout(() => {
         setIsSystemMode(true);
         const isNight = getIsNightTime();
-        setIsNightTime(isNight);
         setTheme(isNight ? "dark" : "light");
       }, 0);
     }
-  }, [setTheme]);
+  }, [mounted, setTheme]);
 
   // Update theme based on time when system mode is active
   useEffect(() => {
     if (isSystemMode) {
       const checkTime = () => {
         const isNight = getIsNightTime();
-        setIsNightTime(isNight);
         setTheme(isNight ? "dark" : "light");
       };
 
@@ -255,13 +261,7 @@ export function Footer() {
     }
   }, [theme]);
 
-  // Compute system button active state class
-  let systemButtonClass = "text-muted-foreground hover:text-foreground";
-  if (isSystemMode) {
-    systemButtonClass = isNightTime
-      ? "bg-muted text-foreground"
-      : "bg-muted text-foreground";
-  }
+  // System button styling is handled inline in the JSX
 
   return (
     <footer className="mt-auto bg-black">
@@ -383,7 +383,7 @@ export function Footer() {
               <div className="flex items-center gap-1 rounded-md border border-gray-700 bg-gray-900 p-0.5">
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
-                    !isSystemMode && theme === "light"
+                    mounted && !isSystemMode && theme === "light"
                       ? "bg-gray-800 text-white"
                       : "text-gray-400 hover:text-white"
                   }`}
@@ -395,7 +395,7 @@ export function Footer() {
                 >
                   <Sun
                     className={`h-4 w-4 cursor-pointer ${
-                      !isSystemMode && theme === "light"
+                      mounted && !isSystemMode && theme === "light"
                         ? "text-white"
                         : "text-gray-400"
                     }`}
@@ -403,7 +403,7 @@ export function Footer() {
                 </button>
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
-                    !isSystemMode && theme === "dark"
+                    mounted && !isSystemMode && theme === "dark"
                       ? "bg-gray-800 text-white"
                       : "text-gray-400 hover:text-white"
                   }`}
@@ -415,7 +415,7 @@ export function Footer() {
                 >
                   <Moon
                     className={`h-4 w-4 cursor-pointer ${
-                      !isSystemMode && theme === "dark"
+                      mounted && !isSystemMode && theme === "dark"
                         ? "text-white"
                         : "text-gray-400"
                     }`}
@@ -429,7 +429,6 @@ export function Footer() {
                   }`}
                   onClick={() => {
                     const isNight = getIsNightTime();
-                    setIsNightTime(isNight);
                     setIsSystemMode(true);
                     localStorage.setItem("theme", "system");
                     setTheme(isNight ? "dark" : "light");

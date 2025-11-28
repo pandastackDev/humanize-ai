@@ -41,8 +41,7 @@ class Settings(BaseSettings):
     ANTHROPIC_LLM_MODEL: str = "claude-3-5-sonnet-20241022"  # Direct API - latest version
 
     # Language Detection
-    # Path can be absolute or relative to project root
-    FASTTEXT_MODEL_PATH: str = "models/lid.176.bin"
+    # Note: FastText removed to reduce bundle size (numpy dependency)
 
     # Cloud Language Detection API (optional - for languages outside Lingua's support or high scalability)
     # Google Cloud Translation API
@@ -67,6 +66,14 @@ class Settings(BaseSettings):
     USE_V4_PROMPTS: bool = True  # V4 prompts (Originality.AI optimized) - RECOMMENDED
     ADVANCED_PIPELINE_MIN_WORDS: int = 1500  # Use multi-phase only for very long texts
 
+    # Performance Optimization Settings
+    USE_FAST_MODEL_FOR_QUICK_PIPELINE: bool = (
+        True  # Use Haiku for quick pipeline (<1500 words) for speed
+    )
+    SKIP_VALIDATION_FOR_QUICK_PIPELINE: bool = (
+        False  # Skip validation for faster processing (not recommended)
+    )
+
     # LLM Settings for Humanization (V4 - Originality.AI Optimized)
     # Based on analysis of 93% human-scored text
     # Optimized for consistency AND quality (lower temperature for more consistent output)
@@ -79,6 +86,19 @@ class Settings(BaseSettings):
 
     # V4 Pattern Breaker Settings
     PATTERN_BREAKER_AGGRESSIVENESS: float = 0.6  # 0.0-1.0 (0.6 = conservative, less expansion)
+
+    # Originality.AI Optimization Settings
+    ORIGINALITY_AI_OPTIMIZATION_ENABLED: bool = True  # Enable Originality.AI-specific optimizations
+    ORIGINALITY_AI_AGGRESSIVE_MODE: bool = (
+        False  # Use higher aggressiveness when Originality.AI API key is available
+    )
+    ORIGINALITY_AI_TARGET_SCORE: float = 0.90  # Target human score (0.90 = 90% human)
+    ORIGINALITY_AI_FEEDBACK_LOOP: bool = (
+        False  # Use Originality.AI API to refine output (adds latency, improves quality)
+    )
+    ORIGINALITY_AI_MIN_SCORE_FOR_REFINEMENT: float = (
+        0.85  # Only refine if score is below this threshold
+    )
 
     # Model Preferences for Different Phases
     # Note: Model names may include provider prefix (e.g., "anthropic/claude-3-5-sonnet-20241022")

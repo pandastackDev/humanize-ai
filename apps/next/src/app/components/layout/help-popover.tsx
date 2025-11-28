@@ -175,7 +175,7 @@ export function HelpPopover() {
         {/* Main Menu Items */}
         <div className="space-y-1">
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-black text-sm transition-colors hover:bg-accent hover:text-foreground dark:text-white"
             href="/pricing"
             onClick={() => setOpen(false)}
           >
@@ -183,7 +183,7 @@ export function HelpPopover() {
             See plans and pricing
           </Link>
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-black text-sm transition-colors hover:bg-accent hover:text-foreground dark:text-white"
             href="/support"
             onClick={() => setOpen(false)}
           >
@@ -195,7 +195,7 @@ export function HelpPopover() {
         {/* Secondary Menu Items */}
         <div className="mt-3 space-y-1 border-border border-t pt-3">
           <Link
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-muted-foreground text-sm transition-colors hover:bg-accent hover:text-foreground"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-black text-sm transition-colors hover:bg-accent hover:text-foreground dark:text-white"
             href="/feedback"
             onClick={() => setOpen(false)}
           >
@@ -203,7 +203,7 @@ export function HelpPopover() {
             Leave feedback
           </Link>
           <button
-            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-muted-foreground text-sm transition-colors hover:bg-muted hover:text-foreground dark:text-muted-foreground dark:hover:bg-[var(--color-select-hover)] dark:hover:text-foreground"
+            className="flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-left text-black text-sm transition-colors hover:bg-muted hover:text-foreground dark:text-white dark:hover:bg-[var(--color-select-hover)]"
             onClick={() => {
               setOpen(false);
               setCookiesDialogOpen(true);

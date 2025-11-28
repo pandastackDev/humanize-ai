@@ -12,7 +12,9 @@ export function DashboardContainer({
   const [mounted, setMounted] = useState(false);
 
   // Only apply theme-dependent classes after hydration to avoid mismatch
+  // This is a valid use case for setState in effect (hydration pattern)
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

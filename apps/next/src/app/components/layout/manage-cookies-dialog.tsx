@@ -191,15 +191,15 @@ export function ManageCookiesDialog({
     <Dialog onOpenChange={onOpenChange} open={open}>
       <DialogContent className="max-w-lg border-border bg-background text-left dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
         <DialogHeader className="text-left">
-          <DialogTitle className="flex items-center gap-2 font-semibold text-foreground text-xl dark:text-foreground">
+          <DialogTitle className="flex items-center gap-2 font-semibold text-foreground text-xl">
             <Cookie className="h-5 w-5" />
             Manage cookies
           </DialogTitle>
-          <DialogDescription className="mt-2 text-muted-foreground text-sm leading-relaxed dark:text-muted-foreground">
+          <DialogDescription className="mt-2 text-muted-foreground text-sm leading-relaxed">
             We use cookies to improve your experience and analyze site traffic.
             For more information, read our{" "}
             <Link
-              className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
+              className="text-foreground underline transition-colors hover:text-muted-foreground"
               href="/cookie-policy"
               onClick={(e) => {
                 e.stopPropagation();
@@ -219,7 +219,7 @@ export function ManageCookiesDialog({
             >
               <div className="flex items-center justify-between">
                 <Label
-                  className="font-semibold text-foreground text-sm dark:text-foreground"
+                  className="font-semibold text-foreground text-sm"
                   htmlFor={`cookie-${category.id}`}
                 >
                   {category.name}
@@ -234,11 +234,11 @@ export function ManageCookiesDialog({
                   }
                 />
               </div>
-              <p className="text-muted-foreground text-xs dark:text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 {category.description}
               </p>
               {category.required && (
-                <p className="text-muted-foreground text-xs dark:text-muted-foreground">
+                <p className="text-muted-foreground text-xs opacity-70">
                   This cookie is required and cannot be disabled.
                 </p>
               )}
@@ -248,7 +248,7 @@ export function ManageCookiesDialog({
 
         <DialogFooter className="gap-2 sm:justify-end">
           <Button
-            className="border-border bg-background text-foreground hover:bg-muted dark:border-[var(--color-select-hover)] dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-[var(--color-select-hover)]"
+            className="text-sm"
             onClick={handleDeclineAll}
             type="button"
             variant="outline"
@@ -256,7 +256,7 @@ export function ManageCookiesDialog({
             Decline all
           </Button>
           <Button
-            className="bg-foreground text-background hover:bg-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted"
+            className="text-sm"
             onClick={hasChanges ? handleSave : handleAcceptAll}
             type="button"
           >

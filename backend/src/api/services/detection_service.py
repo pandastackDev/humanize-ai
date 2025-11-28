@@ -74,6 +74,8 @@ class DetectionCache:
 class AIDetectionService:
     """Service for AI detection using multiple APIs and internal analysis."""
 
+    _ORIGINALITY_BASE_URL = "https://core.originality.ai/api/v2/user/content-scans/lite"
+
     def __init__(self):
         """Initialize detection service with cache."""
         self._cache = DetectionCache()
@@ -183,62 +185,32 @@ class AIDetectionService:
         API: https://gptzero.me/docs/api
         """
         start_time = time.time()
-        try:
-            # Placeholder - real implementation would call actual API
-            # For now, return mock data to demonstrate structure
-            await asyncio.sleep(0.1)  # Simulate API call
-
-            # Simple heuristic for demo: check for AI-like patterns
-            ai_score = self._simple_ai_heuristic(text)
-
-            return self._create_detector_result(
-                detector=DetectorType.GPTZERO,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.85,
-                response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure GPTZERO_API_KEY for real detection"},
-                error=None,
-            )
-        except Exception as e:
-            logger.error(f"GPTZero detection failed: {e!s}")
-            return self._create_detector_result(
-                detector=DetectorType.GPTZERO,
-                ai_probability=0.5,
-                human_probability=0.5,
-                confidence=0.0,
-                error=str(e),
-                response_time_ms=(time.time() - start_time) * 1000,
-                details=None,
-            )
+        message = "GPTZero detector not implemented. Requires real API integration."
+        logger.warning(message)
+        return self._create_detector_result(
+            detector=DetectorType.GPTZERO,
+            ai_probability=0.5,
+            human_probability=0.5,
+            confidence=0.0,
+            response_time_ms=(time.time() - start_time) * 1000,
+            details=None,
+            error=message,
+        )
 
     async def _detect_copyleaks(self, text: str) -> DetectorResult:
         """Detect using CopyLeaks AI Content Detector API."""
         start_time = time.time()
-        try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
-
-            return self._create_detector_result(
-                detector=DetectorType.COPYLEAKS,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.82,
-                response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure COPYLEAKS_API_KEY for real detection"},
-                error=None,
-            )
-        except Exception as e:
-            logger.error(f"CopyLeaks detection failed: {e!s}")
-            return self._create_detector_result(
-                detector=DetectorType.COPYLEAKS,
-                ai_probability=0.5,
-                human_probability=0.5,
-                confidence=0.0,
-                error=str(e),
-                response_time_ms=(time.time() - start_time) * 1000,
-                details=None,
-            )
+        message = "CopyLeaks detector not implemented. Requires real API integration."
+        logger.warning(message)
+        return self._create_detector_result(
+            detector=DetectorType.COPYLEAKS,
+            ai_probability=0.5,
+            human_probability=0.5,
+            confidence=0.0,
+            response_time_ms=(time.time() - start_time) * 1000,
+            details=None,
+            error=message,
+        )
 
     async def _detect_sapling(self, text: str) -> DetectorResult:
         """
@@ -251,17 +223,16 @@ class AIDetectionService:
         start_time = time.time()
         try:
             if not settings.SAPLING_API_KEY:
-                # Fallback to heuristic if API key not configured
-                await asyncio.sleep(0.1)
-                ai_score = self._simple_ai_heuristic(text)
+                message = "Sapling API key not configured"
+                logger.warning(message)
                 return self._create_detector_result(
                     detector=DetectorType.SAPLING,
-                    ai_probability=ai_score,
-                    human_probability=1 - ai_score,
-                    confidence=0.80,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
                     response_time_ms=(time.time() - start_time) * 1000,
-                    details={"note": "Demo mode - configure SAPLING_API_KEY for real detection"},
-                    error=None,
+                    details=None,
+                    error=message,
                 )
 
             # Call Sapling AI detect API
@@ -287,7 +258,7 @@ class AIDetectionService:
 
                             # Parse Sapling response format
                             # Based on API docs, response may contain: score, score_breakdown, etc.
-                            ai_score = 0.5
+                            ai_score: float | None = None
                             confidence = 0.0
 
                             if isinstance(data, dict):
@@ -315,32 +286,22 @@ class AIDetectionService:
                                     elif "score" in breakdown:
                                         ai_score = float(breakdown["score"])
                                 else:
-                                    # Log the full response for debugging
                                     logger.warning(
                                         f"Unexpected Sapling response format. Keys: {list(data.keys())}, Full response: {data}"
                                     )
-                                    # Try to find any numeric value that might be the score
-                                    for key, value in data.items():
-                                        if isinstance(value, (int, float)) and 0 <= value <= 1:
-                                            ai_score = float(value)
-                                            logger.info(f"Using {key}={value} as AI score")
-                                            break
-                                    if ai_score == 0.5:
-                                        # Fallback to heuristic if we couldn't parse
-                                        logger.warning(
-                                            "Could not parse Sapling response, using heuristic"
-                                        )
-                                        ai_score = self._simple_ai_heuristic(text)
 
                                 # Calculate confidence based on how far from 0.5
-                                confidence = abs(ai_score - 0.5) * 2
+                                if ai_score is not None:
+                                    confidence = abs(ai_score - 0.5) * 2
                             else:
-                                # Unexpected response format
-                                logger.warning(
+                                raise ValueError(
                                     f"Unexpected Sapling response type: {type(data)}, value: {data}"
                                 )
-                                ai_score = self._simple_ai_heuristic(text)
-                                confidence = 0.5
+
+                            if ai_score is None:
+                                raise ValueError(
+                                    f"Sapling response missing AI score. Keys: {list(data.keys())}"
+                                )
 
                             # Ensure scores are in valid range
                             ai_score = max(0.0, min(1.0, ai_score))
@@ -433,17 +394,16 @@ class AIDetectionService:
         start_time = time.time()
         try:
             if not self._writer_client:
-                # Fallback to heuristic if API key not configured
-                await asyncio.sleep(0.1)
-                ai_score = self._simple_ai_heuristic(text)
+                message = "Writer API key not configured"
+                logger.warning(message)
                 return self._create_detector_result(
                     detector=DetectorType.WRITER,
-                    ai_probability=ai_score,
-                    human_probability=1 - ai_score,
-                    confidence=0.83,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
                     response_time_ms=(time.time() - start_time) * 1000,
-                    details={"note": "Demo mode - configure WRITER_API_KEY for real detection"},
-                    error=None,
+                    details=None,
+                    error=message,
                 )
 
             # Call Writer AI detect API
@@ -510,126 +470,144 @@ class AIDetectionService:
 
         API: https://api.zerogpt.com/api/detect/detectText
         Method: POST
-        Headers: ApiKey, Content-Type
-        Body: {"input_text": text, "textWords": word_count, ...}
+        Headers: Authorization (Bearer token), Content-Type, and browser-like headers
+        Body: {"input_text": text}
+
+        Response format: {"success": true, "data": {"isHuman": 0-100, "fakePercentage": 0-100, ...}}
         """
         start_time = time.time()
         try:
-            if not settings.ZEROGPT_API_KEY:
-                # Fallback to heuristic if API key not configured
-                await asyncio.sleep(0.1)
-                ai_score = self._simple_ai_heuristic(text)
+            # Check if API key is configured
+            api_key = settings.ZEROGPT_API_KEY
+            if not api_key or not api_key.strip():
+                message = "ZeroGPT API key not configured"
+                logger.warning(message)
                 return self._create_detector_result(
                     detector=DetectorType.ZEROGPT,
-                    ai_probability=ai_score,
-                    human_probability=1 - ai_score,
-                    confidence=0.78,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
                     response_time_ms=(time.time() - start_time) * 1000,
-                    details={"note": "Demo mode - configure ZEROGPT_API_KEY for real detection"},
-                    error=None,
+                    details=None,
+                    error=message,
                 )
 
+            # Log API key status (first 20 chars for debugging, not full key for security)
+            api_key_preview = api_key[:20] + "..." if len(api_key) > 20 else api_key
+            logger.info(f"ZeroGPT API key loaded (preview: {api_key_preview})")
+
             # Prepare request body
-            word_count = len(text.split())
             body = {
                 "input_text": text,
-                "textWords": word_count,
-                "aiWords": 0,
-                "fakePercentage": 0,
-                "sentences": [],
-                "h": [],
-                "collection_id": 0,
-                "fileName": "",
-                "feedback": "",
+            }
+
+            # Prepare headers matching the test script
+            # Note: API key is used as Bearer token in Authorization header
+            headers = {
+                "accept": "application/json, text/plain, */*",
+                "accept-encoding": "gzip, deflate, br, zstd",
+                "accept-language": "en-US,en;q=0.9",
+                "authorization": f"Bearer {api_key.strip()}",
+                "content-type": "application/json",
+                "origin": "https://www.zerogpt.com",
+                "referer": "https://www.zerogpt.com/",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
             }
 
             # Call ZeroGPT API
             async with httpx.AsyncClient(timeout=30.0) as client:
                 try:
+                    endpoint = "https://api.zerogpt.com/api/detect/detectText"
+
                     response = await client.post(
-                        "https://api.zerogpt.com/api/detect/detectText",
-                        headers={
-                            "ApiKey": settings.ZEROGPT_API_KEY,
-                            "Content-Type": "application/json",
-                        },
+                        endpoint,
+                        headers=headers,
                         json=body,
                     )
 
-                    logger.info(f"ZeroGPT API response status: {response.status_code}")
+                    logger.info(
+                        f"ZeroGPT API response status: {response.status_code} from {endpoint}"
+                    )
 
                     if 200 <= response.status_code < 300:
                         try:
                             data = response.json()
                             logger.info(f"ZeroGPT API response data: {data}")
 
-                            # Parse ZeroGPT response format
-                            # Response typically contains fakePercentage, aiWords, or similar fields
-                            ai_score = 0.5
+                            # Parse ZeroGPT response format based on test script
+                            # Expected format: {"success": true, "data": {"isHuman": 0-100, "fakePercentage": 0-100, ...}}
+                            ai_score: float | None = None
                             confidence = 0.0
 
                             if isinstance(data, dict):
-                                # Try different possible response field names
-                                if "fakePercentage" in data:
-                                    # fakePercentage is likely 0-100 where 100 = fully AI
-                                    fake_pct = float(data["fakePercentage"])
-                                    ai_score = fake_pct / 100.0  # Normalize 0-100 to 0-1
-                                elif "aiPercentage" in data:
-                                    ai_pct = float(data["aiPercentage"])
-                                    ai_score = ai_pct / 100.0
-                                elif "aiWords" in data and "textWords" in data:
-                                    # Calculate percentage from word counts
-                                    ai_words = float(data.get("aiWords", 0))
-                                    text_words = float(data.get("textWords", word_count))
-                                    if text_words > 0:
-                                        ai_score = ai_words / text_words
-                                elif "score" in data:
-                                    score = float(data["score"])
-                                    if score > 1:
-                                        ai_score = score / 100.0
+                                # Check for success flag and data object (matching test script format)
+                                if "success" in data:
+                                    if not data.get("success"):
+                                        # API returned success: false
+                                        error_message = data.get(
+                                            "message", "ZeroGPT API returned success: false"
+                                        )
+                                        logger.error(f"ZeroGPT API error: {error_message}")
+                                        return self._create_detector_result(
+                                            detector=DetectorType.ZEROGPT,
+                                            ai_probability=0.5,
+                                            human_probability=0.5,
+                                            confidence=0.0,
+                                            error=error_message,
+                                            response_time_ms=(time.time() - start_time) * 1000,
+                                            details={"raw_response": data},
+                                        )
+
+                                    # success: true, check for data object
+                                    if "data" in data and isinstance(data["data"], dict):
+                                        data_obj = data["data"]
+
+                                        # Primary field: fakePercentage (0-100) - AI score
+                                        if "fakePercentage" in data_obj:
+                                            fake_pct = float(data_obj["fakePercentage"])
+                                            ai_score = fake_pct / 100.0  # Normalize 0-100 to 0-1
+                                        # Alternative: isHuman (0-100) - inverse of AI score
+                                        elif "isHuman" in data_obj:
+                                            human_pct = float(data_obj["isHuman"])
+                                            ai_score = 1.0 - (human_pct / 100.0)  # Inverse
+                                        # Fallback: calculate from aiWords and textWords
+                                        elif "aiWords" in data_obj and "textWords" in data_obj:
+                                            ai_words = float(data_obj.get("aiWords", 0))
+                                            text_words = float(data_obj.get("textWords", 0))
+                                            if text_words > 0:
+                                                ai_score = ai_words / text_words
+                                        else:
+                                            logger.warning(
+                                                f"ZeroGPT response missing score fields. Keys in data: {list(data_obj.keys())}, Full response: {data}"
+                                            )
                                     else:
-                                        ai_score = score
-                                elif "probability" in data:
-                                    ai_score = float(data["probability"])
-                                elif "ai_probability" in data:
-                                    ai_score = float(data["ai_probability"])
-                                elif "result" in data and isinstance(data["result"], dict):
-                                    # Try nested result object
-                                    result = data["result"]
-                                    if "fakePercentage" in result:
-                                        fake_pct = float(result["fakePercentage"])
-                                        ai_score = fake_pct / 100.0
-                                    elif "aiPercentage" in result:
-                                        ai_pct = float(result["aiPercentage"])
-                                        ai_score = ai_pct / 100.0
+                                        logger.warning(
+                                            f"ZeroGPT response has success=true but missing or invalid data object. Keys: {list(data.keys())}, Full response: {data}"
+                                        )
+                                # Legacy format: direct fakePercentage at root
+                                elif "fakePercentage" in data:
+                                    fake_pct = float(data["fakePercentage"])
+                                    ai_score = fake_pct / 100.0
+                                # Legacy format: direct isHuman at root
+                                elif "isHuman" in data:
+                                    human_pct = float(data["isHuman"])
+                                    ai_score = 1.0 - (human_pct / 100.0)
                                 else:
-                                    # Log the full response for debugging
                                     logger.warning(
                                         f"Unexpected ZeroGPT response format. Keys: {list(data.keys())}, Full response: {data}"
                                     )
-                                    # Try to find any numeric value that might be the score
-                                    for key, value in data.items():
-                                        if isinstance(value, (int, float)) and 0 <= value <= 100:
-                                            ai_score = (
-                                                float(value) / 100.0 if value > 1 else float(value)
-                                            )
-                                            logger.info(f"Using {key}={value} as AI score")
-                                            break
-                                    if ai_score == 0.5:
-                                        # Fallback to heuristic if we couldn't parse
-                                        logger.warning(
-                                            "Could not parse ZeroGPT response, using heuristic"
-                                        )
-                                        ai_score = self._simple_ai_heuristic(text)
+
+                                if ai_score is None:
+                                    raise ValueError(
+                                        f"ZeroGPT response missing AI score. Keys: {list(data.keys())}, Response: {data}"
+                                    )
 
                                 # Calculate confidence based on how far from 0.5
                                 confidence = abs(ai_score - 0.5) * 2
                             else:
-                                # Unexpected response format
-                                logger.warning(
+                                raise ValueError(
                                     f"Unexpected ZeroGPT response type: {type(data)}, value: {data}"
                                 )
-                                ai_score = self._simple_ai_heuristic(text)
-                                confidence = 0.5
 
                             # Ensure scores are in valid range
                             ai_score = max(0.0, min(1.0, ai_score))
@@ -643,7 +621,7 @@ class AIDetectionService:
                                 response_time_ms=(time.time() - start_time) * 1000,
                                 details={
                                     "raw_response": data,
-                                    "api_version": "v1",
+                                    "api_version": "detect/detectText",
                                 },
                                 error=None,
                             )
@@ -660,9 +638,28 @@ class AIDetectionService:
                                 response_time_ms=(time.time() - start_time) * 1000,
                                 details=None,
                             )
+                        except Exception as e:
+                            # Other parsing errors
+                            error_msg = f"Failed to parse ZeroGPT response: {e!s}. Response text: {response.text[:200] if response else 'No response'}"
+                            logger.error(error_msg, exc_info=True)
+                            return self._create_detector_result(
+                                detector=DetectorType.ZEROGPT,
+                                ai_probability=0.5,
+                                human_probability=0.5,
+                                confidence=0.0,
+                                error=error_msg,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details=None,
+                            )
                     else:
                         # API returned error status
-                        error_text = response.text[:500]  # Limit error text length
+                        try:
+                            error_data = response.json()
+                            error_text = str(error_data)
+                        except Exception:
+                            error_text = (
+                                response.text[:500] if response.text else "No error message"
+                            )
                         error_msg = f"HTTP {response.status_code}: {error_text}"
                         logger.error(f"ZeroGPT API error: {error_msg}")
                         return self._create_detector_result(
@@ -674,6 +671,18 @@ class AIDetectionService:
                             response_time_ms=(time.time() - start_time) * 1000,
                             details=None,
                         )
+                except httpx.TimeoutException as e:
+                    error_msg = f"Request timeout: {e!s}"
+                    logger.error(f"ZeroGPT detection timeout: {error_msg}")
+                    return self._create_detector_result(
+                        detector=DetectorType.ZEROGPT,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        error=error_msg,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details=None,
+                    )
                 except httpx.RequestError as e:
                     error_msg = f"Request error: {e!s}"
                     logger.error(f"ZeroGPT API request error: {error_msg}")
@@ -687,17 +696,6 @@ class AIDetectionService:
                         details=None,
                     )
 
-        except httpx.TimeoutException as e:
-            logger.error(f"ZeroGPT detection timeout: {e!s}")
-            return self._create_detector_result(
-                detector=DetectorType.ZEROGPT,
-                ai_probability=0.5,
-                human_probability=0.5,
-                confidence=0.0,
-                error=f"Request timeout: {e!s}",
-                response_time_ms=(time.time() - start_time) * 1000,
-                details=None,
-            )
         except Exception as e:
             logger.error(f"ZeroGPT detection failed: {e!s}", exc_info=True)
             return self._create_detector_result(
@@ -705,26 +703,406 @@ class AIDetectionService:
                 ai_probability=0.5,
                 human_probability=0.5,
                 confidence=0.0,
-                error=str(e),
+                error=f"Unexpected error: {e!s}",
                 response_time_ms=(time.time() - start_time) * 1000,
                 details=None,
             )
 
+    def _split_into_sentences(self, text: str) -> list[str]:
+        """
+        Split text into sentences for Originality.AI API.
+
+        Uses improved regex pattern matching from test script for better accuracy.
+        """
+        # Remove HTML tags if present
+        if "<" in text and ">" in text:
+            text = re.sub(r"<[^>]+>", "", text)
+
+        # Remove extra whitespace
+        text = re.sub(r"\s+", " ", text.strip())
+
+        # Split by sentence endings (improved pattern from test script)
+        # Uses positive lookbehind to keep punctuation with sentences
+        sentences = re.split(r"(?<=[.!?])\s+", text)
+
+        # Filter out empty sentences and strip whitespace
+        sentences = [s.strip() for s in sentences if s.strip()]
+
+        # Fallback: if no sentences found, return text as single sentence
+        return sentences if sentences else [text]
+
+    def _analyze_blocks(self, blocks: list[dict]) -> dict:
+        """
+        Analyze block-level results to identify AI-like vs human-like sentences.
+
+        Args:
+            blocks: List of block results from Originality.AI API
+
+        Returns:
+            Dictionary with analysis including:
+            - human_like_count: Number of sentences with real > 0.8
+            - ai_like_count: Number of sentences with fake > 0.5
+            - ai_like_sentences: List of sentences flagged as AI-like
+            - human_like_sentences: List of sentences flagged as human-like
+            - patterns: Identified patterns (excessive commas, formal connectors, etc.)
+        """
+        human_like_count = 0
+        ai_like_count = 0
+        ai_like_sentences = []
+        human_like_sentences = []
+        patterns = {
+            "excessive_commas": [],
+            "formal_connectors": [],
+            "overly_complex": [],
+            "repetitive": [],
+            "forced_emotional": [],
+        }
+
+        # Formal connectors that are AI-like
+        formal_connectors = [
+            "furthermore",
+            "moreover",
+            "consequently",
+            "additionally",
+            "subsequently",
+            "nevertheless",
+            "therefore",
+            "thus",
+            "hence",
+        ]
+
+        for block in blocks:
+            text = block.get("text", "").strip()
+            result = block.get("result", {})
+            fake_score = result.get("fake", 0.5)
+            real_score = result.get("real", 0.5)
+
+            if real_score >= 0.8:
+                human_like_count += 1
+                human_like_sentences.append(
+                    {
+                        "text": text,
+                        "real_score": real_score,
+                        "fake_score": fake_score,
+                    }
+                )
+            elif fake_score >= 0.5:
+                ai_like_count += 1
+                ai_like_sentences.append(
+                    {
+                        "text": text,
+                        "real_score": real_score,
+                        "fake_score": fake_score,
+                    }
+                )
+
+                # Analyze patterns in AI-like sentences
+                # Check for excessive commas (4+ in one sentence)
+                comma_count = text.count(",")
+                if comma_count >= 4:
+                    patterns["excessive_commas"].append(text[:100] + "...")
+
+                # Check for formal connectors
+                text_lower = text.lower()
+                for connector in formal_connectors:
+                    if connector in text_lower:
+                        patterns["formal_connectors"].append(connector)
+                        break
+
+                # Check for overly complex sentences (40+ words)
+                word_count = len(text.split())
+                if word_count >= 40:
+                    patterns["overly_complex"].append(text[:100] + "...")
+
+        return {
+            "human_like_count": human_like_count,
+            "ai_like_count": ai_like_count,
+            "total_blocks": len(blocks),
+            "ai_like_sentences": ai_like_sentences[:5],  # Limit to first 5 for size
+            "human_like_sentences": human_like_sentences[:5],  # Limit to first 5
+            "patterns": patterns,
+        }
+
+    def _create_formatted_content(self, text: str) -> str:
+        """
+        Convert plain text to HTML formatted content for Originality.AI API.
+
+        Matches the formatting from the test script.
+        """
+        # Split by double newlines (paragraphs)
+        paragraphs = text.split("\n\n")
+
+        # Wrap each paragraph in <p> tags
+        formatted_paragraphs = []
+        for para in paragraphs:
+            para = para.strip()
+            if para:
+                # Replace single newlines with spaces within paragraphs
+                para = re.sub(r"\n+", " ", para)
+                formatted_paragraphs.append(f"<p>{para}</p>")
+
+        # If no paragraphs found, wrap entire text
+        if not formatted_paragraphs:
+            text = re.sub(r"\n+", " ", text.strip())
+            formatted_paragraphs.append(f"<p>{text}</p>")
+
+        return "".join(formatted_paragraphs)
+
+    async def _poll_originality_scan(
+        self,
+        client: httpx.AsyncClient,
+        scan_id: int,
+        max_wait_time: int = 180,
+        poll_interval: float = 2.0,
+    ) -> dict:
+        """
+        Poll Originality.AI for scan completion.
+
+        Args:
+            client: Shared HTTPX client
+            scan_id: Scan identifier returned from create call
+            max_wait_time: Maximum seconds to wait for completion
+            poll_interval: Delay between polling attempts
+
+        Returns:
+            Final scan result payload
+
+        Raises:
+            TimeoutError: If scan does not complete in allotted time
+        """
+        start_time = time.time()
+
+        while True:
+            response = await client.get(
+                f"{self._ORIGINALITY_BASE_URL}/{scan_id}",
+                headers={
+                    "Authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
+                    "Accept": "application/json",
+                },
+            )
+
+            if response.status_code >= 400:
+                raise RuntimeError(
+                    f"Originality.AI polling failed (status {response.status_code}): "
+                    f"{response.text[:300]}"
+                )
+
+            data = response.json()
+            scan_results = data.get("scan_results", {})
+            scan = scan_results.get("scan", {})
+            running = scan.get("running", 1)
+            jobs_remaining = scan.get("jobs_remaining", 0)
+
+            if running == 0 and jobs_remaining == 0:
+                return data
+
+            elapsed = time.time() - start_time
+            if elapsed >= max_wait_time:
+                raise TimeoutError(
+                    f"Originality.AI scan {scan_id} did not finish within {max_wait_time}s "
+                    f"(running={running}, jobs_remaining={jobs_remaining})"
+                )
+
+            await asyncio.sleep(poll_interval)
+
     async def _detect_originality(self, text: str) -> DetectorResult:
         """Detect using Originality.ai API."""
         start_time = time.time()
-        try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
 
+        # Check if API key is configured
+        if not settings.ORIGINALITY_API_KEY:
+            message = "Originality API key not configured"
+            logger.warning(message)
             return self._create_detector_result(
                 detector=DetectorType.ORIGINALITY,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.87,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
                 response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure ORIGINALITY_API_KEY for real detection"},
-                error=None,
+                details=None,
+                error=message,
+            )
+
+        try:
+            # Split text into sentences for Originality.AI API (improved method)
+            sentences = self._split_into_sentences(text)
+
+            # Create formatted HTML content (improved method)
+            formatted_content = self._create_formatted_content(text)
+
+            # Generate title from first sentence if not provided
+            title = text[:50] + "..." if len(text) > 50 else text
+            if sentences:
+                first_sentence = sentences[0]
+                if len(first_sentence) > 50:
+                    title = first_sentence[:50] + "..."
+                else:
+                    title = first_sentence
+
+            # Calculate credit cost (rough estimate: 1 credit per 100 words)
+            word_count = len(text.split())
+            credit_cost = max(1, (word_count + 99) // 100)
+
+            # Prepare request body according to Originality.AI API format
+            request_body = {
+                "sentences": sentences,
+                "originalContent": text,
+                "formattedContent": formatted_content,
+                "creditCost": credit_cost,
+                "title": title,
+                "aiModelVersion": 1,
+                "excludedUrls": [],
+                "pcoTargetedCountry": "United States",
+                "pcoTargetedDevice": "desktop",
+                "pcoPublishingDomain": "",
+                "pcoTargetedQuery": "",
+                "egcPresetGuideline": None,
+                "egcGuidelineID": None,
+                "scan_ai": True,
+                "scan_plag": True,
+                "scan_facts": False,
+                "scan_readability": False,
+                "scan_grammar_spelling": False,
+                "scan_pco": False,
+                "scan_egc": False,
+            }
+
+            # Call Originality.AI API with optimized timeout
+            async with httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)) as client:
+                create_response = await client.post(
+                    self._ORIGINALITY_BASE_URL,
+                    headers={
+                        "Authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
+                        "Content-Type": "application/json",
+                        "Accept": "application/json",
+                    },
+                    json=request_body,
+                )
+
+                logger.info(
+                    f"Originality.AI API called - Status: {create_response.status_code}, "
+                    f"Sentences={len(sentences)}"
+                )
+
+                if 200 <= create_response.status_code < 300:
+                    create_data = create_response.json()
+                    scan_id = create_data.get("scanID") or create_data.get("scan", {}).get("id")
+
+                    if not scan_id:
+                        logger.error(f"Originality.AI response missing scan ID: {create_data}")
+                        raise RuntimeError("Originality.AI response missing scan ID")
+
+                    scan_results = create_data.get("scan_results", {})
+                    scan_meta = scan_results.get("scan", {})
+
+                    if not scan_results or scan_meta.get("running", 1) != 0:
+                        final_data = await self._poll_originality_scan(client, scan_id)
+                    else:
+                        final_data = create_data
+
+                    scan_results = final_data.get("scan_results", {})
+                    scan = scan_results.get("scan", {})
+                    ai_results = scan_results.get("aiResults", {})
+                    plag_results = scan_results.get("plagResults", {})
+
+                    ai_fake_score = ai_results.get("ai_fake_score")
+                    if ai_fake_score is None:
+                        ai_fake_score = scan.get("ai_fake_score")
+                    if ai_fake_score is None:
+                        ai_fake_score = ai_results.get("fake")
+                    if ai_fake_score is None:
+                        ai_fake_score = 0.5
+
+                    ai_real_score = ai_results.get("ai_real_score")
+                    if ai_real_score is None:
+                        ai_real_score = scan.get("ai_real_score")
+                    if ai_real_score is None:
+                        ai_real_score = ai_results.get("real")
+                    if ai_real_score is None:
+                        ai_real_score = 0.5
+
+                    ai_probability = float(ai_fake_score)
+                    human_probability = float(ai_real_score)
+                    confidence = abs(ai_probability - 0.5) * 2
+
+                    block_analysis = None
+                    if ai_results and "blocks" in ai_results:
+                        block_analysis = self._analyze_blocks(ai_results.get("blocks", []))
+
+                    plagiarism_score = None
+                    if plag_results:
+                        plagiarism_score = plag_results.get("documentScore")
+
+                    logger.info(
+                        f"Originality.AI API: AI={ai_probability:.3f}, "
+                        f"Human={human_probability:.3f}, Confidence={confidence:.3f}, "
+                        f"ScanID={scan.get('id') or scan_id}"
+                    )
+
+                    if block_analysis:
+                        logger.info(
+                            f"Block analysis: {block_analysis['human_like_count']} human-like, "
+                            f"{block_analysis['ai_like_count']} AI-like sentences"
+                        )
+
+                    return self._create_detector_result(
+                        detector=DetectorType.ORIGINALITY,
+                        ai_probability=ai_probability,
+                        human_probability=human_probability,
+                        confidence=confidence,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details={
+                            "ai_fake_score": ai_fake_score,
+                            "ai_real_score": ai_real_score,
+                            "plagiarism_score": plagiarism_score,
+                            "scan_id": scan.get("id") or scan_id,
+                            "block_analysis": block_analysis,
+                        },
+                        error=None,
+                    )
+                else:
+                    error_msg = f"Originality.AI API returned status {create_response.status_code}"
+                    error_text = (
+                        create_response.text[:500]
+                        if hasattr(create_response, "text")
+                        else "No error details"
+                    )
+                    logger.error(f"{error_msg}: {error_text}")
+
+                    logger.debug(f"Request URL: {self._ORIGINALITY_BASE_URL}")
+                    logger.debug(f"Request body keys: {list(request_body.keys())}")
+                    logger.debug(f"Sentences count: {len(sentences)}")
+
+                    return self._create_detector_result(
+                        detector=DetectorType.ORIGINALITY,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details={"error": error_msg, "error_details": error_text},
+                        error=error_msg,
+                    )
+        except httpx.TimeoutException:
+            logger.error("Originality.AI API timeout")
+            return self._create_detector_result(
+                detector=DetectorType.ORIGINALITY,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                response_time_ms=(time.time() - start_time) * 1000,
+                details={"error": "API timeout"},
+                error="API timeout",
+            )
+        except TimeoutError as e:
+            logger.error(f"Originality.AI polling timeout: {e!s}")
+            return self._create_detector_result(
+                detector=DetectorType.ORIGINALITY,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                response_time_ms=(time.time() - start_time) * 1000,
+                details={"error": "Polling timeout", "error_details": str(e)},
+                error=str(e),
             )
         except Exception as e:
             logger.error(f"Originality detection failed: {e!s}")
@@ -733,85 +1111,25 @@ class AIDetectionService:
                 ai_probability=0.5,
                 human_probability=0.5,
                 confidence=0.0,
-                error=str(e),
                 response_time_ms=(time.time() - start_time) * 1000,
-                details=None,
+                details={"error": str(e)},
+                error=str(e),
             )
 
     async def _detect_quillbot(self, text: str) -> DetectorResult:
         """Detect using QuillBot AI Detector API."""
         start_time = time.time()
-        try:
-            await asyncio.sleep(0.1)
-            ai_score = self._simple_ai_heuristic(text)
-
-            return self._create_detector_result(
-                detector=DetectorType.QUILLBOT,
-                ai_probability=ai_score,
-                human_probability=1 - ai_score,
-                confidence=0.81,
-                response_time_ms=(time.time() - start_time) * 1000,
-                details={"note": "Demo mode - configure QUILLBOT_API_KEY for real detection"},
-                error=None,
-            )
-        except Exception as e:
-            logger.error(f"QuillBot detection failed: {e!s}")
-            return self._create_detector_result(
-                detector=DetectorType.QUILLBOT,
-                ai_probability=0.5,
-                human_probability=0.5,
-                confidence=0.0,
-                error=str(e),
-                response_time_ms=(time.time() - start_time) * 1000,
-                details=None,
-            )
-
-    def _simple_ai_heuristic(self, text: str) -> float:
-        """
-        Simple heuristic to estimate AI probability for demo purposes.
-
-        This is a placeholder that uses basic linguistic features.
-        Real implementations would use the actual API services.
-        """
-        # Check for overly formal language patterns
-        formal_words = [
-            "utilize",
-            "facilitate",
-            "implement",
-            "demonstrate",
-            "consequently",
-            "furthermore",
-            "moreover",
-            "nevertheless",
-            "subsequently",
-            "accordingly",
-        ]
-
-        words = text.lower().split()
-        if len(words) == 0:
-            return 0.5
-
-        # Count formal words
-        formal_count = sum(1 for word in words if any(f in word for f in formal_words))
-        formal_ratio = formal_count / len(words)
-
-        # Check sentence structure uniformity
-        sentences = re.split(r"[.!?]+", text)
-        sentences = [s.strip() for s in sentences if s.strip()]
-
-        if len(sentences) > 1:
-            sentence_lengths = [len(s.split()) for s in sentences]
-            avg_length = sum(sentence_lengths) / len(sentence_lengths)
-            variance = sum((length - avg_length) ** 2 for length in sentence_lengths) / len(
-                sentence_lengths
-            )
-            uniformity_score = 1.0 / (1.0 + math.sqrt(variance) / 10)
-        else:
-            uniformity_score = 0.5
-
-        # Combine metrics
-        ai_score = formal_ratio * 0.4 + uniformity_score * 0.6
-        return min(max(ai_score, 0.0), 1.0)
+        message = "QuillBot detector not implemented. Requires real API integration."
+        logger.warning(message)
+        return self._create_detector_result(
+            detector=DetectorType.QUILLBOT,
+            ai_probability=0.5,
+            human_probability=0.5,
+            confidence=0.0,
+            response_time_ms=(time.time() - start_time) * 1000,
+            details=None,
+            error=message,
+        )
 
     async def _internal_analysis(self, text: str) -> InternalAnalysis:
         """

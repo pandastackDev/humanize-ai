@@ -34,6 +34,8 @@ class ValidationService:
         """
         Validate that semantic meaning is preserved.
 
+        Uses parallel batch embedding API calls for faster processing.
+
         Args:
             original_text: Original text
             humanized_text: Humanized text
@@ -42,8 +44,12 @@ class ValidationService:
             Tuple of (is_valid, similarity_score)
         """
         try:
-            original_embedding = self.embedding_service.get_embedding(original_text)
-            humanized_embedding = self.embedding_service.get_embedding(humanized_text)
+            # Use batch API to get both embeddings in parallel (much faster)
+            embeddings = self.embedding_service.get_embeddings_batch(
+                [original_text, humanized_text]
+            )
+            original_embedding = embeddings[0]
+            humanized_embedding = embeddings[1]
 
             similarity = self.embedding_service.cosine_similarity(
                 original_embedding, humanized_embedding

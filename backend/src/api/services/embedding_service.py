@@ -8,9 +8,7 @@ Used for:
 """
 
 import logging
-
-import numpy as np
-from numpy import ndarray
+import math
 
 from api.config import settings
 
@@ -40,7 +38,7 @@ class EmbeddingService:
                 logger.error(f"Failed to initialize OpenAI embedding client: {e}")
                 self.openai_enabled = False
 
-    def get_embedding(self, text: str, model: str | None = None) -> ndarray:
+    def get_embedding(self, text: str, model: str | None = None) -> list[float]:
         """
         Get embedding vector for text.
 
@@ -49,7 +47,7 @@ class EmbeddingService:
             model: Embedding model name (optional, uses default if not provided)
 
         Returns:
-            NumPy array of embedding vector
+            List of floats representing the embedding vector
 
         Raises:
             RuntimeError: If no embedding provider is available
@@ -64,7 +62,34 @@ class EmbeddingService:
 
         raise RuntimeError("No embedding provider available. Please configure OpenAI API key.")
 
-    def _get_openai_embedding(self, text: str, model: str | None) -> ndarray:
+    def get_embeddings_batch(self, texts: list[str], model: str | None = None) -> list[list[float]]:
+        """
+        Get embeddings for multiple texts in parallel (faster than sequential calls).
+
+        Args:
+            texts: List of texts to embed
+            model: Embedding model name (optional, uses default if not provided)
+
+        Returns:
+            List of embedding vectors (each is a list of floats)
+
+        Raises:
+            RuntimeError: If no embedding provider is available
+        """
+        if not texts:
+            return []
+
+        # Use OpenAI for embeddings
+        if self.openai_enabled:
+            try:
+                return self._get_openai_embeddings_batch(texts, model)
+            except Exception as e:
+                logger.error(f"OpenAI batch embedding failed: {e}")
+                raise RuntimeError("Embedding provider failed") from e
+
+        raise RuntimeError("No embedding provider available. Please configure OpenAI API key.")
+
+    def _get_openai_embedding(self, text: str, model: str | None) -> list[float]:
         """Get embedding using OpenAI."""
         model_name = model or settings.OPENAI_EMBEDDING_MODEL
 
@@ -72,34 +97,52 @@ class EmbeddingService:
             model=model_name, input=text.replace("\n", " ")
         )
 
-        return np.array(response.data[0].embedding)
+        # OpenAI returns a list of floats directly, no conversion needed
+        return list(response.data[0].embedding)
 
-    def cosine_similarity(self, embedding1: ndarray, embedding2: ndarray) -> float:
+    def _get_openai_embeddings_batch(
+        self, texts: list[str], model: str | None
+    ) -> list[list[float]]:
+        """Get embeddings for multiple texts using OpenAI batch API."""
+        model_name = model or settings.OPENAI_EMBEDDING_MODEL
+
+        # Clean texts
+        cleaned_texts = [text.replace("\n", " ") for text in texts]
+
+        # OpenAI embeddings.create supports batch input
+        response = self.openai_client.embeddings.create(model=model_name, input=cleaned_texts)
+
+        # Return list of lists (each embedding is a list of floats)
+        return [list(item.embedding) for item in response.data]
+
+    def cosine_similarity(self, embedding1: list[float], embedding2: list[float]) -> float:
         """
         Calculate cosine similarity between two embeddings.
 
         Args:
-            embedding1: First embedding vector
-            embedding2: Second embedding vector
+            embedding1: First embedding vector (list of floats)
+            embedding2: Second embedding vector (list of floats)
 
         Returns:
             Cosine similarity score (0.0 to 1.0)
         """
-        # Normalize vectors
-        norm1 = np.linalg.norm(embedding1)
-        norm2 = np.linalg.norm(embedding2)
+        # Calculate vector norms (Euclidean norm) using built-in math
+        norm1 = math.sqrt(sum(x * x for x in embedding1))
+        norm2 = math.sqrt(sum(x * x for x in embedding2))
 
         if norm1 == 0 or norm2 == 0:
             return 0.0
 
+        # Calculate dot product using built-in zip and sum
+        dot_product = sum(a * b for a, b in zip(embedding1, embedding2))
+
         # Calculate cosine similarity
-        dot_product = np.dot(embedding1, embedding2)
         similarity = dot_product / (norm1 * norm2)
 
-        # Clamp to [-1, 1] in case of floating point errors
-        return float(np.clip(similarity, -1.0, 1.0))
+        # Clamp to [-1, 1] using built-in min/max
+        return float(max(-1.0, min(1.0, similarity)))
 
-    def get_style_embedding(self, style_sample: str) -> ndarray:
+    def get_style_embedding(self, style_sample: str) -> list[float]:
         """
         Extract style embedding from a style sample.
 
@@ -107,6 +150,6 @@ class EmbeddingService:
             style_sample: Sample text that represents the desired writing style
 
         Returns:
-            Style embedding vector
+            Style embedding vector (list of floats)
         """
         return self.get_embedding(style_sample)

@@ -179,6 +179,35 @@ ${result.detector_results
     return <XCircle className="h-6 w-6 text-red-600" />;
   };
 
+  const getDetectorAssessment = (detector: DetectorResult) => {
+    const aiScore = detector.ai_probability * 100;
+    const humanScore = detector.human_probability * 100;
+    const isLikelyAI = aiScore > humanScore + 0.5;
+    const isLikelyHuman = humanScore > aiScore + 0.5;
+
+    if (isLikelyAI) {
+      return {
+        label: "Likely AI",
+        score: aiScore,
+        colorClass: "text-red-600 dark:text-red-400",
+      };
+    }
+
+    if (isLikelyHuman) {
+      return {
+        label: "Likely Human",
+        score: humanScore,
+        colorClass: "text-green-600 dark:text-green-400",
+      };
+    }
+
+    return {
+      label: "Inconclusive",
+      score: (aiScore + humanScore) / 2,
+      colorClass: "text-yellow-600 dark:text-yellow-400",
+    };
+  };
+
   // Loading screen component with all detectors
   const renderLoadingScreen = () => (
     <Card className="flex h-[600px] flex-col items-center justify-center bg-card/95 px-4 py-8 backdrop-blur-sm dark:bg-editor-bg/95">
@@ -330,11 +359,21 @@ ${result.detector_results
                     )}
                   </div>
                 </div>
-                <div
-                  className={`font-bold text-lg ${getScoreColor(detector.human_probability * 100)}`}
-                >
-                  {(detector.human_probability * 100).toFixed(0)}%
-                </div>
+                {(() => {
+                  const assessment = getDetectorAssessment(detector);
+                  return (
+                    <div className="text-right">
+                      <div
+                        className={`font-bold text-lg ${assessment.colorClass}`}
+                      >
+                        {assessment.score.toFixed(0)}%
+                      </div>
+                      <div className="text-muted-foreground text-xs">
+                        {assessment.label}
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
             ))}
 

@@ -14,7 +14,6 @@ export function WordBalanceButton({
   userId,
   organizationId,
 }: WordBalanceButtonProps) {
-  const [wordBalance, setWordBalance] = useState<number | null>(null);
   const [totalAvailable, setTotalAvailable] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -42,12 +41,10 @@ export function WordBalanceButton({
         const subWords = subscriptionResponse?.words_remaining || 0;
         const purchaseBalance = balanceResponse?.word_balance || 0;
 
-        setWordBalance(purchaseBalance);
         // Total = subscription monthly limit remaining + one-time purchases
         setTotalAvailable(subWords + purchaseBalance);
       } catch (error) {
         console.error("Error fetching word balances:", error);
-        setWordBalance(0);
         setTotalAvailable(0);
       } finally {
         setLoading(false);
@@ -76,7 +73,6 @@ export function WordBalanceButton({
           const subWords = subscriptionResponse?.words_remaining || 0;
           const purchaseBalance = balanceResponse?.word_balance || 0;
 
-          setWordBalance(purchaseBalance);
           setTotalAvailable(subWords + purchaseBalance);
         } catch (err) {
           console.error("Error refreshing balance:", err);

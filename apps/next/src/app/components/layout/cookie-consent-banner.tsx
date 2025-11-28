@@ -1,17 +1,27 @@
 "use client";
 
 import { Button } from "@humanize/ui/components/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@humanize/ui/components/dialog";
+import { Dialog, DialogContent } from "@humanize/ui/components/dialog";
 import { X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ManageCookiesDialog } from "./manage-cookies-dialog";
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkIsMobile = () => {
+      setIsMobile(window.innerWidth < 768); // md breakpoint
+    };
+
+    checkIsMobile();
+    window.addEventListener("resize", checkIsMobile);
+    return () => window.removeEventListener("resize", checkIsMobile);
+  }, []);
+
+  return isMobile;
+}
 
 type CookieConsentBannerProps = {
   showBanner: boolean;
@@ -21,7 +31,7 @@ type CookieConsentBannerProps = {
   onRejectNonEssential: () => void;
 };
 
-// Mobile: Modal view
+// Mobile: Centered modal view (like ChatGPT)
 function MobileView({
   showBanner,
   setShowBanner,
@@ -31,25 +41,29 @@ function MobileView({
 }: CookieConsentBannerProps) {
   return (
     <Dialog onOpenChange={setShowBanner} open={showBanner}>
-      <DialogContent className="max-w-sm border-border bg-card p-6 dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
-        <DialogHeader className="text-left">
-          <div className="flex items-center justify-between">
-            <DialogTitle className="font-semibold text-foreground text-xl dark:text-foreground">
-              We use cookies
-            </DialogTitle>
+      <DialogContent
+        className="border-border bg-card p-0 md:hidden dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]"
+        showCloseButton={false}
+      >
+        <div className="flex flex-col items-center justify-center px-5 pt-4 pb-8 sm:p-10">
+          <div className="mb-2 flex w-full justify-end">
             <button
-              className="text-muted-foreground hover:text-foreground"
+              aria-label="Close"
+              className="flex h-9 w-9 items-center justify-center rounded-lg bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
               onClick={() => setShowBanner(false)}
               type="button"
             >
               <X className="h-5 w-5" />
             </button>
           </div>
-          <DialogDescription className="mt-4 text-muted-foreground text-sm leading-relaxed dark:text-muted-foreground">
+          <p className="mb-2 text-center font-semibold text-card-foreground text-xl">
+            We use cookies
+          </p>
+          <p className="mb-6 text-center text-muted-foreground text-sm">
             We use cookies to help this site function, understand service usage,
             and support marketing efforts. Visit{" "}
             <button
-              className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
+              className="cursor-pointer text-card-foreground underline underline-offset-2 transition-colors hover:text-foreground"
               onClick={onManageCookies}
               type="button"
             >
@@ -57,33 +71,31 @@ function MobileView({
             </button>{" "}
             to change preferences anytime. View our{" "}
             <Link
-              className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
+              className="text-card-foreground underline underline-offset-2 transition-colors hover:text-foreground"
               href="/cookie-policy"
             >
               Cookie Policy
             </Link>{" "}
             for more info.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="mt-6 flex flex-col gap-2">
+          </p>
           <Button
-            className="w-full bg-foreground text-background hover:bg-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted"
+            className="mb-2 w-full sm:mb-3"
             onClick={onManageCookies}
             type="button"
-            variant="default"
+            variant="outline"
           >
             Manage Cookies
           </Button>
           <Button
-            className="w-full bg-foreground text-background hover:bg-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted"
+            className="mb-2 w-full sm:mb-3"
             onClick={onAcceptAll}
             type="button"
-            variant="default"
+            variant="outline"
           >
             Accept all
           </Button>
           <Button
-            className="w-full border-border bg-background text-foreground hover:bg-muted dark:border-[var(--color-select-hover)] dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-[var(--color-select-hover)]"
+            className="mb-2 w-full sm:mb-3"
             onClick={onRejectNonEssential}
             type="button"
             variant="outline"
@@ -96,50 +108,48 @@ function MobileView({
   );
 }
 
-// Desktop: Fixed bottom-left banner
+// Desktop: Full-width bottom banner (like ChatGPT)
 function DesktopView({
-  setShowBanner,
   onManageCookies,
   onAcceptAll,
   onRejectNonEssential,
-}: Omit<CookieConsentBannerProps, "showBanner">) {
+}: Omit<CookieConsentBannerProps, "showBanner" | "setShowBanner">) {
   return (
-    <div className="fixed bottom-0 left-0 z-50 hidden w-full max-w-md p-4 md:block">
-      <div className="rounded-lg border border-border bg-card p-6 shadow-lg dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
-        <div className="mb-4 flex items-start justify-between">
-          <h3 className="font-semibold text-foreground text-lg dark:text-foreground">
+    <div
+      className="fixed right-0 bottom-0 left-0 z-50 hidden w-full border-t shadow-sm md:block"
+      style={{
+        backgroundColor: "var(--color-cookie-banner-bg)",
+        borderTopColor: "var(--color-cookie-banner-border)",
+      }}
+    >
+      <div className="relative flex w-full flex-col items-center justify-between gap-5 p-5 sm:flex-row sm:gap-0">
+        <div className="flex max-w-5xl flex-col gap-2 sm:flex-1">
+          <h3 className="font-semibold text-base text-foreground">
             We use cookies
           </h3>
-          <button
-            className="text-muted-foreground hover:text-foreground"
-            onClick={() => setShowBanner(false)}
-            type="button"
-          >
-            <X className="h-5 w-5" />
-          </button>
+          <p className="text-muted-foreground text-sm">
+            We use cookies to help this site function, understand service usage,
+            and support marketing efforts. Visit{" "}
+            <button
+              className="cursor-pointer text-foreground underline underline-offset-2 transition-colors hover:text-muted-foreground"
+              onClick={onManageCookies}
+              type="button"
+            >
+              Manage Cookies
+            </button>{" "}
+            to change preferences anytime. View our{" "}
+            <Link
+              className="text-foreground underline underline-offset-2 transition-colors hover:text-muted-foreground"
+              href="/cookie-policy"
+            >
+              Cookie Policy
+            </Link>{" "}
+            for more info.
+          </p>
         </div>
-        <p className="mb-4 text-muted-foreground text-sm leading-relaxed dark:text-muted-foreground">
-          We use cookies to help this site function, understand service usage,
-          and support marketing efforts. Visit{" "}
-          <button
-            className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
-            onClick={onManageCookies}
-            type="button"
-          >
-            Manage Cookies
-          </button>{" "}
-          to change preferences anytime. View our{" "}
-          <Link
-            className="text-foreground underline hover:text-muted-foreground dark:text-foreground dark:hover:text-muted-foreground"
-            href="/cookie-policy"
-          >
-            Cookie Policy
-          </Link>{" "}
-          for more info.
-        </p>
-        <div className="flex flex-wrap items-center justify-end gap-2">
+        <div className="flex w-full flex-row justify-end gap-3 sm:w-auto sm:min-w-[300px]">
           <Button
-            className="border-border bg-background text-foreground hover:bg-muted dark:border-[var(--color-select-hover)] dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-[var(--color-select-hover)]"
+            className="cursor-pointer text-sm"
             onClick={onManageCookies}
             type="button"
             variant="outline"
@@ -147,7 +157,7 @@ function DesktopView({
             Manage Cookies
           </Button>
           <Button
-            className="border-border bg-background text-foreground hover:bg-muted dark:border-[var(--color-select-hover)] dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-[var(--color-select-hover)]"
+            className="cursor-pointer text-sm"
             onClick={onRejectNonEssential}
             type="button"
             variant="outline"
@@ -155,10 +165,10 @@ function DesktopView({
             Reject non-essential
           </Button>
           <Button
-            className="bg-foreground text-background hover:bg-muted-foreground dark:bg-background dark:text-foreground dark:hover:bg-muted"
+            className="cursor-pointer text-sm"
             onClick={onAcceptAll}
             type="button"
-            variant="default"
+            variant="outline"
           >
             Accept all
           </Button>
@@ -171,6 +181,7 @@ function DesktopView({
 export function CookieConsentBanner() {
   const [showBanner, setShowBanner] = useState(false);
   const [cookiesDialogOpen, setCookiesDialogOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     // Check if user has already given consent
@@ -234,19 +245,21 @@ export function CookieConsentBanner() {
 
   return (
     <>
-      <MobileView
-        onAcceptAll={handleAcceptAll}
-        onManageCookies={handleManageCookies}
-        onRejectNonEssential={handleRejectNonEssential}
-        setShowBanner={setShowBanner}
-        showBanner={showBanner}
-      />
-      <DesktopView
-        onAcceptAll={handleAcceptAll}
-        onManageCookies={handleManageCookies}
-        onRejectNonEssential={handleRejectNonEssential}
-        setShowBanner={setShowBanner}
-      />
+      {isMobile ? (
+        <MobileView
+          onAcceptAll={handleAcceptAll}
+          onManageCookies={handleManageCookies}
+          onRejectNonEssential={handleRejectNonEssential}
+          setShowBanner={setShowBanner}
+          showBanner={showBanner}
+        />
+      ) : (
+        <DesktopView
+          onAcceptAll={handleAcceptAll}
+          onManageCookies={handleManageCookies}
+          onRejectNonEssential={handleRejectNonEssential}
+        />
+      )}
       <ManageCookiesDialog
         onOpenChange={(open) => {
           setCookiesDialogOpen(open);

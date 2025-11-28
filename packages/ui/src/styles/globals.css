@@ -48,6 +48,10 @@
   --select-bg: oklch(1 0 0);
   --select-hover: oklch(0.967 0.001 286.375);
   --separator-bg: oklch(0.92 0.004 286.32);
+  --cookie-banner-bg: #ececec;
+  --cookie-banner-border: #ececec;
+  --color-cookie-banner-bg: var(--cookie-banner-bg);
+  --color-cookie-banner-border: var(--cookie-banner-border);
   /* Detector button colors - Light mode */
   --detector-default-bg: rgb(245, 243, 255);
   --detector-default-border: rgb(221, 214, 254);
@@ -106,6 +110,10 @@
   --select-bg: #1f1f1f;
   --select-hover: #282828;
   --separator-bg: #2a2a2a;
+  --cookie-banner-bg: #1d1d1d;
+  --cookie-banner-border: #1d1d1d;
+  --color-cookie-banner-bg: var(--cookie-banner-bg);
+  --color-cookie-banner-border: var(--cookie-banner-border);
   /* Detector button colors - Dark mode */
   --detector-default-bg: rgb(30, 27, 75);
   --detector-default-border: rgb(59, 51, 128);
@@ -169,6 +177,8 @@
   --color-select-bg: var(--select-bg);
   --color-select-hover: var(--select-hover);
   --color-separator-bg: var(--separator-bg);
+  --color-cookie-banner-bg: var(--cookie-banner-bg);
+  --color-cookie-banner-border: var(--cookie-banner-border);
   --color-detector-default-bg: var(--detector-default-bg);
   --color-detector-default-border: var(--detector-default-border);
   --color-detector-default-text: var(--detector-default-text);

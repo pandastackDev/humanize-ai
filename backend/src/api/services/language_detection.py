@@ -3,10 +3,8 @@ Language detection service.
 
 Supports multiple detection methods with fallback chain:
 - Lingua-py (primary) - Modern, accurate, ~75 languages
-- langid.py (fallback) - Fast, reliable for many languages
-- FastText (fallback) - Proven performance for longer texts
 - Cloud API (optional) - For languages outside Lingua's support or high scalability
-- langdetect (last resort) - Lightweight fallback
+- langdetect (fallback) - Lightweight fallback
 - Manual heuristics (ultra-short text < 30 words)
 
 Includes benchmarking and metrics tracking for accuracy and latency.
@@ -16,7 +14,6 @@ import logging
 import re
 import time
 from collections import defaultdict
-from pathlib import Path
 from typing import Any
 
 # Try to import Lingua-py (primary)
@@ -27,114 +24,6 @@ try:
 except ImportError:
     LINGUA_AVAILABLE = False
     logging.warning("Lingua-py not available. Install with: pip install lingua-language-detector")
-
-# Try to import langid.py (fallback)
-try:
-    import langid
-
-    LANGID_AVAILABLE = True
-    # Set language detection to use all languages for best accuracy
-    langid.set_languages(
-        [
-            "af",
-            "am",
-            "an",
-            "ar",
-            "as",
-            "az",
-            "be",
-            "bg",
-            "bn",
-            "br",
-            "bs",
-            "ca",
-            "cs",
-            "cy",
-            "da",
-            "de",
-            "dz",
-            "el",
-            "en",
-            "es",
-            "et",
-            "fa",
-            "fi",
-            "fr",
-            "ga",
-            "gl",
-            "gu",
-            "he",
-            "hi",
-            "hr",
-            "ht",
-            "hu",
-            "hy",
-            "id",
-            "is",
-            "it",
-            "ja",
-            "jv",
-            "ka",
-            "kk",
-            "km",
-            "kn",
-            "ko",
-            "ku",
-            "ky",
-            "la",
-            "lb",
-            "lo",
-            "lt",
-            "lv",
-            "mg",
-            "mk",
-            "ml",
-            "mn",
-            "mr",
-            "ms",
-            "mt",
-            "nb",
-            "ne",
-            "nl",
-            "nn",
-            "no",
-            "oc",
-            "or",
-            "pa",
-            "pl",
-            "ps",
-            "pt",
-            "qu",
-            "ro",
-            "ru",
-            "rw",
-            "se",
-            "si",
-            "sk",
-            "sl",
-            "sq",
-            "sr",
-            "sv",
-            "sw",
-            "ta",
-            "te",
-            "th",
-            "tl",
-            "tr",
-            "ug",
-            "uk",
-            "ur",
-            "vi",
-            "vo",
-            "wa",
-            "xh",
-            "zh",
-            "zu",
-        ]
-    )
-except ImportError:
-    LANGID_AVAILABLE = False
-    logging.warning("langid not available. Install with: pip install langid")
 
 # Try to import langdetect (fallback)
 try:
@@ -196,79 +85,12 @@ class LanguageDetectionService:
                 logger.warning(f"Failed to initialize Lingua-py: {e}. Will use fallback methods.")
                 self.lingua_detector = None
 
-        # Initialize langid.py (fallback)
-        self.langid_available = LANGID_AVAILABLE
-        if self.langid_available:
-            logger.info("langid.py detector available")
-
-        # Initialize FastText (fallback)
-        self.use_fasttext = bool(settings.FASTTEXT_MODEL_PATH)
-        self.fasttext_model = None
-        if self.use_fasttext:
-            self._load_fasttext()
-
         # Initialize Cloud API (optional fallback)
         self.use_cloud_api = settings.USE_CLOUD_LANGUAGE_DETECTION and bool(
             settings.GOOGLE_CLOUD_TRANSLATE_API_KEY
         )
         if self.use_cloud_api:
             logger.info("Google Cloud Translation API enabled for language detection")
-
-    def _load_fasttext(self) -> None:
-        """Load FastText model if available."""
-        try:
-            import fasttext  # type: ignore[import-untyped]
-
-            # Try to load from path first
-            model_path = Path(settings.FASTTEXT_MODEL_PATH)
-            if not model_path.is_absolute():
-                # Get project root (3 levels up from this file: services -> api -> src -> backend -> root)
-                project_root = Path(__file__).parent.parent.parent.parent.parent
-                model_path = project_root / model_path
-
-            # If model file doesn't exist, try to download it automatically
-            if not model_path.exists():
-                logger.warning(
-                    f"FastText model not found at {model_path}. Attempting to download..."
-                )
-                try:
-                    # Create models directory if it doesn't exist
-                    model_path.parent.mkdir(parents=True, exist_ok=True)
-                    # Download the model automatically
-                    logger.info(
-                        "Downloading FastText language identification model (lid.176.bin)..."
-                    )
-                    fasttext_model_url = (
-                        "https://dl.fbaipublicfiles.com/fasttext/supervised-models/lid.176.bin"
-                    )
-                    import urllib.request
-
-                    urllib.request.urlretrieve(fasttext_model_url, str(model_path))
-                    logger.info(f"FastText model downloaded successfully to {model_path}")
-                except Exception as download_error:
-                    logger.error(
-                        f"Failed to download FastText model: {download_error}. Will use fallback methods."
-                    )
-                    self.use_fasttext = False
-                    return
-
-            if model_path.exists():
-                logger.info(f"Loading FastText model from {model_path}")
-                self.fasttext_model = fasttext.load_model(str(model_path))
-                logger.info("FastText model loaded successfully")
-            else:
-                logger.warning(
-                    f"FastText model not found at {model_path}. Will use fallback methods."
-                )
-                self.use_fasttext = False
-        except ImportError:
-            logger.warning(
-                "FastText not available. Install with: pip install fasttext. Will use fallback methods."
-            )
-            self.use_fasttext = False
-        except Exception as e:
-            logger.error(f"Failed to load FastText model: {e}. Will use fallback methods.")
-            self.use_fasttext = False
 
     def _detect_with_heuristics(self, text: str) -> tuple[str, float]:
         """
@@ -485,11 +307,9 @@ class LanguageDetectionService:
 
         Priority order:
         1. Lingua-py (primary) - Modern, accurate, ~75 languages
-        2. langid.py (fallback) - Fast, reliable for many languages
-        3. FastText (fallback) - Proven performance for longer texts
-        4. Cloud API (optional fallback) - For languages outside Lingua's support or high scalability
-        5. langdetect (last resort) - Lightweight fallback
-        6. Heuristics (ultra-short < 30 words)
+        2. Cloud API (optional) - For languages outside Lingua's support or high scalability
+        3. langdetect (fallback) - Lightweight fallback
+        4. Heuristics (ultra-short < 30 words)
 
         Args:
             text: Text to analyze
@@ -579,7 +399,7 @@ class LanguageDetectionService:
                     self._track_metrics("lingua", latency_ms, success=True, fallback=False)
                     return lang_code, confidence
                 elif unknown_lang is not None and detected_lang == unknown_lang:
-                    logger.debug("Lingua-py returned UNKNOWN language. Trying langid.py.")
+                    logger.debug("Lingua-py returned UNKNOWN language. Trying fallback methods.")
                     self._track_metrics("lingua", latency_ms, success=False, fallback=True)
             except AttributeError:
                 # Handle case where Language.UNKNOWN doesn't exist in this version
@@ -602,63 +422,12 @@ class LanguageDetectionService:
                     method_start = time.time()
                     latency_ms = (time.time() - method_start) * 1000
                     self._track_metrics("lingua", latency_ms, success=False, fallback=True)
-                    logger.warning(f"Lingua-py detection failed: {e}. Trying langid.py.")
+                    logger.warning(f"Lingua-py detection failed: {e}. Trying fallback methods.")
             except Exception as e:
                 method_start = time.time()
                 latency_ms = (time.time() - method_start) * 1000
                 self._track_metrics("lingua", latency_ms, success=False, fallback=True)
-                logger.warning(f"Lingua-py detection failed: {e}. Trying langid.py.")
-
-        # Try langid.py (fallback)
-        if self.langid_available:
-            try:
-                method_start = time.time()
-                detected_lang, confidence_score = langid.classify(text)
-                latency_ms = (time.time() - method_start) * 1000
-
-                if detected_lang and confidence_score > 0.5:  # Minimum confidence threshold
-                    lang_code = detected_lang
-                    # Normalize confidence (langid returns 0-1, convert to our scale)
-                    confidence = float(confidence_score)
-                    self._track_metrics("langid", latency_ms, success=True, fallback=True)
-                    logger.info(
-                        f"langid.py detected language: {lang_code} (confidence: {confidence:.2f}, latency: {latency_ms:.2f}ms)"
-                    )
-                    return lang_code, confidence
-                self._track_metrics("langid", latency_ms, success=False, fallback=True)
-            except Exception as e:
-                method_start = time.time()
-                latency_ms = (time.time() - method_start) * 1000
-                self._track_metrics("langid", latency_ms, success=False, fallback=True)
-                logger.warning(f"langid.py detection failed: {e}. Trying FastText.")
-
-        # Try FastText (fallback)
-        if self.use_fasttext and self.fasttext_model is not None:
-            try:
-                method_start = time.time()
-                # FastText returns (labels_tuple, confidences_array)
-                labels, confidences = self.fasttext_model.predict(text, k=1)
-                latency_ms = (time.time() - method_start) * 1000
-
-                if labels and len(labels) > 0:
-                    # FastText returns labels like "__label__en", remove prefix
-                    raw_lang_code = labels[0].replace("__label__", "")
-                    confidence = float(confidences[0])
-                    # Normalize to ISO 639-1 if needed
-                    lang_code = LANGUAGE_CODE_MAP.get(raw_lang_code, raw_lang_code)
-                    if not lang_code:
-                        lang_code = raw_lang_code
-                    self._track_metrics("fasttext", latency_ms, success=True, fallback=True)
-                    logger.info(
-                        f"FastText detected language: {lang_code} (confidence: {confidence:.2f}, latency: {latency_ms:.2f}ms)"
-                    )
-                    return lang_code, confidence
-                self._track_metrics("fasttext", latency_ms, success=False, fallback=True)
-            except Exception as e:
-                method_start = time.time()
-                latency_ms = (time.time() - method_start) * 1000
-                self._track_metrics("fasttext", latency_ms, success=False, fallback=True)
-                logger.warning(f"FastText detection failed: {e}. Trying Cloud API.")
+                logger.warning(f"Lingua-py detection failed: {e}. Trying fallback methods.")
 
         # Try Cloud API (optional fallback for languages outside Lingua's support)
         if self.use_cloud_api:

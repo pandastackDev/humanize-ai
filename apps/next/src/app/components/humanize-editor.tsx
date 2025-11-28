@@ -844,10 +844,7 @@ function getLanguageCode(languageName: string): string {
 }
 
 // Get detector-specific styles using CSS variables
-function getDetectorStyles(
-  detectorName: string,
-  _isDark = false
-): {
+function getDetectorStyles(detectorName: string): {
   bgColor: string;
   borderColor: string;
   textColor: string;
@@ -1005,7 +1002,7 @@ export function HumanizeEditor({
           organizationId
         );
         setSubscriptionPlan(subscriptionInfo.plan);
-      } catch (err) {
+      } catch {
         // Silently default to free plan on error (error is already handled in checkSubscription)
         setSubscriptionPlan("free");
       }
@@ -1563,7 +1560,7 @@ export function HumanizeEditor({
     }
     if (isLoading || forceLoading) {
       return (
-        <div className="flex h-full w-full flex-col items-center gap-3 overflow-hidden px-3 py-3 sm:px-4 md:px-6">
+        <div className="flex min-h-0 w-full flex-col items-center gap-3 overflow-hidden px-3 py-3 sm:px-4 md:px-6">
           {/* Loading Spinner with Gradient Background */}
           <div className="flex w-full flex-col items-center justify-center gap-2.5 rounded-lg bg-gradient-to-br from-[var(--color-brand-primary)]/5 via-purple-500/5 to-[var(--color-brand-primary)]/5 p-5 dark:from-[var(--color-brand-primary)]/10 dark:via-purple-500/10 dark:to-[var(--color-brand-primary)]/10">
             <div className="relative">
@@ -1585,7 +1582,7 @@ export function HumanizeEditor({
     }
     if (hasOutputText) {
       return (
-        <div className="h-full overflow-auto px-3 py-3 text-sm sm:px-4 sm:py-4 md:px-6 md:py-5">
+        <div className="min-h-0 px-3 py-3 text-sm sm:px-4 sm:py-4 md:px-6 md:py-5">
           <TextDiffViewer
             enabledFeatures={enabledFeatures}
             humanizedText={outputText}
@@ -1663,7 +1660,7 @@ export function HumanizeEditor({
               <div className="flex w-full flex-wrap justify-center gap-2">
                 {AI_DETECTORS.map((detector, index) => {
                   // Use detector-specific styles with CSS variables
-                  const styles = getDetectorStyles(detector.name, isDarkMode);
+                  const styles = getDetectorStyles(detector.name);
 
                   const pillStyle: React.CSSProperties = {
                     backgroundColor: styles.bgColor,
@@ -1775,109 +1772,139 @@ export function HumanizeEditor({
           </div>
 
           {/* Detector Grid - Smaller pill-shaped buttons, centered */}
-          <div className="mb-4 flex w-full flex-wrap justify-center gap-1.5">
+          <div className="mb-4 flex w-full flex-wrap justify-center gap-2">
             {AI_DETECTORS.map((detector) => {
               const result = getDetectorResult(detector.name);
-              const humanPct = result
-                ? (result.human_probability * 100).toFixed(0)
-                : "N/A";
-              const hasError = result?.error !== undefined;
+              const hasError = Boolean(result?.error);
 
-              const styles = getDetectorStyles(detector.name, isDarkMode);
+              const styles = getDetectorStyles(detector.name);
 
               const statusTextStyle: React.CSSProperties = {
                 fontSize: "12px",
                 lineHeight: "16px",
               };
 
+              // Helper function to get color for AI detection
+              const getAIColor = () =>
+                isDarkMode ? "rgb(248, 113, 113)" : "rgb(220, 38, 38)";
+
+              // Helper function to get color for Human detection
+              const getHumanColor = () =>
+                isDarkMode ? "rgb(34, 197, 94)" : "rgb(22, 163, 74)";
+
+              // Helper function to get color for error state
+              const getErrorColor = () =>
+                isDarkMode ? "rgb(248, 113, 113)" : "rgb(220, 38, 38)";
+
+              // Helper function to calculate detector status
+              const calculateDetectorStatus = (
+                detectorAiScore: number,
+                detectorHumanScore: number
+              ) => {
+                const isLikelyAI = detectorAiScore > detectorHumanScore + 0.5;
+                const isLikelyHuman =
+                  detectorHumanScore > detectorAiScore + 0.5;
+
+                if (isLikelyAI) {
+                  return {
+                    label: "AI",
+                    value: detectorAiScore.toFixed(0),
+                    color: getAIColor(),
+                  };
+                }
+                if (isLikelyHuman) {
+                  return {
+                    label: "H",
+                    value: detectorHumanScore.toFixed(0),
+                    color: getHumanColor(),
+                  };
+                }
+                return {
+                  label: "?",
+                  value: ((detectorAiScore + detectorHumanScore) / 2).toFixed(
+                    0
+                  ),
+                  color: isDarkMode ? "rgb(234, 179, 8)" : "rgb(202, 138, 4)",
+                };
+              };
+
+              // Helper function to render status text
+              const renderStatusText = (text: string, textColor: string) => (
+                <span
+                  className="font-semibold"
+                  style={{
+                    ...statusTextStyle,
+                    color: textColor,
+                  }}
+                >
+                  {text}
+                </span>
+              );
+
               const getStatusText = () => {
                 if (hasError) {
-                  return (
-                    <span
-                      className="whitespace-nowrap font-semibold"
-                      style={{
-                        ...statusTextStyle,
-                        color: isDarkMode
-                          ? "rgb(248, 113, 113)"
-                          : "rgb(220, 38, 38)",
-                      }}
-                    >
-                      Error
-                    </span>
-                  );
+                  return renderStatusText("Error", getErrorColor());
                 }
                 if (result) {
-                  return (
-                    <span
-                      className="whitespace-nowrap font-semibold"
-                      style={{
-                        ...statusTextStyle,
-                        color: styles.textColor,
-                      }}
-                    >
-                      {humanPct}%
-                    </span>
+                  const detectorAiScore = result.ai_probability * 100;
+                  const detectorHumanScore = result.human_probability * 100;
+                  const status = calculateDetectorStatus(
+                    detectorAiScore,
+                    detectorHumanScore
+                  );
+                  return renderStatusText(
+                    `${status.value}% ${status.label}`,
+                    status.color
                   );
                 }
-                return (
-                  <span
-                    className="whitespace-nowrap font-semibold"
-                    style={{
-                      ...statusTextStyle,
-                      color: "rgb(148, 163, 184)",
-                    }}
-                  >
-                    N/A
-                  </span>
-                );
+                return renderStatusText("N/A", "rgb(148, 163, 184)");
               };
 
               return (
                 <div
-                  className="flex shrink-0 items-center gap-1 rounded-full border-[1.5px] px-2 py-1"
+                  className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-2.5 py-1.5"
                   key={detector.name}
                   style={{
                     backgroundColor: styles.bgColor,
                     borderColor: styles.borderColor,
-                    flex: "0 0 calc(25% - 6px)",
-                    maxWidth: "calc(25% - 6px)",
-                    minWidth: "120px",
-                    justifyContent: "center",
+                    minWidth: "140px",
+                    maxWidth: "100%",
+                    justifyContent: "flex-start",
                   }}
                 >
-                  {/* Logo - smaller */}
+                  {/* Logo - always visible */}
                   <div className="shrink-0">
                     <Image
                       alt={detector.name}
-                      className="h-3 w-3"
-                      height={12}
+                      className="h-3.5 w-3.5"
+                      height={14}
                       src={detector.image}
-                      width={12}
+                      width={14}
                     />
                   </div>
 
-                  {/* Detector name - matching processing state font */}
+                  {/* Detector name - can truncate if needed */}
                   <span
-                    className="whitespace-nowrap font-semibold"
+                    className="truncate font-semibold"
                     style={{
                       fontSize: "12px",
                       lineHeight: "16px",
                       color: styles.textColor,
+                      maxWidth: "60px",
                     }}
+                    title={detector.name}
                   >
                     {detector.name}
                   </span>
 
-                  {/* Status - matching the empty div structure from HTML */}
-                  <div className="shrink-0">
+                  {/* Status - always visible with score */}
+                  <div className="ml-auto shrink-0">
                     {hasError || result ? getStatusText() : null}
                   </div>
                 </div>
               );
             })}
           </div>
-
-          {/* Score Breakdown - Smaller, centered */}
           <div className="mb-4 w-full max-w-sm rounded-lg border border-border bg-muted p-3 shadow-lg dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]/50">
             <div className="relative mb-2 flex items-center justify-between border-border border-b pb-2 dark:border-[var(--color-editor-border)]">
               <div className="flex items-center gap-1.5">
@@ -1912,16 +1939,12 @@ export function HumanizeEditor({
               </div>
             </div>
           </div>
-
-          {/* Word count and message - smaller, centered */}
           <div className="mb-3 text-center">
             <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">
               Predicted based upon{" "}
               {String(detectionResult.metadata?.word_count ?? 0)} words.
             </p>
           </div>
-
-          {/* Final message - smaller, centered */}
           <div
             className="w-full rounded-lg border border-border bg-card p-2 text-center dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]"
             style={{
@@ -1941,8 +1964,6 @@ export function HumanizeEditor({
               })()}
             </p>
           </div>
-
-          {/* Cached indicator */}
           {detectionResult.cached && (
             <div className="mt-3 flex items-center justify-center gap-1 text-blue-600 text-xs dark:text-blue-500">
               <Clock className="h-3 w-3" />
@@ -2107,11 +2128,10 @@ export function HumanizeEditor({
 
             {/* Main Editor Content */}
             <div className="relative min-h-[20rem] overflow-hidden rounded-xl border border-border bg-card shadow-sm md:min-h-[32rem] dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
-              {/* Center vertical divider spanning full editor height on desktop */}
-              <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border md:block dark:bg-[var(--color-vertical-border)]" />
-
               {/* Text Areas Container */}
-              <div className="flex min-w-0 flex-col md:flex-row">
+              <div className="relative flex min-w-0 flex-col md:flex-row">
+                {/* Center vertical divider spanning Text Areas Container height on desktop */}
+                <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border md:block dark:bg-[var(--color-vertical-border)]" />
                 {/* Left Text Area - Original */}
                 <div className="box-border flex w-full min-w-0 flex-col border-0 md:w-1/2">
                   {/* Text Input Area - Always visible, with drag-and-drop support */}
@@ -2127,7 +2147,7 @@ export function HumanizeEditor({
                       }
                     >
                       <Textarea
-                        className="h-[300px] w-full min-w-0 resize-none border-0 border-b border-b-transparent px-3 py-3 pr-6 text-sm shadow-none outline-none focus:border-b-transparent focus:ring-0 focus-visible:border-b-transparent focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-7 md:h-[450px] md:px-5 md:py-5 md:pr-9 dark:border-b-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)] dark:focus-visible:border-b-[var(--color-editor-border)] dark:focus:border-b-[var(--color-editor-border)]"
+                        className="b order-b h-[300px] w-full min-w-0 resize-none border-0 border-b-transparent px-3 py-3 pr-6 text-sm shadow-none outline-none focus:border-b-transparent focus:ring-0 focus-visible:border-b-transparent focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-7 md:h-[450px] md:px-5 md:py-5 md:pr-9 dark:border-b-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)] dark:focus-visible:border-b-[var(--color-editor-border)] dark:focus:border-b-[var(--color-editor-border)]"
                         onChange={(e) => {
                           setInputText(e.target.value);
                         }}
@@ -2297,8 +2317,8 @@ export function HumanizeEditor({
 
                 {/* Right Text Area - Humanized */}
                 <div className="flex w-full min-w-0 flex-col md:w-1/2">
-                  <div className="relative flex min-w-0 flex-1 flex-col">
-                    <div className="flex-1 overflow-auto">
+                  <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
+                    <div className="h-[300px] overflow-y-auto sm:h-[400px] md:h-[450px]">
                       {activeTab === "humanize"
                         ? renderHumanizeOutput()
                         : renderOtherTabOutput()}
@@ -2368,75 +2388,6 @@ export function HumanizeEditor({
                   )}
                 </div>
               </div>
-
-              {/* Text Features Legend - Outside textarea area */}
-              {activeTab === "humanize" && hasOutputText && (
-                <div className="flex flex-wrap items-center justify-end gap-2 border-border border-t bg-card px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-t-[var(--color-editor-border)] dark:bg-background/50">
-                  {/* Only show legend items for features that are present AND can be toggled */}
-                  {presentFeatures.changed && (
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-red-500"
-                      />
-                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
-                        Changed Words
-                      </span>
-                    </div>
-                  )}
-                  {presentFeatures.structural && (
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        aria-hidden="true"
-                        className="h-0.5 w-4 shrink-0 bg-yellow-500"
-                      />
-                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
-                        Structural Changes
-                      </span>
-                    </div>
-                  )}
-                  {presentFeatures.unchanged && (
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-blue-500"
-                      />
-                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
-                        Longest Unchanged Words
-                      </span>
-                    </div>
-                  )}
-                  {presentFeatures.thesaurus && (
-                    <div className="flex items-center gap-1.5">
-                      <div
-                        aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-purple-500"
-                      />
-                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
-                        Thesaurus
-                      </span>
-                    </div>
-                  )}
-                  {/* Only show text features popover if there are any toggleable present features */}
-                  {(presentFeatures.changed ||
-                    presentFeatures.structural ||
-                    presentFeatures.unchanged ||
-                    presentFeatures.thesaurus) && (
-                    <TextFeaturesSidebar
-                      enabledFeatures={enabledFeatures}
-                      onFeatureToggle={(feature, enabled) => {
-                        if (feature === "thesaurus") {
-                          return;
-                        }
-                        setEnabledFeatures((prev) => ({
-                          ...prev,
-                          [feature]: enabled,
-                        }));
-                      }}
-                    />
-                  )}
-                </div>
-              )}
 
               {/* Bottom Controls - Moved to bottom as per reference */}
               {activeTab === "humanize" && !isInitialState && (
@@ -2575,6 +2526,74 @@ export function HumanizeEditor({
                       ))}
                     </SelectContent>
                   </Select>
+                </div>
+              )}
+              {/* Text Features Legend - Outside textarea area */}
+              {activeTab === "humanize" && hasOutputText && (
+                <div className="flex flex-wrap items-center justify-end gap-2 border-border border-t bg-card px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-t-[var(--color-editor-border)] dark:bg-background/50">
+                  {/* Only show legend items for features that are present AND can be toggled */}
+                  {presentFeatures.changed && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        aria-hidden="true"
+                        className="h-3 w-3 shrink-0 rounded-full bg-red-500"
+                      />
+                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+                        Changed Words
+                      </span>
+                    </div>
+                  )}
+                  {presentFeatures.structural && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        aria-hidden="true"
+                        className="h-0.5 w-4 shrink-0 bg-yellow-500"
+                      />
+                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+                        Structural Changes
+                      </span>
+                    </div>
+                  )}
+                  {presentFeatures.unchanged && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        aria-hidden="true"
+                        className="h-3 w-3 shrink-0 rounded-full bg-blue-500"
+                      />
+                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+                        Longest Unchanged Words
+                      </span>
+                    </div>
+                  )}
+                  {presentFeatures.thesaurus && (
+                    <div className="flex items-center gap-1.5">
+                      <div
+                        aria-hidden="true"
+                        className="h-3 w-3 shrink-0 rounded-full bg-purple-500"
+                      />
+                      <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+                        Thesaurus
+                      </span>
+                    </div>
+                  )}
+                  {/* Only show text features popover if there are any toggleable present features */}
+                  {(presentFeatures.changed ||
+                    presentFeatures.structural ||
+                    presentFeatures.unchanged ||
+                    presentFeatures.thesaurus) && (
+                    <TextFeaturesSidebar
+                      enabledFeatures={enabledFeatures}
+                      onFeatureToggle={(feature, enabled) => {
+                        if (feature === "thesaurus") {
+                          return;
+                        }
+                        setEnabledFeatures((prev) => ({
+                          ...prev,
+                          [feature]: enabled,
+                        }));
+                      }}
+                    />
+                  )}
                 </div>
               )}
             </div>

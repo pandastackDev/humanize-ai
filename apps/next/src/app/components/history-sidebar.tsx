@@ -257,7 +257,10 @@ export function HistorySidebar({
         }}
         open={detailViewOpen}
       >
-        <DialogContent className="max-h-[90vh] max-w-6xl overflow-y-auto bg-background">
+        <DialogContent
+          className="max-h-[90vh] max-w-6xl overflow-y-auto bg-background"
+          showCloseButton={false}
+        >
           {selectedItem && (
             <>
               <DialogHeader className="border-border border-b pb-4">
