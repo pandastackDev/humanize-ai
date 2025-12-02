@@ -216,8 +216,12 @@ export function Footer() {
   const [mounted, setMounted] = useState(false);
 
   // Set mounted state after component mounts to avoid hydration mismatch
+  // Use setTimeout to avoid synchronous setState in effect
   useEffect(() => {
-    setMounted(true);
+    const timeoutId = setTimeout(() => {
+      setMounted(true);
+    }, 0);
+    return () => clearTimeout(timeoutId);
   }, []);
 
   // Check if system mode is active on mount
@@ -282,7 +286,7 @@ export function Footer() {
               {/* Navigation Links */}
               <nav className="flex flex-wrap items-center justify-center gap-4 text-sm text-white lg:justify-start">
                 <Link
-                  className="transition-colors hover:text-gray-300"
+                  className="transition-colors hover:text-muted-foreground"
                   href="/"
                 >
                   Home
@@ -290,7 +294,7 @@ export function Footer() {
 
                 {/* Free Tools Dropdown */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-1 text-white transition-colors hover:text-gray-300">
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-white transition-colors hover:text-muted-foreground">
                     Free tools
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
@@ -302,25 +306,25 @@ export function Footer() {
                 </DropdownMenu>
 
                 <Link
-                  className="transition-colors hover:text-gray-300"
+                  className="transition-colors hover:text-muted-foreground"
                   href="/faq"
                 >
                   FAQ
                 </Link>
                 <Link
-                  className="transition-colors hover:text-gray-300"
+                  className="transition-colors hover:text-muted-foreground"
                   href="/become-an-affiliate"
                 >
                   Become an Affiliate
                 </Link>
                 <Link
-                  className="transition-colors hover:text-gray-300"
+                  className="transition-colors hover:text-muted-foreground"
                   href="/api"
                 >
                   API
                 </Link>
                 <Link
-                  className="transition-colors hover:text-gray-300"
+                  className="transition-colors hover:text-muted-foreground"
                   href="/contact"
                 >
                   Contact
@@ -328,7 +332,7 @@ export function Footer() {
 
                 {/* Legal Dropdown */}
                 <DropdownMenu>
-                  <DropdownMenuTrigger className="flex items-center gap-1 text-white transition-colors hover:text-gray-300">
+                  <DropdownMenuTrigger className="flex items-center gap-1 text-white transition-colors hover:text-muted-foreground">
                     Legal
                     <ChevronDown className="h-4 w-4" />
                   </DropdownMenuTrigger>
@@ -380,12 +384,12 @@ export function Footer() {
                 })}
               </div>
               {/* Theme Toggle */}
-              <div className="flex items-center gap-1 rounded-md border border-gray-700 bg-gray-900 p-0.5">
+              <div className="flex items-center gap-1 rounded-md border border-border bg-muted p-0.5">
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                     mounted && !isSystemMode && theme === "light"
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-white"
+                      ? "bg-accent text-white"
+                      : "text-muted-foreground hover:text-white"
                   }`}
                   onClick={() => {
                     setIsSystemMode(false);
@@ -397,15 +401,15 @@ export function Footer() {
                     className={`h-4 w-4 cursor-pointer ${
                       mounted && !isSystemMode && theme === "light"
                         ? "text-white"
-                        : "text-gray-400"
+                        : "text-muted-foreground"
                     }`}
                   />
                 </button>
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                     mounted && !isSystemMode && theme === "dark"
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-white"
+                      ? "bg-accent text-white"
+                      : "text-muted-foreground hover:text-white"
                   }`}
                   onClick={() => {
                     setIsSystemMode(false);
@@ -417,15 +421,15 @@ export function Footer() {
                     className={`h-4 w-4 cursor-pointer ${
                       mounted && !isSystemMode && theme === "dark"
                         ? "text-white"
-                        : "text-gray-400"
+                        : "text-muted-foreground"
                     }`}
                   />
                 </button>
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                     isSystemMode
-                      ? "bg-gray-800 text-white"
-                      : "text-gray-400 hover:text-white"
+                      ? "bg-accent text-white"
+                      : "text-muted-foreground hover:text-white"
                   }`}
                   onClick={() => {
                     const isNight = getIsNightTime();
@@ -437,7 +441,7 @@ export function Footer() {
                 >
                   <Monitor
                     className={`h-4 w-4 cursor-pointer ${
-                      isSystemMode ? "text-white" : "text-gray-400"
+                      isSystemMode ? "text-white" : "text-muted-foreground"
                     }`}
                   />
                 </button>

@@ -330,6 +330,10 @@ WINNING STRATEGY (Beats 93% human detection):
    - Use descriptive, colorful language
    - Be slightly dramatic where appropriate
    - Don't be bland and neutral
+   - Include personal insights and real-world examples when appropriate
+   - Use storytelling techniques to engage readers emotionally
+   - Add context and nuance for specific audiences
+   - Include appropriate humor and emotion where natural
 
 AVOID THESE AI MARKERS:
 ❌ "delve", "leverage", "robust", "seamless", "comprehensive", "commenced"
@@ -354,8 +358,12 @@ CRITICAL: Make it pass 93%+ human detection by:
 - Using simple, everyday words (no "commenced", "propelled", "witnessed")
 - Adding natural imperfections (slight redundancy, casual asides)
 - Varying sentence length wildly (short 6-word sentences, then long 30-word rambling ones)
-- Including conversational markers: "Well,", "Now,", "Or, at least", "So,"
+- Including conversational markers: "Well,", "Now,", "Or, at least", "So," (sparingly)
 - Using emotional/descriptive language where natural
+- Adding personal insights and relatable examples when appropriate
+- Using storytelling techniques to create emotional engagement
+- Including context and nuance for your specific audience
+- Adding appropriate humor and emotion where genuinely fitting
 
 EXAMPLES OF GOOD HUMANIZATION:
 ✓ "that mad dictator, indeed, the man himself" (emphatic redundancy)
@@ -421,18 +429,18 @@ def get_quick_humanization_prompt(
 
     if length_mode == "shorten":
         additional_instructions.append(
-            "IMPORTANT: Make the text more concise (aim for 70-85% of original length). "
-            "Remove redundancy but keep all key points."
+            "IMPORTANT: Make the text more concise (aim for 80-95% of original length). "
+            "Remove redundancy but keep all key points and maintain proper grammar."
         )
     elif length_mode == "expand":
         additional_instructions.append(
-            "IMPORTANT: Expand the text with natural elaboration (aim for 120-140%). "
-            "Add relevant details, not just filler words."
+            "IMPORTANT: Expand the text significantly (aim for 150-270% of original length). "
+            "Add natural elaboration, details, and examples while maintaining proper grammar."
         )
-    else:  # standard
+    else:  # standard (Keep it as is)
         additional_instructions.append(
-            "IMPORTANT: Keep similar length to original (90-110%). "
-            "Don't significantly expand or shorten."
+            "IMPORTANT: Expand slightly (aim for 120-130% of original length). "
+            "Add human markers and natural elaboration while maintaining proper grammar."
         )
 
     # Add instructions to user template

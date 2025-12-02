@@ -366,7 +366,7 @@ export function HistorySidebar({
                       </span>
                     )}
                     {selectedItem.language && (
-                      <span className="rounded-full bg-green-100 px-3 py-1 font-medium text-green-700 text-xs dark:bg-green-900/30 dark:text-green-400">
+                      <span className="rounded-full bg-success-bg px-3 py-1 font-medium text-success text-xs dark:bg-success-muted dark:text-success">
                         {selectedItem.language}
                       </span>
                     )}

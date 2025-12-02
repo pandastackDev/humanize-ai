@@ -24,10 +24,10 @@ export default async function AccountPage() {
       </div>
 
       {userFields && (
-        <div className="flex w-[400px] flex-col justify-center gap-3">
+        <div className="flex w-tabs flex-col justify-center gap-3">
           {userFields.map(([label, value]) => (
             <div className="flex items-center gap-6" key={String(value)}>
-              <Label className="w-[100px] font-bold">{label}</Label>
+              <Label className="w-label font-bold">{label}</Label>
 
               <div className="flex-1">
                 <Input readOnly value={String(value) || ""} />

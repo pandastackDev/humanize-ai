@@ -69,22 +69,22 @@ export function EvaluationDashboard() {
 
   const getImprovementColor = (delta: number) => {
     if (delta > 10) {
-      return "text-green-600 dark:text-green-400";
+      return "text-success dark:text-success";
     }
     if (delta > 0) {
-      return "text-yellow-600 dark:text-yellow-400";
+      return "text-warning dark:text-warning";
     }
-    return "text-red-600 dark:text-red-400";
+    return "text-destructive dark:text-destructive";
   };
 
   const getImprovementIcon = (delta: number) => {
     if (delta > 10) {
-      return <TrendingUp className="h-5 w-5 text-green-600" />;
+      return <TrendingUp className="h-5 w-5 text-success" />;
     }
     if (delta > 0) {
-      return <ArrowUp className="h-5 w-5 text-yellow-600" />;
+      return <ArrowUp className="h-5 w-5 text-warning" />;
     }
-    return <ArrowDown className="h-5 w-5 text-red-600" />;
+    return <ArrowDown className="h-5 w-5 text-destructive" />;
   };
 
   return (
@@ -100,7 +100,7 @@ export function EvaluationDashboard() {
           </CardHeader>
           <CardContent>
             <Textarea
-              className="min-h-[300px] resize-y"
+              className="min-h-editor-sm resize-y"
               onChange={(e) => setOriginalText(e.target.value)}
               placeholder="Paste the original text here..."
               value={originalText}
@@ -117,7 +117,7 @@ export function EvaluationDashboard() {
           </CardHeader>
           <CardContent>
             <Textarea
-              className="min-h-[300px] resize-y"
+              className="min-h-editor-sm resize-y"
               onChange={(e) => setHumanizedText(e.target.value)}
               placeholder="Paste the humanized text here..."
               value={humanizedText}
@@ -149,9 +149,9 @@ export function EvaluationDashboard() {
       </div>
 
       {error && (
-        <Card className="border-red-200 bg-red-50 dark:border-red-800 dark:bg-red-900/20">
+        <Card className="border-destructive/30 bg-destructive/10 dark:border-destructive/50 dark:bg-destructive/20">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-2 text-red-800 dark:text-red-300">
+            <div className="flex items-center gap-2 text-destructive dark:text-destructive">
               <XCircle className="h-5 w-5" />
               <p>{error}</p>
             </div>
@@ -242,13 +242,13 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
                     <span className="font-medium text-sm">
                       Human Likelihood
                     </span>
-                    <span className="font-bold text-blue-600 text-lg dark:text-blue-400">
+                    <span className="font-bold text-info text-lg dark:text-info">
                       {result.original.human_likelihood_pct.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div className="h-bar-md w-full rounded-full bg-muted dark:bg-muted-bg-medium">
                     <div
-                      className="h-2.5 rounded-full bg-blue-600 transition-all"
+                      className="h-bar-md rounded-full bg-info transition-all"
                       style={{
                         width: `${result.original.human_likelihood_pct}%`,
                       }}
@@ -259,13 +259,13 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-medium text-sm">AI Likelihood</span>
-                    <span className="font-bold text-lg text-red-600 dark:text-red-400">
+                    <span className="font-bold text-destructive text-lg dark:text-destructive">
                       {result.original.ai_likelihood_pct.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div className="h-bar-md w-full rounded-full bg-muted dark:bg-muted-bg-medium">
                     <div
-                      className="h-2.5 rounded-full bg-red-600 transition-all"
+                      className="h-bar-md rounded-full bg-destructive transition-all"
                       style={{ width: `${result.original.ai_likelihood_pct}%` }}
                     />
                   </div>
@@ -287,7 +287,7 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
                 <CardTitle className="flex items-center gap-2">
                   Humanized Text Detection
                   {result.improvement.human_likelihood_delta > 5 && (
-                    <CheckCircle className="h-5 w-5 text-green-600" />
+                    <CheckCircle className="h-5 w-5 text-success" />
                   )}
                 </CardTitle>
                 <CardDescription>After humanization</CardDescription>
@@ -298,13 +298,13 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
                     <span className="font-medium text-sm">
                       Human Likelihood
                     </span>
-                    <span className="font-bold text-green-600 text-lg dark:text-green-400">
+                    <span className="font-bold text-lg text-success dark:text-success">
                       {result.humanized.human_likelihood_pct.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div className="h-bar-md w-full rounded-full bg-muted dark:bg-muted-bg-medium">
                     <div
-                      className="h-2.5 rounded-full bg-green-600 transition-all"
+                      className="h-bar-md rounded-full bg-success transition-all"
                       style={{
                         width: `${result.humanized.human_likelihood_pct}%`,
                       }}
@@ -315,13 +315,13 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
                 <div className="space-y-2">
                   <div className="flex justify-between">
                     <span className="font-medium text-sm">AI Likelihood</span>
-                    <span className="font-bold text-lg text-red-600 dark:text-red-400">
+                    <span className="font-bold text-destructive text-lg dark:text-destructive">
                       {result.humanized.ai_likelihood_pct.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="h-2.5 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+                  <div className="h-bar-md w-full rounded-full bg-muted dark:bg-muted-bg-medium">
                     <div
-                      className="h-2.5 rounded-full bg-red-600 transition-all"
+                      className="h-bar-md rounded-full bg-destructive transition-all"
                       style={{
                         width: `${result.humanized.ai_likelihood_pct}%`,
                       }}
@@ -347,22 +347,22 @@ Improvement: ${result.improvement.human_likelihood_delta.toFixed(1)}% (${result.
               <CardTitle>Improvement Visualization</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="relative h-8 overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+              <div className="relative h-8 overflow-hidden rounded-full bg-muted dark:bg-muted-bg-medium">
                 {/* Original position */}
                 <div
-                  className="absolute h-full border-blue-600 border-r-2 bg-blue-500/30"
+                  className="absolute h-full border-info border-r-2 bg-info/30"
                   style={{ width: `${result.original.human_likelihood_pct}%` }}
                 >
-                  <span className="absolute top-1 right-2 font-medium text-blue-900 text-xs dark:text-blue-100">
+                  <span className="absolute top-1 right-2 font-medium text-info text-xs dark:text-info">
                     Original
                   </span>
                 </div>
                 {/* Humanized position */}
                 <div
-                  className="absolute h-full border-green-600 border-r-2 bg-green-500/30"
+                  className="absolute h-full border-success border-r-2 bg-success/30"
                   style={{ width: `${result.humanized.human_likelihood_pct}%` }}
                 >
-                  <span className="absolute top-1 right-2 font-medium text-green-900 text-xs dark:text-green-100">
+                  <span className="absolute top-1 right-2 font-medium text-success text-xs dark:text-success">
                     Humanized
                   </span>
                 </div>

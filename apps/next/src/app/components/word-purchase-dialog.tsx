@@ -146,19 +146,19 @@ export function WordPurchaseDialog({
   const renderPromoCodeSection = () => {
     if (promoDiscount?.valid) {
       return (
-        <div className="flex items-center justify-between rounded-md bg-green-50 p-2 dark:bg-green-950/20">
+        <div className="flex items-center justify-between rounded-md bg-success-bg p-2 dark:bg-success-muted">
           <div className="flex items-center gap-2">
-            <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
-            <span className="font-medium text-green-700 text-sm dark:text-green-400">
+            <Check className="h-4 w-4 text-success dark:text-success" />
+            <span className="font-medium text-sm text-success dark:text-success">
               {promoDiscount.code}
             </span>
             {promoDiscount.discountType === "percentage" && (
-              <span className="text-green-600 text-xs dark:text-green-500">
+              <span className="text-success text-xs dark:text-success">
                 -{promoDiscount.discountValue}% off
               </span>
             )}
             {promoDiscount.discountType === "fixed" && (
-              <span className="text-green-600 text-xs dark:text-green-500">
+              <span className="text-success text-xs dark:text-success">
                 -${promoDiscount.discountValue.toFixed(2)} off
               </span>
             )}
@@ -405,7 +405,7 @@ export function WordPurchaseDialog({
                     <span className="font-medium">${subtotal.toFixed(2)}</span>
                   </div>
                   {promoDiscount?.valid && discountAmount > 0 && (
-                    <div className="flex justify-between text-green-600 text-sm dark:text-green-500">
+                    <div className="flex justify-between text-sm text-success dark:text-success">
                       <div className="flex items-center gap-1">
                         <span>Discount ({promoDiscount.code})</span>
                         {promoDiscount.discountType === "percentage" ? (
@@ -451,7 +451,7 @@ export function WordPurchaseDialog({
                 <span className="text-muted-foreground text-sm">
                   After Purchase
                 </span>
-                <span className="font-semibold text-green-600 text-lg">
+                <span className="font-semibold text-lg text-success">
                   {(currentBalance + wordAmount).toLocaleString()} words
                 </span>
               </div>

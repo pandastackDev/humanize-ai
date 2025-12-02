@@ -11,6 +11,7 @@ export type HumanizeRequest = {
   style_sample?: string;
   readability_level?: string;
   language?: string;
+  advanced_mode?: boolean;
 };
 
 export type HumanizeMetrics = {
@@ -43,6 +44,38 @@ export type HumanizeResponse = {
  */
 function getApiBaseUrl(): string {
   return env.NEXT_PUBLIC_PYTHON_API_URL;
+}
+
+/**
+ * Extract and format error message from API response.
+ */
+function extractErrorMessage(response: Response, errorData: unknown): string {
+  let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+
+  // Try to extract error message from response
+  if (errorData && typeof errorData === "object") {
+    const data = errorData as Record<string, unknown>;
+    if (data.detail && typeof data.detail === "string") {
+      errorMessage = data.detail;
+    } else if (data.message && typeof data.message === "string") {
+      errorMessage = data.message;
+    }
+  } else if (typeof errorData === "string") {
+    errorMessage = errorData;
+  }
+
+  // Provide user-friendly error messages for common issues
+  if (errorMessage.includes("cannot access local variable")) {
+    return "A server error occurred. Please try again or contact support if the issue persists.";
+  }
+  if (errorMessage.includes("rate limit") || errorMessage.includes("429")) {
+    return "Too many requests. Please wait a moment and try again.";
+  }
+  if (errorMessage.includes("timeout") || errorMessage.includes("timed out")) {
+    return "The request took too long. Please try again with a shorter text.";
+  }
+
+  return errorMessage;
 }
 
 /**
@@ -84,12 +117,18 @@ export async function humanizeText(
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({
-        detail: `HTTP ${response.status}: ${response.statusText}`,
-      }));
-      throw new Error(
-        errorData.detail || `API request failed: ${response.statusText}`
-      );
+      let errorData: unknown;
+      try {
+        errorData = await response.json();
+      } catch {
+        // If JSON parsing fails, use default error
+        errorData = {
+          detail: `HTTP ${response.status}: ${response.statusText}`,
+        };
+      }
+
+      const errorMessage = extractErrorMessage(response, errorData);
+      throw new Error(errorMessage);
     }
 
     const data: HumanizeResponse = await response.json();

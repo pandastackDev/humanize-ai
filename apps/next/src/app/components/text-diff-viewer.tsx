@@ -520,11 +520,12 @@ export function TextDiffViewer({
     isChanged?: boolean;
   }): string => {
     const typeClasses: Record<TextFeatureType, string> = {
-      changed: "text-red-600 dark:text-red-300",
-      structural: "underline decoration-yellow-400 dark:decoration-yellow-500",
-      unchanged: "text-blue-700 dark:text-blue-300",
+      changed: "text-text-changed",
+      structural:
+        "underline decoration-2 decoration-yellow-400 dark:decoration-yellow-500",
+      unchanged: "text-info dark:text-info",
       thesaurus:
-        "bg-purple-100 text-purple-900 underline decoration-purple-300 cursor-pointer hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-200 dark:decoration-purple-700 dark:hover:bg-purple-900/50",
+        "bg-purple-100 text-purple-900 underline decoration-2 decoration-purple-300 cursor-pointer hover:bg-purple-200 dark:bg-purple-900/30 dark:text-purple-200 dark:decoration-purple-700 dark:hover:bg-purple-900/50",
       plain: "",
     };
 
@@ -534,17 +535,17 @@ export function TextDiffViewer({
     // If structural, ensure underline is present
     if (segment.isStructural && !dynamicClasses.includes("underline")) {
       dynamicClasses +=
-        " underline decoration-yellow-400 dark:decoration-yellow-500";
+        " underline decoration-2 decoration-yellow-400 dark:decoration-yellow-500";
     }
 
-    // If changed, ensure red color is present (override default black for structural)
-    if (segment.isChanged && !dynamicClasses.includes("text-red")) {
+    // If changed, ensure changed color is present (override default black for structural)
+    if (segment.isChanged && !dynamicClasses.includes("text-text-changed")) {
       // Remove any existing text color classes first if it's structural
       if (segment.type === "structural") {
         dynamicClasses =
-          "underline decoration-yellow-400 dark:decoration-yellow-500";
+          "underline decoration-2 decoration-yellow-400 dark:decoration-yellow-500";
       }
-      dynamicClasses += " text-red-600 dark:text-red-300";
+      dynamicClasses += " text-text-changed";
     }
 
     return dynamicClasses;
@@ -561,7 +562,7 @@ export function TextDiffViewer({
     },
     index: number
   ) => {
-    const baseClasses = "px-0.5 transition-colors";
+    const baseClasses = "px-0-5 transition-colors";
     const dynamicClasses = getDynamicClasses(segment);
     const isSelected =
       selectedWord &&

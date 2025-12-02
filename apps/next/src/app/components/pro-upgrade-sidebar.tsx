@@ -133,7 +133,7 @@ export function ProUpgradeSidebar({
             <div className="flex flex-wrap gap-2">
               {config.uses.map((use) => (
                 <span
-                  className="rounded-full bg-[var(--primary)]/10 px-3 py-1 font-medium text-[var(--primary)] text-xs dark:bg-[var(--primary)]/20"
+                  className="rounded-full bg-primary/10 px-3 py-1 font-medium text-primary text-xs dark:bg-primary/20"
                   key={use}
                 >
                   {use}
@@ -156,7 +156,7 @@ export function ProUpgradeSidebar({
             </div>
 
             <div className="flex items-center justify-center">
-              <ArrowDown className="h-5 w-5 text-[var(--primary)]" />
+              <ArrowDown className="h-5 w-5 text-primary" />
             </div>
 
             <div className="space-y-2">

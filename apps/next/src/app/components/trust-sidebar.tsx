@@ -21,7 +21,7 @@ export function TrustSidebar() {
         <div className="flex items-center gap-1">
           {[0, 1, 2, 3, 4].map((starNum) => (
             <Star
-              className="h-5 w-5 fill-yellow-400 text-yellow-400"
+              className="h-5 w-5 fill-star text-star"
               key={`star-yellow-${starNum}`}
             />
           ))}
@@ -32,8 +32,8 @@ export function TrustSidebar() {
       </div>
 
       {/* AI Detector Bypass Section */}
-      <div className="rounded-lg border-2 border-green-500 bg-green-50 p-4 dark:border-green-600 dark:bg-green-900/20">
-        <h3 className="mb-3 font-semibold text-green-900 text-sm dark:text-green-100">
+      <div className="rounded-lg border-2 border-success bg-success-bg p-4 dark:border-success dark:bg-success-muted">
+        <h3 className="mb-3 font-semibold text-sm text-success dark:text-success">
           AI Humanizer can bypass these AI detectors
         </h3>
         <div className="grid grid-cols-2 gap-3">
@@ -42,7 +42,7 @@ export function TrustSidebar() {
               className="flex items-center gap-2 rounded-md bg-card p-2 shadow-sm dark:bg-card"
               key={detector.name}
             >
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-100 font-bold text-blue-600 dark:bg-blue-900/30 dark:text-blue-400">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-info-bg font-bold text-info dark:bg-info-muted dark:text-info">
                 {detector.logo}
               </div>
               <span className="font-medium text-foreground text-xs dark:text-foreground">
@@ -55,8 +55,8 @@ export function TrustSidebar() {
 
       {/* Trust Metrics */}
       <div className="space-y-3">
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
-          <Check className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
+        <div className="flex items-start gap-3 rounded-lg border-2 border-success bg-card p-3 dark:border-success dark:bg-card">
+          <Check className="h-5 w-5 shrink-0 text-success dark:text-success" />
           <div>
             <p className="font-semibold text-foreground text-sm dark:text-foreground">
               Trusted by 12 Million+ Users
@@ -64,8 +64,8 @@ export function TrustSidebar() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
-          <FileText className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
+        <div className="flex items-start gap-3 rounded-lg border-2 border-success bg-card p-3 dark:border-success dark:bg-card">
+          <FileText className="h-5 w-5 shrink-0 text-success dark:text-success" />
           <div>
             <p className="font-semibold text-foreground text-sm dark:text-foreground">
               1.46 Billion+ Words Humanized Monthly
@@ -73,20 +73,13 @@ export function TrustSidebar() {
           </div>
         </div>
 
-        <div className="flex items-start gap-3 rounded-lg border-2 border-green-500 bg-card p-3 dark:border-green-600 dark:bg-card">
-          <Check className="h-5 w-5 shrink-0 text-green-600 dark:text-green-400" />
+        <div className="flex items-start gap-3 rounded-lg border-2 border-success bg-card p-3 dark:border-success dark:bg-card">
+          <Check className="h-5 w-5 shrink-0 text-success dark:text-success" />
           <div>
             <p className="font-semibold text-foreground text-sm dark:text-foreground">
               99.54% Success Rate
             </p>
-            <div className="mt-2 flex items-center gap-1">
-              {[0, 1, 2, 3, 4].map((starNum) => (
-                <Star
-                  className="h-4 w-4 fill-green-500 text-green-500"
-                  key={`star-green-${starNum}`}
-                />
-              ))}
-            </div>
+
             <p className="mt-1 text-muted-foreground text-xs dark:text-muted-foreground">
               5,936 reviews on Trustpilot
             </p>

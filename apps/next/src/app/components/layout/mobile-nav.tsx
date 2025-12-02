@@ -26,7 +26,7 @@ export function MobileNav({ user }: { user: User | null }) {
         </Button>
       </SheetTrigger>
       <SheetContent
-        className="w-[85vw] max-w-sm overflow-y-auto sm:w-[85vw]"
+        className="w-mobile-sheet max-w-sm overflow-y-auto sm:w-mobile-sheet"
         side="right"
       >
         <SheetHeader>
@@ -95,7 +95,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
     <nav className="flex flex-col gap-4">
       <div className="flex flex-col gap-2">
         <button
-          className="flex scale-[0.98] transform items-center justify-between rounded-md px-3 py-2 text-left font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
+          className="flex scale-hover transform items-center justify-between rounded-md px-3 py-2 text-left font-medium text-base transition-all duration-fast ease-in-out hover:scale-100 hover:bg-accent active:scale-active"
           onClick={() => setOpenFreeTools(!openFreeTools)}
           type="button"
         >
@@ -107,14 +107,14 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
           </span>
         </button>
         {openFreeTools && (
-          <div className="ml-4 flex max-h-[60vh] flex-col gap-4 overflow-y-auto border-l pl-4">
+          <div className="ml-4 flex max-h-mobile-menu flex-col gap-4 overflow-y-auto border-l pl-4">
             {Object.entries(freeTools).map(([category, tools]) => (
               <div key={category}>
                 <div className="mb-2 font-semibold text-sm">{category}</div>
                 <div className="flex flex-col gap-1">
                   {tools.map((tool) => (
                     <Link
-                      className="scale-[0.98] transform rounded-md px-3 py-1.5 text-muted-foreground text-sm transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent hover:text-foreground active:scale-[0.95]"
+                      className="scale-hover transform rounded-md px-3 py-1.5 text-muted-foreground text-sm transition-all duration-fast ease-in-out hover:scale-100 hover:bg-accent hover:text-foreground active:scale-active"
                       href={tool.href}
                       key={tool.title}
                       onClick={onLinkClick}
@@ -130,7 +130,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </div>
 
       <Link
-        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
+        className="scale-hover transform rounded-md px-3 py-2 font-medium text-base transition-all duration-fast ease-in-out hover:scale-100 hover:bg-accent active:scale-active"
         href="/pricing"
         onClick={onLinkClick}
       >
@@ -138,7 +138,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </Link>
 
       <Link
-        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
+        className="scale-hover transform rounded-md px-3 py-2 font-medium text-base transition-all duration-fast ease-in-out hover:scale-100 hover:bg-accent active:scale-active"
         href="/humanize"
         onClick={onLinkClick}
       >
@@ -146,7 +146,7 @@ function MobileMainNav({ onLinkClick }: { onLinkClick: () => void }) {
       </Link>
 
       <Link
-        className="scale-[0.98] transform rounded-md px-3 py-2 font-medium text-base transition-all duration-200 ease-in-out hover:scale-100 hover:bg-accent active:scale-[0.95]"
+        className="scale-hover transform rounded-md px-3 py-2 font-medium text-base transition-all duration-fast ease-in-out hover:scale-100 hover:bg-accent active:scale-active"
         href="/affiliate"
         onClick={onLinkClick}
       >

@@ -29,7 +29,9 @@ logger = logging.getLogger(__name__)
 STRATEGIC_HUMANIZATION_V4_PROMPT = {
     "system": """You are rewriting AI text to beat Originality.AI detection (target: 93%+ human score).
 
-CRITICAL SUCCESS FACTORS (from 93% human benchmark analysis):
+Your goal is to transform robotic AI content into engaging, authentic human writing that connects with readers emotionally and intellectually.
+
+CRITICAL SUCCESS FACTORS (from 93% human benchmark analysis + best practices):
 
 1. REPETITIVE WORD CHOICES (Humans don't use thesaurus!):
    ✅ Repeat descriptive adjectives 2-3 times naturally
@@ -137,38 +139,92 @@ CRITICAL SUCCESS FACTORS (from 93% human benchmark analysis):
     ✅ Hyperbolic descriptions where natural
     ❌ NEVER: Measured, clinical precision
 
-11. ACTIVE VOICE PREFERENCE (More natural):
+11. PERSONAL INSIGHTS AND EXPERIENCES (Critical for authenticity):
+    ✅ Add relatable real-world examples and anecdotes when appropriate
+    ✅ Include specific details that show human experience and expertise
+    ✅ Use concrete examples instead of generic hypothetical scenarios
+    ✅ Share brief personal touches that demonstrate actual human expertise
+    ✅ Connect abstract concepts to tangible experiences readers can relate to
+    ❌ NEVER: Only generic, theoretical statements
+    ❌ NEVER: Detached, hypothetical examples without grounding
+
+12. STORYTELLING TECHNIQUES (Engage readers emotionally):
+    ✅ Structure information as a journey from challenge to resolution
+    ✅ Include narrative elements: conflict, surprise, character development, resolution
+    ✅ Frame content as solving real problems readers face
+    ✅ Create natural progression that pulls readers through the content
+    ✅ Use brief scenarios that illustrate problems being addressed
+    ✅ Reveal unexpected findings or insights that challenge assumptions
+    ❌ NEVER: Pure information dumps without narrative structure
+    ❌ NEVER: Flat, list-like presentation of facts
+
+13. CONTEXT AND NUANCE (Show human understanding):
+    ✅ Evaluate what's relevant for specific audiences and knowledge levels
+    ✅ Add appropriate qualifications and caveats where needed
+    ✅ Ensure examples resonate with intended audience
+    ✅ Check cultural references for appropriateness
+    ✅ Identify where more explanation or background is needed
+    ✅ Balance technical accuracy with accessibility
+    ❌ NEVER: Overly confident generalizations without nuance
+    ❌ NEVER: One-size-fits-all explanations
+    ❌ NEVER: Missing important context or background information
+
+14. HUMOR AND EMOTION (Add personality appropriately):
+    ✅ Include appropriate touches of humor where natural and fitting
+    ✅ Express honest emotional responses to challenges or opportunities
+    ✅ Show genuine enthusiasm, concern, or curiosity about topics
+    ✅ Allow natural human reactions to remain visible
+    ✅ Use light humor that acknowledges shared human experiences
+    ✅ Balance emotional expression with factual content
+    ⚠️ CRITICAL: Only use humor/emotion when genuinely appropriate - forced attempts backfire
+    ⚠️ CRITICAL: Match emotional tone to subject matter and audience
+    ❌ NEVER: Forced or synthetic-sounding emotional appeals
+    ❌ NEVER: Manufacturing emotion that isn't genuine
+    ❌ NEVER: Inappropriate humor for serious topics
+
+15. ACTIVE VOICE PREFERENCE (More natural):
     ✅ "The team completed the task" NOT "The task was completed by the team"
     ✅ "People believe" NOT "It is believed that"
     ✅ Use active voice predominantly
     ⚠️ Passive voice is OK sometimes, but prefer active
 
-12. PERSONAL/CONCRETE DETAILS (Human authenticity):
-    ✅ Include specific examples: "In 2020, when I visited..."
-    ✅ Use concrete numbers: "3 out of 5" not "most"
-    ✅ Mention specific places/people when appropriate
-    ✅ Add anecdotes or stories when natural
-    ❌ NEVER: Only vague generalizations
+16. CONVERSATIONAL ELEMENTS (Natural human voice):
+    ✅ Use contractions: "don't" not "do not", "it's" not "it is"
+    ✅ Include occasional rhetorical questions where natural
+    ✅ Use natural transitions that sound like spoken language
+    ✅ Vary sentence length to create natural rhythm and emphasis
+    ✅ Read passages aloud mentally - if it sounds stilted, make it conversational
+    ✅ Develop distinctive voice with unique phrases that reflect personality
+    ❌ NEVER: Overly formal, stilted language
+    ❌ NEVER: Phrases no one would say in conversation
+    ❌ NEVER: Uniform, mechanical sentence patterns
 
-13. RHETORICAL QUESTIONS (AVOID - Flagged by detectors):
-    ❌ NEVER use rhetorical questions like "But what does this mean?" - detectors flag this as AI pattern
-    ❌ NEVER use rhetorical questions - they are easily detected as AI-generated content
-    ✅ Use declarative statements instead of questions
+17. RHETORICAL QUESTIONS (Use SPARINGLY and NATURALLY):
+    ⚠️ Use rhetorical questions VERY sparingly (max 1 per 200-300 words) and only when genuinely natural
+    ✅ When used, make them feel like genuine human curiosity, not formulaic patterns
+    ✅ Example: "But what does this actually mean for readers?" (natural, contextual)
+    ❌ NEVER: Formulaic patterns like "But what does this mean?" at paragraph starts
+    ❌ NEVER: Multiple rhetorical questions in close proximity
+    ❌ NEVER: Questions that feel forced or synthetic
 
-14. DIRECT ADDRESS (Conversational):
-    ✅ "you might notice", "you'll see", "you'll find"
-    ✅ Frequency: 2-3% of sentences MAX
-    ✅ Natural, not forced
-    ❌ NEVER: Every sentence (too much)
+18. DIRECT ADDRESS (Conversational - use sparingly):
+    ✅ "you might notice", "you'll see", "you'll find" (very sparingly)
+    ✅ Frequency: 1-2 instances per 300-400 words MAX
+    ✅ Natural, not forced - only when it genuinely helps reader connection
+    ⚠️ CRITICAL: Overuse is flagged by detectors - use extremely sparingly
+    ❌ NEVER: Every sentence or even every paragraph
+    ❌ NEVER: Formulaic patterns like starting every section with "you"
 
-15. READABLE PARAGRAPHS (Good flow):
+19. READABLE PARAGRAPHS (Good flow):
     ✅ Break up dense blocks of text
     ✅ Max ~150 words per paragraph
     ✅ Natural transitions between paragraphs
     ✅ Manageable paragraph lengths
+    ✅ Vary paragraph structure - mix short impactful paragraphs with longer explanatory ones
     ❌ NEVER: Walls of text (hard to read)
+    ❌ NEVER: Uniform paragraph lengths throughout
 
-16. NATURAL FLOW AND VARIED TRANSITIONS (Critical for 100% human score):
+20. NATURAL FLOW AND VARIED TRANSITIONS (Critical for 100% human score):
     ✅ Use varied transitions: "In addition", "Consequently", "The following day", "In the meantime"
     ✅ Natural phrasing: "came to the point where", "continued to do what it had been doing"
     ✅ Slightly awkward but natural structures: "came out unmasked", "continued to do what it had been doing"
@@ -280,13 +336,53 @@ CRITICAL FORMAT PRESERVATION:
 ✅ Keep "(1939–1945)" as "(1939–1945)" - DO NOT rewrite as "from 1939 to 1945" or "raging from 1939 to 1945"
 ✅ Keep "1939–1945" as "1939–1945" - DO NOT rewrite as "from 1939 to 1945"
 ✅ Preserve all number ranges, year ranges, time periods exactly as they appear
-❌ NEVER rewrite ranges like "(1939–1945)" into phrases like "from X to Y" or "raging from X to Y".""",
+❌ NEVER rewrite ranges like "(1939–1945)" into phrases like "from X to Y" or "raging from X to Y"
+
+CRITICAL ASCII CONVERSION:
+⚠️ Your text contains non-ASCII characters (e.g., — – " " … © ™ € £ • → emojis). This may affect the humanization quality.
+✅ ALWAYS convert non-ASCII characters to ASCII equivalents:
+   - Em dashes (—) → --
+   - En dashes (–) → -
+   - Smart quotes (" " ' ') → " " ' '
+   - Ellipsis (…) → ...
+   - Copyright (©) → (c)
+   - Trademark (™) → TM
+   - Euro (€) → EUR
+   - Pound (£) → GBP
+   - Bullet (•) → *
+   - Arrow (→) → ->
+✅ Use only ASCII characters in your output to ensure maximum compatibility and quality
+✅ Maintain proper grammar rules while converting characters""",
     "user_template": """Rewrite this text to pass 93%+ human detection on Originality.AI.
 
 INPUT WORD COUNT: {word_count} words
 TARGET OUTPUT: {target_min}-{target_max} words (stay within this range!)
 
-MANDATORY REQUIREMENTS (based on 93% human sample):
+CRITICAL GRAMMAR REQUIREMENTS:
+✅ ALWAYS write complete sentences with proper subject-verb structure
+✅ ALWAYS maintain proper grammar rules throughout
+✅ ALWAYS ensure sentences are grammatically correct
+✅ NEVER write fragments or incomplete sentences
+✅ NEVER break grammar rules - maintain proper sentence structure
+
+CRITICAL ASCII CONVERSION:
+⚠️ Your text contains non-ASCII characters (e.g., — – " " … © ™ € £ • → emojis). This may affect the humanization quality.
+✅ ALWAYS convert non-ASCII characters to ASCII equivalents:
+   - Em dashes (—) → --
+   - En dashes (–) → -
+   - Smart quotes (" " ' ') → " " ' '
+   - Ellipsis (…) → ...
+   - Copyright (©) → (c)
+   - Trademark (™) → TM
+   - Euro (€) → EUR
+   - Pound (£) → GBP
+   - Bullet (•) → *
+   - Arrow (→) → ->
+✅ Use only ASCII characters in your output to ensure maximum compatibility and quality
+
+MANDATORY REQUIREMENTS (based on 93% human sample + best practices):
+
+CORE HUMANIZATION TECHNIQUES:
 1. Repeat descriptive adjectives naturally (don't vary every synonym) - e.g., "angry issues", "angry aggressive"
 2. Add emphatic redundancy sparingly - e.g., "that mad dictator, indeed, the man himself" (use "indeed" max 1-2 times per 300 words)
 3. Include 1 casual intensifier MAX ("really", "quite", "basically", "actually") - VARY them, use VERY SPARINGLY!
@@ -308,15 +404,21 @@ MANDATORY REQUIREMENTS (based on 93% human sample):
 14. Break formulaic templates: "From X to Y" → vary if repeated
 15. Simplify sequence words: "First... Then... Finally" not "Firstly... Secondly... Finally"
 16. Prefer active voice: "The team did it" not "It was done by the team"
-17. Add personal/concrete details: use specific examples, numbers, places when appropriate
-18. ❌ NEVER use rhetorical questions like "But what does this mean?" - detectors flag this as AI pattern
-19. ❌ Avoid direct address ("you might notice", "you'll see") - too formulaic, detectors flag this
-20. Ensure readable paragraphs: break up dense blocks (max ~150 words per paragraph)
-21. Use natural phrasing but avoid obvious patterns - vary sentence starts and structures
-22. CRITICAL: Never repeat the same phrase multiple times (e.g., "kicked off" twice) - vary word choice
-23. CRITICAL: Maintain narrative flow - each sentence must connect logically to previous and next sentences
-24. CRITICAL: Use consistent naming - choose "United States" or "U.S." and stick with it (prefer "United States")
-25. CRITICAL: Avoid fragment sentences like "The aftermath was immense." - combine with next sentence or expand
+
+ENHANCED HUMANIZATION STRATEGIES (from best practices):
+17. Add personal insights and experiences: Include relatable real-world examples, anecdotes, and specific details that show human expertise
+18. Use storytelling techniques: Structure information as a journey, include narrative elements (conflict, surprise, resolution), frame content as solving real problems
+19. Include context and nuance: Add appropriate qualifications, ensure examples resonate with audience, check cultural appropriateness, provide needed background
+20. Add appropriate humor and emotion: Include light humor where natural, express honest emotional responses, show genuine enthusiasm/concern/curiosity
+21. Use conversational tone: Read passages mentally - if stilted, make conversational. Use natural transitions that sound like spoken language
+22. Add concrete details: Use specific examples, numbers, places instead of vague generalizations
+23. Ensure readable paragraphs: Break up dense blocks, max ~150 words, vary paragraph lengths
+24. ❌ NEVER use rhetorical questions excessively - use max 1 per 200-300 words and only when genuinely natural
+25. ❌ Avoid direct address overuse ("you might notice") - use max 1-2 times per 300-400 words
+26. CRITICAL: Never repeat the same phrase multiple times (e.g., "kicked off" twice) - vary word choice
+27. CRITICAL: Maintain narrative flow - each sentence must connect logically to previous and next sentences
+28. CRITICAL: Use consistent naming - choose "United States" or "U.S." and stick with it (prefer "United States")
+29. CRITICAL: Avoid fragment sentences like "The aftermath was immense." - combine with next sentence or expand
 
 CRITICAL AVOID (These are flagged by Originality.ai as AI patterns):
 ❌ Colloquialisms: "dragged in", "dragged", "steamrolled", "really on the move", "downright invincible", "loads of", "speed things up", "dodge", "dodge defeat", "gave in", "gave up", "wrap up", "skip", "teamed up", "thirst for", "hungry for", "kicked off", "on the planet", "sidestep" - use more formal alternatives
@@ -472,10 +574,14 @@ CRITICAL: Stay within {target_min}-{target_max} words. Don't ramble or add unnec
 
 {additional_context}
 
-Text:
+CRITICAL: The examples above (like "mad dictator", "helpless Poland", etc.) are STYLE EXAMPLES ONLY - do NOT use them in your output unless they appear in the text below!
+
+ONLY rewrite the actual text provided below. Do NOT add content from the examples above.
+
+Text to rewrite:
 {text}
 
-Write the human-feeling version (casual, emotional, slightly imperfect, {target_min}-{target_max} words):""",
+Write the human-feeling version (casual, emotional, slightly imperfect, {target_min}-{target_max} words). ONLY rewrite the text provided above - do NOT add examples or unrelated content:""",
 }
 
 # ============================================================================
@@ -518,18 +624,18 @@ def get_strategic_humanization_v4_prompt(
     # Length adjustments
     if length_mode == "shorten":
         context_parts.append(
-            "Length: Make slightly more concise (70-85% of original). "
-            "But still keep some wordiness - humans don't optimize perfectly."
+            "Length: Make the text more concise (80-95% of original word count). "
+            "Remove redundancy but keep all key points and maintain complete sentences with proper grammar."
         )
     elif length_mode == "expand":
         context_parts.append(
-            "Length: Add natural elaboration (120-140% of original). "
-            "Expand with conversational details and emphasis."
+            "Length: Expand the text significantly (150-270% of original word count). "
+            "Add natural elaboration, details, examples, and conversational depth while maintaining proper grammar and sentence structure."
         )
-    else:  # standard
+    else:  # standard (Keep it as is)
         context_parts.append(
-            "Length: CRITICAL - Keep very similar length (95-110% of original word count). "
-            "Add human markers but DON'T expand excessively. Quality over quantity."
+            "Length: CRITICAL - Expand slightly (120-130% of original word count). "
+            "Add human markers and natural elaboration while maintaining proper grammar rules and complete sentences."
         )
 
     # Readability adjustments
@@ -577,8 +683,20 @@ Focus on these CRITICAL fixes (from 93% human sample):
 FORBIDDEN WORDS: commenced, propelled, witnessed, endured, Subsequently, Moreover, 
 Furthermore, delve, leverage, robust, seamless, comprehensive
 
+CRITICAL ASCII CONVERSION:
+⚠️ Convert non-ASCII characters to ASCII: — → --, – → -, " " → " ", … → ..., © → (c), ™ → TM, € → EUR, £ → GBP, • → *, → → ->
+
+CRITICAL GRAMMAR:
+✅ ALWAYS write complete sentences with proper grammar
+✅ NEVER write fragments or incomplete sentences
+✅ Maintain proper sentence structure throughout
+
 Keep 80%+ of original but inject human markers from 93% sample.""",
     "user_template": """Quick humanization - make this pass 93%+ human detection.
+
+CRITICAL: The examples in the system prompt (like "mad dictator", "helpless Poland", etc.) are STYLE EXAMPLES ONLY - do NOT use them in your output unless they appear in the text below!
+
+ONLY rewrite the actual text provided below. Do NOT add content from the examples.
 
 INPUT: {word_count} words
 TARGET: {target_min}-{target_max} words (stay within range!)
@@ -592,10 +710,12 @@ Apply:
 - KEEP LENGTH CONTROLLED!
 - CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945"
 
-Text:
+CRITICAL: The examples above are STYLE EXAMPLES ONLY - do NOT use them unless they appear in the text below!
+
+Text to rewrite:
 {text}
 
-Humanized version ({target_min}-{target_max} words):""",
+Humanized version ({target_min}-{target_max} words). ONLY rewrite the text provided above - do NOT add examples or unrelated content:""",
 }
 
 
@@ -611,7 +731,9 @@ def get_quick_fix_v4_prompt() -> dict:
 RECONSTRUCTION_V4_PROMPT = {
     "system": """You are reconstructing text from notes to pass 93%+ human detection on Originality.AI.
 
-WRITE EXACTLY LIKE THE 93% HUMAN BENCHMARK:
+Your goal is to transform compressed notes into engaging, authentic human writing that connects with readers.
+
+WRITE EXACTLY LIKE THE 93% HUMAN BENCHMARK + BEST PRACTICES:
 
 1. REPEAT ADJECTIVES (don't vary perfectly):
    - "angry issues" → "angry aggressive dictators" → "angry conflicts"
@@ -671,27 +793,56 @@ CRITICAL FORMAT PRESERVATION:
     - "the man himself"  
     - Hyperbolic where appropriate
 
-KEEP ALL FACTS ACCURATE. Just write messily, emotionally, with personality.""",
+11. PERSONAL INSIGHTS AND STORYTELLING:
+    - Add relatable real-world examples when reconstructing from notes
+    - Structure information as a journey or narrative when possible
+    - Include specific details that show human experience
+    - Frame content as solving real problems readers face
+    - Use concrete examples instead of generic statements
+
+12. CONTEXT AND NUANCE:
+    - Add appropriate qualifications and caveats
+    - Ensure examples resonate with intended audience
+    - Provide needed background information
+    - Balance technical accuracy with accessibility
+
+13. APPROPRIATE EMOTION AND PERSONALITY:
+    - Show genuine enthusiasm, concern, or curiosity where natural
+    - Include light humor when appropriate and fitting
+    - Express honest emotional responses to topics
+    - Allow natural human reactions to remain visible
+
+KEEP ALL FACTS ACCURATE. Just write messily, emotionally, with personality, and human connection.""",
     "user_template": """Reconstruct this outline into natural prose that passes 93%+ human detection.
+
+CRITICAL: The examples in the system prompt are STYLE EXAMPLES ONLY - do NOT use them unless they appear in the outline below!
+
+ONLY reconstruct the outline provided below. Do NOT add unrelated content.
 
 MUST INCLUDE:
 - Repeated adjectives (same word 2-3 times)
-- Emphatic redundancy (1+ times)
-- Casual intensifiers (2-3 times)
-- Conversational breaks (2-3 times)
+- Emphatic redundancy (1+ times, sparingly)
+- Casual intensifiers (1-2 times, very sparingly)
+- Conversational breaks (1-2 times, very sparingly)
 - Emotional language throughout
 - Simple words only (no "commenced", "witnessed", "Subsequently")
 - Natural wordiness
 - Wild sentence variety (5→35→12→7 words)
-- Some sentences starting with "And", "So", "Well"
+- Some sentences starting with "And", "So", "Well" (sparingly)
 - Dramatic emphasis
+- Personal insights and concrete examples
+- Storytelling elements (narrative structure, journey from problem to solution)
+- Context and nuance (appropriate qualifications, audience-appropriate examples)
+- Appropriate emotion and personality (genuine enthusiasm, light humor when fitting)
 
 CRITICAL: Preserve date/number ranges in original format - keep "(1939–1945)" as "(1939–1945)", DO NOT rewrite as "from 1939 to 1945" or "raging from 1939 to 1945"
 
-Outline:
+CRITICAL: The examples above are STYLE EXAMPLES ONLY - do NOT use them unless they appear in the outline below!
+
+Outline to reconstruct:
 {compressed_text}
 
-Natural, messy, emotional human version:""",
+Natural, messy, emotional human version. ONLY reconstruct the outline provided above - do NOT add examples or unrelated content:""",
 }
 
 

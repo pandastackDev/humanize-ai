@@ -37,7 +37,7 @@ export function LoadingSpinner({
         stroke="currentColor"
         strokeWidth="1.875"
         strokeLinecap="round"
-      />
+    />
     </svg>
   );
 }

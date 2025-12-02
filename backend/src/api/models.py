@@ -172,6 +172,10 @@ class HumanizeRequest(BaseModel):
     language: str | None = Field(
         None, description="Target language (auto-detected if not provided)"
     )
+    advanced_mode: bool = Field(
+        False,
+        description="If True, use StealthWriter API only. If False, use our own humanization workflow.",
+    )
 
     @field_validator("style_sample")
     @classmethod

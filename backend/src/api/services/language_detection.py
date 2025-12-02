@@ -326,6 +326,7 @@ class LanguageDetectionService:
         text = text.strip()
         word_count = len(text.split())
         start_time = time.time()
+        logger.info(f"Starting language detection for {word_count} words ({len(text)} characters)")
 
         # Ultra-short text handling (< 30 words)
         if word_count < 30:
@@ -380,7 +381,9 @@ class LanguageDetectionService:
             try:
                 # Lingua-py returns Language enum or None
                 method_start = time.time()
+                logger.debug(f"Calling Lingua-py detect_language_of for {word_count} words...")
                 detected_lang = self.lingua_detector.detect_language_of(text)
+                logger.debug("Lingua-py detect_language_of completed")
                 latency_ms = (time.time() - method_start) * 1000
 
                 # Check for UNKNOWN language (if it exists in this version)

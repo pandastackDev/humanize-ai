@@ -8,7 +8,7 @@ export default async function Home() {
 
   if (user) {
     return (
-      <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col items-center bg-background px-2 py-6 sm:px-4 sm:py-8 md:py-12">
+      <div className="flex min-h-page flex-1 flex-col items-center bg-background px-2 py-6 sm:px-4 sm:py-8 md:py-12">
         <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
           <div className="flex w-full max-w-5xl flex-col items-center justify-center gap-3 text-center sm:gap-4">
             <h1 className="font-bold font-heading text-foreground text-xl tracking-tight sm:text-2xl md:text-3xl lg:text-4xl xl:whitespace-nowrap">
@@ -31,7 +31,7 @@ export default async function Home() {
 
   return (
     <>
-      <div className="flex min-h-[calc(100vh-4rem)] flex-1 flex-col items-center bg-background px-2 py-6 sm:px-4 sm:py-8 md:py-12">
+      <div className="flex min-h-page flex-1 flex-col items-center bg-background px-2 py-6 sm:px-4 sm:py-8 md:py-12">
         <div className="flex w-full flex-col items-center gap-6 sm:gap-8">
           <div className="flex w-full max-w-5xl flex-col items-center justify-center gap-3 text-center sm:gap-4">
             <h1 className="font-bold text-foreground text-xl tracking-tight sm:text-2xl md:text-3xl lg:text-4xl xl:whitespace-nowrap">

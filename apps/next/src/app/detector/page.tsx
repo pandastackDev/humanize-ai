@@ -28,7 +28,7 @@ export default function DetectorPage() {
       </div>
 
       <Tabs className="space-y-6" defaultValue="detector">
-        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-2 lg:w-tabs">
           <TabsTrigger value="detector">AI Detector</TabsTrigger>
           <TabsTrigger value="evaluation">Evaluation</TabsTrigger>
         </TabsList>

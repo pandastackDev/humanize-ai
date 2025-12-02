@@ -87,22 +87,23 @@ class LLMService:
         target_model = model or settings.PRIMARY_HUMANIZATION_MODEL
 
         # Determine which provider to use based on model
+        # For now, use only OpenAI to avoid Anthropic 404 errors
         if "claude" in target_model.lower() or "anthropic" in target_model.lower():
-            # Try Claude models first (best for humanization)
-            # Only include enabled providers
+            # If Claude model requested but we want to use OpenAI only, use OpenAI fallback
             providers = []
-            if self.anthropic_enabled:
-                providers.append(("anthropic", target_model))
             if self.openai_enabled:
                 providers.append(("openai", settings.FALLBACK_HUMANIZATION_MODEL))
+            # Skip Anthropic for now - uncomment if you want to re-enable
+            # if self.anthropic_enabled:
+            #     providers.append(("anthropic", target_model))
         else:
-            # OpenAI or other models
-            # Only include enabled providers
+            # OpenAI or other models - use OpenAI only
             providers = []
             if self.openai_enabled:
                 providers.append(("openai", target_model))
-            if self.anthropic_enabled:
-                providers.append(("anthropic", settings.PRIMARY_HUMANIZATION_MODEL))
+            # Skip Anthropic fallback - uncomment if you want to re-enable
+            # if self.anthropic_enabled:
+            #     providers.append(("anthropic", settings.PRIMARY_HUMANIZATION_MODEL))
 
         if not providers:
             raise RuntimeError(
@@ -200,7 +201,7 @@ class LLMService:
         temperature: float,
         max_tokens: int | None,
     ) -> str:
-        """Generate text using Anthropic."""
+        """Generate text using Anthropic with automatic retry for rate limits."""
         model_name = model or settings.ANTHROPIC_LLM_MODEL
 
         # Strip provider prefix if present (e.g., "anthropic/claude-3-5-sonnet" -> "claude-3-5-sonnet")
@@ -213,6 +214,8 @@ class LLMService:
         # Anthropic requires max_tokens, use reasonable default if not provided
         effective_max_tokens = max_tokens or 4096
 
+        # Anthropic client has built-in retry logic with exponential backoff
+        # It will automatically retry on 429 errors
         response = self.anthropic_client.messages.create(
             model=model_name,
             max_tokens=effective_max_tokens,

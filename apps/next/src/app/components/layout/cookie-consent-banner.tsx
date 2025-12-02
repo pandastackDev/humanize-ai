@@ -42,7 +42,7 @@ function MobileView({
   return (
     <Dialog onOpenChange={setShowBanner} open={showBanner}>
       <DialogContent
-        className="border-border bg-card p-0 md:hidden dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]"
+        className="border-border bg-card p-0 md:hidden dark:border-editor-border dark:bg-editor-bg"
         showCloseButton={false}
       >
         <div className="flex flex-col items-center justify-center px-5 pt-4 pb-8 sm:p-10">
@@ -147,7 +147,7 @@ function DesktopView({
             for more info.
           </p>
         </div>
-        <div className="flex w-full flex-row justify-end gap-3 sm:w-auto sm:min-w-[300px]">
+        <div className="flex w-full flex-row justify-end gap-3 sm:w-auto sm:min-w-button-group">
           <Button
             className="cursor-pointer text-sm"
             onClick={onManageCookies}

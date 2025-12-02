@@ -112,7 +112,7 @@ export function ProjectTeamDropdown({
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
-          className="w-[240px] border-border bg-popover"
+          className="w-popover border-border bg-popover"
         >
           {/* TEAMS Section */}
           <div className="px-2 py-1.5">
@@ -128,7 +128,7 @@ export function ProjectTeamDropdown({
                 >
                   <div className="flex w-full items-center gap-2">
                     {selectedTeam === team.id && (
-                      <Check className="h-4 w-4 text-green-600" />
+                      <Check className="h-4 w-4 text-success" />
                     )}
                     {selectedTeam !== team.id && <div className="h-4 w-4" />}
                     <span className="flex-1 text-popover-foreground text-sm">

@@ -96,11 +96,11 @@ export default function ClientDemo() {
 
   if (error) {
     return (
-      <div className="rounded-lg border border-red-300 p-4 text-red-500">
+      <div className="rounded-lg border border-destructive/30 p-4 text-destructive">
         <h3 className="mb-2 font-semibold text-lg">Error loading data</h3>
         <p className="text-sm">{error.toString()}</p>
         <button
-          className="mt-2 rounded bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+          className="mt-2 rounded bg-destructive px-4 py-2 text-white transition-colors hover:bg-destructive/90"
           onClick={() => refetch()}
           type="button"
         >
@@ -117,7 +117,7 @@ export default function ClientDemo() {
           Interactive Demo - Client Component
         </h2>
         <button
-          className="cursor-not-allowed rounded-lg bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700 disabled:opacity-50"
+          className="cursor-not-allowed rounded-lg bg-brand-primary px-4 py-2 text-white transition-colors hover:bg-brand-primary/90 disabled:opacity-50"
           disabled={isLoading}
           onClick={() => refetch()}
           type="button"
@@ -126,15 +126,15 @@ export default function ClientDemo() {
         </button>
       </div>
 
-      <div className="rounded-lg bg-purple-50 p-4">
-        <p className="text-purple-800 text-sm">
+      <div className="rounded-lg bg-muted p-4">
+        <p className="text-foreground text-sm">
           <strong>TanStack React Query Features:</strong> Real-time updates,
           optimistic updates, automatic caching, background refetching
         </p>
       </div>
 
       {/* Create Item Form */}
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
+      <div className="rounded-lg border bg-card p-6 shadow-sm">
         <h3 className="mb-4 font-semibold text-xl">Create New Item</h3>
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -143,7 +143,7 @@ export default function ClientDemo() {
                 Name *
               </label>
               <input
-                className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border px-3 py-2 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary"
                 id="name"
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
@@ -160,7 +160,7 @@ export default function ClientDemo() {
                 Value *
               </label>
               <input
-                className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border px-3 py-2 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary"
                 id="value"
                 min="0"
                 onChange={(e) =>
@@ -185,7 +185,7 @@ export default function ClientDemo() {
                 Category
               </label>
               <select
-                className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border px-3 py-2 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary"
                 id="category"
                 onChange={(e) =>
                   setFormData({
@@ -208,7 +208,7 @@ export default function ClientDemo() {
                 Tags (comma-separated)
               </label>
               <input
-                className="w-full rounded-lg border px-3 py-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-lg border px-3 py-2 focus:border-brand-primary focus:ring-2 focus:ring-brand-primary"
                 id="tags"
                 onChange={(e) =>
                   setFormData({ ...formData, tags: e.target.value })
@@ -221,7 +221,7 @@ export default function ClientDemo() {
           </div>
 
           <button
-            className="w-full rounded-lg bg-green-600 px-4 py-2 text-white transition-colors hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="w-full rounded-lg bg-success px-4 py-2 text-white transition-colors hover:bg-success/90 disabled:cursor-not-allowed disabled:opacity-50"
             disabled={createMutation.isPending}
             type="submit"
           >
@@ -235,7 +235,7 @@ export default function ClientDemo() {
         <div className="flex items-center justify-between">
           <h3 className="font-semibold text-xl">Items List</h3>
           {data && (
-            <span className="text-gray-500 text-sm">
+            <span className="text-muted-foreground text-sm">
               {data.total} items total
             </span>
           )}
@@ -243,20 +243,20 @@ export default function ClientDemo() {
 
         {isLoading ? (
           <div className="py-8 text-center">
-            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-gray-300 border-t-blue-600" />
-            <p className="mt-2 text-gray-600">Loading items...</p>
+            <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-muted border-t-brand-primary" />
+            <p className="mt-2 text-muted-foreground">Loading items...</p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {data?.data.map((item) => (
               <div
-                className="rounded-lg border bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="rounded-lg border bg-card p-4 shadow-sm transition-shadow hover:shadow-md"
                 key={item.id}
               >
                 <div className="mb-2 flex items-start justify-between">
                   <h4 className="font-semibold text-lg">{item.name}</h4>
                   <button
-                    className="text-red-600 text-sm hover:text-red-800 disabled:opacity-50"
+                    className="text-destructive text-sm hover:text-destructive disabled:opacity-50"
                     disabled={deleteMutation.isPending}
                     onClick={() => handleDelete(item.id)}
                     title="Delete item"
@@ -266,12 +266,12 @@ export default function ClientDemo() {
                   </button>
                 </div>
                 <div className="space-y-1">
-                  <p className="text-gray-600 text-sm">ID: {item.id}</p>
-                  <p className="font-bold text-green-600 text-lg">
+                  <p className="text-muted-foreground text-sm">ID: {item.id}</p>
+                  <p className="font-bold text-lg text-success">
                     ${item.value.toFixed(2)}
                   </p>
                   {item.category && (
-                    <span className="inline-block rounded bg-blue-100 px-2 py-1 text-blue-800 text-xs">
+                    <span className="inline-block rounded bg-info-bg px-2 py-1 text-info text-xs">
                       {item.category}
                     </span>
                   )}
@@ -279,7 +279,7 @@ export default function ClientDemo() {
                     <div className="mt-2 flex flex-wrap gap-1">
                       {item.tags.map((tag) => (
                         <span
-                          className="rounded bg-gray-100 px-2 py-0.5 text-gray-700 text-xs"
+                          className="rounded bg-muted-bg-light px-2 py-0.5 text-muted-foreground text-xs"
                           key={tag}
                         >
                           {tag}
@@ -296,7 +296,7 @@ export default function ClientDemo() {
 
       {/* Mutation Status */}
       {(createMutation.isPending || deleteMutation.isPending) && (
-        <div className="fixed right-4 bottom-4 rounded-lg bg-blue-600 p-4 text-white shadow-lg">
+        <div className="fixed right-4 bottom-4 rounded-lg bg-brand-primary p-4 text-white shadow-lg">
           <p className="text-sm">Processing request...</p>
         </div>
       )}

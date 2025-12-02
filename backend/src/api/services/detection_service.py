@@ -13,6 +13,7 @@ import logging
 import math
 import re
 import time
+import urllib.parse
 from collections import Counter
 from typing import Any
 
@@ -24,6 +25,31 @@ from api.config import settings
 from api.models import DetectorResult, DetectorType, InternalAnalysis
 
 logger = logging.getLogger(__name__)
+
+
+def parse_cookie_string(cookie_string: str) -> dict[str, str]:
+    """
+    Parse a cookie string and extract all cookies.
+
+    Args:
+        cookie_string: Cookie string from browser (semicolon-separated)
+
+    Returns:
+        Dictionary with all cookies
+    """
+    cookies = {}
+
+    for cookie in cookie_string.split(";"):
+        cookie = cookie.strip()
+        if "=" in cookie:
+            key, value = cookie.split("=", 1)
+            key = key.strip()
+            value = value.strip()
+
+            # Store all cookies with URL-decoded values
+            cookies[key] = urllib.parse.unquote(value)
+
+    return cookies
 
 
 class DetectionCache:
@@ -182,20 +208,253 @@ class AIDetectionService:
         """
         Detect using GPTZero API.
 
-        API: https://gptzero.me/docs/api
+        API: https://api.gptzero.me/v3/ai/text
+        Method: POST
+        Body: {"text": text_to_analyze}
+        Response: documents[0].class_probabilities with "ai" and "mixed" keys
+
+        Authentication: Uses cookie string (GPTZERO_COOKIE_STRING)
         """
         start_time = time.time()
-        message = "GPTZero detector not implemented. Requires real API integration."
-        logger.warning(message)
-        return self._create_detector_result(
-            detector=DetectorType.GPTZERO,
-            ai_probability=0.5,
-            human_probability=0.5,
-            confidence=0.0,
-            response_time_ms=(time.time() - start_time) * 1000,
-            details=None,
-            error=message,
-        )
+        try:
+            # Check if cookie string is configured
+            cookie_string = settings.GPTZERO_COOKIE_STRING
+
+            if not cookie_string or not cookie_string.strip():
+                message = (
+                    "GPTZero cookie string not configured. Please set GPTZERO_COOKIE_STRING in .env"
+                )
+                logger.warning(message)
+                return self._create_detector_result(
+                    detector=DetectorType.GPTZERO,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=message,
+                )
+
+            # Parse and prepare cookies
+            cookies = None
+            try:
+                cookies_dict = parse_cookie_string(cookie_string)
+                # httpx expects cookies as a dict or Cookie object
+                cookies = cookies_dict
+                logger.info(f"GPTZero cookies parsed: {len(cookies_dict)} cookies")
+            except Exception as e:
+                error_msg = f"Failed to parse GPTZero cookies: {e}"
+                logger.error(error_msg)
+                return self._create_detector_result(
+                    detector=DetectorType.GPTZERO,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=error_msg,
+                )
+
+            # Prepare request body
+            # GPTZero API accepts either "text" or "document" key
+            body = {
+                "text": text,
+            }
+
+            # Prepare headers with browser-like headers for better compatibility
+            headers = {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Origin": "https://app.gptzero.me",
+                "Referer": "https://app.gptzero.me/",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            }
+
+            # Call GPTZero API
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                try:
+                    endpoint = "https://api.gptzero.me/v3/ai/text"
+
+                    # Prepare request with cookies
+                    response = await client.post(
+                        endpoint,
+                        headers=headers,
+                        json=body,
+                        cookies=cookies,
+                    )
+
+                    logger.info(
+                        f"GPTZero API response status: {response.status_code} from {endpoint}"
+                    )
+
+                    if 200 <= response.status_code < 300:
+                        try:
+                            data = response.json()
+                            logger.info(f"GPTZero API response data: {data}")
+
+                            # Parse GPTZero response format
+                            # Expected format: {"documents": [{"class_probabilities": {"ai": 0.95, "mixed": 0.05, "human": 0.0}, ...}], ...}
+                            ai_score: float | None = None
+                            mixed_score: float | None = None
+                            confidence = 0.0
+
+                            if isinstance(data, dict):
+                                # Get the first document
+                                documents = data.get("documents", [])
+                                if documents and isinstance(documents, list) and len(documents) > 0:
+                                    document = documents[0]
+
+                                    # Get class_probabilities
+                                    class_probabilities = document.get("class_probabilities", {})
+
+                                    if isinstance(class_probabilities, dict):
+                                        # Extract AI probability
+                                        ai_score = class_probabilities.get("ai")
+                                        if ai_score is None:
+                                            # Try alternative field names
+                                            ai_score = class_probabilities.get("ai_probability")
+
+                                        # Extract mixed probability (optional, for details)
+                                        mixed_score = class_probabilities.get("mixed")
+
+                                        # If ai_score is still None, try to calculate from other fields
+                                        if ai_score is None:
+                                            # Try completely_generated_prob as fallback
+                                            completely_generated_prob = document.get(
+                                                "completely_generated_prob"
+                                            )
+                                            if completely_generated_prob is not None:
+                                                ai_score = float(completely_generated_prob)
+
+                                        # Calculate confidence from confidence_score if available
+                                        confidence_score = document.get("confidence_score")
+                                        if confidence_score is not None:
+                                            confidence = float(confidence_score)
+
+                                        # If no confidence_score, calculate from how far from 0.5
+                                        if confidence == 0.0 and ai_score is not None:
+                                            confidence = abs(ai_score - 0.5) * 2
+                                    else:
+                                        logger.warning(
+                                            f"GPTZero response missing class_probabilities. Keys in document: {list(document.keys())}, Full response: {data}"
+                                        )
+                                else:
+                                    logger.warning(
+                                        f"GPTZero response missing or empty documents array. Keys: {list(data.keys())}, Full response: {data}"
+                                    )
+                            else:
+                                logger.warning(
+                                    f"Unexpected GPTZero response format. Keys: {list(data.keys()) if isinstance(data, dict) else 'not a dict'}, Full response: {data}"
+                                )
+
+                            if ai_score is None:
+                                raise ValueError(
+                                    f"GPTZero response missing AI score. Response: {data}"
+                                )
+
+                            # Ensure scores are in valid range
+                            ai_score = max(0.0, min(1.0, float(ai_score)))
+                            human_probability = 1 - ai_score
+
+                            # Calculate confidence if not already set
+                            if confidence == 0.0:
+                                confidence = abs(ai_score - 0.5) * 2
+
+                            return self._create_detector_result(
+                                detector=DetectorType.GPTZERO,
+                                ai_probability=ai_score,
+                                human_probability=human_probability,
+                                confidence=confidence,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details={
+                                    "raw_response": data,
+                                    "api_version": "v3",
+                                    "mixed_probability": mixed_score,
+                                },
+                                error=None,
+                            )
+                        except ValueError as e:
+                            # JSON parsing error
+                            error_msg = f"Failed to parse GPTZero response: {e!s}. Response text: {response.text[:200]}"
+                            logger.error(error_msg)
+                            return self._create_detector_result(
+                                detector=DetectorType.GPTZERO,
+                                ai_probability=0.5,
+                                human_probability=0.5,
+                                confidence=0.0,
+                                error=error_msg,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details=None,
+                            )
+                        except Exception as e:
+                            # Other parsing errors
+                            error_msg = f"Failed to parse GPTZero response: {e!s}. Response text: {response.text[:200] if response else 'No response'}"
+                            logger.error(error_msg, exc_info=True)
+                            return self._create_detector_result(
+                                detector=DetectorType.GPTZERO,
+                                ai_probability=0.5,
+                                human_probability=0.5,
+                                confidence=0.0,
+                                error=error_msg,
+                                response_time_ms=(time.time() - start_time) * 1000,
+                                details=None,
+                            )
+                    else:
+                        # API returned error status
+                        try:
+                            error_data = response.json()
+                            error_text = str(error_data)
+                        except Exception:
+                            error_text = (
+                                response.text[:500] if response.text else "No error message"
+                            )
+                        error_msg = f"HTTP {response.status_code}: {error_text}"
+                        logger.error(f"GPTZero API error: {error_msg}")
+                        return self._create_detector_result(
+                            detector=DetectorType.GPTZERO,
+                            ai_probability=0.5,
+                            human_probability=0.5,
+                            confidence=0.0,
+                            error=error_msg,
+                            response_time_ms=(time.time() - start_time) * 1000,
+                            details=None,
+                        )
+                except httpx.TimeoutException as e:
+                    error_msg = f"Request timeout: {e!s}"
+                    logger.error(f"GPTZero detection timeout: {error_msg}")
+                    return self._create_detector_result(
+                        detector=DetectorType.GPTZERO,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        error=error_msg,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details=None,
+                    )
+                except httpx.RequestError as e:
+                    error_msg = f"Request error: {e!s}"
+                    logger.error(f"GPTZero API request error: {error_msg}")
+                    return self._create_detector_result(
+                        detector=DetectorType.GPTZERO,
+                        ai_probability=0.5,
+                        human_probability=0.5,
+                        confidence=0.0,
+                        error=error_msg,
+                        response_time_ms=(time.time() - start_time) * 1000,
+                        details=None,
+                    )
+
+        except Exception as e:
+            logger.error(f"GPTZero detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.GPTZERO,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=f"Unexpected error: {e!s}",
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+            )
 
     async def _detect_copyleaks(self, text: str) -> DetectorResult:
         """Detect using CopyLeaks AI Content Detector API."""

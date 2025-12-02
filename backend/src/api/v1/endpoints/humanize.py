@@ -8,8 +8,16 @@ import re
 from fastapi import APIRouter, Header, HTTPException
 
 from api.config import settings
-from api.models import HumanizeRequest, HumanizeResponse, LengthMode, SubscriptionCheckRequest
+from api.models import (
+    HumanizeRequest,
+    HumanizeResponse,
+    LengthMode,
+    Metadata,
+    Metrics,
+    SubscriptionCheckRequest,
+)
 from api.services import HumanizationService
+from api.services.stealthwriter_service import StealthWriterService
 from api.utils.sanitization import InputSanitizer
 from api.v1.endpoints.subscriptions import check_subscription
 
@@ -145,62 +153,166 @@ async def humanize_text(
 
         logger.info(f"Sanitized Input Length: {len(sanitized_input_text)} characters")
 
-        # Get service instance
-        service = get_humanization_service()
-
-        # Convert LengthMode enum to string
-        length_mode_str = (
-            request.length_mode.value
-            if isinstance(request.length_mode, LengthMode)
-            else request.length_mode
-        )
-
-        # Call humanization service with sanitized input
-        result = service.humanize(
-            input_text=sanitized_input_text,
-            tone=request.tone,
-            length_mode=length_mode_str,
-            style_sample=sanitized_style_sample,
-            readability_level=request.readability_level,
-            language=request.language,
-        )
-
+        # Step 3: Route based on Advanced Mode
         logger.info("=" * 80)
-        logger.info("✅ HUMANIZATION SUCCESSFUL")
-        logger.info("=" * 80)
-        logger.info(f"Output Text Length: {len(result['humanized_text'])} characters")
-        logger.info(f"Output Text Preview: {result['humanized_text'][:200]}...")
+        if request.advanced_mode:
+            logger.info("🚀 ADVANCED MODE: Using StealthWriter API only")
+            logger.info("=" * 80)
 
-        if result.get("metrics"):
-            metrics = result["metrics"]
-            logger.info("-" * 80)
-            logger.info("Metrics:")
-            logger.info(f"  • Semantic Similarity: {metrics.get('semantic_similarity', 'N/A')}")
-            logger.info(f"  • Style Similarity: {metrics.get('style_similarity', 'N/A')}")
-            logger.info(f"  • Processing Time: {metrics.get('processing_time_ms', 'N/A')} ms")
-            logger.info(f"  • Word Count: {metrics.get('word_count', 'N/A')}")
-            logger.info(f"  • Chunks Used: {metrics.get('chunks_used', 'N/A')}")
+            # Advanced Mode: Use ONLY StealthWriter API - no fallback
+            if not settings.DEFAULT_COOKIE_STRING or not settings.DEFAULT_COOKIE_STRING.strip():
+                raise HTTPException(
+                    status_code=503,
+                    detail="Advanced mode requires StealthWriter to be configured. Please configure DEFAULT_COOKIE_STRING in backend/.env",
+                )
 
-        if result.get("metadata"):
-            metadata = result["metadata"]
-            logger.info("-" * 80)
-            logger.info("Metadata:")
-            logger.info(f"  • Detected Language: {metadata.get('detected_language', 'N/A')}")
-            logger.info(f"  • Language Confidence: {metadata.get('language_confidence', 'N/A')}")
-            logger.info(f"  • Chunk Count: {metadata.get('chunk_count', 'N/A')}")
-            logger.info(f"  • Model Used: {metadata.get('model_used', 'N/A')}")
-            logger.info(f"  • Semantic Passed: {metadata.get('semantic_passed', 'N/A')}")
-            logger.info(f"  • Style Passed: {metadata.get('style_passed', 'N/A')}")
+            try:
+                logger.info("📝 Input to StealthWriter:")
+                logger.info(f"   • Length: {len(sanitized_input_text)} characters")
+                logger.info(f"   • Words: {len(sanitized_input_text.split())} words")
+                logger.info(
+                    f"   • Preview: {sanitized_input_text[:150]}..."
+                    if len(sanitized_input_text) > 150
+                    else f"   • Text: {sanitized_input_text}"
+                )
 
-        logger.info("=" * 80)
+                stealthwriter = StealthWriterService(cookie_string=settings.DEFAULT_COOKIE_STRING)
 
-        # Convert dict result to response model
-        return HumanizeResponse(
-            humanized_text=result["humanized_text"],
-            language=result.get("language"),
-            metrics=result.get("metrics"),
-            metadata=result.get("metadata"),
-        )
+                if not stealthwriter.is_valid():
+                    raise HTTPException(
+                        status_code=503,
+                        detail="StealthWriter service is not valid. Please check your DEFAULT_COOKIE_STRING configuration.",
+                    )
+
+                stealthwriter_result = stealthwriter.humanize_text(
+                    text=sanitized_input_text,
+                    level=8,  # Use level from service default
+                    n=5,  # Number of variations
+                )
+
+                if not stealthwriter_result:
+                    raise HTTPException(
+                        status_code=503,
+                        detail="StealthWriter API call failed. Please check your cookies or try again later.",
+                    )
+
+                final_humanized_text = stealthwriter.extract_humanized_text(stealthwriter_result)
+
+                if not final_humanized_text or not final_humanized_text.strip():
+                    raise HTTPException(
+                        status_code=503,
+                        detail="StealthWriter returned empty result. Please try again.",
+                    )
+
+                logger.info("✅ StealthWriter processing complete")
+                logger.info(f"   • Output length: {len(final_humanized_text)} chars")
+                logger.info(f"   • Output words: {len(final_humanized_text.split())} words")
+                logger.info(
+                    f"   • Preview: {final_humanized_text[:200]}..."
+                    if len(final_humanized_text) > 200
+                    else f"   • Text: {final_humanized_text}"
+                )
+
+                # Return response with StealthWriter results
+                return HumanizeResponse(
+                    humanized_text=final_humanized_text,
+                    language=request.language,  # Use provided language or None
+                    metrics=Metrics(
+                        word_count=len(final_humanized_text.split()),
+                        character_count=len(final_humanized_text),
+                        processing_time_ms=0.0,  # We don't track time for StealthWriter
+                    ),
+                    metadata=Metadata(
+                        detected_language=request.language or "unknown",
+                        model_used="stealthwriter",
+                    ),
+                )
+
+            except HTTPException:
+                raise
+            except Exception as e:
+                logger.error(f"StealthWriter processing failed: {e}", exc_info=True)
+                raise HTTPException(
+                    status_code=503, detail=f"StealthWriter processing failed: {str(e)}"
+                )
+
+        else:
+            # Standard Mode: Use ONLY our own humanization workflow
+            logger.info("🔧 STANDARD MODE: Using our own humanization workflow")
+            logger.info("=" * 80)
+
+            # Standard Mode: Use ONLY our own humanization workflow
+            service = get_humanization_service()
+
+            # Convert LengthMode enum to string
+            length_mode_str = (
+                request.length_mode.value
+                if isinstance(request.length_mode, LengthMode)
+                else request.length_mode
+            )
+
+            # Call humanization service with sanitized input
+            result = service.humanize(
+                input_text=sanitized_input_text,
+                tone=request.tone,
+                length_mode=length_mode_str,
+                style_sample=sanitized_style_sample,
+                readability_level=request.readability_level,
+                language=request.language,
+            )
+
+            logger.info("=" * 80)
+            logger.info("✅ HUMANIZATION SUCCESSFUL")
+            logger.info("=" * 80)
+            logger.info(f"Output Text Length: {len(result['humanized_text'])} characters")
+            logger.info(f"Output Text Preview: {result['humanized_text'][:200]}...")
+
+            if result.get("metrics"):
+                metrics = result["metrics"]
+                logger.info("-" * 80)
+                logger.info("Metrics:")
+                logger.info(f"  • Semantic Similarity: {metrics.get('semantic_similarity', 'N/A')}")
+                logger.info(f"  • Style Similarity: {metrics.get('style_similarity', 'N/A')}")
+                logger.info(f"  • Processing Time: {metrics.get('processing_time_ms', 'N/A')} ms")
+                logger.info(f"  • Word Count: {metrics.get('word_count', 'N/A')}")
+                logger.info(f"  • Chunks Used: {metrics.get('chunks_used', 'N/A')}")
+
+            if result.get("metadata"):
+                metadata = result["metadata"]
+                logger.info("-" * 80)
+                logger.info("Metadata:")
+                logger.info(f"  • Detected Language: {metadata.get('detected_language', 'N/A')}")
+                logger.info(
+                    f"  • Language Confidence: {metadata.get('language_confidence', 'N/A')}"
+                )
+                logger.info(f"  • Chunk Count: {metadata.get('chunk_count', 'N/A')}")
+                logger.info(f"  • Model Used: {metadata.get('model_used', 'N/A')}")
+                logger.info(f"  • Semantic Passed: {metadata.get('semantic_passed', 'N/A')}")
+                logger.info(f"  • Style Passed: {metadata.get('style_passed', 'N/A')}")
+
+            logger.info("=" * 80)
+
+            final_humanized_text = result["humanized_text"]
+
+            logger.info("=" * 80)
+            logger.info("📤 FINAL OUTPUT")
+            logger.info("=" * 80)
+            logger.info(f"Final text length: {len(final_humanized_text)} characters")
+            logger.info(f"Final text words: {len(final_humanized_text.split())} words")
+            logger.info(
+                f"Final preview: {final_humanized_text[:200]}..."
+                if len(final_humanized_text) > 200
+                else f"Final text: {final_humanized_text}"
+            )
+            logger.info("=" * 80)
+
+            # Convert dict result to response model
+            return HumanizeResponse(
+                humanized_text=final_humanized_text,
+                language=result.get("language"),
+                metrics=result.get("metrics"),
+                metadata=result.get("metadata"),
+            )
 
     except ValueError as e:
         logger.error(f"Validation error in humanize: {e}")

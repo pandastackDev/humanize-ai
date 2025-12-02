@@ -163,15 +163,15 @@ export function MainNav() {
           >
             Free Tools
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="!left-0 !top-full !mt-1.5 !w-auto !p-0 !bg-transparent !border-0 !shadow-none !rounded-none">
-            <div className="max-h-[85vh] overflow-y-auto rounded-3xl border-2 border-border bg-card px-4 py-5 shadow-xl sm:px-8 sm:py-7">
+          <NavigationMenuContent className="!left-0 !top-full !mt-1-5 !w-auto !p-0 !bg-transparent !border-0 !shadow-none !rounded-none">
+            <div className="max-h-nav-menu overflow-y-auto rounded-3xl border-2 border-border bg-card px-4 py-5 shadow-xl sm:px-8 sm:py-7">
               <div className="mb-4 font-bold text-card-foreground text-sm sm:text-base">
                 Free Tools
               </div>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:flex lg:gap-6">
                 {Object.entries(freeTools).map(([category, tools]) => (
                   <div
-                    className="w-full min-w-[160px] sm:w-[200px]"
+                    className="w-full min-w-select-small sm:w-select-medium"
                     key={category}
                   >
                     <div className="mb-3 font-semibold text-card-foreground text-xs sm:text-sm">
@@ -182,7 +182,7 @@ export function MainNav() {
                         <li key={tool.title}>
                           <NavigationMenuLink asChild>
                             <Link
-                              className="block scale-[0.98] transform text-muted-foreground text-xs transition-all duration-200 ease-in-out hover:scale-100 hover:text-primary active:scale-[0.95] sm:text-sm"
+                              className="block scale-hover transform text-muted-foreground text-xs transition-all duration-fast ease-in-out hover:scale-100 hover:text-primary active:scale-active sm:text-sm"
                               href={tool.href}
                             >
                               {tool.title}
@@ -260,7 +260,10 @@ function CompactNav() {
             Browse tools
           </Button>
         </SheetTrigger>
-        <SheetContent className="w-[90vw] max-w-md overflow-y-auto" side="left">
+        <SheetContent
+          className="w-sheet-content max-w-md overflow-y-auto"
+          side="left"
+        >
           <SheetHeader>
             <SheetTitle>Free Tools</SheetTitle>
           </SheetHeader>
@@ -273,7 +276,7 @@ function CompactNav() {
                 <div className="flex flex-col gap-2">
                   {tools.map((tool) => (
                     <Link
-                      className="rounded-md px-3 py-1.5 text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+                      className="rounded-md px-3 py-1-5 text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
                       href={tool.href}
                       key={tool.title}
                     >
@@ -288,25 +291,25 @@ function CompactNav() {
       </Sheet>
 
       <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        className="rounded-md px-3 py-1-5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
         href="/faq"
       >
         FAQ
       </Link>
       <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        className="rounded-md px-3 py-1-5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
         href="/affiliate"
       >
         Become an affiliate
       </Link>
       <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        className="rounded-md px-3 py-1-5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
         href="/api"
       >
         API
       </Link>
       <Link
-        className="rounded-md px-3 py-1.5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
+        className="rounded-md px-3 py-1-5 font-semibold text-muted-foreground text-sm transition-colors hover:bg-primary/10 hover:text-primary"
         href="/contact"
       >
         Contact

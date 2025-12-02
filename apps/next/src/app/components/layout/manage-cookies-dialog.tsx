@@ -189,7 +189,7 @@ export function ManageCookiesDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="max-w-lg border-border bg-background text-left dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+      <DialogContent className="max-w-lg border-border bg-background text-left dark:border-editor-border dark:bg-editor-bg">
         <DialogHeader className="text-left">
           <DialogTitle className="flex items-center gap-2 font-semibold text-foreground text-xl">
             <Cookie className="h-5 w-5" />
@@ -214,7 +214,7 @@ export function ManageCookiesDialog({
         <div className="space-y-6 py-4">
           {COOKIE_CATEGORIES.map((category) => (
             <div
-              className="space-y-2 border-border border-b pb-4 last:border-b-0 dark:border-[var(--color-select-hover)]"
+              className="space-y-2 border-border border-b pb-4 last:border-b-0 dark:border-select-hover"
               key={category.id}
             >
               <div className="flex items-center justify-between">
@@ -226,7 +226,7 @@ export function ManageCookiesDialog({
                 </Label>
                 <Switch
                   checked={cookiePreferences[category.id] ?? category.enabled}
-                  className="data-[state=checked]:bg-[var(--color-brand-primary)] dark:data-[state=checked]:bg-[var(--color-brand-primary)]"
+                  className="data-[state=checked]:bg-brand-primary dark:data-[state=checked]:bg-brand-primary"
                   disabled={category.required}
                   id={`cookie-${category.id}`}
                   onCheckedChange={(checked) =>

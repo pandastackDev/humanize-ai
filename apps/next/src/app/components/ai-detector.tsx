@@ -161,22 +161,22 @@ ${result.detector_results
 
   const getScoreColor = (score: number) => {
     if (score >= 70) {
-      return "text-green-600 dark:text-green-400";
+      return "text-success dark:text-success";
     }
     if (score >= 40) {
-      return "text-yellow-600 dark:text-yellow-400";
+      return "text-warning dark:text-warning";
     }
-    return "text-red-600 dark:text-red-400";
+    return "text-destructive dark:text-destructive";
   };
 
   const getScoreIcon = (score: number) => {
     if (score >= 70) {
-      return <CheckCircle className="h-6 w-6 text-green-600" />;
+      return <CheckCircle className="h-6 w-6 text-success" />;
     }
     if (score >= 40) {
-      return <AlertCircle className="h-6 w-6 text-yellow-600" />;
+      return <AlertCircle className="h-6 w-6 text-warning" />;
     }
-    return <XCircle className="h-6 w-6 text-red-600" />;
+    return <XCircle className="h-6 w-6 text-destructive" />;
   };
 
   const getDetectorAssessment = (detector: DetectorResult) => {
@@ -189,7 +189,7 @@ ${result.detector_results
       return {
         label: "Likely AI",
         score: aiScore,
-        colorClass: "text-red-600 dark:text-red-400",
+        colorClass: "text-destructive dark:text-destructive",
       };
     }
 
@@ -197,20 +197,20 @@ ${result.detector_results
       return {
         label: "Likely Human",
         score: humanScore,
-        colorClass: "text-green-600 dark:text-green-400",
+        colorClass: "text-success dark:text-success",
       };
     }
 
     return {
       label: "Inconclusive",
       score: (aiScore + humanScore) / 2,
-      colorClass: "text-yellow-600 dark:text-yellow-400",
+      colorClass: "text-warning dark:text-warning",
     };
   };
 
   // Loading screen component with all detectors
   const renderLoadingScreen = () => (
-    <Card className="flex h-[600px] flex-col items-center justify-center bg-card/95 px-4 py-8 backdrop-blur-sm dark:bg-editor-bg/95">
+    <Card className="flex h-editor-xl flex-col items-center justify-center bg-card/95 px-4 py-8 backdrop-blur-sm dark:bg-editor-bg/95">
       <CardContent className="w-full max-w-4xl">
         {/* Purple heading */}
         <h2 className="mb-2 text-center font-bold text-2xl text-purple-600 dark:text-purple-400">
@@ -297,7 +297,7 @@ ${result.detector_results
               </div>
               <div className="h-2.5 w-full rounded-full bg-muted dark:bg-editor-bg">
                 <div
-                  className="h-2.5 rounded-full bg-green-600 transition-all"
+                  className="h-2.5 rounded-full bg-success transition-all"
                   style={{ width: `${result.human_likelihood_pct}%` }}
                 />
               </div>
@@ -314,7 +314,7 @@ ${result.detector_results
               </div>
               <div className="h-2.5 w-full rounded-full bg-muted dark:bg-editor-bg">
                 <div
-                  className="h-2.5 rounded-full bg-red-600 transition-all"
+                  className="h-2.5 rounded-full bg-destructive transition-all"
                   style={{ width: `${result.ai_likelihood_pct}%` }}
                 />
               </div>
@@ -482,7 +482,7 @@ ${result.detector_results
                 </span>
               </div>
               <Textarea
-                className="min-h-[300px] resize-y"
+                className="min-h-editor-sm resize-y"
                 id="detect-text"
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Paste the text you want to analyze here..."
@@ -542,7 +542,7 @@ ${result.detector_results
             </Button>
 
             {error && (
-              <div className="rounded-lg bg-red-50 p-3 text-red-800 text-sm dark:bg-red-900/20 dark:text-red-300">
+              <div className="rounded-lg bg-destructive/10 p-3 text-destructive text-sm dark:bg-destructive/20 dark:text-destructive">
                 <AlertCircle className="mr-2 inline-block h-4 w-4" />
                 {error}
               </div>
@@ -558,7 +558,7 @@ ${result.detector_results
         {isDetecting && renderLoadingScreen()}
 
         {!(result || isDetecting) && (
-          <Card className="flex h-[400px] items-center justify-center">
+          <Card className="flex h-editor-md items-center justify-center">
             <CardContent className="text-center text-muted-foreground">
               <Shield className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>Enter text and click &quot;Detect AI Content&quot;</p>

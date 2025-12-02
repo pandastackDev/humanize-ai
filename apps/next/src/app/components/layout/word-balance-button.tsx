@@ -87,14 +87,23 @@ export function WordBalanceButton({
 
   return (
     <>
-      <div className="flex items-center gap-2">
-        <div className="hidden h-9 items-center gap-1 rounded-md bg-accent px-4 text-sm sm:flex">
-          <span className="text-muted-foreground">Balance:</span>
-          <span className="font-semibold">
+      <div className="flex items-center gap-1.5 sm:gap-2">
+        <div className="hidden h-9 items-center gap-1 rounded-md bg-accent px-2 text-xs sm:flex sm:px-3 sm:text-sm md:px-4">
+          <span className="hidden text-muted-foreground sm:inline">
+            Balance:
+          </span>
+          <span className="whitespace-nowrap font-semibold">
             {loading ? "..." : (totalAvailable ?? 0).toLocaleString()}
           </span>
         </div>
-        <Button onClick={() => setDialogOpen(true)}>Get more words</Button>
+        <Button
+          className="h-8 cursor-pointer px-2 text-xs sm:h-9 sm:px-3 sm:text-sm md:px-4"
+          onClick={() => setDialogOpen(true)}
+          size="sm"
+        >
+          <span className="hidden sm:inline">Get more words</span>
+          <span className="sm:hidden">Get more</span>
+        </Button>
       </div>
       <WordPurchaseDialog
         currentBalance={totalAvailable ?? 0}

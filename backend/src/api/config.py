@@ -33,7 +33,9 @@ class Settings(BaseSettings):
 
     # OpenAI Configuration
     OPENAI_API_KEY: str = ""
-    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-large"
+    OPENAI_EMBEDDING_MODEL: str = (
+        "text-embedding-3-small"  # Changed to small for cost savings (if validation enabled)
+    )
     OPENAI_LLM_MODEL: str = "gpt-4-turbo"  # Direct API uses model name without prefix
 
     # Anthropic Configuration
@@ -68,10 +70,10 @@ class Settings(BaseSettings):
 
     # Performance Optimization Settings
     USE_FAST_MODEL_FOR_QUICK_PIPELINE: bool = (
-        True  # Use Haiku for quick pipeline (<1500 words) for speed
+        True  # Use fast model for quick pipeline (<1500 words) for speed and cost savings
     )
     SKIP_VALIDATION_FOR_QUICK_PIPELINE: bool = (
-        False  # Skip validation for faster processing (not recommended)
+        True  # Skip validation to save on embedding API costs (embeddings are expensive)
     )
 
     # LLM Settings for Humanization (V4 - Originality.AI Optimized)
@@ -101,11 +103,11 @@ class Settings(BaseSettings):
     )
 
     # Model Preferences for Different Phases
-    # Note: Model names may include provider prefix (e.g., "anthropic/claude-3-5-sonnet-20241022")
-    # For direct Anthropic API, prefix will be stripped to "claude-3-5-sonnet-20241022"
-    PRIMARY_HUMANIZATION_MODEL: str = "anthropic/claude-3-5-sonnet-20241022"  # Best for naturalness
-    COMPRESSION_MODEL: str = "anthropic/claude-3-haiku-20240307"  # Fast, good for compression
-    FALLBACK_HUMANIZATION_MODEL: str = "openai/gpt-4-turbo"  # Updated to current model
+    # Note: Model names may include provider prefix (e.g., "openai/gpt-4-turbo")
+    # Using OpenAI models for humanization (Anthropic disabled for now due to model name issues)
+    PRIMARY_HUMANIZATION_MODEL: str = "openai/gpt-4-turbo"  # Primary model for humanization
+    COMPRESSION_MODEL: str = "openai/gpt-4o-mini"  # Fast, good for compression and quick pipeline
+    FALLBACK_HUMANIZATION_MODEL: str = "openai/gpt-4-turbo"  # Fallback model
 
     # Temperature Settings by Phase
     COMPRESSION_TEMPERATURE: float = 0.70
@@ -115,19 +117,22 @@ class Settings(BaseSettings):
     FINAL_TUNING_TEMPERATURE: float = 0.75
 
     # Authenticity / Anti-Detection Controls
-    AUTHENTICITY_PASS_ENABLED: bool = True
+    AUTHENTICITY_PASS_ENABLED: bool = False  # Disabled to reduce processing cost
     AUTHENTICITY_PASS_MIN_WORDS: int = 180
     # Enable invisible characters for better AI detection bypass (like the sample output)
-    INVISIBLE_CHAR_NOISE_ENABLED: bool = True
+    INVISIBLE_CHAR_NOISE_ENABLED: bool = True  # Keep enabled - it's free (no API calls)
     INVISIBLE_CHAR_INSERT_EVERY_N_WORDS: int = 15  # Insert every 15 words for natural distribution
 
     # Length Enforcement Ratios
-    LENGTH_STANDARD_MIN_RATIO: float = 0.65
-    LENGTH_STANDARD_MAX_RATIO: float = 1.35
-    LENGTH_SHORTEN_MIN_RATIO: float = 0.6
-    LENGTH_SHORTEN_MAX_RATIO: float = 0.85
-    LENGTH_EXPAND_MIN_RATIO: float = 1.2
-    LENGTH_EXPAND_MAX_RATIO: float = 1.5
+    # Keep it as is: 1.2~1.3x (120-130% of original)
+    LENGTH_STANDARD_MIN_RATIO: float = 1.2
+    LENGTH_STANDARD_MAX_RATIO: float = 1.3
+    # Make it shorter: 80~95% of original
+    LENGTH_SHORTEN_MIN_RATIO: float = 0.80
+    LENGTH_SHORTEN_MAX_RATIO: float = 0.95
+    # Make it longer: 1.5~2.7x (150-270% of original)
+    LENGTH_EXPAND_MIN_RATIO: float = 1.5
+    LENGTH_EXPAND_MAX_RATIO: float = 2.7
 
     # Stripe Configuration
     STRIPE_API_KEY: str = ""
@@ -158,7 +163,9 @@ class Settings(BaseSettings):
 
     # AI Detection API Keys (for /detect endpoint)
     # Note: These are optional - detectors will work in demo mode without keys
-    GPTZERO_API_KEY: str = ""
+    GPTZERO_COOKIE_STRING: str = (
+        ""  # Session cookies for GPTZero API (required for GPTZero detection)
+    )
     COPYLEAKS_API_KEY: str = ""
     SAPLING_API_KEY: str = ""
     WRITER_API_KEY: str = ""
@@ -172,6 +179,9 @@ class Settings(BaseSettings):
     # Detection Cache Configuration
     DETECTION_CACHE_SIZE: int = 1000
     DETECTION_CACHE_TTL_SECONDS: int = 3600  # 1 hour
+
+    # StealthWriter API Configuration (optional final enhancement step)
+    DEFAULT_COOKIE_STRING: str = ""  # Session cookies for StealthWriter API
 
     model_config = {
         "case_sensitive": True,

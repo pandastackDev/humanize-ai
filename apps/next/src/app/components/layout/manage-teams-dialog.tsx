@@ -104,7 +104,7 @@ export function ManageTeamsDialog({
 
   return (
     <Dialog onOpenChange={onOpenChange} open={open}>
-      <DialogContent className="border-border bg-background text-left dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+      <DialogContent className="border-border bg-background text-left dark:border-editor-border dark:bg-editor-bg">
         <DialogHeader className="text-left">
           <DialogTitle className="font-semibold text-foreground text-xl dark:text-foreground">
             Manage teams
@@ -134,7 +134,7 @@ export function ManageTeamsDialog({
                     {editingTeamId === team.id ? (
                       <>
                         <Input
-                          className="flex-1 border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-border focus-visible:ring-ring dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:focus-visible:border-border dark:focus-visible:ring-ring dark:placeholder:text-muted-foreground"
+                          className="flex-1 border-border bg-background text-foreground placeholder:text-muted-foreground focus-visible:border-border focus-visible:ring-ring dark:border-border dark:bg-editor-bg dark:text-foreground dark:focus-visible:border-border dark:focus-visible:ring-ring dark:placeholder:text-muted-foreground"
                           disabled={loading}
                           onChange={(e) => setEditName(e.target.value)}
                           onKeyDown={(e) => {
@@ -153,7 +153,7 @@ export function ManageTeamsDialog({
                           size="sm"
                           variant="ghost"
                         >
-                          <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
+                          <Check className="h-4 w-4 text-success dark:text-success" />
                         </Button>
                         <Button
                           className="h-8 w-8 rounded p-0"
@@ -169,7 +169,7 @@ export function ManageTeamsDialog({
                       <>
                         <div className="flex flex-1 items-center gap-2">
                           {selectedTeamId === team.id && (
-                            <Check className="h-4 w-4 text-green-600 dark:text-green-500" />
+                            <Check className="h-4 w-4 text-success dark:text-success" />
                           )}
                           <button
                             className="flex-1 cursor-pointer text-left font-medium text-foreground text-sm dark:text-foreground"
@@ -190,7 +190,7 @@ export function ManageTeamsDialog({
                             <Edit2 className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
                           </Button>
                           <Button
-                            className="h-8 w-8 rounded p-0 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400"
+                            className="h-8 w-8 rounded p-0 hover:bg-destructive/10 hover:text-destructive dark:hover:bg-destructive/20 dark:hover:text-destructive"
                             disabled={loading || teams.length === 1}
                             onClick={() => handleDelete(team.id)}
                             size="sm"
@@ -214,7 +214,7 @@ export function ManageTeamsDialog({
 
           {/* Create Team Button */}
           <Button
-            className="w-full border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-muted"
+            className="w-full border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-editor-bg dark:text-foreground dark:hover:bg-muted"
             onClick={handleCreateTeam}
             variant="outline"
           >
@@ -225,7 +225,7 @@ export function ManageTeamsDialog({
 
         <DialogFooter className="gap-2 sm:justify-end">
           <Button
-            className="border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-[var(--color-editor-bg)] dark:text-foreground dark:hover:bg-muted"
+            className="border-border bg-background text-foreground hover:bg-muted dark:border-border dark:bg-editor-bg dark:text-foreground dark:hover:bg-muted"
             disabled={loading}
             onClick={() => onOpenChange(false)}
             type="button"

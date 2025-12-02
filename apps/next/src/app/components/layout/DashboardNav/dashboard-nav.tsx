@@ -90,7 +90,7 @@ export function DashboardNav() {
   const pathname = usePathname();
 
   return (
-    <div className="w-[300px]">
+    <div className="w-dashboard-nav">
       <div className="flex flex-1 flex-col items-stretch gap-1 overflow-hidden">
         {navItems.map((item) => {
           const Icon = item.icon ?? ArrowRight;

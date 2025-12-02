@@ -31,8 +31,6 @@ type PlanData = {
 type PricingCardProps = {
   plan: PlanData;
   billingPeriod: "monthly" | "annual";
-  isSelected: boolean;
-  onSelect: () => void;
   userId: string | undefined;
   subscriptionLoading: boolean;
   subscriptionPlan: string | null;
@@ -44,8 +42,6 @@ type PricingCardProps = {
 function PricingCard({
   plan,
   billingPeriod,
-  isSelected,
-  onSelect,
   userId,
   subscriptionLoading,
   subscriptionPlan,
@@ -53,6 +49,8 @@ function PricingCard({
   onSubscribe,
   onManageSubscription,
 }: PricingCardProps) {
+  // Border always shows on the "most popular" card (plan.highlight === true)
+  const isSelected = plan.highlight;
   const isCurrentPlanLoading = loadingPlan === `${plan.name}-${billingPeriod}`;
   const hasActiveSubscription = subscriptionPlan && subscriptionPlan !== "free";
 
@@ -60,7 +58,7 @@ function PricingCard({
     if (!userId) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="w-full bg-primary text-primary-foreground hover:opacity-90"
           onClick={() => {
             window.location.href = "/login";
           }}
@@ -73,7 +71,7 @@ function PricingCard({
     if (subscriptionLoading) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="w-full bg-primary text-primary-foreground hover:opacity-90"
           disabled
         >
           <LoadingSpinner className="mr-2" size="sm" />
@@ -85,7 +83,7 @@ function PricingCard({
     if (hasActiveSubscription) {
       return (
         <Button
-          className="w-full bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+          className="w-full bg-primary text-primary-foreground hover:opacity-90"
           onClick={onManageSubscription}
         >
           Manage Subscription
@@ -95,7 +93,7 @@ function PricingCard({
 
     return (
       <Button
-        className="w-full cursor-pointer bg-[var(--primary)] text-[var(--primary-foreground)] hover:opacity-90"
+        className="w-full cursor-pointer bg-primary text-primary-foreground hover:opacity-90"
         disabled={isCurrentPlanLoading}
         onClick={() => onSubscribe(plan.name)}
       >
@@ -122,12 +120,9 @@ function PricingCard({
         </div>
       )}
       <Card
-        className={`flex h-full cursor-pointer flex-col transition-all ${
-          isSelected
-            ? "border-2 border-[var(--primary)] shadow-lg"
-            : "border-border"
+        className={`flex h-full flex-col transition-all ${
+          isSelected ? "border-2 border-primary shadow-lg" : "border-border"
         } bg-card`}
-        onClick={onSelect}
       >
         <CardHeader>
           <CardTitle
@@ -165,7 +160,7 @@ function PricingCard({
                 className="flex items-start gap-2"
                 key={`${plan.name}-${index}`}
               >
-                <Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--primary)]" />
+                <Check className="mt-0-5 h-4 w-4 shrink-0 text-primary" />
                 <p className="text-card-foreground text-sm">{feature}</p>
               </div>
             ))}
@@ -302,7 +297,6 @@ export function Pricing({
   const [billingPeriod, setBillingPeriod] = useState<"monthly" | "annual">(
     "annual"
   );
-  const [selectedPlan, setSelectedPlan] = useState<string>("Pro");
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [subscriptionPlan, setSubscriptionPlan] =
     useState<SubscriptionPlan | null>(null);
@@ -416,28 +410,28 @@ export function Pricing({
           }
           value={billingPeriod}
         >
-          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0.5 rounded-[32px] bg-muted p-0.5 [&_button]:min-h-0">
+          <TabsList className="relative grid h-9 w-full grid-cols-2 gap-0-5 rounded-tab bg-muted p-0-5 [&_button]:min-h-0">
             {/* Sliding indicator */}
             <div
-              className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[var(--primary)] transition-all duration-300 ease-in-out"
+              className="absolute top-0-5 bottom-0-5 rounded-tab bg-primary transition-all duration-normal ease-in-out"
               style={{
                 left: getIndicatorLeft(),
                 width: "calc(50% - 0.1875rem)",
               }}
             />
             <TabsTrigger
-              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white dark:text-gray-300"
+              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1-5 rounded-tab bg-transparent px-4 font-medium text-muted-foreground text-sm leading-normal transition-all duration-normal ease-in-out data-[state=active]:bg-primary data-[state=active]:text-white dark:text-muted-foreground"
               value="monthly"
             >
               <span className="whitespace-nowrap">Monthly</span>
             </TabsTrigger>
             <TabsTrigger
-              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1.5 rounded-[32px] bg-transparent px-4 font-medium text-gray-600 text-sm leading-normal transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--primary)] data-[state=active]:text-white dark:text-gray-300"
+              className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-1-5 rounded-tab bg-transparent px-4 font-medium text-muted-foreground text-sm leading-normal transition-all duration-normal ease-in-out data-[state=active]:bg-primary data-[state=active]:text-white dark:text-muted-foreground"
               value="annual"
             >
               <span className="whitespace-nowrap">Annual</span>
               <span
-                className="ml-1 inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 font-semibold text-[10px] text-white leading-none"
+                className="ml-1 inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 font-semibold text-white text-xs-custom leading-none"
                 style={{ backgroundColor: "#0066ff" }}
               >
                 SAVE 50%
@@ -452,11 +446,9 @@ export function Pricing({
         {plans.map((plan) => (
           <PricingCard
             billingPeriod={billingPeriod}
-            isSelected={selectedPlan === plan.name}
             key={plan.name}
             loadingPlan={loadingPlan}
             onManageSubscription={handleManageSubscription}
-            onSelect={() => setSelectedPlan(plan.name)}
             onSubscribe={handleSubscribe}
             plan={plan}
             subscriptionLoading={subscriptionLoading}

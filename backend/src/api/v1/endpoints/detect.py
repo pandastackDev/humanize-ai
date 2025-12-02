@@ -32,33 +32,16 @@ def sanitize_text(text: str) -> str:
     """
     Sanitize and pre-process text for detection.
 
+    - Remove markdown formatting (to avoid AI detection)
+    - Convert non-ASCII characters to ASCII equivalents
     - Remove/nullify control characters and null bytes
     - Normalize excessive whitespace
     - Ensure UTF-8 encoding
     """
-    import re
+    from api.utils.sanitization import InputSanitizer
 
-    # Remove null bytes
-    text = text.replace("\x00", "")
-
-    # Remove control characters except newlines, tabs, and carriage returns
-    text = re.sub(r"[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F]", "", text)
-
-    # Normalize excessive whitespace (keep single spaces, newlines, tabs)
-    text = re.sub(r"[ \t]+", " ", text)  # Multiple spaces/tabs to single space
-    text = re.sub(r"\n{3,}", "\n\n", text)  # Multiple newlines to double
-
-    # Strip leading/trailing whitespace
-    text = text.strip()
-
-    # Ensure UTF-8 encoding (decode and re-encode to handle any encoding issues)
-    try:
-        text = text.encode("utf-8", errors="ignore").decode("utf-8")
-    except Exception:
-        # If encoding fails, use error handling
-        text = text.encode("utf-8", errors="replace").decode("utf-8")
-
-    return text
+    # Use InputSanitizer which handles markdown removal and ASCII conversion
+    return InputSanitizer.sanitize(text)
 
 
 @router.post("/", response_model=DetectResponse, summary="Detect AI-generated content")

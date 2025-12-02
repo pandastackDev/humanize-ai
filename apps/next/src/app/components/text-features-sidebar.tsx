@@ -37,10 +37,10 @@ export function TextFeaturesSidebar({
       label: "Changed Words",
       description:
         "Original words are swapped with synonyms to maintain the underlying meaning and concepts.",
-      color: "bg-red-500",
-      textColor: "text-red-600",
-      bgColor: "bg-red-100",
-      darkBgColor: "dark:bg-red-900/30",
+      color: "bg-destructive",
+      textColor: "text-destructive",
+      bgColor: "bg-destructive/10",
+      darkBgColor: "dark:bg-destructive/30",
       indicatorType: "dot" as const,
     },
     {
@@ -48,10 +48,10 @@ export function TextFeaturesSidebar({
       label: "Structural Changes",
       description:
         "Going a step further, the sentence structure is modified by rearranging and altering clauses.",
-      color: "bg-yellow-500",
-      textColor: "text-yellow-600",
-      bgColor: "bg-yellow-100",
-      darkBgColor: "dark:bg-yellow-900/30",
+      color: "bg-warning",
+      textColor: "text-warning",
+      bgColor: "bg-warning-bg",
+      darkBgColor: "dark:bg-warning-muted",
       indicatorType: "dash" as const,
     },
     {
@@ -59,10 +59,10 @@ export function TextFeaturesSidebar({
       label: "Longest Unchanged Words",
       description:
         "This is the longest set of words that remain unchanged between the original and paraphrased text.",
-      color: "bg-blue-500",
-      textColor: "text-blue-600",
-      bgColor: "bg-blue-100",
-      darkBgColor: "dark:bg-blue-900/30",
+      color: "bg-info",
+      textColor: "text-info",
+      bgColor: "bg-info-bg",
+      darkBgColor: "dark:bg-info-muted",
       indicatorType: "dot" as const,
     },
     {
@@ -82,7 +82,7 @@ export function TextFeaturesSidebar({
     <Popover>
       <PopoverTrigger asChild>
         <Button
-          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
+          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-select-hover"
           title="Text features"
           type="button"
           variant="ghost"
@@ -138,7 +138,7 @@ export function TextFeaturesSidebar({
                         className={cn(
                           "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2",
                           isEnabled
-                            ? "bg-[var(--color-brand-primary)] focus:ring-[var(--color-brand-primary)]"
+                            ? "bg-brand-primary focus:ring-brand-primary"
                             : "bg-muted focus:ring-muted-foreground dark:bg-muted"
                         )}
                         onClick={() =>

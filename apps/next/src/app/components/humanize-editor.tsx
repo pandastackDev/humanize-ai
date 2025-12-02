@@ -19,8 +19,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@humanize/ui/components/select";
+import { Switch } from "@humanize/ui/components/switch";
 import { Tabs, TabsList, TabsTrigger } from "@humanize/ui/components/tabs";
 import { Textarea } from "@humanize/ui/components/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@humanize/ui/components/tooltip";
 import {
   BarChart3,
   Check,
@@ -47,7 +54,14 @@ import { useRouter } from "next/navigation";
 import * as pdfjsLib from "pdfjs-dist";
 import type React from "react";
 import type { JSX } from "react";
-import { useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { type DetectResponse, detectAIContent } from "@/lib/detect-api";
 import { humanizeText } from "@/lib/humanize-api";
@@ -245,7 +259,7 @@ const AI_DETECTORS = [
 const readabilityIcons: Record<string, JSX.Element> = {
   university: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -265,7 +279,7 @@ const readabilityIcons: Record<string, JSX.Element> = {
   ),
   "high-school": (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -293,7 +307,7 @@ const readabilityIcons: Record<string, JSX.Element> = {
   ),
   doctorate: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -321,7 +335,7 @@ const readabilityIcons: Record<string, JSX.Element> = {
   ),
   journalist: (
     <svg
-      className="h-4 w-4 text-[var(--color-brand-primary)]"
+      className="h-4 w-4 text-brand-primary"
       fill="none"
       viewBox="0 0 18 18"
       xmlns="http://www.w3.org/2000/svg"
@@ -350,7 +364,7 @@ const readabilityIcons: Record<string, JSX.Element> = {
   ),
   marketing: (
     <svg
-      className="h-4 w-4 text-[var(--color-brand-primary)]"
+      className="h-4 w-4 text-brand-primary"
       fill="none"
       viewBox="0 0 18 18"
       xmlns="http://www.w3.org/2000/svg"
@@ -388,7 +402,7 @@ const readabilityIcons: Record<string, JSX.Element> = {
 const purposeIcons: Record<string, JSX.Element> = {
   academic: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -409,7 +423,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   general: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -436,7 +450,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   essay: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -463,7 +477,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   article: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -485,7 +499,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   marketing: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -532,7 +546,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   story: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -559,7 +573,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   "cover-letter": (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -597,7 +611,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   report: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -631,7 +645,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   business: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -664,7 +678,7 @@ const purposeIcons: Record<string, JSX.Element> = {
   ),
   legal: (
     <svg
-      className="h-5 w-5 text-[var(--color-brand-primary)]"
+      className="h-5 w-5 text-brand-primary"
       fill="none"
       viewBox="0 0 20 20"
       xmlns="http://www.w3.org/2000/svg"
@@ -695,37 +709,35 @@ function MarketingInner() {
   return (
     <>
       {/* Rating Card */}
-      <div className="w-full rounded-lg border border-border bg-card p-2.5 shadow-sm dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]/50">
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-0.5">
+      <div className="w-full rounded-lg bg-background p-2.5 shadow-none">
+        <div className="flex flex-col items-center gap-1">
+          <div className="flex items-center gap-0-5">
             {[1, 2, 3, 4, 5].map((starNum) => (
               <Star
-                className="h-4 w-4 fill-[var(--color-brand-primary)] text-[var(--color-brand-primary)]"
+                className="h-4 w-4 fill-star text-star"
                 key={`rating-star-${starNum}`}
               />
             ))}
           </div>
-          <div className="flex flex-col">
-            <p className="font-bold text-card-foreground text-sm">4.8/5</p>
-            <p className="text-muted-foreground text-xs dark:text-muted-foreground">
-              128,743 reviews
-            </p>
-          </div>
+          <p className="text-center text-card-foreground text-sm">
+            <span className="font-bold">4.8</span>/5 based on{" "}
+            <span className="font-bold">128,743</span> reviews
+          </p>
         </div>
       </div>
 
       {/* AI Detector Bypass Section */}
-      <div className="w-full rounded-lg border border-white bg-card p-3 shadow-sm dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]/50">
+      <div className="w-full rounded-lg bg-background p-3 shadow-none">
         <h3 className="mb-2 font-semibold text-card-foreground text-xs">
           AI Humanizer can bypass these AI detectors
         </h3>
-        <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-1-5 sm:grid-cols-4">
           {AI_DETECTORS.map((detector) => (
             <div
-              className="flex items-center gap-1.5 rounded-md border border-border bg-muted p-1.5 transition-all hover:border-[var(--color-brand-primary)]/30 hover:bg-[var(--color-brand-primary)]/5 dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)] dark:hover:border-[var(--color-brand-primary)]/50 dark:hover:bg-[var(--color-brand-primary)]/10"
+              className="flex items-center gap-1-5 rounded-md bg-muted p-1-5 transition-all hover:bg-brand-primary/5 dark:bg-editor-bg dark:hover:bg-brand-primary/10"
               key={detector.name}
             >
-              <div className="relative flex h-4 w-4 shrink-0 items-center justify-center">
+              <div className="relative flex h-4 w-4 shrink-none items-center justify-center">
                 <Image
                   alt={detector.name}
                   className="object-contain"
@@ -745,12 +757,12 @@ function MarketingInner() {
       {/* Trust Metrics */}
       <div className="w-full space-y-2">
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-          <div className="flex items-center gap-2 rounded-lg border border-[var(--color-brand-primary)]/20 bg-gradient-to-br from-[var(--color-brand-primary)]/10 to-[var(--color-brand-primary)]/5 p-2.5 shadow-sm dark:border-[var(--color-brand-primary)]/30 dark:from-[var(--color-brand-primary)]/20 dark:to-[var(--color-brand-primary)]/10">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)]/20 dark:bg-[var(--color-brand-primary)]/30">
-              <Check className="h-3.5 w-3.5 text-[var(--color-brand-primary)]" />
+          <div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-primary/5 p-2.5 shadow-none dark:from-brand-primary/20 dark:to-brand-primary/10">
+            <div className="flex h-7 w-7 shrink-none items-center justify-center rounded-full bg-brand-primary/20 dark:bg-brand-primary/30">
+              <Check className="size-icon-sm text-brand-primary" />
             </div>
             <div>
-              <p className="font-bold text-[var(--color-brand-primary)] text-xs">
+              <p className="font-bold text-brand-primary text-xs">
                 12 Million+
               </p>
               <p className="text-muted-foreground text-xs dark:text-muted-foreground">
@@ -759,12 +771,12 @@ function MarketingInner() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 rounded-lg border border-[var(--color-brand-primary)]/20 bg-gradient-to-br from-[var(--color-brand-primary)]/10 to-[var(--color-brand-primary)]/5 p-2.5 shadow-sm dark:border-[var(--color-brand-primary)]/30 dark:from-[var(--color-brand-primary)]/20 dark:to-[var(--color-brand-primary)]/10">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-primary)]/20 dark:bg-[var(--color-brand-primary)]/30">
-              <FileText className="h-3.5 w-3.5 text-[var(--color-brand-primary)]" />
+          <div className="flex items-center gap-2 rounded-lg bg-gradient-to-br from-brand-primary/10 to-brand-primary/5 p-2.5 shadow-none dark:from-brand-primary/20 dark:to-brand-primary/10">
+            <div className="flex h-7 w-7 shrink-none items-center justify-center rounded-full bg-brand-primary/20 dark:bg-brand-primary/30">
+              <FileText className="size-icon-sm text-brand-primary" />
             </div>
             <div>
-              <p className="font-bold text-[var(--color-brand-primary)] text-xs">
+              <p className="font-bold text-brand-primary text-xs">
                 1.46 Billion+
               </p>
               <p className="text-muted-foreground text-xs dark:text-muted-foreground">
@@ -776,17 +788,17 @@ function MarketingInner() {
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           {/* Success Rate */}
-          <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-green-50/50 px-3 py-1.5 shadow-sm dark:border-green-900/50 dark:from-green-950/30 dark:to-green-950/10">
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/50">
-              <Check className="h-3 w-3 text-green-600 dark:text-green-400" />
+          <div className="c flex items-center gap-2 bg-gradient-to-br from-green-50 to-green-50/50 px-3 py-1-5 shadow-none dark:from-green-950/30 dark:to-green-950/10">
+            <div className="flex h-5 w-5 shrink-none items-center justify-center rounded-full bg-success-bg dark:bg-success-muted">
+              <Check className="size-icon-xs text-success dark:text-success" />
             </div>
-            <p className="font-bold text-green-700 text-xs dark:text-green-400">
+            <p className="font-bold text-success text-xs dark:text-success">
               99.54% Success Rate
             </p>
           </div>
 
           {/* Trustpilot Reviews */}
-          <div className="flex flex-1 items-center gap-1.5 rounded-lg border border-border bg-card px-3 py-1.5 shadow-sm dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]/50">
+          <div className="flex flex-1 items-center gap-1-5 rounded-lg bg-card px-3 py-1-5 shadow-none dark:bg-editor-bg/50">
             <Image
               alt="4.5 stars on Trustpilot"
               className="h-3.5 w-auto"
@@ -796,10 +808,10 @@ function MarketingInner() {
               width={70}
             />
             <span className="flex items-center gap-1 text-muted-foreground text-xs dark:text-muted-foreground">
-              <span className="font-medium">5,936 reviews on</span>
+              <span className="font-medium underline">5,936 reviews on</span>
               <Image
                 alt="Trustpilot"
-                className="h-3 w-3"
+                className="size-icon-xs"
                 height={12}
                 src="/logos/trustpilot-star.png"
                 width={12}
@@ -908,8 +920,10 @@ export function HumanizeEditor({
   organizationId?: string;
 }) {
   const router = useRouter();
+  const tabsId = useId();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dragCounterRef = useRef(0);
 
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
@@ -922,6 +936,7 @@ export function HumanizeEditor({
   const [styleSample, setStyleSample] = useState("");
   const [tempStyleSample, setTempStyleSample] = useState("");
   const [styleSampleError, setStyleSampleError] = useState<string | null>(null);
+  const [advancedMode, setAdvancedMode] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isParsingFile, setIsParsingFile] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -956,6 +971,38 @@ export function HumanizeEditor({
   const [isDetecting, setIsDetecting] = useState(false);
   const [detectionError, setDetectionError] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [hasTextareaScrollbar, setHasTextareaScrollbar] = useState(false);
+
+  // Initialize drag counter on mount and ensure it's reset - use useLayoutEffect to run before paint
+  useLayoutEffect(() => {
+    dragCounterRef.current = 0;
+    setIsDragOver(false);
+    setIsDragOverValid(false);
+  }, []);
+
+  // Check if textarea has scrollbar
+  // biome-ignore lint/correctness/useExhaustiveDependencies: inputText is needed to detect scrollbar changes when content changes
+  useLayoutEffect(() => {
+    const checkScrollbar = () => {
+      if (textareaRef.current) {
+        const hasScrollbar =
+          textareaRef.current.scrollHeight > textareaRef.current.clientHeight;
+        setHasTextareaScrollbar(hasScrollbar);
+      }
+    };
+
+    // Use requestAnimationFrame to ensure DOM has updated
+    requestAnimationFrame(() => {
+      checkScrollbar();
+    });
+
+    // Check on window resize
+    window.addEventListener("resize", checkScrollbar);
+
+    return () => {
+      window.removeEventListener("resize", checkScrollbar);
+    };
+  }, [inputText]);
 
   // Detect dark mode
   useEffect(() => {
@@ -1011,6 +1058,16 @@ export function HumanizeEditor({
     fetchSubscription();
   }, [userId, organizationId]);
 
+  // Initialize PDF.js worker once on component mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Use unpkg.com CDN which is more reliable for PDF.js workers
+      // Version 4.x uses .mjs extension for workers
+      const pdfjsVersion = pdfjsLib.version || "4.0.379";
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
+    }
+  }, []);
+
   // Load history from localStorage on mount
   useEffect(() => {
     try {
@@ -1047,13 +1104,19 @@ export function HumanizeEditor({
     .split(WORD_COUNT_REGEX)
     .filter(Boolean).length;
 
-  // Get word limit based on subscription plan
-  console.log("subscriptionPlan", subscriptionPlan);
   // const wordLimit = WORD_LIMITS[subscriptionPlan];
   const wordLimit = 3000;
 
   const isOverLimit = wordCount > wordLimit;
   const hasStyleSample = styleSample.trim().length > 0;
+
+  // Estimate characters: calculate average chars per word from current text, or use 5 as default
+  const avgCharsPerWord =
+    wordCount > 0 ? inputText.trim().length / wordCount : 5;
+  const estimatedLimitChars = wordLimit * avgCharsPerWord;
+  const excessCharacters = isOverLimit
+    ? Math.round(inputText.trim().length - estimatedLimitChars)
+    : 0;
 
   // Handle paste from clipboard
   const handlePasteText = async () => {
@@ -1082,156 +1145,178 @@ export function HumanizeEditor({
   };
 
   // Helper function to check file type
-  const getFileType = (
-    file: File
-  ): "pdf" | "docx" | "doc" | "txt" | "unknown" => {
-    const extensionTypeMap: Record<string, "pdf" | "docx" | "doc" | "txt"> = {
-      ".pdf": "pdf",
-      ".docx": "docx",
-      ".doc": "doc",
-      ".txt": "txt",
-    };
-    const mimeTypeMap: Record<string, "pdf" | "docx" | "doc" | "txt"> = {
-      "application/pdf": "pdf",
-      "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
-        "docx",
-      "application/msword": "doc",
-      "text/plain": "txt",
-    };
+  const getFileType = useCallback(
+    (file: File): "pdf" | "docx" | "doc" | "txt" | "unknown" => {
+      const extensionTypeMap: Record<string, "pdf" | "docx" | "doc" | "txt"> = {
+        ".pdf": "pdf",
+        ".docx": "docx",
+        ".doc": "doc",
+        ".txt": "txt",
+      };
+      const mimeTypeMap: Record<string, "pdf" | "docx" | "doc" | "txt"> = {
+        "application/pdf": "pdf",
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+          "docx",
+        "application/msword": "doc",
+        "text/plain": "txt",
+      };
 
-    const fileName = file.name.toLowerCase();
-    for (const [extension, type] of Object.entries(extensionTypeMap)) {
-      if (fileName.endsWith(extension)) {
-        return type;
+      const fileName = file.name.toLowerCase();
+      for (const [extension, type] of Object.entries(extensionTypeMap)) {
+        if (fileName.endsWith(extension)) {
+          return type;
+        }
       }
-    }
 
-    const mimeMatch = mimeTypeMap[file.type];
-    if (mimeMatch) {
-      return mimeMatch;
-    }
+      const mimeMatch = mimeTypeMap[file.type];
+      if (mimeMatch) {
+        return mimeMatch;
+      }
 
-    return "unknown";
-  };
+      return "unknown";
+    },
+    []
+  );
+
+  // Initialize PDF.js worker once on component mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Use unpkg.com CDN which is more reliable for PDF.js workers
+      // Version 4.x uses .mjs extension for workers
+      const pdfjsVersion = pdfjsLib.version || "4.0.379";
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsVersion}/build/pdf.worker.min.mjs`;
+    }
+  }, []);
 
   // Helper function to parse PDF
-  const parsePdf = async (file: File): Promise<string> => {
-    if (typeof window !== "undefined") {
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+  const parsePdf = useCallback(async (file: File): Promise<string> => {
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      const numPages = pdf.numPages;
+
+      const pageTexts: string[] = [];
+      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+        const page = await pdf.getPage(pageNum);
+        const textContent = await page.getTextContent();
+        const isTextItem = (item: unknown): item is { str: string } =>
+          typeof item === "object" &&
+          item !== null &&
+          "str" in item &&
+          typeof (item as { str?: unknown }).str === "string";
+        const pageText = textContent.items
+          .map((item) => (isTextItem(item) ? item.str : ""))
+          .join(" ");
+        pageTexts.push(pageText);
+      }
+
+      return pageTexts.join("\n\n").trim();
+    } catch (pdfError) {
+      const errorMessage =
+        pdfError instanceof Error ? pdfError.message : String(pdfError);
+      throw new Error(
+        `Failed to parse PDF file: ${errorMessage}. Please try copying and pasting the text directly, or ensure the file is not corrupted.`
+      );
     }
-
-    const arrayBuffer = await file.arrayBuffer();
-    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-    const numPages = pdf.numPages;
-
-    const pageTexts: string[] = [];
-    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-      const page = await pdf.getPage(pageNum);
-      const textContent = await page.getTextContent();
-      const isTextItem = (item: unknown): item is { str: string } =>
-        typeof item === "object" &&
-        item !== null &&
-        "str" in item &&
-        typeof (item as { str?: unknown }).str === "string";
-      const pageText = textContent.items
-        .map((item) => (isTextItem(item) ? item.str : ""))
-        .join(" ");
-      pageTexts.push(pageText);
-    }
-
-    return pageTexts.join("\n\n").trim();
-  };
+  }, []);
 
   // Helper function to parse DOCX
-  const parseDocx = async (file: File): Promise<string> => {
+  const parseDocx = useCallback(async (file: File): Promise<string> => {
     const arrayBuffer = await file.arrayBuffer();
     const result = await mammoth.extractRawText({ arrayBuffer });
     if (result.messages.length > 0) {
       console.warn("DOCX parsing warnings:", result.messages);
     }
     return result.value.trim();
-  };
+  }, []);
 
   // Helper function to parse TXT
-  const parseTxt = async (file: File): Promise<string> => {
+  const parseTxt = useCallback(async (file: File): Promise<string> => {
     const text = await file.text();
     return text.trim();
-  };
+  }, []);
 
-  const resetFileInput = () => {
+  const resetFileInput = useCallback(() => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-  };
+  }, []);
 
-  const ensureSupportedFileType = (fileType: string) => {
-    if (fileType === "unknown") {
-      setError("Please upload a .docx, .pdf, or .txt file");
-      resetFileInput();
-      return false;
-    }
-
-    if (fileType === "doc") {
-      setError(
-        "Please convert your .doc file to .docx format, or paste the text directly."
-      );
-      resetFileInput();
-      return false;
-    }
-    return true;
-  };
-
-  const extractTextFromFile = (
-    file: File,
-    fileType: string
-  ): Promise<string> => {
-    switch (fileType) {
-      case "pdf":
-        return parsePdf(file);
-      case "docx":
-        return parseDocx(file);
-      case "txt":
-        return parseTxt(file);
-      default:
-        return Promise.resolve("");
-    }
-  };
-
-  const processUploadedFile = async (file: File) => {
-    const fileType = getFileType(file);
-    if (!ensureSupportedFileType(fileType)) {
-      return;
-    }
-
-    setIsParsingFile(true);
-    setError(null);
-
-    try {
-      const extractedText = await extractTextFromFile(file, fileType);
-
-      if (!extractedText || extractedText.trim().length === 0) {
-        setError(
-          "No text could be extracted from the file. Please try another file or paste the text directly."
-        );
-        setIsParsingFile(false);
+  const ensureSupportedFileType = useCallback(
+    (fileType: string) => {
+      if (fileType === "unknown") {
+        setError("Please upload a .docx, .pdf, or .txt file");
         resetFileInput();
+        return false;
+      }
+
+      if (fileType === "doc") {
+        setError(
+          "Please convert your .doc file to .docx format, or paste the text directly."
+        );
+        resetFileInput();
+        return false;
+      }
+      return true;
+    },
+    [resetFileInput]
+  );
+
+  const extractTextFromFile = useCallback(
+    (file: File, fileType: string): Promise<string> => {
+      switch (fileType) {
+        case "pdf":
+          return parsePdf(file);
+        case "docx":
+          return parseDocx(file);
+        case "txt":
+          return parseTxt(file);
+        default:
+          return Promise.resolve("");
+      }
+    },
+    [parseDocx, parsePdf, parseTxt]
+  );
+
+  const processUploadedFile = useCallback(
+    async (file: File) => {
+      const fileType = getFileType(file);
+      if (!ensureSupportedFileType(fileType)) {
         return;
       }
 
-      setInputText(extractedText);
+      setIsParsingFile(true);
       setError(null);
-      toast.success("File uploaded and text extracted successfully!");
-    } catch (err) {
-      console.error("File parsing error:", err);
-      const errorMessage = err instanceof Error ? err.message : "Unknown error";
-      setError(
-        `Failed to parse file: ${errorMessage}. Please try copying and pasting the text directly.`
-      );
-    } finally {
-      setIsParsingFile(false);
-      resetFileInput();
-    }
-  };
+
+      try {
+        const extractedText = await extractTextFromFile(file, fileType);
+
+        if (!extractedText || extractedText.trim().length === 0) {
+          setError(
+            "No text could be extracted from the file. Please try another file or paste the text directly."
+          );
+          setIsParsingFile(false);
+          resetFileInput();
+          return;
+        }
+
+        setInputText(extractedText);
+        setError(null);
+        toast.success("File uploaded and text extracted successfully!");
+      } catch (err) {
+        console.error("File parsing error:", err);
+        const errorMessage =
+          err instanceof Error ? err.message : "Unknown error";
+        setError(
+          `Failed to parse file: ${errorMessage}. Please try copying and pasting the text directly.`
+        );
+      } finally {
+        setIsParsingFile(false);
+        resetFileInput();
+      }
+    },
+    [ensureSupportedFileType, extractTextFromFile, getFileType, resetFileInput]
+  );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -1261,6 +1346,7 @@ export function HumanizeEditor({
       readability_level: readabilityLevel || "university",
       language: languageCode !== "en" ? languageCode : undefined,
       style_sample: styleSample.trim() || undefined,
+      advanced_mode: advancedMode,
     };
   };
 
@@ -1538,12 +1624,14 @@ export function HumanizeEditor({
 
     if (error && !forceLoading) {
       return (
-        <div className="flex h-[300px] w-full flex-col items-center justify-center gap-4 px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6">
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
-            <p className="mb-2 font-semibold text-red-900 text-sm dark:text-red-200">
+        <div className="flex h-editor-sm w-full flex-col items-center justify-center gap-4 px-3 py-4 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6">
+          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 dark:border-destructive/50 dark:bg-destructive/20">
+            <p className="mb-2 font-semibold text-destructive text-sm dark:text-destructive">
               Error
             </p>
-            <p className="text-red-700 text-xs dark:text-red-300">{error}</p>
+            <p className="text-destructive text-xs dark:text-destructive">
+              {error}
+            </p>
             <Button
               className="mt-3 h-8 w-full text-xs"
               onClick={() => {
@@ -1562,13 +1650,13 @@ export function HumanizeEditor({
       return (
         <div className="flex min-h-0 w-full flex-col items-center gap-3 overflow-hidden px-3 py-3 sm:px-4 md:px-6">
           {/* Loading Spinner with Gradient Background */}
-          <div className="flex w-full flex-col items-center justify-center gap-2.5 rounded-lg bg-gradient-to-br from-[var(--color-brand-primary)]/5 via-purple-500/5 to-[var(--color-brand-primary)]/5 p-5 dark:from-[var(--color-brand-primary)]/10 dark:via-purple-500/10 dark:to-[var(--color-brand-primary)]/10">
+          <div className="flex w-full flex-col items-center justify-center gap-2-5 rounded-lg bg-gradient-to-br from-brand-primary/5 via-purple-500/5 to-brand-primary/5 p-5 dark:from-brand-primary/10 dark:via-purple-500/10 dark:to-brand-primary/10">
             <div className="relative">
-              <div className="absolute inset-0 animate-pulse rounded-full bg-[var(--color-brand-primary)]/20 blur-lg" />
+              <div className="absolute inset-0 animate-pulse rounded-full bg-brand-primary/20 blur-lg" />
               <LoadingSpinner className="relative" size="md" />
             </div>
-            <div className="flex flex-col items-center gap-0.5">
-              <p className="bg-gradient-to-r from-[var(--color-brand-primary)] to-purple-600 bg-clip-text font-semibold text-sm text-transparent">
+            <div className="flex flex-col items-center gap-0-5">
+              <p className="bg-gradient-to-r from-brand-primary to-purple-600 bg-clip-text font-semibold text-sm text-transparent">
                 Humanizing your text...
               </p>
               <p className="text-muted-foreground text-xs dark:text-muted-foreground">
@@ -1600,13 +1688,13 @@ export function HumanizeEditor({
     }
     if (!hasInteracted) {
       return (
-        <div className="flex h-[300px] w-full flex-col items-center gap-3 overflow-hidden px-3 py-3 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6">
+        <div className="flex h-editor-sm w-full flex-col items-center justify-center gap-3 overflow-hidden px-3 py-3 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6">
           <MarketingInner />
         </div>
       );
     }
     return (
-      <div className="flex h-[300px] w-full flex-col items-center justify-center px-3 py-4 sm:h-[400px] sm:px-4 md:h-[450px] md:px-6 md:py-5">
+      <div className="flex h-editor-sm w-full flex-col items-center justify-center px-3 py-4 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6 md:py-5">
         <p className="text-muted-foreground text-sm dark:text-muted-foreground">
           Your humanized text will appear here...
         </p>
@@ -1621,8 +1709,8 @@ export function HumanizeEditor({
     if (detectionError) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center px-3 py-4 sm:px-4 md:px-6 md:py-5">
-          <X className="mb-4 h-12 w-12 text-red-500" />
-          <h3 className="mb-2 font-semibold text-base text-red-600 dark:text-red-400">
+          <X className="mb-4 h-12 w-12 text-destructive" />
+          <h3 className="mb-2 font-semibold text-base text-destructive dark:text-destructive">
             Detection Error
           </h3>
           <p className="text-center text-muted-foreground text-xs sm:text-sm dark:text-muted-foreground">
@@ -1643,68 +1731,53 @@ export function HumanizeEditor({
       // Loading screen with all detectors
       if (isDetecting) {
         return (
-          <div className="flex h-full w-full flex-col items-center justify-center bg-card px-3 py-3 sm:px-4 md:px-6 dark:bg-[var(--color-editor-bg)]">
+          <div className="flex h-full w-full flex-col items-center justify-center bg-card px-2 py-2 sm:px-3 md:px-4 dark:bg-editor-bg">
             <div className="flex w-full max-w-3xl flex-col items-center justify-center">
               {/* Purple heading - smaller */}
-              <h2 className="mb-1 text-center font-bold text-purple-600 text-sm dark:text-purple-400">
+              <h2 className="mb-0.5 text-center font-bold text-purple-600 text-xs sm:text-sm dark:text-purple-400">
                 Analyzing your text through all major AI detectors
               </h2>
 
               {/* Description - smaller */}
-              <p className="mb-4 max-w-2xl text-center text-[10px] text-muted-foreground dark:text-muted-foreground">
+              <p className="mb-2 max-w-2xl text-center text-[10px] text-muted-foreground leading-tight sm:text-xs dark:text-muted-foreground">
                 This may take a few seconds as we cross-verify results across
                 multiple platforms for maximum accuracy.
               </p>
 
-              {/* Detector grid - Pill-shaped buttons matching HTML exactly */}
-              <div className="flex w-full flex-wrap justify-center gap-2">
+              {/* Detector grid - Matching AI Humanizer style */}
+              <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
                 {AI_DETECTORS.map((detector, index) => {
                   // Use detector-specific styles with CSS variables
                   const styles = getDetectorStyles(detector.name);
 
-                  const pillStyle: React.CSSProperties = {
-                    backgroundColor: styles.bgColor,
-                    borderColor: styles.borderColor,
-                    flex: "0 0 calc(25% - 8px)",
-                    maxWidth: "calc(25% - 8px)",
-                    minWidth: "140px",
-                    justifyContent: "center",
-                    animationDelay: `${index * 50}ms`,
-                  };
-
-                  const textStyle: React.CSSProperties = {
-                    fontSize: "12px",
-                    lineHeight: "16px",
-                    color: styles.textColor,
-                  };
-
                   return (
                     <div
-                      className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-3 py-1.5"
+                      className="flex items-center gap-1.5 rounded-md bg-muted p-1.5 transition-all hover:bg-brand-primary/5 dark:bg-editor-bg dark:hover:bg-brand-primary/10"
                       key={detector.name}
-                      style={pillStyle}
+                      style={{
+                        boxShadow: "none",
+                        borderColor: styles.bgColor,
+                        animationDelay: `${index * 50}ms`,
+                      }}
                     >
-                      {/* Logo - 16px exactly as in HTML */}
-                      <div className="shrink-0">
+                      {/* Logo */}
+                      <div className="relative flex h-4 w-4 shrink-none items-center justify-center">
                         <Image
                           alt={detector.name}
-                          className="h-4 w-4"
+                          className="object-contain"
                           height={16}
                           src={detector.image}
                           width={16}
                         />
                       </div>
 
-                      {/* Detector name - 12px font, exact styling */}
-                      <span
-                        className="whitespace-nowrap font-semibold"
-                        style={textStyle}
-                      >
+                      {/* Detector name */}
+                      <span className="font-medium text-[10px] text-muted-foreground sm:text-xs dark:text-muted-foreground">
                         {detector.name}
                       </span>
 
-                      {/* Spinner - matching the empty div structure */}
-                      <div className="shrink-0">
+                      {/* Spinner */}
+                      <div className="ml-auto shrink-none">
                         <Loader2 className="h-3 w-3 animate-spin text-purple-500 dark:text-purple-400" />
                       </div>
                     </div>
@@ -1742,22 +1815,22 @@ export function HumanizeEditor({
     };
 
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center overflow-y-auto bg-card px-3 py-3 sm:px-4 md:px-6 dark:bg-[var(--color-editor-bg)]">
-        <div className="flex w-full max-w-3xl flex-col items-center justify-center">
+      <div className="flex h-full w-full flex-col items-center justify-center bg-background px-2 py-2 sm:px-3 md:px-4 dark:bg-background">
+        <div className="mx-auto flex w-full max-w-3xl flex-col items-center">
           {/* Main Result Header - smaller, centered */}
-          <div className="mb-4 text-center">
-            <div className="mb-1 flex flex-col items-center justify-center">
-              <span className="font-bold text-5xl text-card-foreground">
+          <div className="mb-2 text-center">
+            <div className="mb-0.5 flex flex-col items-center justify-center">
+              <span className="font-bold text-3xl text-card-foreground sm:text-4xl">
                 {detectionResult.ai_likelihood_pct > 50
                   ? detectionResult.ai_likelihood_pct.toFixed(0)
                   : detectionResult.human_likelihood_pct.toFixed(0)}
                 %
               </span>
               <span
-                className={`font-semibold text-sm ${
+                className={`font-semibold text-xs ${
                   detectionResult.ai_likelihood_pct > 50
-                    ? "text-red-600 dark:text-red-500"
-                    : "text-green-600 dark:text-green-500"
+                    ? "text-destructive dark:text-destructive"
+                    : "text-success dark:text-success"
                 }`}
               >
                 {detectionResult.ai_likelihood_pct > 50
@@ -1765,14 +1838,14 @@ export function HumanizeEditor({
                   : "of text likely Human"}
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground leading-tight sm:text-xs dark:text-muted-foreground">
               Your text has been deeply analyzed using the strongest AI
               detectors in the market.
             </p>
           </div>
 
-          {/* Detector Grid - Smaller pill-shaped buttons, centered */}
-          <div className="mb-4 flex w-full flex-wrap justify-center gap-2">
+          {/* Detector Grid - Matching AI Humanizer style */}
+          <div className="mb-2 grid grid-cols-2 gap-1.5 sm:grid-cols-4">
             {AI_DETECTORS.map((detector) => {
               const result = getDetectorResult(detector.name);
               const hasError = Boolean(result?.error);
@@ -1780,8 +1853,8 @@ export function HumanizeEditor({
               const styles = getDetectorStyles(detector.name);
 
               const statusTextStyle: React.CSSProperties = {
-                fontSize: "12px",
-                lineHeight: "16px",
+                fontSize: "10px",
+                lineHeight: "14px",
               };
 
               // Helper function to get color for AI detection
@@ -1862,96 +1935,85 @@ export function HumanizeEditor({
 
               return (
                 <div
-                  className="flex shrink-0 items-center gap-1.5 rounded-full border-[1.5px] px-2.5 py-1.5"
+                  className="flex items-center gap-1.5 rounded-md bg-muted p-1.5 transition-all hover:bg-brand-primary/5 dark:bg-editor-bg dark:hover:bg-brand-primary/10"
                   key={detector.name}
                   style={{
-                    backgroundColor: styles.bgColor,
-                    borderColor: styles.borderColor,
-                    minWidth: "140px",
-                    maxWidth: "100%",
-                    justifyContent: "flex-start",
+                    boxShadow: "none",
+                    borderColor: styles.bgColor,
                   }}
                 >
-                  {/* Logo - always visible */}
-                  <div className="shrink-0">
+                  {/* Logo */}
+                  <div className="relative flex h-4 w-4 shrink-none items-center justify-center">
                     <Image
                       alt={detector.name}
-                      className="h-3.5 w-3.5"
-                      height={14}
+                      className="object-contain"
+                      height={16}
                       src={detector.image}
-                      width={14}
+                      width={16}
                     />
                   </div>
 
-                  {/* Detector name - can truncate if needed */}
-                  <span
-                    className="truncate font-semibold"
-                    style={{
-                      fontSize: "12px",
-                      lineHeight: "16px",
-                      color: styles.textColor,
-                      maxWidth: "60px",
-                    }}
-                    title={detector.name}
-                  >
-                    {detector.name}
-                  </span>
-
-                  {/* Status - always visible with score */}
-                  <div className="ml-auto shrink-0">
-                    {hasError || result ? getStatusText() : null}
+                  {/* Detector name and status */}
+                  <div className="flex min-w-0 flex-1 items-center justify-between gap-1">
+                    <span className="truncate font-medium text-[10px] text-muted-foreground sm:text-xs dark:text-muted-foreground">
+                      {detector.name}
+                    </span>
+                    {/* Status - always visible with score */}
+                    {hasError || result ? (
+                      <div className="shrink-none">{getStatusText()}</div>
+                    ) : null}
                   </div>
                 </div>
               );
             })}
           </div>
-          <div className="mb-4 w-full max-w-sm rounded-lg border border-border bg-muted p-3 shadow-lg dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]/50">
-            <div className="relative mb-2 flex items-center justify-between border-border border-b pb-2 dark:border-[var(--color-editor-border)]">
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+          <div
+            className="mb-2 w-full max-w-sm rounded-lg border border-muted bg-muted p-2 dark:border-editor-bg/50 dark:bg-editor-bg/50"
+            style={{
+              boxShadow: "none",
+            }}
+          >
+            <div className="relative mb-1.5 flex items-center justify-between border-muted border-b pb-1.5 dark:border-editor-bg/50">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground sm:text-xs dark:text-muted-foreground">
                   AI-generated
                 </span>
                 <div className="relative">
                   <Info className="h-3 w-3 cursor-help text-muted-foreground dark:text-muted-foreground" />
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-red-500" />
-                <span className="font-medium text-card-foreground text-xs dark:text-white">
+              <div className="flex items-center gap-1">
+                <div className="h-2 w-2 rounded-full bg-destructive" />
+                <span className="font-medium text-[10px] text-card-foreground sm:text-xs dark:text-white">
                   {detectionResult.ai_likelihood_pct.toFixed(0)}%
                 </span>
               </div>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-1.5">
-                <span className="text-muted-foreground text-xs dark:text-muted-foreground">
+              <div className="flex items-center gap-1">
+                <span className="text-[10px] text-muted-foreground sm:text-xs dark:text-muted-foreground">
                   Human-written
                 </span>
                 <div className="relative">
                   <Info className="h-3 w-3 cursor-help text-muted-foreground dark:text-muted-foreground" />
                 </div>
               </div>
-              <div className="flex items-center gap-1.5">
-                <div className="h-1.5 w-1.5 rounded-full bg-green-500" />
-                <span className="font-medium text-card-foreground text-xs dark:text-white">
+              <div className="flex items-center gap-1">
+                <div className="h-2 w-2 rounded-full bg-success" />
+                <span className="font-medium text-[10px] text-card-foreground sm:text-xs dark:text-white">
                   {detectionResult.human_likelihood_pct.toFixed(0)}%
                 </span>
               </div>
             </div>
           </div>
-          <div className="mb-3 text-center">
-            <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">
+          <div className="mb-1.5 text-center">
+            <p className="text-[10px] text-muted-foreground leading-tight sm:text-xs dark:text-muted-foreground">
               Predicted based upon{" "}
               {String(detectionResult.metadata?.word_count ?? 0)} words.
             </p>
           </div>
-          <div
-            className="w-full rounded-lg border border-border bg-card p-2 text-center dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]"
-            style={{
-              boxShadow: "none",
-            }}
-          >
-            <p className="text-[10px] text-muted-foreground dark:text-muted-foreground">
+          <div className="w-full rounded-lg border border-card bg-card p-1.5 text-center dark:border-editor-border dark:bg-editor-bg">
+            <p className="text-[10px] text-muted-foreground leading-tight sm:text-xs dark:text-muted-foreground">
               {(() => {
                 const score = detectionResult.human_likelihood_pct;
                 if (score >= 70) {
@@ -1964,12 +2026,6 @@ export function HumanizeEditor({
               })()}
             </p>
           </div>
-          {detectionResult.cached && (
-            <div className="mt-3 flex items-center justify-center gap-1 text-blue-600 text-xs dark:text-blue-500">
-              <Clock className="h-3 w-3" />
-              Cached result
-            </div>
-          )}
         </div>
       </div>
     );
@@ -2009,112 +2065,226 @@ export function HumanizeEditor({
   let dragContainerHighlightClass = "";
   if (isDragOverValid) {
     dragContainerHighlightClass =
-      "border-2 border-[var(--color-brand-primary)] border-dashed bg-[var(--color-brand-primary)]/5";
+      "border-2 border-brand-primary border-dashed bg-brand-primary/5";
   } else if (isDragOver) {
     dragContainerHighlightClass =
-      "border-2 border-red-500/70 border-dashed bg-red-500/5";
+      "border-2 border-destructive/70 border-dashed bg-destructive/100/5";
   }
 
-  const getDraggedFile = (
-    e: React.DragEvent<HTMLTextAreaElement>
-  ): File | null => {
-    const { items, files } = e.dataTransfer;
-    if (items && items.length > 0) {
-      const firstItem = items[0];
-      if (firstItem && firstItem.kind === "file") {
-        return firstItem.getAsFile();
+  const getDraggedFile = useCallback(
+    (e: React.DragEvent<HTMLElement>): File | null => {
+      if (!e.dataTransfer) {
+        return null;
+      }
+      const { items, files } = e.dataTransfer;
+      if (items && items.length > 0) {
+        const firstItem = items[0];
+        if (firstItem && firstItem.kind === "file") {
+          return firstItem.getAsFile();
+        }
+        return null;
+      }
+      if (files && files.length > 0) {
+        return files[0] ?? null;
       }
       return null;
-    }
-    if (files && files.length > 0) {
-      return files[0] ?? null;
-    }
-    return null;
-  };
+    },
+    []
+  );
 
-  const handleTextareaDragEnter = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    if (hasInputText) {
-      return;
-    }
-    setIsDragOver(true);
-  };
+  const handleContainerDragEnter = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
 
-  const handleTextareaDragLeave = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    setIsDragOverValid(false);
-  };
+      // Ensure dragCounterRef is always properly initialized
+      if (
+        typeof dragCounterRef.current !== "number" ||
+        dragCounterRef.current < 0
+      ) {
+        dragCounterRef.current = 0;
+      }
+      dragCounterRef.current += 1;
 
-  const handleTextareaDragOver = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    if (hasInputText) {
-      return;
-    }
-    const file = getDraggedFile(e);
-    if (!file) {
+      if (hasInputText) {
+        return;
+      }
+
+      // Check if dataTransfer is available
+      if (!e.dataTransfer) {
+        return;
+      }
+
+      // Check if files are being dragged
+      const hasFiles = e.dataTransfer.types.some(
+        (type) => type === "Files" || type === "application/x-moz-file"
+      );
+      if (!hasFiles) {
+        setIsDragOver(false);
+        setIsDragOverValid(false);
+        return;
+      }
+
+      setIsDragOver(true);
+
+      // Try to get file and validate
+      try {
+        const file = getDraggedFile(e);
+        if (file) {
+          const type = getFileType(file);
+          const isValidType =
+            type === "pdf" || type === "docx" || type === "txt";
+          setIsDragOverValid(isValidType);
+        } else {
+          // If we can't get the file yet, assume it's valid (will validate on dragOver)
+          setIsDragOverValid(true);
+        }
+      } catch {
+        // If file access fails, still show drag state but mark as invalid
+        setIsDragOverValid(false);
+      }
+    },
+    [hasInputText, getDraggedFile, getFileType]
+  );
+
+  const handleContainerDragLeave = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Ensure dragCounterRef is always properly initialized
+      if (
+        typeof dragCounterRef.current !== "number" ||
+        dragCounterRef.current < 0
+      ) {
+        dragCounterRef.current = 0;
+      } else {
+        dragCounterRef.current -= 1;
+      }
+
+      // Only reset if we've actually left the container (all nested elements exited)
+      if (dragCounterRef.current <= 0) {
+        dragCounterRef.current = 0;
+        setIsDragOver(false);
+        setIsDragOverValid(false);
+      }
+    },
+    []
+  );
+
+  const handleContainerDragOver = useCallback(
+    (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (hasInputText) {
+        return;
+      }
+
+      // Check if dataTransfer is available
+      if (!e.dataTransfer) {
+        return;
+      }
+
+      // Set drop effect
+      e.dataTransfer.dropEffect = "copy";
+
+      // Check if files are being dragged
+      const hasFiles = e.dataTransfer.types.some(
+        (type) => type === "Files" || type === "application/x-moz-file"
+      );
+      if (!hasFiles) {
+        setIsDragOver(false);
+        setIsDragOverValid(false);
+        return;
+      }
+
+      setIsDragOver(true);
+
+      // Try to get file and validate
+      try {
+        const file = getDraggedFile(e);
+        if (file) {
+          const type = getFileType(file);
+          const isValidType =
+            type === "pdf" || type === "docx" || type === "txt";
+          setIsDragOverValid(isValidType);
+        }
+      } catch {
+        setIsDragOverValid(false);
+      }
+    },
+    [hasInputText, getDraggedFile, getFileType]
+  );
+
+  const handleContainerDrop = useCallback(
+    async (e: React.DragEvent<HTMLElement>) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // Always reset drag counter
+      dragCounterRef.current = 0;
+      setIsDragOver(false);
       setIsDragOverValid(false);
-      return;
-    }
-    const type = getFileType(file);
-    setIsDragOver(true);
-    setIsDragOverValid(type === "pdf" || type === "docx" || type === "txt");
-  };
 
-  const handleTextareaDrop = async (
-    e: React.DragEvent<HTMLTextAreaElement>
-  ) => {
-    e.preventDefault();
-    setIsDragOver(false);
-    setIsDragOverValid(false);
-    if (hasInputText) {
-      return;
-    }
-    const file = getDraggedFile(e);
-    if (!file) {
-      return;
-    }
-    await processUploadedFile(file);
-  };
+      if (hasInputText) {
+        return;
+      }
+
+      // Check if dataTransfer is available
+      if (!e.dataTransfer) {
+        return;
+      }
+
+      const file = getDraggedFile(e);
+      if (!file) {
+        return;
+      }
+
+      await processUploadedFile(file);
+    },
+    [hasInputText, getDraggedFile, processUploadedFile]
+  );
 
   return (
-    <div className="relative mx-auto w-full max-w-[1400px] overflow-x-hidden px-3 py-4 md:px-4">
+    <div className="relative mx-auto w-full max-w-container px-3 py-4 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-20">
       <div className="flex flex-col gap-4">
         {/* Tabs */}
-        <div className="flex items-center justify-center px-1.5 sm:px-0">
+        <div className="flex items-center justify-center px-1-5 sm:px-0">
           <Tabs
             className="w-full max-w-full sm:max-w-xl"
+            id={tabsId}
             onValueChange={setActiveTab}
             value={activeTab}
           >
-            <TabsList className="relative grid h-8 w-full grid-cols-3 gap-0.5 rounded-[32px] bg-muted p-0.5 sm:h-9 sm:gap-0.5 sm:p-0.5 dark:bg-[var(--color-tabs-bg)] [&_button]:min-h-0">
+            <TabsList className="relative grid h-tabs-list-md w-full grid-cols-3 gap-1 rounded-tab bg-muted p-1 sm:h-tabs-list-lg sm:gap-1 sm:p-1 dark:bg-tabs-bg [&_button]:min-h-0">
               {/* Sliding indicator */}
               <div
-                className="absolute top-0.5 bottom-0.5 rounded-[32px] bg-[hsl(216_100%_50%/1)] transition-all duration-300 ease-in-out sm:top-0.5 sm:bottom-0.5"
+                className="absolute top-1 bottom-1 rounded-tab bg-brand-primary transition-all duration-normal ease-in-out sm:top-1 sm:bottom-1"
                 style={{
                   left: getIndicatorLeft(),
                   width: "calc(33.333% - 0.1875rem)",
                 }}
               />
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--color-brand-primary)] data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
+                className="group relative z-overlay flex h-full min-h-0 cursor-pointer items-center justify-center gap-1 rounded-tab bg-transparent px-3 font-medium text-muted-foreground text-sm leading-normal transition-all duration-normal ease-in-out data-[state=active]:bg-brand-primary data-[state=active]:text-white sm:gap-2 sm:px-4 dark:text-white"
                 value="humanize"
               >
-                <Sparkles className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
+                <Sparkles className="size-icon-sm shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large" />
                 <span className="whitespace-nowrap">AI Humanizer</span>
               </TabsTrigger>
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--color-brand-primary)] data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
+                className="group relative z-overlay flex h-full min-h-0 cursor-pointer items-center justify-center gap-1 rounded-tab bg-transparent px-3 font-medium text-muted-foreground text-sm leading-normal transition-all duration-normal ease-in-out data-[state=active]:bg-brand-primary data-[state=active]:text-white sm:gap-2 sm:px-4 dark:text-white"
                 value="detector"
               >
-                <BarChart3 className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
+                <BarChart3 className="size-icon-sm shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large" />
                 <span className="whitespace-nowrap">AI Detector</span>
               </TabsTrigger>
               <TabsTrigger
-                className="group relative z-10 flex h-full min-h-0 cursor-pointer items-center justify-center gap-0.5 rounded-[32px] bg-transparent px-1.5 font-medium text-[10px] text-gray-600 leading-tight transition-all duration-300 ease-in-out data-[state=active]:bg-[var(--color-brand-primary)] data-[state=active]:text-white sm:gap-1.5 sm:px-2 sm:text-xs sm:leading-normal dark:text-white"
+                className="group relative z-overlay flex h-full min-h-0 cursor-pointer items-center justify-center gap-1 rounded-tab bg-transparent px-3 font-medium text-muted-foreground text-sm leading-normal transition-all duration-normal ease-in-out data-[state=active]:bg-brand-primary data-[state=active]:text-white sm:gap-2 sm:px-4 dark:text-white"
                 value="plagiarism"
               >
-                <FileCheck className="h-3 w-3 shrink-0 text-current transition-transform duration-300 ease-in-out group-data-[state=active]:scale-110 sm:h-3.5 sm:w-3.5" />
+                <FileCheck className="size-icon-sm shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large" />
                 <span className="whitespace-nowrap">Plagiarism Checker</span>
               </TabsTrigger>
             </TabsList>
@@ -2122,129 +2292,172 @@ export function HumanizeEditor({
         </div>
 
         {/* Main Editor Container */}
-        <div className="relative flex gap-3">
-          <div className="relative flex flex-1 flex-col gap-3 px-0 lg:pr-[120px] lg:pl-[120px]">
+        <div className="relative flex min-w-0 gap-3">
+          <div className="relative flex min-w-0 flex-1 flex-col gap-3 px-0">
             {/* History Button - Outside textarea at top right */}
 
             {/* Main Editor Content */}
-            <div className="relative min-h-[20rem] overflow-hidden rounded-xl border border-border bg-card shadow-sm md:min-h-[32rem] dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+            <div className="relative min-h-editor-sm overflow-hidden md:min-h-editor-md">
               {/* Text Areas Container */}
-              <div className="relative flex min-w-0 flex-col md:flex-row">
-                {/* Center vertical divider spanning Text Areas Container height on desktop */}
-                <div className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px bg-border md:block dark:bg-[var(--color-vertical-border)]" />
+              <div className="relative flex w-full min-w-0 flex-col md:flex-row">
                 {/* Left Text Area - Original */}
-                <div className="box-border flex w-full min-w-0 flex-col border-0 md:w-1/2">
+                <div
+                  className={`box-border flex w-full min-w-0 flex-col overflow-hidden border border-border bg-card shadow-sm md:w-1/2 dark:border-editor-border dark:bg-editor-bg ${activeTab === "humanize" && hasOutputText ? "rounded-l-xl" : "rounded-xl"}`}
+                >
                   {/* Text Input Area - Always visible, with drag-and-drop support */}
-                  <fieldset
-                    aria-label="Original text input and file drop zone"
-                    className={`relative flex min-w-0 flex-1 flex-col rounded-lg transition-colors ${dragContainerHighlightClass}`}
+                  {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: Drag-and-drop handlers are required for file upload functionality */}
+                  <section
+                    aria-label="File drop zone"
+                    className={`relative flex w-full min-w-0 flex-1 flex-col rounded-lg transition-colors ${dragContainerHighlightClass}`}
+                    onDragEnter={handleContainerDragEnter}
+                    onDragLeave={handleContainerDragLeave}
+                    onDragOver={handleContainerDragOver}
+                    onDrop={handleContainerDrop}
                   >
-                    <div
-                      className={
-                        isDragOverValid && !hasInputText
-                          ? "pointer-events-none opacity-0"
-                          : "opacity-100"
-                      }
+                    <fieldset
+                      aria-label="Original text input and file drop zone"
+                      className="relative flex w-full min-w-0 flex-1 flex-col border-0"
                     >
-                      <Textarea
-                        className="b order-b h-[300px] w-full min-w-0 resize-none border-0 border-b-transparent px-3 py-3 pr-6 text-sm shadow-none outline-none focus:border-b-transparent focus:ring-0 focus-visible:border-b-transparent focus-visible:ring-0 sm:h-[400px] sm:px-4 sm:py-4 sm:pr-7 md:h-[450px] md:px-5 md:py-5 md:pr-9 dark:border-b-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)] dark:focus-visible:border-b-[var(--color-editor-border)] dark:focus:border-b-[var(--color-editor-border)]"
-                        onChange={(e) => {
-                          setInputText(e.target.value);
-                        }}
-                        onDragEnter={handleTextareaDragEnter}
-                        onDragLeave={handleTextareaDragLeave}
-                        onDragOver={handleTextareaDragOver}
-                        onDrop={handleTextareaDrop}
-                        placeholder="To humanize AI text, enter/paste it here, or upload a file (.docx, .pdf, .txt)"
-                        ref={textareaRef}
-                        style={{
-                          wordBreak: "break-word",
-                          overflowWrap: "break-word",
-                          maxWidth: "100%",
-                        }}
-                        value={inputText}
-                      />
-                      {/* Action Buttons - Only visible when textarea is empty and on humanize tab */}
-                      {activeTab === "humanize" && !hasInputText && (
-                        <div className="absolute top-16 left-3 flex flex-wrap items-center gap-1.5 sm:top-20 sm:left-4 sm:gap-2 md:top-24 md:left-6">
+                      <div
+                        className={
+                          isDragOverValid && !hasInputText
+                            ? "pointer-events-none opacity-0"
+                            : "opacity-100"
+                        }
+                      >
+                        <Textarea
+                          className="h-editor-sm w-full min-w-0 resize-none border-0 border-b-transparent px-3 py-3 pr-6 text-sm shadow-none outline-none focus:border-b-transparent focus:ring-0 focus-visible:border-b-transparent focus-visible:ring-0 sm:h-editor-md sm:px-4 sm:py-4 sm:pr-7 md:h-editor-lg md:px-5 md:py-5 md:pr-9 dark:border-b-editor-border dark:bg-editor-bg dark:focus-visible:border-b-editor-border dark:focus:border-b-editor-border"
+                          onChange={(e) => {
+                            setInputText(e.target.value);
+                          }}
+                          placeholder="To humanize AI text, enter/paste it here, or upload a file (.docx, .pdf, .txt)"
+                          ref={textareaRef}
+                          style={{
+                            wordBreak: "break-word",
+                            overflowWrap: "break-word",
+                            boxSizing: "border-box",
+                          }}
+                          value={inputText}
+                        />
+                        {/* Action Buttons - Only visible when textarea is empty and on humanize tab */}
+                        {activeTab === "humanize" && !hasInputText && (
+                          <div className="absolute top-16 left-3 flex flex-wrap items-center gap-1-5 sm:top-20 sm:left-4 sm:gap-2 md:top-24 md:left-6">
+                            <Button
+                              className="scale-100 cursor-pointer gap-1-5 rounded-full border border-brand-primary bg-card px-2 py-1-5 font-medium text-brand-primary text-xs transition-none hover:scale-100 hover:bg-brand-primary/10 active:scale-100 sm:gap-2 sm:px-2-5 sm:text-sm dark:border-brand-primary dark:bg-background dark:text-brand-primary dark:hover:bg-select-hover"
+                              onClick={handlePasteText}
+                              variant="outline"
+                            >
+                              <Clipboard className="size-icon-xs shrink-none" />
+                              <span className="whitespace-nowrap">
+                                Paste text
+                              </span>
+                            </Button>
+                            <Button
+                              className="scale-100 cursor-pointer gap-1-5 rounded-full border border-brand-primary bg-card px-2 py-1-5 font-medium text-brand-primary text-xs transition-none hover:scale-100 hover:bg-brand-primary/10 active:scale-100 sm:gap-2 sm:px-2-5 sm:text-sm dark:border-brand-primary dark:bg-background dark:text-brand-primary dark:hover:bg-select-hover"
+                              disabled={isParsingFile}
+                              onClick={handleFileUpload}
+                              variant="outline"
+                            >
+                              {isParsingFile ? (
+                                <Loader2 className="size-icon-xs shrink-none animate-spin" />
+                              ) : (
+                                <FileUp className="size-icon-xs shrink-none" />
+                              )}
+                              <span className="whitespace-nowrap">
+                                {isParsingFile
+                                  ? "Parsing file..."
+                                  : "Upload file"}
+                              </span>
+                            </Button>
+                            <input
+                              accept=".docx,.pdf,.doc,.txt"
+                              className="hidden"
+                              onChange={handleFileChange}
+                              ref={fileInputRef}
+                              type="file"
+                            />
+                            <Button
+                              className="scale-100 cursor-pointer gap-1-5 rounded-full border border-brand-primary bg-card px-2 py-1-5 font-medium text-brand-primary text-xs transition-none hover:scale-100 hover:bg-brand-primary/10 active:scale-100 sm:gap-2 sm:px-2-5 sm:text-sm dark:border-brand-primary dark:bg-background dark:text-brand-primary dark:hover:bg-select-hover"
+                              onClick={handleTryExample}
+                              variant="outline"
+                            >
+                              <FileText className="size-icon-xs shrink-none" />
+                              <span className="whitespace-nowrap">
+                                Try example
+                              </span>
+                            </Button>
+                          </div>
+                        )}
+                        {hasInputText && (
                           <Button
-                            className="scale-100 gap-1.5 rounded-full border border-[var(--color-brand-primary)] bg-card px-2 py-1.5 font-medium text-[var(--color-brand-primary)] text-xs transition-none hover:scale-100 hover:bg-[var(--color-brand-primary)]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[var(--color-brand-primary)] dark:bg-background dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-select-hover)]"
-                            onClick={handlePasteText}
-                            variant="outline"
+                            className="h-8 w-8 cursor-pointer rounded p-0 text-muted-foreground transition-colors hover:bg-transparent hover:text-destructive dark:text-muted-foreground dark:hover:text-destructive"
+                            onClick={handleClearInput}
+                            style={{
+                              position: "absolute",
+                              right: hasTextareaScrollbar ? "8px" : "0px",
+                              top: "6px",
+                            }}
+                            title="Clear text"
+                            variant="ghost"
                           >
-                            <Clipboard className="h-3 w-3 shrink-0" />
-                            <span className="whitespace-nowrap">
-                              Paste text
-                            </span>
+                            <Trash2 className="h-4 w-4" />
                           </Button>
-                          <Button
-                            className="scale-100 gap-1.5 rounded-full border border-[var(--color-brand-primary)] bg-card px-2 py-1.5 font-medium text-[var(--color-brand-primary)] text-xs transition-none hover:scale-100 hover:bg-[var(--color-brand-primary)]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[var(--color-brand-primary)] dark:bg-background dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-select-hover)]"
-                            disabled={isParsingFile}
-                            onClick={handleFileUpload}
-                            variant="outline"
-                          >
-                            {isParsingFile ? (
-                              <Loader2 className="h-3 w-3 shrink-0 animate-spin" />
-                            ) : (
-                              <FileUp className="h-3 w-3 shrink-0" />
-                            )}
-                            <span className="whitespace-nowrap">
-                              {isParsingFile
-                                ? "Parsing file..."
-                                : "Upload file"}
-                            </span>
-                          </Button>
-                          <input
-                            accept=".docx,.pdf,.doc,.txt"
-                            className="hidden"
-                            onChange={handleFileChange}
-                            ref={fileInputRef}
-                            type="file"
-                          />
-                          <Button
-                            className="scale-100 gap-1.5 rounded-full border border-[var(--color-brand-primary)] bg-card px-2 py-1.5 font-medium text-[var(--color-brand-primary)] text-xs transition-none hover:scale-100 hover:bg-[var(--color-brand-primary)]/10 active:scale-100 sm:gap-2 sm:px-2.5 sm:text-sm dark:border-[var(--color-brand-primary)] dark:bg-background dark:text-[var(--color-brand-primary)] dark:hover:bg-[var(--color-select-hover)]"
-                            onClick={handleTryExample}
-                            variant="outline"
-                          >
-                            <FileText className="h-3 w-3 shrink-0" />
-                            <span className="whitespace-nowrap">
-                              Try example
-                            </span>
-                          </Button>
-                        </div>
-                      )}
-                      {hasInputText && (
-                        <Button
-                          className="absolute top-4 right-3 h-8 w-8 cursor-pointer rounded p-0 hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
-                          onClick={handleClearInput}
-                          title="Clear text"
-                          variant="ghost"
-                        >
-                          <Trash2 className="h-4 w-4 text-muted-foreground dark:text-muted-foreground" />
-                        </Button>
-                      )}
-                    </div>
+                        )}
+                      </div>
+                    </fieldset>
 
                     {/* Drag overlay */}
-                    {isDragOverValid && !hasInputText && (
-                      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center rounded-lg bg-background/80 text-center text-muted-foreground text-sm dark:bg-[var(--color-editor-bg)]/80">
-                        <FileUp className="mb-2 h-6 w-6 text-[var(--color-brand-primary)]" />
-                        <p className="font-medium">
-                          Drop your PDF or Word (.DOCX) file here
-                        </p>
+                    {isDragOver && !hasInputText && (
+                      <div className="pointer-events-none absolute inset-0 z-modal flex flex-col items-center justify-center rounded-lg bg-background/90 text-center text-muted-foreground text-sm dark:bg-editor-bg/90">
+                        {isDragOverValid ? (
+                          <>
+                            <FileUp className="mb-2 h-6 w-6 text-brand-primary" />
+                            <p className="font-medium">
+                              Drop your file here (.docx, .pdf, .txt)
+                            </p>
+                          </>
+                        ) : (
+                          <>
+                            <X className="mb-2 h-6 w-6 text-destructive" />
+                            <p className="font-medium text-destructive dark:text-destructive">
+                              Invalid file type. Please drop .docx, .pdf, or
+                              .txt files only.
+                            </p>
+                          </>
+                        )}
                       </div>
                     )}
-                  </fieldset>
+                  </section>
 
                   {/* Left Footer */}
-                  <div className="flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+                  <div
+                    className={`flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-editor-border dark:bg-editor-bg ${activeTab === "humanize" && hasOutputText ? "rounded-bl-xl" : "rounded-b-xl"}`}
+                  >
                     <div className="flex w-full items-center justify-between gap-2">
-                      <div className="flex flex-col items-start gap-0.5">
-                        <span
-                          className={`font-semibold text-sm ${isOverLimit ? "text-red-600 dark:text-red-400" : "text-card-foreground"}`}
-                        >
-                          {getWordCountText()}
-                        </span>
+                      <div className="flex flex-col items-start gap-0-5">
+                        {isOverLimit ? (
+                          <TooltipProvider>
+                            <Tooltip>
+                              <TooltipTrigger asChild>
+                                <span className="cursor-help font-semibold text-destructive text-sm dark:text-destructive">
+                                  {getWordCountText()}
+                                </span>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>
+                                  {excessCharacters.toLocaleString()}{" "}
+                                  {excessCharacters === 1
+                                    ? "character"
+                                    : "characters"}
+                                </p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </TooltipProvider>
+                        ) : (
+                          <span className="font-semibold text-card-foreground text-sm">
+                            {getWordCountText()}
+                          </span>
+                        )}
                       </div>
                       {isOverLimit && (
                         <Button
@@ -2257,45 +2470,50 @@ export function HumanizeEditor({
                       )}
                     </div>
                     {activeTab === "humanize" && (
-                      <div className="flex items-center gap-2">
-                        <Button
-                          className="h-8 cursor-pointer gap-1.5 px-3 text-sm sm:w-auto"
-                          disabled={!inputText.trim() || isDetecting}
-                          onClick={handleCheckForAI}
-                        >
-                          {isDetecting ? (
-                            <>
-                              <LoadingSpinner size="sm" />
-                              Detecting...
-                            </>
-                          ) : (
-                            <>
-                              <BarChart3 className="h-4 w-4" />
-                              Check for AI
-                            </>
-                          )}
-                        </Button>
-                        <Button
-                          className="h-8 cursor-pointer gap-1.5 px-3 text-sm sm:w-auto"
-                          disabled={
-                            !inputText.trim() || isLoading || isProSelected
-                          }
-                          onClick={handleHumanize}
-                        >
-                          {isLoading ? (
-                            <>
-                              <LoadingSpinner size="sm" />
-                              Humanizing...
-                            </>
-                          ) : (
-                            <>Humanize</>
-                          )}
-                        </Button>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
+                            disabled={!inputText.trim() || isDetecting}
+                            onClick={handleCheckForAI}
+                          >
+                            {isDetecting ? (
+                              <>
+                                <LoadingSpinner size="sm" />
+                                Detecting...
+                              </>
+                            ) : (
+                              <>
+                                <BarChart3 className="h-4 w-4" />
+                                Check for AI
+                              </>
+                            )}
+                          </Button>
+                          <Button
+                            className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
+                            disabled={
+                              !inputText.trim() || isLoading || isProSelected
+                            }
+                            onClick={handleHumanize}
+                          >
+                            {isLoading ? (
+                              <>
+                                <LoadingSpinner size="sm" />
+                                Humanizing...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="size-icon-xs shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large sm:size-icon-sm" />
+                                Humanize
+                              </>
+                            )}
+                          </Button>
+                        </div>
                       </div>
                     )}
                     {activeTab === "detector" && (
                       <Button
-                        className="h-8 cursor-pointer gap-1.5 px-3 text-sm sm:w-auto"
+                        className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
                         disabled={!inputText.trim() || isDetecting}
                         onClick={handleDetectAI}
                       >
@@ -2316,9 +2534,13 @@ export function HumanizeEditor({
                 </div>
 
                 {/* Right Text Area - Humanized */}
-                <div className="flex w-full min-w-0 flex-col md:w-1/2">
+                <div
+                  className={`flex w-full min-w-0 flex-col overflow-hidden md:w-1/2 ${activeTab === "humanize" && hasOutputText ? "rounded-r-xl border border-border border-l-0 bg-card shadow-sm dark:border-editor-border dark:bg-editor-bg" : "bg-transparent"}`}
+                >
                   <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
-                    <div className="h-[300px] overflow-y-auto sm:h-[400px] md:h-[450px]">
+                    <div
+                      className={`h-editor-sm sm:h-editor-md md:h-editor-lg ${activeTab === "humanize" && hasOutputText ? "overflow-y-auto" : "overflow-hidden"}`}
+                    >
                       {activeTab === "humanize"
                         ? renderHumanizeOutput()
                         : renderOtherTabOutput()}
@@ -2326,29 +2548,29 @@ export function HumanizeEditor({
                   </div>
 
                   {/* Right Footer */}
-                  {activeTab === "humanize" && (
-                    <div className="flex flex-col gap-2 border-white border-t bg-card px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)]">
+                  {activeTab === "humanize" && hasOutputText && (
+                    <div className="flex flex-col gap-2 rounded-br-xl bg-transparent px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6">
                       <div className="flex items-center gap-4">
-                        <div className="flex flex-col items-start gap-0.5">
+                        <div className="flex flex-col items-start gap-0-5">
                           <span className="font-semibold text-card-foreground text-sm">
                             {outputWordCount}
                           </span>
-                          <span className="text-[var(--color-brand-primary)] text-xs dark:text-[var(--color-brand-primary)]">
+                          <span className="text-brand-primary text-xs dark:text-brand-primary">
                             Word Count
                           </span>
                         </div>
-                        <div className="flex flex-col items-start gap-0.5">
+                        <div className="flex flex-col items-start gap-0-5">
                           <span className="font-semibold text-card-foreground text-sm">
                             {humanScore !== null ? `${humanScore}%` : "-"}
                           </span>
-                          <span className="text-[var(--color-brand-primary)] text-xs dark:text-[var(--color-brand-primary)]">
+                          <span className="text-brand-primary text-xs dark:text-brand-primary">
                             HUMAN WRITTEN
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-1">
                         <Button
-                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
+                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-select-hover"
                           disabled={!hasOutputText}
                           onClick={handleThumbsUp}
                           title="Like this output"
@@ -2357,7 +2579,7 @@ export function HumanizeEditor({
                           <ThumbsUp className="h-4 w-4 text-foreground" />
                         </Button>
                         <Button
-                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
+                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-select-hover"
                           disabled={!hasOutputText}
                           onClick={handleThumbsDown}
                           title="Dislike this output"
@@ -2366,7 +2588,7 @@ export function HumanizeEditor({
                           <ThumbsDown className="h-4 w-4 text-foreground" />
                         </Button>
                         <Button
-                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
+                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-select-hover"
                           disabled={!hasOutputText}
                           onClick={handleDownloadOutput}
                           title="Download text"
@@ -2375,7 +2597,7 @@ export function HumanizeEditor({
                           <Download className="h-4 w-4 text-foreground" />
                         </Button>
                         <Button
-                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-[var(--color-select-hover)]"
+                          className="h-8 w-8 rounded-lg p-0 transition-all hover:bg-muted dark:hover:bg-select-hover"
                           disabled={!hasOutputText}
                           onClick={handleCopyOutput}
                           title="Copy to clipboard"
@@ -2391,18 +2613,18 @@ export function HumanizeEditor({
 
               {/* Bottom Controls - Moved to bottom as per reference */}
               {activeTab === "humanize" && !isInitialState && (
-                <div className="flex flex-col gap-2 border-white border-t bg-muted px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:border-t-[var(--color-editor-border)] dark:bg-background/50">
+                <div className="flex flex-col gap-2 bg-transparent px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:bg-background/50">
                   <Select
                     onValueChange={setReadabilityLevel}
                     value={readabilityLevel || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-[210px] dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-white">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-large dark:border-select-bg dark:bg-select-bg dark:text-white">
                       <SelectValue placeholder="Select Readability Level" />
                     </SelectTrigger>
-                    <SelectContent className="border-border bg-card dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)]">
+                    <SelectContent className="border-border bg-card dark:border-select-bg dark:bg-select-bg">
                       {readabilityLevels.map((level) => (
                         <SelectItem
-                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-[var(--color-select-hover)]"
+                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-select-hover"
                           key={level.value}
                           value={level.value}
                         >
@@ -2426,13 +2648,13 @@ export function HumanizeEditor({
                     onValueChange={setPurpose}
                     value={purpose || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-[160px] dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-white">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-small dark:border-select-bg dark:bg-select-bg dark:text-white">
                       <SelectValue placeholder="Select Purpose" />
                     </SelectTrigger>
-                    <SelectContent className="border-border bg-card dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)]">
+                    <SelectContent className="border-border bg-card dark:border-select-bg dark:bg-select-bg">
                       {purposes.map((p) => (
                         <SelectItem
-                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-[var(--color-select-hover)]"
+                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-select-hover"
                           key={p.value}
                           value={p.value}
                         >
@@ -2455,30 +2677,44 @@ export function HumanizeEditor({
                   <Button
                     className={`h-9 gap-2 px-4 font-medium transition-colors ${
                       hasStyleSample
-                        ? "border-[var(--color-brand-primary)] bg-[var(--color-brand-primary)] text-white hover:bg-[var(--color-brand-primary)]/90 dark:border-[var(--color-brand-primary)] dark:bg-[var(--color-brand-primary)] dark:text-white dark:hover:bg-[var(--color-brand-primary)]/90"
-                        : "border-border bg-card text-muted-foreground hover:bg-muted dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-white dark:hover:bg-[var(--color-select-hover)]"
+                        ? "border-brand-primary bg-brand-primary text-white hover:bg-brand-primary/90 dark:border-brand-primary dark:bg-brand-primary dark:text-white dark:hover:bg-brand-primary/90"
+                        : "border-border bg-card text-muted-foreground hover:bg-muted dark:border-select-bg dark:bg-select-bg dark:text-white dark:hover:bg-select-hover"
                     }`}
                     onClick={() => {
                       setShowStyleSampleModal(true);
                     }}
                     variant={hasStyleSample ? "default" : "outline"}
                   >
-                    <Sparkles className="h-4 w-4 dark:text-white" />
                     {hasStyleSample ? "My Writing Style" : "Personalize"}
                   </Button>
+
+                  {/* Advanced Mode Toggle */}
+                  <div className="flex items-center gap-2">
+                    <label
+                      className="flex cursor-pointer items-center gap-2 font-medium text-card-foreground text-sm"
+                      htmlFor="advanced-mode-toggle"
+                    >
+                      <Switch
+                        checked={advancedMode}
+                        id="advanced-mode-toggle"
+                        onCheckedChange={setAdvancedMode}
+                      />
+                      <span className="whitespace-nowrap">Advanced mode</span>
+                    </label>
+                  </div>
 
                   <Select
                     onValueChange={setSelectedLanguage}
                     value={selectedLanguage || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-[200px] dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-white">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-medium dark:border-select-bg dark:bg-select-bg dark:text-white">
                       <SelectValue placeholder="Auto-detect" />
                     </SelectTrigger>
-                    <SelectContent className="min-w-[400px] border-border bg-card dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] [&>div>div]:grid [&>div>div]:grid-cols-3 [&>div>div]:gap-0">
+                    <SelectContent className="min-w-select-content border-border bg-card dark:border-select-bg dark:bg-select-bg [&>div>div]:grid [&>div>div]:grid-cols-3 [&>div>div]:gap-0">
                       <SelectGroup>
                         {languages.map((lang) => (
                           <SelectItem
-                            className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-[var(--color-select-hover)]"
+                            className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-select-hover"
                             key={lang}
                             value={lang}
                           >
@@ -2495,9 +2731,9 @@ export function HumanizeEditor({
                           </SelectItem>
                         ))}
                       </SelectGroup>
-                      <SelectSeparator className="col-span-3 dark:bg-[var(--color-separator-bg)]" />
+                      <SelectSeparator className="col-span-3 dark:bg-separator-bg" />
                       <SelectItem
-                        className="col-span-3 cursor-pointer text-card-foreground dark:text-white dark:focus:bg-[var(--color-select-hover)]"
+                        className="col-span-3 cursor-pointer text-card-foreground dark:text-white dark:focus:bg-select-hover"
                         value="auto"
                       >
                         Auto-detect
@@ -2511,13 +2747,13 @@ export function HumanizeEditor({
                     }
                     value={lengthMode}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-[160px] dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)] dark:text-white">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-small dark:border-select-bg dark:bg-select-bg dark:text-white">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border-border bg-card dark:border-[var(--color-select-bg)] dark:bg-[var(--color-select-bg)]">
+                    <SelectContent className="border-border bg-card dark:border-select-bg dark:bg-select-bg">
                       {lengthModes.map((mode) => (
                         <SelectItem
-                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-[var(--color-select-hover)]"
+                          className="cursor-pointer text-card-foreground dark:text-white dark:focus:bg-select-hover"
                           key={mode.value}
                           value={mode.value}
                         >
@@ -2530,13 +2766,13 @@ export function HumanizeEditor({
               )}
               {/* Text Features Legend - Outside textarea area */}
               {activeTab === "humanize" && hasOutputText && (
-                <div className="flex flex-wrap items-center justify-end gap-2 border-border border-t bg-card px-3 py-2 sm:gap-3 sm:px-4 md:px-6 dark:border-t-[var(--color-editor-border)] dark:bg-background/50">
+                <div className="flex flex-wrap items-center justify-end gap-2 bg-transparent px-3 py-2 sm:gap-3 sm:px-4 md:px-6">
                   {/* Only show legend items for features that are present AND can be toggled */}
                   {presentFeatures.changed && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1-5">
                       <div
                         aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-red-500"
+                        className="size-icon-xs shrink-none rounded-full bg-destructive/100"
                       />
                       <span className="text-muted-foreground text-xs dark:text-muted-foreground">
                         Changed Words
@@ -2544,10 +2780,10 @@ export function HumanizeEditor({
                     </div>
                   )}
                   {presentFeatures.structural && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1-5">
                       <div
                         aria-hidden="true"
-                        className="h-0.5 w-4 shrink-0 bg-yellow-500"
+                        className="h-bar-thin w-4 shrink-none bg-warning"
                       />
                       <span className="text-muted-foreground text-xs dark:text-muted-foreground">
                         Structural Changes
@@ -2555,10 +2791,10 @@ export function HumanizeEditor({
                     </div>
                   )}
                   {presentFeatures.unchanged && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1-5">
                       <div
                         aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-blue-500"
+                        className="size-icon-xs shrink-none rounded-full bg-info"
                       />
                       <span className="text-muted-foreground text-xs dark:text-muted-foreground">
                         Longest Unchanged Words
@@ -2566,10 +2802,10 @@ export function HumanizeEditor({
                     </div>
                   )}
                   {presentFeatures.thesaurus && (
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1-5">
                       <div
                         aria-hidden="true"
-                        className="h-3 w-3 shrink-0 rounded-full bg-purple-500"
+                        className="size-icon-xs shrink-none rounded-full bg-purple-500"
                       />
                       <span className="text-muted-foreground text-xs dark:text-muted-foreground">
                         Thesaurus
@@ -2599,9 +2835,9 @@ export function HumanizeEditor({
             </div>
           </div>
           {activeTab === "humanize" && hasInteracted && (
-            <div className="absolute top-2 right-16 z-10 flex flex-col items-center gap-1">
+            <div className="-right-20 absolute top-2 z-overlay flex flex-col items-center gap-1">
               <Button
-                className="h-8 w-8 cursor-pointer rounded-full border border-border bg-[var(--color-tabs-bg)] p-0 text-card-foreground hover:bg-[var(--color-tabs-bg)]/90 dark:border-[var(--color-editor-border)] dark:bg-[var(--color-editor-bg)] dark:hover:bg-[var(--color-editor-bg)]/80"
+                className="h-8 w-8 cursor-pointer rounded-full border border-border bg-tabs-bg p-0 text-card-foreground hover:bg-tabs-bg/90 dark:border-editor-border dark:bg-editor-bg dark:hover:bg-editor-bg/80"
                 onClick={() => setShowHistory(true)}
                 title="History"
                 variant="ghost"
@@ -2663,10 +2899,10 @@ export function HumanizeEditor({
           <div className="space-y-4">
             <div className="space-y-2">
               <Textarea
-                className={`h-[260px] resize-none overflow-y-auto border-2 bg-card text-sm focus:ring-0 dark:bg-[var(--color-editor-bg)] ${
+                className={`h-sidebar-content resize-none overflow-y-auto border-2 bg-card text-sm focus:ring-0 dark:bg-editor-bg ${
                   tempStyleSample.trim().length > 0
-                    ? "border-[var(--color-brand-primary)] focus:border-[var(--color-brand-primary)]"
-                    : "border-border focus:border-[var(--color-brand-primary)]"
+                    ? "border-brand-primary focus:border-brand-primary"
+                    : "border-border focus:border-brand-primary"
                 }`}
                 onChange={(e) => {
                   const value = e.target.value;
@@ -2685,7 +2921,7 @@ export function HumanizeEditor({
                 value={tempStyleSample}
               />
               {styleSampleError && (
-                <p className="text-red-500 text-xs dark:text-red-400">
+                <p className="text-destructive text-xs dark:text-destructive">
                   {styleSampleError}
                 </p>
               )}
@@ -2702,7 +2938,7 @@ export function HumanizeEditor({
                   </span>
                 </div>
                 <button
-                  className="font-medium text-[var(--color-brand-primary)] text-sm hover:text-[var(--color-brand-primary)]/90 dark:text-[var(--color-brand-primary)] dark:hover:text-[var(--color-brand-primary)]/90"
+                  className="font-medium text-brand-primary text-sm hover:text-brand-primary/90 dark:text-brand-primary dark:hover:text-brand-primary/90"
                   onClick={() => {
                     setTempStyleSample(EXAMPLE_TEXT);
                   }}
@@ -2726,7 +2962,7 @@ export function HumanizeEditor({
               Cancel
             </Button>
             <Button
-              className="bg-[var(--color-brand-primary)] text-white hover:bg-[var(--color-brand-primary)]/90"
+              className="bg-brand-primary text-white hover:bg-brand-primary/90"
               onClick={() => {
                 const styleWordCount = tempStyleSample
                   .trim()

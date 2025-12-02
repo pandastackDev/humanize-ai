@@ -20,6 +20,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
 from api.config import settings
+from api.utils.sanitization import InputSanitizer
 
 from .embedding_service import EmbeddingService
 from .format_preservation import (
@@ -482,6 +483,13 @@ class HumanizationService:
             - metrics: Validation metrics
             - metadata: Processing metadata
         """
+        # Convert non-ASCII characters to ASCII before processing
+        # This ensures better humanization quality and avoids issues with special characters
+        original_text_for_check = input_text
+        input_text = InputSanitizer.convert_to_ascii(input_text)
+        if input_text != original_text_for_check:
+            logger.info("Converted non-ASCII characters to ASCII equivalents")
+
         word_count = len(input_text.split())
 
         # Route to appropriate pipeline based on text length and configuration
@@ -515,6 +523,9 @@ class HumanizationService:
         """
         start_time = time.time()
 
+        # Convert non-ASCII characters to ASCII (already done in humanize(), but ensure it's done)
+        input_text = InputSanitizer.convert_to_ascii(input_text)
+
         # Normalize line breaks first
         input_text = normalize_line_breaks(input_text)
 
@@ -532,10 +543,20 @@ class HumanizationService:
         if language:
             detected_language = language.lower().split("-")[0]
             language_confidence = 1.0
+            logger.info(f"Using provided language: {detected_language}")
         else:
-            detected_language, language_confidence = self.language_service.detect_language(
-                input_text
-            )
+            logger.info("Detecting language...")
+            try:
+                detected_language, language_confidence = self.language_service.detect_language(
+                    input_text
+                )
+                logger.info(
+                    f"Detected language: {detected_language} (confidence: {language_confidence:.2f})"
+                )
+            except Exception as e:
+                logger.error(f"Language detection failed: {e}. Defaulting to English.")
+                detected_language = "en"
+                language_confidence = 0.5
 
         logger.info(f"Quick humanization for language: {detected_language}")
 
@@ -585,12 +606,15 @@ class HumanizationService:
             """Format user prompt with word count targets for V4."""
             wc = len(text.split())
             # Calculate targets based on length mode
+            # Keep it as is: 1.2~1.3x (120-130%)
+            # Make it shorter: 80~95%
+            # Make it longer: 1.5~2.7x (150-270%)
             if length_mode == "shorten":
-                target_min, target_max = int(wc * 0.70), int(wc * 0.85)
+                target_min, target_max = int(wc * 0.80), int(wc * 0.95)
             elif length_mode == "expand":
-                target_min, target_max = int(wc * 1.20), int(wc * 1.40)
-            else:  # standard
-                target_min, target_max = int(wc * 0.95), int(wc * 1.10)
+                target_min, target_max = int(wc * 1.5), int(wc * 2.7)
+            else:  # standard (Keep it as is)
+                target_min, target_max = int(wc * 1.2), int(wc * 1.3)
 
             # Format with all placeholders
             try:
@@ -602,21 +626,40 @@ class HumanizationService:
                 return prompt_template.format(text=text)
 
         # Handle multi-paragraph text with format preservation
-        if preserve_formatting and format_metadata["total_paragraphs"] > 1:
+        # OPTIMIZATION: For cost savings, process short multi-paragraph texts as a single request
+        # Only split if text is very long (to stay within token limits)
+        total_words = len(input_text.split())
+        should_split = (
+            preserve_formatting
+            and format_metadata["total_paragraphs"] > 1
+            and total_words > 800  # Only split if > 800 words (cost optimization)
+        )
+
+        if should_split:
             # Split into paragraphs while preserving structure
             structured_parts = split_preserving_structure(input_text)
             humanized_paragraphs = []
 
-            # Use faster model for quick pipeline if enabled
-            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL
-            if settings.USE_FAST_MODEL_FOR_QUICK_PIPELINE:
-                model_to_use = settings.COMPRESSION_MODEL  # Haiku
-                logger.info("Using fast model (Haiku) for quick pipeline optimization")
+            # For multi-paragraph text, use primary model to avoid rate limits
+            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL  # Default to primary model
+            logger.info(
+                f"Processing {len(structured_parts)} paragraphs separately (text too long for single request)"
+            )
 
-            for part in structured_parts:
+            # Add small delay between requests to prevent rate limiting
+            delay_seconds = 0.2  # 200ms delay between requests
+
+            for idx, part in enumerate(structured_parts):
+                # Add delay between requests to prevent rate limiting
+                if idx > 0:
+                    time.sleep(delay_seconds)
+                    logger.debug(f"Added {delay_seconds}s delay before paragraph {idx + 1}")
+
                 user_prompt = format_user_prompt(part["content"], prompt_dict["user_template"])
                 part_words = len(part["content"].split())
-                max_tokens = max(int(part_words * 2.5), part_words + 100)  # Optimized multiplier
+                max_tokens = max(
+                    int(part_words * 2.2), part_words + 50
+                )  # Cost optimization - reduced multiplier
 
                 humanized_para = self.llm_service.generate_text(
                     prompt=user_prompt,
@@ -633,20 +676,41 @@ class HumanizationService:
             # Reassemble with original structure
             humanized_text = reassemble_with_structure(humanized_paragraphs, structured_parts)
         else:
+            # OPTIMIZATION: Process as single request (cheaper for shorter texts)
+            if preserve_formatting and format_metadata["total_paragraphs"] > 1:
+                logger.info(
+                    f"Processing {format_metadata['total_paragraphs']} paragraphs as single request "
+                    f"({total_words} words - cost optimization)"
+                )
             # Single-pass humanization for simple text
+            logger.info("=" * 80)
+            logger.info("📝 ACTUAL INPUT TEXT TO HUMANIZE:")
+            logger.info("=" * 80)
+            logger.info(f"Text: {input_text}")
+            logger.info(f"Length: {len(input_text)} characters")
+            logger.info(f"Words: {len(input_text.split())} words")
+            logger.info("=" * 80)
+
             user_prompt = format_user_prompt(input_text, prompt_dict["user_template"])
 
-            # Use faster model for quick pipeline if enabled (Haiku is ~3x faster)
-            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL
-            if settings.USE_FAST_MODEL_FOR_QUICK_PIPELINE:
-                # Use Haiku for speed in quick pipeline (still high quality)
-                model_to_use = settings.COMPRESSION_MODEL  # Haiku
-                logger.info("Using fast model (Haiku) for quick pipeline optimization")
+            logger.info("📤 FORMATTED USER PROMPT (first 500 chars):")
+            logger.info(f"{user_prompt[:500]}...")
+            logger.info("=" * 80)
 
-            # Optimize max_tokens: reduce multiplier for faster processing
-            # Original: * 3, optimized: * 2.5 (still enough for quality, faster)
+            # Use faster model for quick pipeline if enabled (cost optimization)
+            # Fast model is cheaper and faster for quick pipeline
+            model_to_use = settings.PRIMARY_HUMANIZATION_MODEL  # Default to primary model
+            if settings.USE_FAST_MODEL_FOR_QUICK_PIPELINE:
+                # Use fast model for cost savings in quick pipeline (still high quality)
+                model_to_use = settings.COMPRESSION_MODEL  # Fast model (cheaper)
+                logger.info("Using fast model for quick pipeline (cost optimization)")
+
+            # Optimize max_tokens: reduce multiplier for cost savings
+            # Original: * 3, optimized: * 2.2 (cost optimization - still enough for quality)
             input_words = len(input_text.split())
-            max_tokens = max(int(input_words * 2.5), input_words + 100)  # Minimum buffer
+            max_tokens = max(
+                int(input_words * 2.2), input_words + 50
+            )  # Reduced buffer for cost savings
 
             humanized_text = self.llm_service.generate_text(
                 prompt=user_prompt,
@@ -663,13 +727,18 @@ class HumanizationService:
         humanized_text = remove_ai_patterns(humanized_text)
 
         # V4 Enhancement: Apply pattern breaking for better originality scores
-        if use_v4 and self.pattern_breaker is not None:
+        # OPTIMIZATION: Only apply if Originality.AI optimization is enabled (saves CPU)
+        if (
+            use_v4
+            and self.pattern_breaker is not None
+            and settings.ORIGINALITY_AI_OPTIMIZATION_ENABLED
+        ):
             logger.info("Applying V4 pattern breaking enhancements")
             # Get aggressiveness from settings
             base_aggressiveness = getattr(settings, "PATTERN_BREAKER_AGGRESSIVENESS", 0.6)
 
-            # Increase aggressiveness if Originality.AI optimization is enabled and API key is available
-            if settings.ORIGINALITY_AI_OPTIMIZATION_ENABLED and settings.ORIGINALITY_API_KEY:
+            # Increase aggressiveness if Originality.AI API key is available
+            if settings.ORIGINALITY_API_KEY:
                 if settings.ORIGINALITY_AI_AGGRESSIVE_MODE:
                     # Use higher aggressiveness for better Originality.AI scores
                     aggressiveness = min(base_aggressiveness + 0.15, 0.85)  # Cap at 0.85
@@ -692,6 +761,10 @@ class HumanizationService:
             if logger.isEnabledFor(logging.DEBUG):
                 stats = self.pattern_breaker.get_statistics(humanized_text)
                 logger.debug(f"Pattern breaker stats: {stats}")
+        elif use_v4 and self.pattern_breaker is not None:
+            logger.debug(
+                "Skipping pattern breaker (Originality.AI optimization disabled - cost savings)"
+            )
 
         # Ensure paragraph structure is preserved
         if preserve_formatting:
@@ -814,6 +887,9 @@ class HumanizationService:
         10. Validation
         """
         start_time = time.time()
+
+        # Convert non-ASCII characters to ASCII (already done in humanize(), but ensure it's done)
+        input_text = InputSanitizer.convert_to_ascii(input_text)
 
         # Normalize line breaks and preserve formatting metadata
         input_text = normalize_line_breaks(input_text)
@@ -1825,18 +1901,15 @@ class HumanizationService:
         # Length mode instructions
         if length_mode == "shorten":
             instructions.append(
-                "Make the text significantly more concise while preserving all key information. Aim for 60-80% of the original length. Ensure all sentences are complete and fully written."
+                "Make the text more concise while preserving all key information. Aim for 80-95% of the original length. Ensure all sentences are complete, grammatically correct, and fully written."
             )
         elif length_mode == "expand":
             instructions.append(
-                "Add depth and nuance to the text while maintaining its core meaning. Aim for 120-150% of the original length. Ensure all sentences are complete and fully written."
+                "Expand the text significantly with natural elaboration, details, and examples. Aim for 150-270% of the original length. Ensure all sentences are complete, grammatically correct, and fully written."
             )
-        else:
+        else:  # standard (Keep it as is)
             instructions.append(
-                "Preserve the approximate length of the original text - maintain within 90-110% of the original character count. Do not add unnecessary words or expand sentences unnecessarily."
-            )
-            instructions.append(
-                "Keep sentences concise and direct - aim for similar word count per sentence as the original."
+                "Expand the text slightly (120-130% of original length) while maintaining proper grammar. Add human markers and natural elaboration. Ensure all sentences are complete, grammatically correct, and fully written."
             )
 
         # Readability instructions
