@@ -910,6 +910,8 @@ const EXAMPLE_TEXT = `The seaside town was a picturesque blend of old-world char
 
 // History storage key
 const HISTORY_STORAGE_KEY = "humanize_history";
+// Editor state storage key
+const EDITOR_STATE_KEY = "humanize_editor_state";
 
 // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Component handles multiple UI states and interactions
 export function HumanizeEditor({
@@ -928,8 +930,8 @@ export function HumanizeEditor({
   const [inputText, setInputText] = useState("");
   const [outputText, setOutputText] = useState("");
   const [selectedLanguage, setSelectedLanguage] = useState("");
-  const [readabilityLevel, setReadabilityLevel] = useState("");
-  const [purpose, setPurpose] = useState("");
+  const [readabilityLevel, setReadabilityLevel] = useState("university");
+  const [purpose, setPurpose] = useState("general");
   const [lengthMode, setLengthMode] = useState<
     "shorten" | "expand" | "standard"
   >("standard");
@@ -972,6 +974,7 @@ export function HumanizeEditor({
   const [detectionError, setDetectionError] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hasTextareaScrollbar, setHasTextareaScrollbar] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Initialize drag counter on mount and ensure it's reset - use useLayoutEffect to run before paint
   useLayoutEffect(() => {
@@ -1095,6 +1098,118 @@ export function HumanizeEditor({
     }
   }, [history]);
 
+  // Load editor state from localStorage on mount
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Loading multiple state values is inherently complex
+  useEffect(() => {
+    setIsMounted(true);
+
+    try {
+      const stored = localStorage.getItem(EDITOR_STATE_KEY);
+      if (!stored) {
+        return;
+      }
+
+      const p = JSON.parse(stored);
+
+      // Restore all values
+      if (p.inputText) {
+        setInputText(p.inputText);
+      }
+      if (p.outputText) {
+        setOutputText(p.outputText);
+      }
+      if (p.activeTab) {
+        setActiveTab(p.activeTab);
+      }
+      if (p.selectedLanguage) {
+        setSelectedLanguage(p.selectedLanguage);
+      }
+      if (p.readabilityLevel) {
+        // Check if it's a PRO feature and reset to default if user is on free plan
+        const isProReadability = readabilityLevels.find(
+          (level) => level.value === p.readabilityLevel && level.pro
+        );
+        if (isProReadability && subscriptionPlan === "free") {
+          setReadabilityLevel("university"); // Reset to free default
+        } else {
+          setReadabilityLevel(p.readabilityLevel);
+        }
+      }
+      if (p.purpose) {
+        // Check if it's a PRO feature and reset to default if user is on free plan
+        const isProPurposeItem = purposes.find(
+          (purposeItem) => purposeItem.value === p.purpose && purposeItem.pro
+        );
+        if (isProPurposeItem && subscriptionPlan === "free") {
+          setPurpose("general"); // Reset to free default
+        } else {
+          setPurpose(p.purpose);
+        }
+      }
+      if (p.lengthMode) {
+        setLengthMode(p.lengthMode);
+      }
+      if (p.styleSample) {
+        setStyleSample(p.styleSample);
+      }
+      if (p.detectionResult) {
+        setDetectionResult(p.detectionResult);
+      }
+      if (typeof p.advancedMode === "boolean") {
+        setAdvancedMode(p.advancedMode);
+      }
+      if (typeof p.humanScore === "number") {
+        setHumanScore(p.humanScore);
+      }
+      if (typeof p.hasInteracted === "boolean") {
+        setHasInteracted(p.hasInteracted);
+      }
+    } catch {
+      // Silently fail - state will use defaults
+    }
+  }, [subscriptionPlan]);
+
+  // Save editor state to localStorage whenever key state changes (only after mounted)
+  useEffect(() => {
+    if (!isMounted) {
+      return;
+    }
+
+    try {
+      const state = {
+        inputText,
+        outputText,
+        activeTab,
+        selectedLanguage,
+        readabilityLevel,
+        purpose,
+        lengthMode,
+        styleSample,
+        advancedMode,
+        humanScore,
+        detectionResult,
+        hasInteracted,
+      };
+      localStorage.setItem(EDITOR_STATE_KEY, JSON.stringify(state));
+    } catch (err) {
+      console.error("Failed to save editor state:", err);
+    }
+  }, [
+    isMounted,
+    inputText,
+    outputText,
+    activeTab,
+    selectedLanguage,
+    readabilityLevel,
+    purpose,
+    lengthMode,
+    styleSample,
+    advancedMode,
+    humanScore,
+    detectionResult,
+    hasInteracted,
+  ]);
+
   const wordCount = inputText
     .trim()
     .split(WORD_COUNT_REGEX)
@@ -1104,8 +1219,9 @@ export function HumanizeEditor({
     .split(WORD_COUNT_REGEX)
     .filter(Boolean).length;
 
-  // const wordLimit = WORD_LIMITS[subscriptionPlan];
-  const wordLimit = 3000;
+  // Set word limit based on authentication status
+  // Not signed in: 500 words, Signed in: 3000 words (can be expanded based on subscription plan)
+  const wordLimit = userId ? 3000 : 500;
 
   const isOverLimit = wordCount > wordLimit;
   const hasStyleSample = styleSample.trim().length > 0;
@@ -1326,12 +1442,17 @@ export function HumanizeEditor({
     await processUploadedFile(file);
   };
 
-  // Handle clear input
+  // Handle clear input - Reset everything including errors and detection results
   const handleClearInput = () => {
     setInputText("");
     setOutputText("");
     setHumanScore(null);
     setError(null);
+    setDetectionError(null);
+    setDetectionResult(null);
+    setIsLoading(false);
+    setIsDetecting(false);
+    // Don't reset hasInteracted - keep Marketing UI visible
   };
 
   // Helper: Build API request parameters
@@ -1395,6 +1516,7 @@ export function HumanizeEditor({
   };
 
   // Handle humanize
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: Handles multiple validation and API call scenarios
   const handleHumanize = async () => {
     if (!inputText.trim()) {
       return;
@@ -1406,9 +1528,10 @@ export function HumanizeEditor({
     }
 
     if (isOverLimit) {
-      setError(
-        `Word limit exceeded. Your ${subscriptionPlan} plan allows up to ${wordLimit} words per request. ${subscriptionPlan === "free" ? "Upgrade to a paid plan for higher limits." : "Upgrade to a higher tier for more words."}`
-      );
+      const errorMessage = userId
+        ? `Word limit exceeded. Your ${subscriptionPlan} plan allows up to ${wordLimit} words per request. ${subscriptionPlan === "free" ? "Upgrade to a paid plan for higher limits." : "Upgrade to a higher tier for more words."}`
+        : `Word limit exceeded. Please sign in to increase your limit to 3000 words. Current limit: ${wordLimit} words.`;
+      setError(errorMessage);
       router.push("/pricing");
       return;
     }
@@ -1624,8 +1747,8 @@ export function HumanizeEditor({
 
     if (error && !forceLoading) {
       return (
-        <div className="flex h-editor-sm w-full flex-col items-center justify-center gap-4 px-3 py-4 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6">
-          <div className="rounded-lg border border-destructive/30 bg-destructive/10 p-4 dark:border-destructive/50 dark:bg-destructive/20">
+        <div className="flex h-full w-full flex-col items-center justify-center px-3 py-4 sm:px-4 md:px-6 md:py-5">
+          <div className="w-full max-w-md rounded-lg border border-destructive/30 bg-destructive/10 p-4 dark:border-destructive/50 dark:bg-destructive/20">
             <p className="mb-2 font-semibold text-destructive text-sm dark:text-destructive">
               Error
             </p>
@@ -1686,18 +1809,10 @@ export function HumanizeEditor({
         </div>
       );
     }
-    if (!hasInteracted) {
-      return (
-        <div className="flex h-editor-sm w-full flex-col items-center justify-center gap-3 overflow-hidden px-3 py-3 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6">
-          <MarketingInner />
-        </div>
-      );
-    }
+    // Show Marketing UI when: 1) left side is empty OR 2) has input but no API called yet (Rule 1 + new requirement)
     return (
-      <div className="flex h-editor-sm w-full flex-col items-center justify-center px-3 py-4 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6 md:py-5">
-        <p className="text-muted-foreground text-sm dark:text-muted-foreground">
-          Your humanized text will appear here...
-        </p>
+      <div className="flex h-editor-sm w-full flex-col items-center justify-center gap-3 overflow-hidden px-3 py-3 sm:h-editor-md sm:px-4 md:h-editor-lg md:px-6">
+        <MarketingInner />
       </div>
     );
   };
@@ -1709,20 +1824,27 @@ export function HumanizeEditor({
     if (detectionError) {
       return (
         <div className="flex h-full w-full flex-col items-center justify-center px-3 py-4 sm:px-4 md:px-6 md:py-5">
-          <X className="mb-4 h-12 w-12 text-destructive" />
-          <h3 className="mb-2 font-semibold text-base text-destructive dark:text-destructive">
-            Detection Error
-          </h3>
-          <p className="text-center text-muted-foreground text-xs sm:text-sm dark:text-muted-foreground">
-            {detectionError}
-          </p>
-          <Button
-            className="mt-4"
-            onClick={() => setDetectionError(null)}
-            variant="outline"
-          >
-            Try Again
-          </Button>
+          <div className="w-full max-w-md rounded-lg border border-destructive/30 bg-destructive/10 p-4 dark:border-destructive/50 dark:bg-destructive/20">
+            <div className="mb-3 flex items-center justify-center">
+              <X className="h-12 w-12 text-destructive dark:text-destructive" />
+            </div>
+            <h3 className="mb-2 text-center font-semibold text-base text-destructive dark:text-destructive">
+              Detection Error
+            </h3>
+            <p className="text-center text-muted-foreground text-xs sm:text-sm dark:text-muted-foreground">
+              {detectionError}
+            </p>
+            <Button
+              className="mt-4 w-full"
+              onClick={() => {
+                setDetectionError(null);
+                handleDetectAI();
+              }}
+              variant="outline"
+            >
+              Try Again
+            </Button>
+          </div>
         </div>
       );
     }
@@ -1731,7 +1853,7 @@ export function HumanizeEditor({
       // Loading screen with all detectors
       if (isDetecting) {
         return (
-          <div className="flex h-full w-full flex-col items-center justify-center bg-card px-2 py-2 sm:px-3 md:px-4 dark:bg-editor-bg">
+          <div className="flex h-full w-full flex-col items-center justify-center px-2 py-2 sm:px-3 md:px-4">
             <div className="flex w-full max-w-3xl flex-col items-center justify-center">
               {/* Purple heading - smaller */}
               <h2 className="mb-0.5 text-center font-bold text-purple-600 text-xs sm:text-sm dark:text-purple-400">
@@ -1789,16 +1911,10 @@ export function HumanizeEditor({
         );
       }
 
-      // Default empty state
+      // Show Marketing UI when: 1) left side is empty OR 2) has input but no API called yet (Rule 1 + new requirement)
       return (
-        <div className="flex h-full w-full flex-col items-center justify-center px-3 py-4 sm:px-4 md:px-6 md:py-5">
-          <BarChart3 className="mb-4 h-12 w-12 text-muted-foreground dark:text-muted-foreground" />
-          <h3 className="mb-2 font-semibold text-base text-card-foreground sm:text-lg">
-            AI Detector
-          </h3>
-          <p className="text-center text-muted-foreground text-xs sm:text-sm dark:text-muted-foreground">
-            Click &quot;Detect AI&quot; to analyze your text
-          </p>
+        <div className="flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden bg-background px-3 py-3 sm:px-4 md:px-6 dark:bg-background">
+          <MarketingInner />
         </div>
       );
     }
@@ -2037,15 +2153,10 @@ export function HumanizeEditor({
       return renderDetectionOutput();
     }
 
-    // Plagiarism checker placeholder
+    // Plagiarism checker - Show Marketing UI when: 1) left side is empty OR 2) has input but no API called yet (Rule 1 + new requirement)
     return (
-      <div className="flex h-full w-full flex-col items-center justify-center px-3 py-4 sm:px-4 md:px-6 md:py-5">
-        <h3 className="mb-2 font-semibold text-base text-card-foreground sm:text-lg">
-          Plagiarism Checker
-        </h3>
-        <p className="text-center text-muted-foreground text-xs sm:text-sm dark:text-muted-foreground">
-          Click &quot;Check Plagiarism&quot; to analyze your text
-        </p>
+      <div className="flex h-full w-full flex-col items-center justify-center gap-3 overflow-hidden bg-background px-3 py-3 sm:px-4 md:px-6 dark:bg-background">
+        <MarketingInner />
       </div>
     );
   };
@@ -2059,6 +2170,54 @@ export function HumanizeEditor({
       return "calc(33.333% + 0.0625rem)";
     }
     return "calc(66.666% + 0.0625rem)";
+  };
+
+  // Helper function to determine if right panel should be visible with styling
+  const shouldShowRightPanel = () => {
+    switch (activeTab) {
+      case "humanize":
+        return hasOutputText || error; // Exclude isLoading - should be transparent during processing
+      case "detector":
+        return detectionResult !== null || detectionError !== null; // Exclude isDetecting - should be transparent during processing
+      case "plagiarism":
+        return true; // Always show styled panel for plagiarism checker
+      default:
+        return false;
+    }
+  };
+
+  // Get right panel styling classes
+  const getRightPanelClasses = () => {
+    if (!shouldShowRightPanel()) {
+      return "bg-transparent";
+    }
+
+    // Check if we're showing an error state
+    const isErrorState =
+      (activeTab === "humanize" && error) ||
+      (activeTab === "detector" && detectionError);
+
+    // Error states: use editor-bg and editor-border
+    if (isErrorState) {
+      return "rounded-r-xl border border-border border-l-0 bg-background shadow-sm dark:border-editor-border dark:bg-editor-bg";
+    }
+
+    // Success states: different styling based on tab
+    if (activeTab === "humanize" && hasOutputText) {
+      // Humanize results: use editor-bg to match left side
+      return "rounded-r-xl border border-border border-l-0 bg-background shadow-sm dark:border-editor-border dark:bg-editor-bg";
+    }
+
+    // AI Detector results: border matches outer background in light theme, distinct in dark theme
+    return "rounded-r-xl border border-background border-l-0 bg-background shadow-sm dark:border-background dark:bg-background";
+  };
+
+  // Get left panel styling classes
+  const getLeftPanelClasses = () => {
+    const baseClasses =
+      "box-border flex w-full min-w-0 flex-col overflow-hidden border border-border bg-card shadow-sm md:w-1/2 dark:border-editor-border dark:bg-editor-bg";
+    const radiusClass = shouldShowRightPanel() ? "rounded-l-xl" : "rounded-xl";
+    return `${baseClasses} ${radiusClass}`;
   };
 
   // Drag container highlight classes (separated to avoid nested ternaries)
@@ -2246,6 +2405,11 @@ export function HumanizeEditor({
     [hasInputText, getDraggedFile, processUploadedFile]
   );
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return null;
+  }
+
   return (
     <div className="relative mx-auto w-full max-w-container px-3 py-4 sm:px-4 md:px-6 lg:px-8 xl:px-12 2xl:px-20">
       <div className="flex flex-col gap-4">
@@ -2301,9 +2465,7 @@ export function HumanizeEditor({
               {/* Text Areas Container */}
               <div className="relative flex w-full min-w-0 flex-col md:flex-row">
                 {/* Left Text Area - Original */}
-                <div
-                  className={`box-border flex w-full min-w-0 flex-col overflow-hidden border border-border bg-card shadow-sm md:w-1/2 dark:border-editor-border dark:bg-editor-bg ${activeTab === "humanize" && hasOutputText ? "rounded-l-xl" : "rounded-xl"}`}
-                >
+                <div className={getLeftPanelClasses()}>
                   {/* Text Input Area - Always visible, with drag-and-drop support */}
                   {/* biome-ignore lint/a11y/noNoninteractiveElementInteractions: Drag-and-drop handlers are required for file upload functionality */}
                   <section
@@ -2327,6 +2489,7 @@ export function HumanizeEditor({
                       >
                         <Textarea
                           className="h-editor-sm w-full min-w-0 resize-none border-0 border-b-transparent px-3 py-3 pr-6 text-sm shadow-none outline-none focus:border-b-transparent focus:ring-0 focus-visible:border-b-transparent focus-visible:ring-0 sm:h-editor-md sm:px-4 sm:py-4 sm:pr-7 md:h-editor-lg md:px-5 md:py-5 md:pr-9 dark:border-b-editor-border dark:bg-editor-bg dark:focus-visible:border-b-editor-border dark:focus:border-b-editor-border"
+                          disabled={isLoading || isDetecting}
                           onChange={(e) => {
                             setInputText(e.target.value);
                           }}
@@ -2391,6 +2554,7 @@ export function HumanizeEditor({
                         {hasInputText && (
                           <Button
                             className="h-8 w-8 cursor-pointer rounded p-0 text-muted-foreground transition-colors hover:bg-transparent hover:text-destructive dark:text-muted-foreground dark:hover:text-destructive"
+                            disabled={isLoading || isDetecting}
                             onClick={handleClearInput}
                             style={{
                               position: "absolute",
@@ -2474,7 +2638,9 @@ export function HumanizeEditor({
                         <div className="flex items-center gap-2">
                           <Button
                             className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
-                            disabled={!inputText.trim() || isDetecting}
+                            disabled={
+                              !inputText.trim() || isDetecting || isLoading
+                            }
                             onClick={handleCheckForAI}
                           >
                             {isDetecting ? (
@@ -2492,7 +2658,10 @@ export function HumanizeEditor({
                           <Button
                             className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
                             disabled={
-                              !inputText.trim() || isLoading || isProSelected
+                              !inputText.trim() ||
+                              isLoading ||
+                              isDetecting ||
+                              isProSelected
                             }
                             onClick={handleHumanize}
                           >
@@ -2514,7 +2683,7 @@ export function HumanizeEditor({
                     {activeTab === "detector" && (
                       <Button
                         className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
-                        disabled={!inputText.trim() || isDetecting}
+                        disabled={!inputText.trim() || isDetecting || isLoading}
                         onClick={handleDetectAI}
                       >
                         {isDetecting ? (
@@ -2535,7 +2704,7 @@ export function HumanizeEditor({
 
                 {/* Right Text Area - Humanized */}
                 <div
-                  className={`flex w-full min-w-0 flex-col overflow-hidden md:w-1/2 ${activeTab === "humanize" && hasOutputText ? "rounded-r-xl border border-border border-l-0 bg-card shadow-sm dark:border-editor-border dark:bg-editor-bg" : "bg-transparent"}`}
+                  className={`flex w-full min-w-0 flex-col overflow-hidden md:w-1/2 ${getRightPanelClasses()}`}
                 >
                   <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden">
                     <div
@@ -2648,7 +2817,7 @@ export function HumanizeEditor({
                     onValueChange={setPurpose}
                     value={purpose || undefined}
                   >
-                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-small dark:border-select-bg dark:bg-select-bg dark:text-white">
+                    <SelectTrigger className="h-9 w-full cursor-pointer border-border bg-card text-card-foreground sm:w-select-large dark:border-select-bg dark:bg-select-bg dark:text-white">
                       <SelectValue placeholder="Select Purpose" />
                     </SelectTrigger>
                     <SelectContent className="border-border bg-card dark:border-select-bg dark:bg-select-bg">
