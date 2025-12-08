@@ -308,7 +308,6 @@ To add components to your app, run the following command at the root of your `we
 
 ```bash
 pnpm dlx shadcn@latest add -c apps/next
-
 ```
 
 This will place the ui components in the `packages/ui/src/components` directory.
