@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_en_legal_material_policy_001",
+    "text": "Medical practitioners are required to comply with the principle of confidentiality for ethical and legal reasons. Confidentiality is also linked with the right to privacy, which is a protected human right under our Constitution. Patients often approach their trusted health-care providers with the confidence that their personal affairs will be kept private and generally, it is unacceptable and illegal to disclose anyone's medical information without his/her consent. However, as with many rules in law, there are exceptions that may apply to the general rule. Section 36 of the Constitution can limit certain human rights and may apply when a balance must be struck between two competing rights. For example, where the right to privacy and the right to freedom of expression are in conflict, one right might prevail over the other if it is in the interests of justice for one of the rights to be limited.\n\nThe Constitution provides that everyone in South Africa has the right to privacy, which includes the right not to have the privacy of their communications infringed.\n\nIn so far as medical information is concerned, the privacy of a patient's communications or disclosures to medical practitioners should be protected. If the patient's confidence is not safeguarded, it is likely that s/he will be unwilling to divulge information that is critical to his/her medical treatment. This could yield a catastrophic result that might have a negative impact on the patient's health.\n\nThe National Health Act 61 of 2003 (\"NHA\") and the Promotion of Access to Information Act 2 of 2000 (\"PAIA\") regulate the rights of patients and third parties to access medical records. There are special clauses relating to personal information, particularly information held by medical practitioners, and the right to privacy. In terms of these clauses, all information must be controlled by information officers in public institutions and the heads of private bodies.\n\nThe Protection of Personal Information Act 4 of 2013 (\"POPI\") also prohibits the processing (like collecting and sharing) of personal information about a person's health, amongst other recognised grounds, as a general rule. However, POPI does allow for the processing of information about a person's health in certain instances, such as where that person has expressly consented to the processing of the information. Another example where consent does not have to be obtained is where medical practitioners, health-care institutions or social services must disclose the information for the proper treatment and care of the patient.",
+    "metadata": {
+      "language": "en",
+      "tone": "Professional",
+      "word_count": 299,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "English legal material policy about patient confidentiality and privacy rights - human written version",
+      "verified_human": true
+    }
+  }
+]

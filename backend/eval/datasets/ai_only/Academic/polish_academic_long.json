@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pl_academic_001",
+    "text": "Społeczeństwo informacyjne charakteryzuje się powszechnym dostępem do technologii cyfrowych i informacji. Internet stał się nieodłącznym elementem codziennego życia, umożliwiając natychmiastową komunikację, dostęp do wiedzy i uczestnictwo w kulturze globalnej. Media społecznościowe przekształciły sposób, w jaki ludzie nawiązują kontakty i dzielą się informacjami.\n\nCyfryzacja wpływa na wszystkie aspekty życia społecznego. E-administracja upraszcza procedury urzędowe, e-commerce zmienia wzorce zakupowe, a telemedycyna zwiększa dostępność opieki zdrowotnej. Inteligentne miasta wykorzystują technologie do optymalizacji zarządzania zasobami i poprawy jakości życia mieszkańców.\n\nJednak rozwój społeczeństwa informacyjnego niesie ze sobą również wyzwania. Cyfrowy podział może pogłębiać nierówności społeczne. Ochrona prywatności i bezpieczeństwo danych stają się kluczowymi kwestiami w erze big data. Dezinformacja i fake news zagrażają demokratycznym procesom.\n\nEdukacja cyfrowa i umiejętności informatyczne stają się niezbędne dla pełnego uczestnictwa w społeczeństwie informacyjnym. Ważne jest, aby zapewnić wszystkim obywatelom możliwość zdobycia tych kompetencji, niezależnie od ich wieku, pochodzenia czy statusu społeczno-ekonomicznego. Polityka publiczna powinna wspierać inkluzywny rozwój cyfrowy, który przynosi korzyści całemu społeczeństwu.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Academic",
+      "word_count": 301,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "society",
+      "date_added": "2025-12-04",
+      "notes": "Polish academic text about information society",
+      "verified_human": false
+    }
+  }
+]

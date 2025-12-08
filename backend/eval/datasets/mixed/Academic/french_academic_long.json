@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_fr_academic_001",
+    "text": "L'innovation technologique transforme continuellement notre monde, créant de nouvelles possibilités tout en soulevant des questions importantes. Les progrès en intelligence artificielle, biotechnologie et énergie renouvelable promettent de résoudre certains des défis les plus pressants de l'humanité. Cependant, ces développements nécessitent une réflexion approfondie sur leurs implications éthiques et sociales.\n\nLa recherche et le développement jouent un rôle central dans l'innovation. Les investissements dans l'éducation scientifique et la recherche fondamentale créent les bases pour les percées technologiques futures. La collaboration entre universités, entreprises et gouvernements accélère le transfert de connaissances de la recherche à l'application pratique.\n\nL'innovation responsable exige que nous considérions non seulement les bénéfices potentiels, mais aussi les risques et les conséquences imprévues. La réglementation doit équilibrer la promotion de l'innovation avec la protection du public et de l'environnement. La participation du public aux discussions sur les nouvelles technologies est essentielle pour garantir que l'innovation serve le bien commun.\n\nL'avenir dépendra de notre capacité à canaliser l'innovation vers des objectifs qui améliorent la qualité de vie tout en préservant nos valeurs fondamentales. Une approche équilibrée qui combine l'enthousiasme pour le progrès technologique avec la prudence et la sagesse sera cruciale pour naviguer dans les décennies à venir.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Mixed",
+      "word_count": 302,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "technology",
+      "date_added": "2025-12-04",
+      "notes": "French mixed text about technological innovation - professional tone with AI assistance",
+      "verified_human": false,
+      "composition": {
+        "style": "professional_formal",
+        "strategy": "Formal rewrite with structured arguments and balanced perspective"
+      }
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pl_report_research_summary_001",
+    "text": "Raporty Synapse Publications, publikowane corocznie przez zespół Synapse, kierowany przez Jeanine McSweeney, Zastępczynię Bibliotekarza ds. Komunikacji Naukowej, prezentują pracę naukową naszych autorów i ich wkład w badania naukowe oraz praktykę kliniczną w Centrum Onkologicznym Memorial Sloan Kettering (MSK).\n\nJesteśmy zadowoleni z przedstawienia nowej publikacji w tym roku, Research in Review: An Analysis of MSK Publications 20162020. Ten rozszerzony raport zapewnia bardziej dogłębną analizę publikacji powiązanych z Centrum i zapewnia szeroki przegląd metryk zazwyczaj stosowanych do oceny wpływu badań na poziomach artykułu, czasopisma i autora. W okresie pod analizą zespół Synapse uzyskał dostęp i edytował ponad 25,500 publikacji akademickich. Te odniesienia są jednym z aspektów złożonego środowiska badawczego, które jest badane w tej analizie. Raport bada również demografię autorów, obecne miary wpływu oraz metodologie stosowane do oceny wpływu badań, a także identyfikuje niektóre interesujące trendy oparte na wiarygodnych źródłach, takich jak PubMed Central 2 (PMC). Głównym celem tego raportu jest zwiększenie świadomości na temat różnych sposobów, w jakie wkłady badawcze mogą być rozumiane i oceniane.\n\nSynapse jest publicznie dostępną, autorytatywną bibliograficzną bazą danych publikacji MSK i jest tworzona oraz zarządzana przez profesjonalny zespół bibliotekarzy. Rejestruje pracę intelektualną badaczy, klinicystów, pielęgniarek i pracowników opieki zdrowotnej MSK w całej instytucji.\n\nPlanujemy również publikować więcej publikacji Research in Review w przyszłości i chcielibyśmy usłyszeć opinie czytelników na temat tego raportu.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Mixed",
+      "word_count": 200,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "Polish research summary report about MSK publications - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

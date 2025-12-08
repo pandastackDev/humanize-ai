@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_academic_psych_001",
+    "text": "The study was approved by the Institutional Review Board of the Department of Psychology, University of Sargodha (IRB 499/2023). Once the ethical clearance was obtained, a Google Form was created to contain all the demographic items and standardized scales needed to collect the data.\n\nGoogle Forms was chosen as the main data-collection instrument because it is practical, cost-effective, and accessible. Most of the students had access to devices that could fill online questionnaires, and no major technical or accessibility challenges were noted.\n\nThe participants were contacted at different places and given a clear description of the study objectives and methods. In line with the ethical principles, informed consent was only written after assuring confidentiality and answering all questions raised by the participants. At the end, participants were thanked to cooperate.\n\nData Analysis\n\nAfter data collection was done, all the responses were exported into Excel, coded and then imported into IBM SPSS to be analyzed statistically. The correct statistical procedures were used and the findings were summarized and discussed to prepare the study report.\n\nAMOS v26 was used to evaluate the final structural model. The hypothesized relationships were tested by maximum likelihood estimation (MLE). Path analysis was performed and model fit was assessed based on absolute and relative fit indices, such as 2, RMSEA, GFI, NFI, IFI, TLI, and CFI. Mediation was analyzed through bootstrapping using 2,000 samples.\n\nThe model-fit assessment was conducted according to the accepted standards: CFI, TLI, NFI, and IFI 0.90 and above (Cortina et al., 2017; Grieger, 2021); SRMR 0.10 and below (Bentler, 1990); and RMSEA 0.05 and below (Brown, 2006; Browne and Cudeck, 1993). Nevertheless, previous studies have shown that RMSEA can be inappropriate in simple path analysis with small degrees of freedom. CFI and SRMR should be the main criteria on which decisions about model adequacy are made in such situations (Kenny et al., 2015).",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 299,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "English academic text about psychology research methodology - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "academic",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

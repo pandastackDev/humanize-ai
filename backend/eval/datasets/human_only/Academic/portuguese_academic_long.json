@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pt_academic_001",
+    "text": "A filosofia ocupa um lugar central na busca humana pelo conhecimento e compreensão. Desde os tempos antigos, os filósofos têm questionado a natureza da realidade, a origem do conhecimento, os fundamentos da ética e o significado da existência. Essas questões fundamentais continuam relevantes mesmo em nossa era tecnológica avançada.\n\nA lógica filosófica fornece ferramentas para o pensamento crítico e a análise rigorosa de argumentos. A ética filosófica explora questões sobre o certo e o errado, a justiça e a responsabilidade moral. A epistemologia investiga como adquirimos conhecimento e o que constitui justificação adequada para nossas crenças.\n\nA filosofia não oferece respostas definitivas, mas sim métodos de investigação e frameworks conceituais para abordar questões complexas. Ela nos ensina a questionar pressupostos, a considerar múltiplas perspectivas e a pensar de forma sistemática sobre problemas que não podem ser resolvidos apenas através da observação empírica.\n\nNo mundo contemporâneo, a filosofia continua a informar debates sobre inteligência artificial, bioética, justiça social e sustentabilidade ambiental. O pensamento filosófico nos ajuda a navegar pelos desafios éticos e conceituais que surgem com o avanço tecnológico e as mudanças sociais.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Academic",
+      "word_count": 291,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "philosophy",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese academic text about philosophy",
+      "verified_human": true
+    }
+  }
+]

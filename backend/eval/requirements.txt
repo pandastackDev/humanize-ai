@@ -1,0 +1,33 @@
+# Evaluation framework dependencies
+
+# HTTP client
+httpx>=0.27.0
+
+# ML/NLP
+sentence-transformers>=2.2.0
+numpy>=1.24.0
+torch>=2.0.0
+
+# LLM APIs (for generating test samples)
+openai>=1.0.0
+anthropic>=0.18.0
+
+# Configuration
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-dotenv>=1.0.0
+
+# Additional test dependencies
+scikit-learn>=1.3.0  # For ROC-AUC, Brier score, ECE
+language-tool-python>=2.7.0  # For grammar checking
+langdetect>=1.0.9  # For language detection
+
+# Testing framework
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+
+# FastAPI test client
+fastapi>=0.109.0
+starlette>=0.35.0
+

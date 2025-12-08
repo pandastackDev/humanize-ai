@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_fr_academic_psych_001",
+    "text": "Tout d'abord, le sujet a été approuvé par le comité d'examen institutionnel du département de psychologie, université de Sargodha (IRB, 499/2023). Suite à l'obtention des autorisations, un formulaire Google a été créé, qui comprenait toutes les échelles et questions démographiques pour faciliter la collecte de données.\n\nGoogle Forms a été utilisé car il est pratique et économique. La plupart des étudiants avaient accès à l'équipement approprié, et aucune préoccupation majeure concernant l'accessibilité ou les difficultés techniques n'a été identifiée.\n\nLes participants ont été contactés dans différents lieux et ont reçu des informations détaillées sur l'objectif de l'étude. En tenant compte des considérations éthiques, leur consentement éclairé écrit a été obtenu après avoir assuré la confidentialité des données. Toutes les questions ont été répondues et à la fin, ils ont été remerciés pour leur participation à l'étude.\n\nAnalyse des données\n\nSuite à la phase de collecte de données, les réponses ont été rassemblées dans une feuille Excel, codées et importées dans IBM-SPSS pour une analyse statistique supplémentaire. Les tests statistiques pertinents ont été effectués. Enfin, les résultats ont été analysés, compilés et discutés dans le rapport d'étude. Le modèle final de la présente étude a été testé via AMOS V26. Les relations prédites dans les modèles proposés ont été testées via AMOS en utilisant l'estimation du maximum de vraisemblance standard (MLE). L'analyse de chemin a été effectuée et ces relations au sein du modèle ont été mesurées pour la qualité d'ajustement et la signification par des indices d'ajustement absolus ; statistique d'ajustement χ2, l'erreur quadratique moyenne d'approximation (RMSEA), l'indice d'ajustement (GFI), indices d'ajustement relatifs, c'est-à-dire indice d'ajustement normé (NFI), indice d'ajustement incrémental (IFI), indice Tucker-Lewis (TLI), indice d'ajustement comparatif (CFI). Le modèle de médiation a été vérifié avec le test de médiation en utilisant la méthode de bootstrapping effectuée sur 2 000 échantillons bootstrap dans AMOS.\n\nPour l'évaluation des indices d'ajustement du modèle, les critères recommandés ont été suivis ; un indice d'ajustement comparatif (CFI), l'indice de Tucker-Lewis (TLI), indice d'ajustement normé (NFI) et indice d'ajustement incrémental (IFI) ≥ 0,90 (Cortina et al., 2017 ; Grieger, 2021) ; résidu quadratique moyen standardisé (SRMR < 0,1) (Bentler, 1990) et l'erreur quadratique moyenne d'approximation (RMSEA), où les valeurs ≤ 0,05 (Brown, 2006 ; Browne and Cudeck, 1993). Il a été observé que RMSEA a des problèmes avec l'analyse de chemin simple, en particulier avec moins de degrés de liberté. Dans ces modèles, la plupart du temps, RMSEA montre incorrectement un mauvais ajustement, même si le modèle s'ajuste bien aux données. Par conséquent, dans de telles conditions, l'acceptation du modèle devrait être basée sur CFI et SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "fr",
+      "tone": "Academic",
+      "word_count": 298,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "French academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_fr_legal_material_explanation_001",
+    "text": "Les professionnels de la santé ont à la fois un devoir légal et éthique d'assurer la confidentialité des données des patients. Cette obligation s'aligne étroitement avec le droit constitutionnellement protégé à la vie privée en Afrique du Sud. Les patients divulguent des informations personnelles hautement sensibles avec l'attente qu'elles restent privées et sécurisées. En général, révéler les détails médicaux d'une autre personne sans consentement constitue une violation légale et éthique.\n\nCependant, la confidentialité n'est pas un principe absolu. La Constitution sud-africaine prévoit que certains droits peuvent être limités lorsqu'il est raisonnable et justifiable de le faire. En vertu de l'article 36, les droits constitutionnels conflictuels—tels que la vie privée et la liberté d'expression—doivent être équilibrés pour servir les intérêts plus larges de la justice.\n\nChaque personne en Afrique du Sud détient un droit constitutionnellement reconnu à la vie privée, qui inclut la protection contre l'intrusion dans les communications privées. Cette protection s'étend explicitement aux informations médicales échangées entre les patients et les prestataires de soins de santé. La sauvegarde de ces informations est un composant critique pour maintenir la confiance au sein du système de santé.\n\nLorsque les patients ne peuvent pas faire confiance que leurs informations resteront confidentielles, ils peuvent choisir de retenir des détails de santé essentiels. De telles omissions peuvent entraîner des diagnostics erronés, des soins compromis, et même des dommages aux résultats de santé du patient.\n\nLes protections légales renforcent ces devoirs éthiques. L'article 61 de la Loi sur la santé nationale (2003) et l'article 2 de la Loi sur la promotion de l'accès à l'information (2000) établissent des normes claires pour l'accès aux dossiers médicaux. Ces statuts visent spécifiquement à sécuriser les informations gérées par les professionnels de la santé. La responsabilité de superviser et protéger ces données incombe aux responsables de l'information désignés dans les institutions publiques et aux dirigeants des entités de soins de santé privées.\n\nDe plus, l'article 4 de la Loi sur la protection des renseignements personnels (2013) impose des restrictions générales sur le traitement—collecte, stockage et partage—des données de santé personnelles. Néanmoins, la Loi permet des exceptions: le traitement est permis si l'individu fournit un consentement explicite ou si la divulgation est nécessaire à des fins médicales, institutionnelles ou de bien-être social légitimes.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Professional",
+      "word_count": 299,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "French legal material explanation about patient confidentiality and privacy rights - AI generated",
+      "verified_human": false
+    }
+  }
+]

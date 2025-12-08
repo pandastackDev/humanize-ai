@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_en_academic_psych_001",
+    "text": "First of all, the topic was approved by the Institutional Review Board of, the Department of Psychology, University of Sargodha (IRB, 499/2023). Following the acquisition of permissions, a Google Form was created, which included all scales and demographic questions to facilitate data collection.\n\nGoogle Forms were used because it is practical and economical. Most students had access to the appropriate equipment, and no major concerns with accessibility or technical difficulties were identified.\n\nParticipants were contacted in different venues and they were provided with detailed information about the purpose of the study. Keeping in view the ethical considerations, their written informed consent was taken after ensuring the confidentiality of data. All queries were answered and at the end, they were thanked for their participation in the study.\n\nData analysis\n\nFollowing the data collecting phase, responses were gathered in an Excel sheet, coded, and imported into IBM-SPSS for further statistical analysis. The relevant statistical tests were performed. Finally, the results were analyzed, compiled, and discussed in the study report. The final model of the present study was tested through AMOS V26. The predicted relationships in the proposed models were tested through AMOS by using maximum standard likelihood estimation (MLE). Path analysis was performed and these relationships within the model were measured for the goodness of fit and significance by absolute fit indices; χ2 goodness-of-fit statistic, the Root Mean Square Error of Approximation (RMSEA), the Goodness-of-Fit Index (GFI), relative fit indices, i.e., Normed Fit Index (NFI), Incremental Fit Index (IFI), Tucker-Lewis Index (TLI), Comparative Fit Index (CFI). The model of mediation was verified with the test of mediation by using the bootstrapping method performed on 2,000 boots strap samples in AMOS.\n\nFor the evaluation of model fit indices, recommended criteria were followed; a comparative fit index (CFI), Tucker–Lewis's index (TLI), Normed Fit Index (NFI), and Incremental Fit Index (IFI) ≥ 0.90 (Cortina et al., 2017; Grieger, 2021); standardized root mean square residual (SRMR < 0.1) (Bentler, 1990) and the root mean square error of approximation (RMSEA), where values ≤ 0.05 (Brown, 2006; Browne and Cudeck, 1993). It has been observed that RMSEA has problems with simple path analysis especially with less degree of freedom. In these models, most of the time RAMSEA wrongly shows a poor fit, even though the model fits the data well. So, in such conditions, acceptance of the model should be based on CFI and SRM (Kenny et al., 2015).",
+    "metadata": {
+      "language": "en",
+      "tone": "Academic",
+      "word_count": 301,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "English academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

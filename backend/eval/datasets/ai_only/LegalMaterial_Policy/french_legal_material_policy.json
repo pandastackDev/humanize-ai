@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_fr_legal_material_policy_001",
+    "text": "Les professionnels de la santé sont légalement et éthiquement tenus de maintenir la confidentialité des patients. Cette obligation est étroitement liée au droit constitutionnel à la vie privée, qui est explicitement protégé par la loi sud-africaine. Les patients divulguent des informations hautement personnelles et sensibles aux prestataires de soins de santé avec l'attente que ces informations resteront confidentielles. En règle générale, la divulgation d'informations médicales sans le consentement d'un patient est à la fois illégale et inacceptable.\n\nNéanmoins, la confidentialité n'est pas absolue. L'article 36 de la Constitution permet la limitation de certains droits lorsque cette limitation est raisonnable et justifiable dans une société ouverte et démocratique. Dans les circonstances où les droits constitutionnels entrent en conflit—tels que le droit à la vie privée contre le droit à la liberté d'expression—un exercice d'équilibrage doit être entrepris pour déterminer quel droit devrait prévaloir dans l'intérêt de la justice.\n\nLa Constitution garantit à chaque individu en Afrique du Sud le droit à la vie privée, y compris la protection contre l'atteinte illégale aux communications privées. Les informations médicales font partie de ces communications et divulgations protégées. Préserver la confidentialité dans le contexte des soins de santé est essentiel; sans cette assurance, les patients peuvent retenir des informations médicales critiques, compromettant potentiellement le diagnostic, le traitement et les résultats de santé globaux.\n\nLes cadres statutaires tels que la Loi nationale sur la santé 61 de 2003 et la Loi sur la promotion de l'accès à l'information 2 de 2000 réglementent l'accès aux dossiers médicaux et aux informations de santé personnelles. Ces lois établissent des contrôles stricts sur la façon dont ces informations sont consultées, stockées et divulguées, en assignant la responsabilité aux responsables de l'information dans les institutions publiques et aux dirigeants désignés des organismes privés.\n\nDe plus, la Loi sur la protection des renseignements personnels 4 de 2013 impose une interdiction générale sur le traitement des renseignements personnels spéciaux, y compris les données liées à la santé. Cependant, la LPRP reconnaît des exceptions spécifiques, permettant le traitement lorsque le consentement explicite a été fourni ou lorsque la divulgation est nécessaire pour le traitement médical, la prestation de soins de santé ou les fonctions de services sociaux liées aux soins aux patients.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Professional",
+      "word_count": 300,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "French legal material policy about patient confidentiality and privacy rights - AI generated",
+      "verified_human": false
+    }
+  }
+]

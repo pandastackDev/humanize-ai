@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pl_report_research_summary_001",
+    "text": "Zespół Synapse prowadzony przez Jeanine McSweeney, Zastępczynię Bibliotekarza, Komunikacji Naukowej, publikuje corocznie raporty Synapse Publications, prezentując wkład naszych autorów w korpus wiedzy naukowej oraz ich działalność badawczą i kliniczną związaną z Centrum Onkologicznym Memorial Sloan Kettering (MSK).\n\nW tym roku z radością dzielę się, że dodaliśmy nowy raport zatytułowany \"Research In Review: An Analysis of MSK Publications 2016-2020,\" który zagłębia się głębiej w publikacje powiązane z Centrum. Ten raport zapewnia wgląd w różnorodność istniejących metryk używanych do pomiaru wpływu badań na poziomie artykułu, czasopisma lub autora. W okresie objętym tym raportem zespół Synapse pobrał i opracował ponad 25,500 prac, i to z tymi cytatami dzielimy się jednym aspektem bardzo złożonej historii badawczej. Ten raport podkreśla demografię naszej społeczności autorów, istniejące metryki oraz sposób, w jaki mierzony jest wpływ badań. Ponadto dzielimy się interesującymi faktami na temat zestawów danych związanych z publikacjami zebranych z różnych wiarygodnych zasobów, takich jak PubMed Central® (PMC). Nasze intencje w tworzeniu tego raportu są po prostu zwiększenie świadomości na temat możliwych sposobów postrzegania wkładów badawczych.\n\nSynapse jest zasobem publicznym i autorytatywną bibliograficzną bazą danych publikacji MSK, rozwijaną i utrzymywaną przez zespół wykwalifikowanych bibliotekarzy. Ta baza danych zapewnia zapis dorobku intelektualnego napisanego przez badaczy, klinicystów, pielęgniarki i innych pracowników opieki zdrowotnej MSK.\n\nMamy nadzieję w przyszłości tworzyć inne publikacje typu \"Research In Review\". Proszę, nie wahaj się skontaktować ze mną, aby podzielić się swoimi przemyśleniami na temat tego raportu.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Professional",
+      "word_count": 201,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "Polish research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

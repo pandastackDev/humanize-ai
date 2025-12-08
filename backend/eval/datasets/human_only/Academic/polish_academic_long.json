@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pl_academic_001",
+    "text": "Prawo stanowi fundament porządku społecznego, regulując relacje między jednostkami, organizacjami i państwem. Systemy prawne różnią się między krajami, odzwierciedlając różne tradycje kulturowe, wartości społeczne i historyczne doświadczenia. Prawo konstytucyjne określa podstawową strukturę rządu i prawa obywatelskie.\n\nPrawo cywilne reguluje relacje między osobami prywatnymi, obejmując takie obszary jak umowy, własność i odpowiedzialność. Prawo karne definiuje przestępstwa i określa kary za ich popełnienie. Prawo administracyjne zarządza działalnością agencji rządowych i ich interakcjami z obywatelami.\n\nWymiar sprawiedliwości odgrywa kluczową rolę w interpretacji i stosowaniu prawa. Sędziowie muszą być niezależni i bezstronni, aby zapewnić sprawiedliwe rozstrzygnięcia. System prawny opiera się na zasadzie, że wszyscy są równi wobec prawa i mają prawo do sprawiedliwego procesu.\n\nEwolucja prawa odzwierciedla zmieniające się potrzeby społeczeństwa. Nowe technologie, zmiany społeczne i globalizacja stwarzają nowe wyzwania prawne, które wymagają ciągłego dostosowywania systemów prawnych. Prawo międzynarodowe staje się coraz ważniejsze w rozwiązywaniu problemów, które wykraczają poza granice narodowe.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Academic",
+      "word_count": 298,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "law",
+      "date_added": "2025-12-04",
+      "notes": "Polish academic text about legal systems",
+      "verified_human": true
+    }
+  }
+]

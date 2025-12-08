@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_zh_report_research_summary_001",
+    "text": "由Jeanine McSweeney（学术传播副馆长）领导的Synapse团队每年发布Synapse Publications报告，展示我们作者对科学知识体系的贡献以及他们与Memorial Sloan Kettering (MSK)癌症中心相关的研究和临床活动。\n\n今年我很高兴地分享，我们添加了一份新的报告，题为《Research In Review: An Analysis of MSK Publications 2016-2020》，该报告更深入地探讨了与中心相关的出版物。本报告提供了用于在文章、期刊或作者层面衡量研究影响的各种现有指标的见解。在本报告涵盖的期间，Synapse团队检索并整理了超过25,500篇作品，正是通过这些引用，我们分享了一个非常复杂的研究故事的一个方面。本报告突出了我们作者社区的人口统计、现有指标以及如何衡量研究影响。此外，我们分享了从PubMed Central® (PMC)等各种可信资源收集的与出版物相关的数据集的有趣事实。我们制作本报告的意图只是提高对可能查看研究贡献的方式的认识。\n\nSynapse是一个面向公众的资源，也是MSK出版物的权威书目数据库，由一支熟练的图书馆员团队开发和维护。该数据库记录了MSK研究人员、临床医生、护士和其他医疗保健专业人员撰写的智力产出。\n\n我们希望在未来制作其他类型的《Research In Review》出版物。请随时与我联系，分享您对本报告的想法。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Professional",
+      "word_count": 200,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "Chinese research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

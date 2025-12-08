@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pt_legal_material_policy_001",
+    "text": "Os profissionais de saúde são obrigados a respeitar a confidencialidade do paciente por razões éticas e legais. Este dever está intimamente ligado ao direito constitucional à privacidade, que é fortemente protegido na África do Sul. Os pacientes compartilham informações médicas pessoais e sensíveis com seus médicos confiando que permanecerão privadas, e na maioria dos casos, é ilegal e inaceitável divulgar tais informações sem o consentimento do paciente.\n\nDito isto, a confidencialidade não é uma regra absoluta. Como muitos princípios legais, ela tem exceções. Sob a Seção 36 da Constituição, certos direitos podem ser limitados quando é razoável e necessário equilibrar interesses concorrentes. Por exemplo, se o direito à privacidade entrar em conflito com outro direito constitucional, como a liberdade de expressão, a lei pode permitir que um direito seja limitado para servir à justiça.\n\nA Constituição declara claramente que todos têm o direito à privacidade, incluindo proteção contra interferência injustificada em suas comunicações. As informações médicas se enquadram diretamente nesta proteção. Se os pacientes não se sentem confiantes de que suas divulgações permanecerão confidenciais, eles podem reter informações cruciais, o que poderia afetar seriamente seu tratamento e saúde geral.\n\nVárias leis regulam o acesso a registros médicos e informações de saúde pessoal. A Lei Nacional de Saúde 61 de 2003 e a Lei de Promoção de Acesso à Informação 2 de 2000 estabelecem como as informações do paciente devem ser protegidas e quem é responsável por gerenciá-las. Tanto em instituições públicas quanto privadas, funcionários específicos são encarregados de controlar o acesso a esses dados sensíveis.\n\nA Lei de Proteção de Informações Pessoais 4 de 2013 restringe ainda mais o processamento de informações relacionadas à saúde. Em geral, essas informações não podem ser coletadas, usadas ou compartilhadas, a menos que certas condições sejam atendidas. Isso inclui situações em que o paciente deu consentimento explícito ou onde a divulgação é necessária para garantir tratamento médico adequado ou cuidados por profissionais de saúde ou serviços relacionados.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

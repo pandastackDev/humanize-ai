@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pt_academic_psych_001",
+    "text": "O protocolo de pesquisa recebeu aprovação formal do Comitê de Revisão Institucional do Departamento de Psicologia, Universidade de Sargodha (IRB 499/2023). Após a concessão da autorização ética, um Formulário Google foi projetado para incluir todos os itens demográficos e escalas padronizadas necessárias para a coleta de dados.\n\nGoogle Forms foi selecionado como a ferramenta principal de coleta de dados devido à sua praticidade, eficiência de custos e acessibilidade. A maioria dos estudantes possuía dispositivos capazes de completar questionários online, e nenhuma barreira técnica ou de acessibilidade significativa foi relatada.\n\nOs participantes foram abordados em vários locais e receberam uma explicação detalhada dos objetivos e procedimentos do estudo. Consistente com as diretrizes éticas, o consentimento informado por escrito foi obtido apenas após garantir a confidencialidade e abordar todas as consultas dos participantes. Os participantes foram agradecidos por sua cooperação ao concluir.\n\nAnálise de Dados\n\nUma vez que a coleta de dados foi concluída, todas as respostas foram exportadas para Excel, codificadas e subsequentemente importadas para IBM SPSS para análise estatística. Procedimentos estatísticos apropriados foram aplicados, e os resultados foram compilados e interpretados para o relatório do estudo.\n\nO modelo estrutural final foi avaliado usando AMOS v26. A estimativa de máxima verossimilhança (MLE) foi usada para testar as relações hipotetizadas. A análise de caminhos foi conduzida, e o ajuste do modelo foi avaliado usando índices de ajuste absolutos e relativos, incluindo χ², RMSEA, GFI, NFI, IFI, TLI e CFI. A mediação foi examinada via bootstrapping com 2.000 amostras.\n\nA avaliação do ajuste do modelo seguiu critérios estabelecidos: CFI, TLI, NFI e IFI ≥ 0,90 (Cortina et al., 2017; Grieger, 2021); SRMR < 0,10 (Bentler, 1990); e RMSEA ≤ 0,05 (Brown, 2006; Browne & Cudeck, 1993). No entanto, pesquisas anteriores indicam que RMSEA pode indicar incorretamente um ajuste de modelo ruim em análises de caminhos simples com graus de liberdade limitados. Nesses casos, as decisões sobre a adequação do modelo devem depender principalmente de CFI e SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "pt",
+      "tone": "Academic",
+      "word_count": 294,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese academic text about psychology research methodology",
+      "verified_human": false
+    }
+  }
+]

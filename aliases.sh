@@ -141,15 +141,19 @@ gwt() {
 
   # Find the absolute repo root
   local repo_root
-  repo_root=$(git rev-parse --show-toplevel 2>/dev/null) || {
+  if ! repo_root=$(git rev-parse --show-toplevel 2>/dev/null); then
     echo "❌ Not inside a git repo"
     return 1
-  }
+  fi
 
   local git_dir
-  git_dir=$(git rev-parse --git-dir 2>/dev/null) || return 1
+  if ! git_dir=$(git rev-parse --git-dir 2>/dev/null); then
+    return 1
+  fi
   local git_common_dir
-  git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null) || return 1
+  if ! git_common_dir=$(git rev-parse --git-common-dir 2>/dev/null); then
+    return 1
+  fi
 
   # Normalize both to absolute paths for comparison
   # (git may return relative paths when run from subdirectories)

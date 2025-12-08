@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_id_marketing_email_001",
+    "text": "Pemasaran email memiliki banyak praktik terbaik, dan kecepatan bukan salah satunya. Meskipun tenggat waktu dapat menyebabkan kebutuhan untuk terburu-buru dan meluncurkan, terburu-buru dalam membuat kampanye dapat mengakibatkan detail yang hilang dalam desain, pesan, dan baris subjek, yang merupakan penyebab langsung kinerja.\n\nKetika email tidak memenuhi harapan pelanggan atau kehilangan fokus mereka pada apa yang awalnya dilanggani orang, tingkat keterlibatan kemungkinan akan menurun. Ini dapat menyebabkan penurunan jumlah pembukaan dan klik, dan dalam kasus lain, peningkatan jumlah berhenti berlangganan atau spam. Selalu merupakan ide yang baik untuk meluangkan waktu dan meninjau daftar, konten, dan strategi umum Anda untuk memastikan kampanye Anda efektif dan diterima dengan baik.\n\n8. Memahami Filter Spam\n\nFilter spam didasarkan pada set aturan yang terus berubah yang mendefinisikan apakah email akan ditempatkan di kotak masuk atau spam. Sistem ini dilatih pada perilaku pengguna—semakin banyak orang yang melabeli email sebagai spam, semakin akurat filter menjadi. Sebagian besar filter spam juga bertukar informasi satu sama lain, meningkatkan kemampuan deteksi mereka.\n\nMeskipun tidak ada metode yang pasti untuk sepenuhnya mengalahkan filter spam, pemasar dapat mencegah pemicu paling sering dengan mengikuti praktik terbaik:\n\nLindungi reputasi Anda sebagai pengirim. Filter spam lainnya mempertimbangkan riwayat IP pengiriman. Dalam kasus platform seperti Mailchimp, pesan dikirimkan melalui server bersama, yang menyiratkan bahwa satu pengguna jahat dapat mempengaruhi yang lain. Kepatuhan yang ketat berguna untuk memastikan bahwa kemampuan pengiriman keseluruhan tinggi.\n\nGunakan template yang dikodekan dengan baik. Struktur HTML yang buruk, tag yang berlebihan, atau kode yang disalin dari editor teks dapat menjadi bendera merah. Dalam kasus ketidakpastian, terapkan template yang dibuat secara profesional atau konsultasikan dengan ahli.\n\nBersikaplah terbuka dalam komunikasi Anda. Pastikan jelas mengapa Anda menghubungi pelanggan dan apa yang Anda tawarkan.\n\nKirim hanya ke pelanggan yang telah memilih untuk berpartisipasi. Daftar berbasis izin sangat meminimalkan keluhan spam dan berhenti berlangganan.\n\nTetap konsisten. Buat konten dan desain email Anda konsisten dengan merek yang dikenal pelanggan di situs web dan media sosial Anda.",
+    "metadata": {
+      "language": "id",
+      "tone": "Mixed",
+      "word_count": 266,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian marketing material about email marketing best practices - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "marketing",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

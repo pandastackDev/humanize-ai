@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_fr_marketing_email_001",
+    "text": "Le marketing par e-mail suit de nombreuses meilleures pratiques, et la vitesse en fait rarement partie. Bien que les délais puissent créer une pression pour lancer rapidement, se précipiter dans la création de campagnes conduit souvent à des détails négligés dans la conception, la messagerie et les lignes d'objet—des détails qui affectent directement les performances.\n\nLorsque les e-mails ne correspondent pas aux attentes des abonnés ou s'éloignent de ce pour quoi les gens se sont initialement inscrits, les taux d'engagement ont tendance à baisser. Cela peut entraîner moins d'ouvertures et de clics, et dans certains cas, des taux de désabonnement plus élevés ou des plaintes de spam. Prendre le temps de revoir votre liste, votre contenu et votre stratégie globale aide à garantir que vos campagnes restent efficaces et bien reçues.\n\n8. Comprendre les Filtres Anti-Spam\n\nLes filtres anti-spam s'appuient sur des ensembles de règles en constante évolution pour déterminer si un e-mail atterrit dans la boîte de réception ou le dossier spam. Ces systèmes apprennent du comportement des utilisateurs—chaque fois que quelqu'un marque un e-mail comme spam, les filtres deviennent plus précis. De nombreux filtres anti-spam partagent également des données entre eux, renforçant leurs capacités de détection.\n\nBien qu'il n'y ait pas de moyen garanti de contourner complètement les filtres anti-spam, les spécialistes du marketing peuvent éviter les déclencheurs courants en suivant des meilleures pratiques éprouvées:\n\nProtégez votre réputation d'envoi. Certains filtres anti-spam évaluent l'historique de l'IP d'envoi. Lors de l'utilisation de plateformes comme Mailchimp, les messages sont envoyés depuis des serveurs partagés, ce qui signifie qu'un mauvais acteur peut affecter les autres. Maintenir une conformité stricte aide à maintenir une délivrabilité globale élevée.\n\nUtilisez des modèles correctement codés. Une structure HTML médiocre, des balises inutiles ou du code copié depuis des éditeurs de texte peuvent lever des drapeaux rouges. En cas de doute, utilisez des modèles conçus professionnellement ou demandez l'aide d'un expert.\n\nSoyez transparent dans votre messagerie. Rendez évident pourquoi vous contactez les abonnés et quelle valeur vous offrez.\n\nEnvoyez uniquement aux abonnés qui ont opté pour l'inscription. Les listes basées sur les permissions réduisent considérablement les plaintes de spam et les désabonnements.\n\nRestez cohérent. Alignez le contenu et la conception de vos e-mails avec la marque que les abonnés reconnaissent de votre site Web et de vos canaux sociaux.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Marketing",
+      "word_count": 267,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "French marketing material about email marketing best practices",
+      "verified_human": false
+    }
+  }
+]

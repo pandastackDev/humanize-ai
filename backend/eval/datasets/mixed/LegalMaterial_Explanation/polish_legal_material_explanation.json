@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pl_legal_material_explanation_001",
+    "text": "Praktycy medyczni mają wyraźny prawny i etyczny obowiązek zachowania poufności informacji pacjentów. Ta odpowiedzialność jest ściśle powiązana z konstytucyjnym prawem do prywatności, które jest silnie chronione w Południowej Afryce. Pacjenci zwykle dzielą się głęboko osobistymi szczegółami ze swoimi dostawcami opieki zdrowotnej w rozumieniu, że te informacje nie będą ujawnione. Z reguły ujawnianie czyjejś informacji medycznej bez ich zgody jest zarówno nielegalne, jak i niedopuszczalne.\n\nTo powiedziawszy, jak większość zasad prawnych, poufność nie jest absolutna. Konstytucja pozwala na ograniczenie pewnych praw, gdy jest to rozsądne i uzasadnione. Sekcja 36 uznaje, że mogą powstać sytuacje, w których dwa prawa konstytucyjne wchodzą w konflikt. Na przykład, gdy prawo do prywatności zderza się z prawem do wolności wypowiedzi, jedno z tych praw może być ograniczone, jeśli interesy sprawiedliwości tego wymagają.\n\nKażdy w Południowej Afryce ma konstytucyjne prawo do prywatności, które obejmuje ochronę przed ingerencją w prywatne komunikacje. Ta ochrona rozciąga się na informacje medyczne dzielone między pacjentem a praktykiem medycznym. Zabezpieczenie tych informacji jest niezbędne.\n\nJeśli pacjenci nie mogą ufać, że ich ujawnienia pozostaną poufne, mogą zataić ważne szczegóły dotyczące swojego zdrowia. Ten brak otwartości może poważnie wpłynąć na leczenie medyczne i może nawet narazić zdrowie pacjenta na ryzyko.\n\nUstawa o Zdrowiu Narodowym 61 z 2003 roku i Ustawa o Promocji Dostępu do Informacji 2 z 2000 roku regulują dostęp do dokumentacji medycznej. Te ustawy zawierają konkretne przepisy mające na celu ochronę informacji osobistych, szczególnie informacji przechowywanych przez praktyków medycznych. Nakładają one odpowiedzialność za zarządzanie i ochronę takich informacji na urzędników informacyjnych w instytucjach publicznych i na szefów prywatnych podmiotów.\n\nDodatkowo, Ustawa o Ochronie Informacji Osobowych 4 z 2013 roku generalnie ogranicza przetwarzanie informacji zdrowotnych osobowych, w tym ich zbieranie i udostępnianie. Jednak Ustawa pozwala na wyjątki. Informacje zdrowotne osobowe mogą być przetwarzane, gdy osoba wyraziła wyraźną zgodę lub gdy ujawnienie jest konieczne dla właściwego leczenia i opieki przez profesjonalistów medycznych, instytucje opieki zdrowotnej lub dostawców usług społecznych.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "Polish legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

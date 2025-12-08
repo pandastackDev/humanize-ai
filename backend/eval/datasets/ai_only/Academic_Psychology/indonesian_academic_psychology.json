@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_id_academic_psych_001",
+    "text": "Protokol penelitian menerima persetujuan formal dari Dewan Tinjauan Institusional Departemen Psikologi, Universitas Sargodha (IRB 499/2023). Setelah izin etis diberikan, Formulir Google dirancang untuk mencakup semua item demografis dan skala terstandar yang diperlukan untuk pengumpulan data.\n\nGoogle Forms dipilih sebagai alat pengumpulan data utama karena kepraktisannya, efisiensi biaya, dan aksesibilitasnya. Mayoritas siswa memiliki perangkat yang mampu menyelesaikan kuesioner online, dan tidak ada hambatan teknis atau aksesibilitas yang signifikan yang dilaporkan.\n\nPara peserta dihubungi di berbagai lokasi dan diberikan penjelasan rinci tentang tujuan dan prosedur penelitian. Sesuai dengan pedoman etika, persetujuan tertulis yang diinformasikan diperoleh hanya setelah memastikan kerahasiaan dan menangani semua pertanyaan peserta. Para peserta diucapkan terima kasih atas kerja sama mereka setelah selesai.\n\nAnalisis Data\n\nSetelah pengumpulan data selesai, semua tanggapan diekspor ke Excel, dikodekan, dan kemudian diimpor ke IBM SPSS untuk analisis statistik. Prosedur statistik yang sesuai diterapkan, dan hasil dikompilasi dan diinterpretasikan untuk laporan penelitian.\n\nModel struktural akhir dinilai menggunakan AMOS v26. Estimasi kemungkinan maksimum (MLE) digunakan untuk menguji hubungan yang dihipotesiskan. Analisis jalur dilakukan, dan kesesuaian model dievaluasi menggunakan indeks kesesuaian absolut dan relatif, termasuk χ², RMSEA, GFI, NFI, IFI, TLI, dan CFI. Mediasi diperiksa melalui bootstrapping dengan 2.000 sampel.\n\nEvaluasi kesesuaian model mengikuti kriteria yang ditetapkan: CFI, TLI, NFI, dan IFI ≥ 0,90 (Cortina et al., 2017; Grieger, 2021); SRMR < 0,10 (Bentler, 1990); dan RMSEA ≤ 0,05 (Brown, 2006; Browne & Cudeck, 1993). Namun, penelitian sebelumnya menunjukkan bahwa RMSEA mungkin secara tidak akurat menunjukkan kesesuaian model yang buruk dalam analisis jalur sederhana dengan derajat kebebasan terbatas. Dalam kasus seperti itu, keputusan mengenai kecukupan model harus terutama bergantung pada CFI dan SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "id",
+      "tone": "Academic",
+      "word_count": 292,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian academic text about psychology research methodology",
+      "verified_human": false
+    }
+  }
+]

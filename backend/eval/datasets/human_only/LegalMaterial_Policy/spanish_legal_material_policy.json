@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_es_legal_material_policy_001",
+    "text": "Se requiere que los profesionales médicos cumplan con el principio de confidencialidad por razones éticas y legales. La confidencialidad también está vinculada con el derecho a la privacidad, que es un derecho humano protegido bajo nuestra Constitución. Los pacientes a menudo se acercan a sus proveedores de atención médica de confianza con la confianza de que sus asuntos personales se mantendrán privados y, en general, es inaceptable e ilegal divulgar la información médica de cualquier persona sin su consentimiento. Sin embargo, como con muchas reglas en la ley, hay excepciones que pueden aplicarse a la regla general. La Sección 36 de la Constitución puede limitar ciertos derechos humanos y puede aplicarse cuando se debe lograr un equilibrio entre dos derechos en competencia. Por ejemplo, donde el derecho a la privacidad y el derecho a la libertad de expresión están en conflicto, un derecho podría prevalecer sobre el otro si está en los intereses de la justicia que uno de los derechos sea limitado.\n\nLa Constitución establece que todos en Sudáfrica tienen el derecho a la privacidad, que incluye el derecho a no tener la privacidad de sus comunicaciones infringida.\n\nEn cuanto a la información médica se refiere, la privacidad de las comunicaciones o divulgaciones de un paciente a los profesionales médicos debe ser protegida. Si la confianza del paciente no está protegida, es probable que él/ella no esté dispuesto a divulgar información que es crítica para su tratamiento médico. Esto podría producir un resultado catastrófico que podría tener un impacto negativo en la salud del paciente.\n\nLa Ley Nacional de Salud 61 de 2003 (\"NHA\") y la Ley de Promoción del Acceso a la Información 2 de 2000 (\"PAIA\") regulan los derechos de los pacientes y terceros para acceder a los registros médicos. Hay cláusulas especiales relacionadas con la información personal, particularmente información mantenida por profesionales médicos, y el derecho a la privacidad. En términos de estas cláusulas, toda la información debe ser controlada por oficiales de información en instituciones públicas y los jefes de organismos privados.\n\nLa Ley de Protección de Información Personal 4 de 2013 (\"POPI\") también prohíbe el procesamiento (como recopilar y compartir) de información personal sobre la salud de una persona, entre otros motivos reconocidos, como regla general. Sin embargo, POPI sí permite el procesamiento de información sobre la salud de una persona en ciertos casos, como cuando esa persona ha consentido expresamente al procesamiento de la información. Otro ejemplo donde no se tiene que obtener consentimiento es donde los profesionales médicos, instituciones de atención médica o servicios sociales deben divulgar la información para el tratamiento y cuidado adecuado del paciente.",
+    "metadata": {
+      "language": "es",
+      "tone": "Professional",
+      "word_count": 299,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Spanish legal material policy about patient confidentiality and privacy rights - human written version",
+      "verified_human": true
+    }
+  }
+]

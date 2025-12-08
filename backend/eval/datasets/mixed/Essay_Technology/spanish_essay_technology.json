@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_es_essay_tech_001",
+    "text": "La próxima década verá a la inteligencia artificial transformar el trabajo de cuello blanco de maneras tanto transformadoras como sutiles. Aunque la mayoría de las predicciones se basan en la pérdida dramática de empleos, la más realista es el cambio gradual en responsabilidades, habilidades y flujos de trabajo. El trabajo cognitivo rutinario, incluyendo la redacción de correos, análisis básico de datos, generación de informes y programación, será cada vez más automatizado por la IA, permitiendo a los empleados trabajar en tareas de mayor valor basadas en el juicio. Este cambio no eliminará a los trabajadores humanos pero alterará el tipo de contribución que hacen.\n\nEntre las transformaciones más notables estarán las industrias intensivas en conocimiento como finanzas, derecho, consultoría y administración de atención médica. Los sistemas de IA proporcionarán información rápida sobre grandes volúmenes de datos, complementando la toma de decisiones humanas y no eliminándola por completo. Como ejemplo, los analistas financieros pueden pasar menos tiempo en la creación de hojas de cálculo y más tiempo en la interpretación de predicciones generadas por IA o asesoramiento a clientes. De manera similar, los abogados pueden usar IA para realizar investigaciones de casos más rápidas, lo que les permitirá enfocarse más en estrategia y defensa del cliente.\n\nSin embargo, estas ventajas vienen acompañadas de dificultades. Los empleados tendrán que aprender a usar nuevas herramientas y adquirir nuevas habilidades, especialmente en áreas como ingeniería de prompts, alfabetización de datos y colaboración humano-IA. Aquellos empleados que no abracen este cambio estarán en desventaja a medida que las empresas se reorganicen en torno a la eficiencia mejorada por IA. Las empresas, a su vez, deben invertir en educación y asegurarse de que las herramientas de IA se usen de manera ética y transparente para prevenir la expansión de la brecha de habilidades y la introducción de sesgos en decisiones clave.\n\nLa otra implicación significativa es el aspecto emocional y social del trabajo. Cuanto más trabajo mecánico haga la IA, más se apreciarán los rasgos específicamente humanos, como creatividad, empatía, comunicación y liderazgo. Los equipos pueden reducirse en tamaño y especializarse, y la IA puede ser un socio permanente. Este desarrollo podría resultar en trabajos más gratificantes, pero también podría causar confusión a aquellos que no están seguros de cómo hacer frente al cambio.",
+    "metadata": {
+      "language": "es",
+      "tone": "Mixed",
+      "word_count": 380,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "technology",
+      "date_added": "2025-12-04",
+      "notes": "Spanish essay about AI and white-collar work - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional_essay",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

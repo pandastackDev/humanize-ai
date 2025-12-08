@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_en_marketing_email_001",
+    "text": "There are many best practices for email marketing, but rushing to get emails out is not one of them. We know you might be under the pressure of a strict deadline, but speeding through the campaign creation process without thinking about your design, content, and subject line can cause some issues.\n\nIf your content isn't relevant to your subscribers or is different from what they signed up for, there's a chance you'll see a decrease in opens and clicks or a rise in spam complaints and unsubscribe rates. So slow down, take a breath, and make sure your list and campaigns are in pristine condition.\n\n8. Understand spam filters\n\nEmail spam filters use a long list of criteria to decide whether or not your campaign will be placed in a recipient's spam folder.\n\nThe list of spammy criteria is constantly growing and adapting because filters learn more about what spam looks like every time someone clicks \"This is junk\" or \"Mark as spam\" in their email client. Spam filters even sync up with each other to share what they've learned.\n\nThere's no magic formula for evading spam filters, but we have some tips email marketers can use to avoid the most common mistakes that get emails marked as spam.\n\nMaintain a good sending reputation. Some spam filters will flag a campaign if anyone with the same IP address has ever sent spam. When you send through Mailchimp, your campaigns are delivered through our servers, so one person getting flagged for spam could affect the deliverability of our users. That's why we work vigilantly to keep our sending reputation intact and require users to abide by our Terms of Use.\n\nUse email templates that are properly coded. Sloppy code, extra tags, or formatting code pulled in from a rich-text editor can trigger spam filters. If you're not familiar with HTML code, we recommend using one of our templates or working with an expert.\n\nMake your intentions clear. You'll also want to make sure your intent is clear so your subscribers know why you're emailing them.\n\nMake sure all subscribers on your list have opted-in to receive your campaigns. This is the easiest way to ensure no one unsubscribes, complains about, or reports your campaigns.\n\nBe consistent. Try not to stray too far from the content and design your audience already associates with your brand, website, or social media channels.",
+    "metadata": {
+      "language": "en",
+      "tone": "Marketing",
+      "word_count": 270,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "English marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

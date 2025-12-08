@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_es_academic_psych_001",
+    "text": "El estudio fue aprobado por la Junta de Revisión Institucional del Departamento de Psicología, Universidad de Sargodha (IRB 499/2023). Una vez obtenida la autorización ética, se creó un Formulario de Google para contener todos los elementos demográficos y escalas estandarizadas necesarias para recopilar los datos.\n\nGoogle Forms fue elegido como el instrumento principal de recolección de datos porque es práctico, rentable y accesible. La mayoría de los estudiantes tenían acceso a dispositivos que podían completar cuestionarios en línea, y no se notaron desafíos técnicos o de accesibilidad importantes.\n\nLos participantes fueron contactados en diferentes lugares y se les dio una descripción clara de los objetivos y métodos del estudio. De acuerdo con los principios éticos, el consentimiento informado solo se obtuvo por escrito después de asegurar la confidencialidad y responder todas las preguntas planteadas por los participantes. Al final, se agradeció a los participantes por cooperar.\n\nAnálisis de Datos\n\nDespués de que se completó la recolección de datos, todas las respuestas se exportaron a Excel, se codificaron y luego se importaron a IBM SPSS para ser analizadas estadísticamente. Se utilizaron los procedimientos estadísticos correctos y los hallazgos se resumieron y discutieron para preparar el informe del estudio.\n\nSe usó AMOS v26 para evaluar el modelo estructural final. Las relaciones hipotetizadas se probaron mediante estimación de máxima verosimilitud (MLE). Se realizó análisis de rutas y el ajuste del modelo se evaluó basándose en índices de ajuste absolutos y relativos, como χ², RMSEA, GFI, NFI, IFI, TLI y CFI. La mediación se analizó mediante bootstrapping usando 2,000 muestras.\n\nLa evaluación del ajuste del modelo se realizó de acuerdo con los estándares aceptados: CFI, TLI, NFI e IFI 0.90 y superior (Cortina et al., 2017; Grieger, 2021); SRMR 0.10 y menor (Bentler, 1990); y RMSEA 0.05 y menor (Brown, 2006; Browne and Cudeck, 1993). Sin embargo, estudios previos han mostrado que RMSEA puede ser inapropiado en análisis de rutas simples con pequeños grados de libertad. CFI y SRMR deben ser los criterios principales en los que se basen las decisiones sobre la adecuación del modelo en tales situaciones (Kenny et al., 2015).",
+    "metadata": {
+      "language": "es",
+      "tone": "Mixed",
+      "word_count": 297,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Spanish academic text about psychology research methodology - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "academic",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

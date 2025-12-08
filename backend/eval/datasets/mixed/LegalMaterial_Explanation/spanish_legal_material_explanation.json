@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_es_legal_material_explanation_001",
+    "text": "Los profesionales médicos tienen un deber legal y ético claro de mantener confidencial la información del paciente. Esta responsabilidad está estrechamente vinculada al derecho constitucional a la privacidad, que está fuertemente protegido en Sudáfrica. Los pacientes generalmente comparten detalles profundamente personales con sus proveedores de atención médica con el entendimiento de que esta información no será divulgada. Como regla, revelar la información médica de alguien sin su consentimiento es tanto ilegal como inaceptable.\n\nDicho esto, como la mayoría de las reglas legales, la confidencialidad no es absoluta. La Constitución permite que ciertos derechos sean limitados cuando es razonable y justificable hacerlo. La Sección 36 reconoce que pueden surgir situaciones donde dos derechos constitucionales entren en conflicto. Por ejemplo, cuando el derecho a la privacidad choca con el derecho a la libertad de expresión, uno de estos derechos puede ser limitado si los intereses de la justicia lo requieren.\n\nTodos en Sudáfrica tienen un derecho constitucional a la privacidad, que incluye protección contra la interferencia con comunicaciones privadas. Esta protección se extiende a la información médica compartida entre un paciente y un profesional médico. Salvaguardar esta información es esencial.\n\nSi los pacientes no pueden confiar en que sus divulgaciones permanecerán confidenciales, pueden retener detalles importantes sobre su salud. Esta falta de apertura puede afectar seriamente el tratamiento médico e incluso puede poner en riesgo la salud de un paciente.\n\nLa Ley Nacional de Salud 61 de 2003 y la Ley de Promoción del Acceso a la Información 2 de 2000 regulan el acceso a los registros médicos. Estas leyes incluyen disposiciones específicas destinadas a proteger la información personal, particularmente la información mantenida por profesionales médicos. Colocan la responsabilidad de gestionar y proteger dicha información en los oficiales de información en instituciones públicas y en los jefes de organismos privados.\n\nAdemás, la Ley de Protección de Información Personal 4 de 2013 generalmente restringe el procesamiento de información de salud personal, incluyendo su recopilación y compartir. Sin embargo, la Ley permite excepciones. La información de salud personal puede ser procesada donde el individuo ha dado consentimiento claro o donde la divulgación es necesaria para el tratamiento y cuidado adecuado por profesionales médicos, instituciones de atención médica o proveedores de servicios sociales.",
+    "metadata": {
+      "language": "es",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "Spanish legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

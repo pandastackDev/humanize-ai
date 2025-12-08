@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_id_academic_psych_001",
+    "text": "Pertama-tama, topik tersebut disetujui oleh Dewan Tinjauan Institusional Departemen Psikologi, Universitas Sargodha (IRB, 499/2023). Setelah memperoleh izin, Formulir Google dibuat, yang mencakup semua skala dan pertanyaan demografis untuk memfasilitasi pengumpulan data.\n\nGoogle Forms digunakan karena praktis dan ekonomis. Sebagian besar siswa memiliki akses ke peralatan yang sesuai, dan tidak ada kekhawatiran besar dengan aksesibilitas atau kesulitan teknis yang diidentifikasi.\n\nPara peserta dihubungi di tempat yang berbeda dan mereka diberikan informasi rinci tentang tujuan penelitian. Mempertimbangkan pertimbangan etika, persetujuan tertulis yang diinformasikan mereka diambil setelah memastikan kerahasiaan data. Semua pertanyaan dijawab dan pada akhirnya, mereka diucapkan terima kasih atas partisipasi mereka dalam penelitian.\n\nAnalisis data\n\nMengikuti fase pengumpulan data, tanggapan dikumpulkan dalam lembar Excel, dikodekan, dan diimpor ke IBM-SPSS untuk analisis statistik lebih lanjut. Uji statistik yang relevan dilakukan. Akhirnya, hasil dianalisis, dikompilasi, dan didiskusikan dalam laporan penelitian. Model akhir dari penelitian ini diuji melalui AMOS V26. Hubungan yang diprediksi dalam model yang diusulkan diuji melalui AMOS dengan menggunakan estimasi kemungkinan maksimum standar (MLE). Analisis jalur dilakukan dan hubungan-hubungan ini dalam model diukur untuk kualitas kesesuaian dan signifikansi oleh indeks kesesuaian absolut; statistik kesesuaian χ2, Root Mean Square Error of Approximation (RMSEA), Indeks Kesesuaian (GFI), indeks kesesuaian relatif, yaitu Indeks Kesesuaian Norma (NFI), Indeks Kesesuaian Incremental (IFI), Indeks Tucker-Lewis (TLI), Indeks Kesesuaian Komparatif (CFI). Model mediasi diverifikasi dengan uji mediasi menggunakan metode bootstrapping yang dilakukan pada 2.000 sampel bootstrap di AMOS.\n\nUntuk evaluasi indeks kesesuaian model, kriteria yang direkomendasikan diikuti; indeks kesesuaian komparatif (CFI), indeks Tucker-Lewis (TLI), Indeks Kesesuaian Norma (NFI), dan Indeks Kesesuaian Incremental (IFI) ≥ 0,90 (Cortina et al., 2017; Grieger, 2021); residu akar kuadrat rata-rata terstandar (SRMR < 0,1) (Bentler, 1990) dan kesalahan akar kuadrat rata-rata dari aproksimasi (RMSEA), di mana nilai ≤ 0,05 (Brown, 2006; Browne and Cudeck, 1993). Telah diamati bahwa RMSEA memiliki masalah dengan analisis jalur sederhana terutama dengan derajat kebebasan yang lebih sedikit. Dalam model-model ini, sebagian besar waktu RMSEA secara salah menunjukkan kesesuaian yang buruk, meskipun model tersebut sesuai dengan data dengan baik. Jadi, dalam kondisi seperti itu, penerimaan model harus didasarkan pada CFI dan SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "id",
+      "tone": "Academic",
+      "word_count": 295,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

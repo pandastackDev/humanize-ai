@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_fr_legal_material_policy_001",
+    "text": "Les professionnels de la santé sont tenus de respecter la confidentialité des patients pour des raisons à la fois éthiques et légales. Ce devoir est étroitement lié au droit constitutionnel à la vie privée, qui est fortement protégé en Afrique du Sud. Les patients partagent des informations médicales personnelles et sensibles avec leurs médecins en faisant confiance qu'elles resteront privées, et dans la plupart des cas, il est à la fois illégal et inacceptable de divulguer ces informations sans le consentement du patient.\n\nCela dit, la confidentialité n'est pas une règle absolue. Comme de nombreux principes juridiques, elle a des exceptions. En vertu de l'article 36 de la Constitution, certains droits peuvent être limités lorsqu'il est raisonnable et nécessaire d'équilibrer des intérêts concurrents. Par exemple, si le droit à la vie privée entre en conflit avec un autre droit constitutionnel, tel que la liberté d'expression, la loi peut permettre qu'un droit soit limité afin de servir la justice.\n\nLa Constitution énonce clairement que chacun a le droit à la vie privée, y compris la protection contre l'ingérence injustifiée dans ses communications. Les informations médicales relèvent directement de cette protection. Si les patients ne se sentent pas confiants que leurs divulgations resteront confidentielles, ils peuvent retenir des informations cruciales, ce qui pourrait sérieusement affecter leur traitement et leur santé globale.\n\nPlusieurs lois réglementent l'accès aux dossiers médicaux et aux informations de santé personnelles. La Loi nationale sur la santé 61 de 2003 et la Loi sur la promotion de l'accès à l'information 2 de 2000 définissent comment les informations des patients doivent être protégées et qui est responsable de leur gestion. Dans les institutions publiques et privées, des responsables spécifiques sont chargés de contrôler l'accès à ces données sensibles.\n\nLa Loi sur la protection des renseignements personnels 4 de 2013 restreint davantage le traitement des informations liées à la santé. En général, ces informations ne peuvent être collectées, utilisées ou partagées que si certaines conditions sont remplies. Celles-ci incluent les situations où le patient a donné un consentement explicite ou où la divulgation est nécessaire pour assurer un traitement médical approprié ou des soins par des professionnels de la santé ou des services connexes.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "French legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

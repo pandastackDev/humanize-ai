@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_zh_legal_material_explanation_001",
+    "text": "医疗从业者负有明确的法律和道德责任，以保持患者信息的机密性。这一责任与宪法隐私权密切相关，该权利在南非受到强烈保护。患者通常与他们的医疗保健提供者分享非常私人的细节，理解这些信息不会被披露。作为规则，未经某人同意而披露其医疗信息既违法也不可接受。\n\n话虽如此，像大多数法律规则一样，保密性不是绝对的。宪法允许在合理和正当的情况下限制某些权利。第36条承认可能出现两个宪法权利冲突的情况。例如，当隐私权与言论自由权发生冲突时，如果正义利益要求，其中一项权利可能会受到限制。\n\n南非的每个人都拥有宪法隐私权，包括保护免受对私人通信的干扰。这种保护延伸到患者和医疗从业者之间共享的医疗信息。保护这些信息至关重要。\n\n如果患者无法相信他们的披露将保持机密，他们可能会隐瞒有关其健康的重要细节。这种缺乏开放性可能严重影响医疗治疗，甚至可能使患者的健康处于危险之中。\n\n2003年第61号《国家健康法》和2000年第2号《信息获取促进法》规范了对医疗记录的访问。这些法律包括旨在保护个人信息的特定条款，特别是医疗从业者持有的信息。它们将管理和保护此类信息的责任放在公共机构的信息官员和私人机构的负责人身上。\n\n此外，2013年第4号《个人信息保护法》通常限制个人健康信息的处理，包括其收集和共享。然而，该法允许例外。在个人已给予明确同意或披露对于医疗专业人员、医疗保健机构或社会服务提供者进行适当治疗和护理是必要的情况下，可以处理个人健康信息。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "Chinese legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

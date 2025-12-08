@@ -314,6 +314,9 @@ async def humanize_text(
                 metadata=result.get("metadata"),
             )
 
+    except HTTPException:
+        # Re-raise HTTPExceptions to preserve their status codes (403, 400, etc.)
+        raise
     except ValueError as e:
         logger.error(f"Validation error in humanize: {e}")
         raise HTTPException(status_code=400, detail=str(e)) from e

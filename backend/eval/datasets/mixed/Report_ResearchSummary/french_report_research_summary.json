@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_fr_report_research_summary_001",
+    "text": "Les rapports Synapse Publications, publiés annuellement par l'équipe Synapse, dirigée par Jeanine McSweeney, Bibliothécaire Associée des Communications Savantes, présentent le travail savant de nos auteurs et leurs contributions à la recherche scientifique et à la pratique clinique au Centre de Cancérologie Memorial Sloan Kettering (MSK).\n\nNous sommes heureux de présenter une nouvelle publication cette année, Research in Review: An Analysis of MSK Publications 20162020. Ce rapport étendu fournit une analyse plus approfondie des publications affiliées au Centre et fournit un aperçu large des métriques typiquement employées pour évaluer l'impact de la recherche aux niveaux de l'article, de la revue et de l'auteur. Sur la période sous analyse, l'équipe Synapse a accédé et édité plus de 25,500 publications académiques. Ces références sont l'un des aspects d'un environnement de recherche complexe qui est examiné dans cette analyse. Le rapport examine également la démographie des auteurs, les mesures d'impact actuelles et les méthodologies appliquées pour évaluer l'influence de la recherche, et identifie également certaines tendances intéressantes basées sur des sources crédibles comme PubMed Central 2 (PMC). L'objectif principal de ce rapport est de sensibiliser aux diverses façons dont les contributions de recherche peuvent être comprises et évaluées.\n\nSynapse est une base de données bibliographique accessible au public et faisant autorité des publications MSK et est créée et gérée par une équipe professionnelle de bibliothécaires. Il enregistre le travail intellectuel des chercheurs, cliniciens, infirmières et professionnels de la santé de MSK dans toute l'institution.\n\nNous prévoyons également de publier plus de publications Research in Review à l'avenir et nous aimerions entendre les commentaires des lecteurs sur ce rapport.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Mixed",
+      "word_count": 200,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "French research summary report about MSK publications - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

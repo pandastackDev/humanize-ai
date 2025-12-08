@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pl_marketing_email_001",
+    "text": "Istnieje wiele najlepszych praktyk dla marketingu e-mailowego, ale pośpiech w wysyłaniu e-maili nie jest jedną z nich. Wiemy, że możesz być pod presją surowego terminu, ale przyspieszenie procesu tworzenia kampanii bez myślenia o projekcie, treści i linii tematu może spowodować pewne problemy.\n\nJeśli Twoja treść nie jest istotna dla Twoich subskrybentów lub różni się od tego, na co się zapisali, istnieje szansa, że zobaczysz spadek otwarć i kliknięć lub wzrost skarg na spam i wskaźników rezygnacji z subskrypcji. Więc zwolnij, weź głęboki oddech i upewnij się, że Twoja lista i kampanie są w nienagannym stanie.\n\n8. Zrozumienie filtrów spamu\n\nFiltry spamu e-mailowego używają długiej listy kryteriów, aby zdecydować, czy Twoja kampania zostanie umieszczona w folderze spamu odbiorcy.\n\nLista kryteriów spamu stale rośnie i dostosowuje się, ponieważ filtry dowiadują się więcej o tym, jak wygląda spam, za każdym razem, gdy ktoś klika \"To jest śmieci\" lub \"Oznacz jako spam\" w swoim kliencie e-mail. Filtry spamu nawet synchronizują się ze sobą, aby dzielić się tym, czego się nauczyły.\n\nNie ma magicznej formuły na unikanie filtrów spamu, ale mamy kilka wskazówek, których marketerzy e-mailowi mogą użyć, aby uniknąć najczęstszych błędów, które powodują, że e-maile są oznaczane jako spam.\n\nUtrzymuj dobrą reputację wysyłania. Niektóre filtry spamu oznaczą kampanię, jeśli ktokolwiek z tym samym adresem IP kiedykolwiek wysłał spam. Gdy wysyłasz przez Mailchimp, Twoje kampanie są dostarczane przez nasze serwery, więc oznaczenie jednej osoby jako spam może wpłynąć na dostarczalność naszych użytkowników. Dlatego pracujemy czujnie, aby zachować naszą reputację wysyłania nienaruszoną i wymagamy od użytkowników przestrzegania naszych Warunków Użytkowania.\n\nUżywaj szablonów e-mailowych, które są poprawnie zakodowane. Niedbały kod, dodatkowe tagi lub kod formatowania wyciągnięty z edytora tekstu sformatowanego może wyzwolić filtry spamu. Jeśli nie jesteś zaznajomiony z kodem HTML, zalecamy użycie jednego z naszych szablonów lub pracę z ekspertem.\n\nUczyń swoje intencje jasne. Będziesz także chciał upewnić się, że Twoja intencja jest jasna, aby Twoi subskrybenci wiedzieli, dlaczego wysyłasz im e-maile.\n\nUpewnij się, że wszyscy subskrybenci na Twojej liście wybrali subskrypcję, aby otrzymywać Twoje kampanie. To najłatwiejszy sposób, aby upewnić się, że nikt nie zrezygnuje z subskrypcji, nie poskarży się ani nie zgłosi Twoich kampanii.\n\nBądź spójny. Staraj się nie odbiegać zbyt daleko od treści i projektu, które Twoja publiczność już kojarzy z Twoją marką, stroną internetową lub kanałami mediów społecznościowych.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Marketing",
+      "word_count": 267,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Polish marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pl_marketing_email_001",
+    "text": "Marketing e-mailowy ma liczne najlepsze praktyki, a prędkość nie jest jedną z nich. Chociaż terminy mogą powodować potrzebę pośpiechu i uruchomienia, pośpiech w tworzeniu kampanii może skutkować utraconymi szczegółami w projekcie, wiadomościach i liniach tematu, które są bezpośrednią przyczyną wydajności.\n\nGdy e-maile nie spełniają oczekiwań subskrybentów lub tracą skupienie na tym, na co ludzie początkowo się zapisali, wskaźniki zaangażowania prawdopodobnie spadną. Może to prowadzić do zmniejszenia liczby otwarć i kliknięć, a w innych przypadkach do wzrostu liczby rezygnacji z subskrypcji lub spamu. Zawsze dobrym pomysłem jest poświęcenie czasu i przejrzenie listy, treści i ogólnej strategii, aby upewnić się, że kampanie są skuteczne i dobrze przyjmowane.\n\n8. Zrozumienie Filtrów Spamu\n\nFiltry spamu opierają się na stale zmieniających się zestawach reguł, które definiują, czy e-mail zostanie umieszczony w skrzynce odbiorczej czy w spamie. Te systemy są szkolone na zachowaniu użytkowników—im więcej ludzi oznacza e-mail jako spam, tym dokładniejsze stają się filtry. Większość filtrów spamu również wymienia informacje między sobą, poprawiając swoje zdolności wykrywania.\n\nChociaż nie ma pewnej metody całkowitego pokonania filtrów spamu, marketerzy mogą zapobiec najczęstszym wyzwalaczom, przestrzegając najlepszych praktyk:\n\nChroń swoją reputację jako nadawcy. Inne filtry spamu uwzględniają historię IP wysyłającego. W przypadku platform takich jak Mailchimp, wiadomości są dostarczane przez współdzielone serwery, co oznacza, że jeden złośliwy użytkownik może wpłynąć na innych. Ścisłe przestrzeganie jest przydatne w zapewnieniu, że ogólna dostarczalność jest wysoka.\n\nUżywaj dobrze zakodowanych szablonów. Słaba struktura HTML, zbędne tagi lub kod skopiowany z edytora tekstu mogą być czerwoną flagą. W przypadku niepewności zastosuj profesjonalnie utworzone szablony lub skonsultuj się z ekspertem.\n\nBądź otwarty w swojej komunikacji. Upewnij się, że jest jasne, dlaczego kontaktujesz się z subskrybentami i co oferujesz.\n\nWysyłaj tylko do subskrybentów, którzy wybrali subskrypcję. Listy oparte na zezwoleniach znacznie minimalizują skargi na spam i rezygnacje z subskrypcji.\n\nPozostań spójny. Uczyń treść i projekt e-maila spójnymi z brandingiem, który subskrybenci znają na Twojej stronie internetowej i mediach społecznościowych.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Mixed",
+      "word_count": 266,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Polish marketing material about email marketing best practices - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "marketing",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

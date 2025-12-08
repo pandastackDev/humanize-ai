@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pl_academic_psych_001",
+    "text": "Protokół badawczy otrzymał formalną aprobatę od Instytucjonalnej Komisji Rewizyjnej Wydziału Psychologii Uniwersytetu Sargodha (IRB 499/2023). Po udzieleniu zgody etycznej zaprojektowano Formularz Google, aby zawierał wszystkie elementy demograficzne i standaryzowane skale wymagane do zbierania danych.\n\nGoogle Forms został wybrany jako główne narzędzie zbierania danych ze względu na jego praktyczność, efektywność kosztową i dostępność. Większość studentów posiadała urządzenia zdolne do wypełniania ankiet online, i nie zgłoszono znaczących barier technicznych lub dostępności.\n\nUczestnicy byli kontaktowani w różnych lokalizacjach i otrzymali szczegółowe wyjaśnienie celów i procedur badania. Zgodnie z wytycznymi etycznymi, pisemna świadoma zgoda została uzyskana dopiero po zapewnieniu poufności i rozwiązaniu wszystkich pytań uczestników. Uczestnicy zostali podziękowani za ich współpracę po zakończeniu.\n\nAnaliza danych\n\nPo zakończeniu zbierania danych wszystkie odpowiedzi zostały wyeksportowane do Excel, zakodowane, a następnie zaimportowane do IBM SPSS do analizy statystycznej. Zastosowano odpowiednie procedury statystyczne, a wyniki zostały skompilowane i zinterpretowane dla raportu z badania.\n\nKońcowy model strukturalny został oceniony przy użyciu AMOS v26. Estymacja maksymalnego prawdopodobieństwa (MLE) została użyta do przetestowania hipotetycznych relacji. Przeprowadzono analizę ścieżek, a dopasowanie modelu zostało ocenione przy użyciu bezwzględnych i względnych wskaźników dopasowania, w tym χ², RMSEA, GFI, NFI, IFI, TLI i CFI. Mediacja została zbadana poprzez bootstrapping z 2.000 próbkami.\n\nOcena dopasowania modelu następowała ustalonym kryteriom: CFI, TLI, NFI i IFI ≥ 0,90 (Cortina et al., 2017; Grieger, 2021); SRMR < 0,10 (Bentler, 1990); i RMSEA ≤ 0,05 (Brown, 2006; Browne & Cudeck, 1993). Jednak wcześniejsze badania wskazują, że RMSEA może nieprawidłowo wskazywać na słabe dopasowanie modelu w prostych analizach ścieżek z ograniczonymi stopniami swobody. W takich przypadkach decyzje dotyczące adekwatności modelu powinny opierać się głównie na CFI i SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "pl",
+      "tone": "Academic",
+      "word_count": 290,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Polish academic text about psychology research methodology",
+      "verified_human": false
+    }
+  }
+]

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_en_marketing_email_001",
+    "text": "Email marketing follows many best practices, and speed is rarely one of them. While deadlines can create pressure to launch quickly, rushing through campaign creation often leads to overlooked details in design, messaging, and subject lines—details that directly affect performance.\n\nWhen emails fail to match subscriber expectations or drift away from what people originally signed up for, engagement rates tend to drop. This can result in fewer opens and clicks, and in some cases, higher unsubscribe rates or spam complaints. Taking the time to review your list, content, and overall strategy helps ensure your campaigns remain effective and well-received.\n\n8. Understand Spam Filters\n\nSpam filters rely on continuously evolving rule sets to determine whether an email lands in the inbox or the spam folder. These systems learn from user behavior—each time someone marks an email as spam, filters become more accurate. Many spam filters also share data with one another, strengthening their detection abilities.\n\nAlthough there is no guaranteed way to bypass spam filters completely, marketers can avoid common triggers by following proven best practices:\n\nProtect your sending reputation. Some spam filters evaluate the sending IP's history. When using platforms like Mailchimp, messages are sent from shared servers, meaning one bad actor can affect others. Maintaining strict compliance helps keep overall deliverability high.\n\nUse properly coded templates. Poor HTML structure, unnecessary tags, or code copied from text editors may raise red flags. When in doubt, use professionally designed templates or seek expert help.\n\nBe transparent in your messaging. Make it obvious why you're contacting subscribers and what value you're offering.\n\nSend only to opted-in subscribers. Permission-based lists significantly reduce spam complaints and unsubscribes.\n\nStay consistent. Align your email content and design with the branding subscribers recognize from your website and social channels.",
+    "metadata": {
+      "language": "en",
+      "tone": "Marketing",
+      "word_count": 268,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "English marketing material about email marketing best practices",
+      "verified_human": false
+    }
+  }
+]

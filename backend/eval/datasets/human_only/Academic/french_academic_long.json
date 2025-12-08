@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_fr_academic_001",
+    "text": "La recherche scientifique moderne s'appuie sur une méthodologie rigoureuse et des processus de validation par les pairs. Les scientifiques collectent des données empiriques, formulent des hypothèses testables et utilisent des expériences contrôlées pour vérifier leurs théories. Cette approche systématique a permis des découvertes remarquables dans tous les domaines de la connaissance.\n\nLa collaboration internationale est devenue essentielle dans la recherche contemporaine. Les projets scientifiques majeurs nécessitent souvent l'expertise de chercheurs de multiples pays et institutions. Cette coopération transfrontalière accélère le progrès scientifique et permet de partager les coûts élevés de la recherche de pointe.\n\nL'éthique scientifique joue un rôle crucial dans la conduite de la recherche. Les chercheurs doivent respecter des normes strictes concernant l'intégrité des données, le traitement éthique des sujets de recherche et la transparence dans la communication des résultats. Les cas de fraude scientifique ou de manipulation de données nuisent gravement à la crédibilité de la communauté scientifique.\n\nL'avenir de la recherche scientifique dépend de notre capacité à maintenir ces standards élevés tout en encourageant l'innovation et la créativité. L'éducation scientifique doit former non seulement les compétences techniques, mais aussi l'intégrité et la pensée critique nécessaires pour faire progresser la connaissance de manière responsable.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Academic",
+      "word_count": 287,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "science",
+      "date_added": "2025-12-04",
+      "notes": "French academic text about scientific research methodology",
+      "verified_human": true
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pl_essay_tech_001",
+    "text": "Następna dekada zobaczy, jak sztuczna inteligencja przekształca pracę biurową w sposób zarówno transformacyjny, jak i subtelny. Chociaż większość prognoz opiera się na dramatycznej utracie miejsc pracy, bardziej realistyczna jest stopniowa zmiana odpowiedzialności, umiejętności i przepływów pracy. Rutynowa praca poznawcza, w tym redagowanie e-maili, podstawowa analiza danych, generowanie raportów i planowanie, będzie coraz bardziej automatyzowana przez SI, pozwalając pracownikom pracować nad zadaniami o wyższej wartości opartymi na osądach. Ta zmiana nie usunie ludzkich pracowników, ale zmieni rodzaj wkładu, który wnoszą.\n\nWśród najbardziej zauważalnych transformacji będą branże intensywne w wiedzę, takie jak finanse, prawo, konsulting i administracja opieki zdrowotnej. Systemy SI zapewnią szybkie wnioski na dużych ilościach danych, uzupełniając podejmowanie decyzji przez ludzi i nie eliminując go całkowicie. Jako przykład, analitycy finansowi mogą spędzać mniej czasu na tworzeniu arkuszy kalkulacyjnych i więcej czasu na interpretowaniu prognoz generowanych przez SI lub doradztwie klientom. Podobnie, prawnicy mogą używać SI do szybszych badań spraw, co pozwoli im bardziej skupić się na strategii i obronie klientów.\n\nNiemniej jednak, te korzyści są związane z trudnościami. Pracownicy będą musieli nauczyć się używać nowych narzędzi i nabywać nowe umiejętności, szczególnie w dziedzinach takich jak inżynieria promptów, umiejętność czytania danych i współpraca człowiek-SI. Ci pracownicy, którzy nie przyjmują tej zmiany, będą w niekorzystnej sytuacji, gdy firmy reorganizują się wokół wydajności wzmocnionej przez SI. Firmy, z kolei, powinny inwestować w edukację i upewnić się, że narzędzia SI są używane w sposób etyczny i transparentny, aby zapobiec poszerzeniu luki w umiejętnościach i wprowadzeniu uprzedzeń w kluczowe decyzje.\n\nInna znacząca implikacja to emocjonalny i społeczny aspekt pracy. Im więcej pracy mechanicznej wykonuje SI, tym bardziej będą cenione specyficznie ludzkie cechy, takie jak kreatywność, empatia, komunikacja i przywództwo. Zespoły mogą być zmniejszone w rozmiarze i wyspecjalizowane, a SI może być stałym partnerem. Ten rozwój może skutkować bardziej satysfakcjonującymi miejscami pracy, ale może również powodować zamieszanie u tych, którzy nie są pewni, jak poradzić sobie ze zmianą.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Mixed",
+      "word_count": 384,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "technology",
+      "date_added": "2025-12-04",
+      "notes": "Polish essay about AI and white-collar work - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional_essay",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

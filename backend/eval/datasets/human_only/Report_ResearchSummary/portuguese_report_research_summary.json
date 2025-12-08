@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pt_report_research_summary_001",
+    "text": "A equipe Synapse liderada por Jeanine McSweeney, Bibliotecária Associada, Comunicações Acadêmicas, publica anualmente os relatórios Synapse Publications, mostrando as contribuições de nossos autores para o corpo de conhecimento científico e suas atividades de pesquisa e clínicas associadas ao Centro de Câncer Memorial Sloan Kettering (MSK).\n\nEste ano, tenho o prazer de compartilhar que adicionamos um novo relatório intitulado \"Research In Review: An Analysis of MSK Publications 2016-2020,\" que mergulha mais profundamente nas publicações afiliadas ao Centro. Este relatório fornece insights sobre a variedade de métricas existentes usadas para medir o impacto da pesquisa em nível de artigo, revista ou autor. No período coberto por este relatório, a equipe Synapse recuperou e organizou mais de 25.500 trabalhos, e é com essas citações que compartilhamos um aspecto de uma história de pesquisa muito complexa. Este relatório destaca a demografia de nossa comunidade de autores, métricas existentes e como o impacto da pesquisa é medido. Além disso, compartilhamos fatos interessantes sobre conjuntos de dados relacionados a publicações obtidos de uma variedade de recursos confiáveis, como PubMed Central® (PMC). Nossas intenções ao produzir este relatório são simplesmente aumentar a conscientização sobre as possíveis formas de visualizar contribuições de pesquisa.\n\nSynapse é um recurso público e o banco de dados bibliográfico autoritativo de publicações MSK, desenvolvido e mantido por uma equipe de bibliotecários qualificados. Este banco de dados fornece um registro da produção intelectual escrita por pesquisadores, clínicos, enfermeiros e outros profissionais de saúde do MSK.\n\nEsperamos no futuro produzir outras publicações do tipo \"Research In Review\". Sinta-se à vontade para entrar em contato comigo para compartilhar seus pensamentos sobre este relatório.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Professional",
+      "word_count": 201,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

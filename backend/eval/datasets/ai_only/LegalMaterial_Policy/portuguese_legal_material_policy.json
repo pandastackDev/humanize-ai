@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pt_legal_material_policy_001",
+    "text": "Os profissionais médicos são legal e eticamente obrigados a manter a confidencialidade do paciente. Esta obrigação está intimamente ligada ao direito constitucional à privacidade, que é explicitamente protegido pela lei sul-africana. Os pacientes divulgam informações altamente pessoais e sensíveis aos prestadores de cuidados de saúde com a expectativa de que tais informações permanecerão confidenciais. Como regra geral, a divulgação de informações médicas sem o consentimento de um paciente é ilegal e inaceitável.\n\nNo entanto, a confidencialidade não é absoluta. A Seção 36 da Constituição permite a limitação de certos direitos quando tal limitação é razoável e justificável em uma sociedade aberta e democrática. Em circunstâncias em que os direitos constitucionais entram em conflito—como o direito à privacidade versus o direito à liberdade de expressão—um exercício de equilíbrio deve ser realizado para determinar qual direito deve prevalecer no interesse da justiça.\n\nA Constituição garante a cada indivíduo na África do Sul o direito à privacidade, incluindo proteção contra violação ilegal de comunicações privadas. As informações médicas fazem parte dessas comunicações e divulgações protegidas. Preservar a confidencialidade no contexto dos cuidados de saúde é essencial; sem essa garantia, os pacientes podem reter informações médicas críticas, potencialmente comprometendo o diagnóstico, tratamento e resultados gerais de saúde.\n\nQuadros estatutários como a Lei Nacional de Saúde 61 de 2003 e a Lei de Promoção de Acesso à Informação 2 de 2000 regulam o acesso a registros médicos e informações de saúde pessoal. Essas leis estabelecem controles rigorosos sobre como essas informações são acessadas, armazenadas e divulgadas, atribuindo responsabilidade a oficiais de informação em instituições públicas e chefes designados de órgãos privados.\n\nAlém disso, a Lei de Proteção de Informações Pessoais 4 de 2013 impõe uma proibição geral ao processamento de informações pessoais especiais, incluindo dados relacionados à saúde. No entanto, a POPIA reconhece exceções específicas, permitindo o processamento quando o consentimento explícito foi fornecido ou quando a divulgação é necessária para tratamento médico, prestação de cuidados de saúde ou funções de serviços sociais relacionadas ao cuidado do paciente.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Professional",
+      "word_count": 300,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese legal material policy about patient confidentiality and privacy rights - AI generated",
+      "verified_human": false
+    }
+  }
+]

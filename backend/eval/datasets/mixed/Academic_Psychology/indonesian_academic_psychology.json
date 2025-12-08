@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_id_academic_psych_001",
+    "text": "Penelitian disetujui oleh Dewan Tinjauan Institusional Departemen Psikologi, Universitas Sargodha (IRB 499/2023). Setelah izin etis diperoleh, Formulir Google dibuat untuk berisi semua item demografis dan skala terstandar yang diperlukan untuk mengumpulkan data.\n\nGoogle Forms dipilih sebagai instrumen pengumpulan data utama karena praktis, hemat biaya, dan dapat diakses. Sebagian besar siswa memiliki akses ke perangkat yang dapat mengisi kuesioner online, dan tidak ada tantangan teknis atau aksesibilitas utama yang dicatat.\n\nPara peserta dihubungi di tempat yang berbeda dan diberikan deskripsi yang jelas tentang tujuan dan metode penelitian. Sesuai dengan prinsip etika, persetujuan tertulis yang diinformasikan hanya diperoleh setelah memastikan kerahasiaan dan menjawab semua pertanyaan yang diajukan oleh peserta. Pada akhirnya, para peserta diucapkan terima kasih karena bekerja sama.\n\nAnalisis Data\n\nSetelah pengumpulan data selesai, semua tanggapan diekspor ke Excel, dikodekan dan kemudian diimpor ke IBM SPSS untuk dianalisis secara statistik. Prosedur statistik yang benar digunakan dan temuan diringkas dan didiskusikan untuk menyiapkan laporan penelitian.\n\nAMOS v26 digunakan untuk mengevaluasi model struktural akhir. Hubungan yang dihipotesiskan diuji dengan estimasi kemungkinan maksimum (MLE). Analisis jalur dilakukan dan kesesuaian model dinilai berdasarkan indeks kesesuaian absolut dan relatif, seperti χ², RMSEA, GFI, NFI, IFI, TLI, dan CFI. Mediasi dianalisis melalui bootstrapping menggunakan 2.000 sampel.\n\nEvaluasi kesesuaian model dilakukan sesuai dengan standar yang diterima: CFI, TLI, NFI, dan IFI 0,90 ke atas (Cortina et al., 2017; Grieger, 2021); SRMR 0,10 ke bawah (Bentler, 1990); dan RMSEA 0,05 ke bawah (Brown, 2006; Browne and Cudeck, 1993). Namun demikian, penelitian sebelumnya telah menunjukkan bahwa RMSEA dapat tidak tepat dalam analisis jalur sederhana dengan derajat kebebasan kecil. CFI dan SRMR harus menjadi kriteria utama di mana keputusan tentang kecukupan model dibuat dalam situasi seperti itu (Kenny et al., 2015).",
+    "metadata": {
+      "language": "id",
+      "tone": "Mixed",
+      "word_count": 293,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian academic text about psychology research methodology - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "academic",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

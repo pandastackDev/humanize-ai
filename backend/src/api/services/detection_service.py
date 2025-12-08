@@ -23,6 +23,10 @@ from writerai import Writer
 
 from api.config import settings
 from api.models import DetectorResult, DetectorType, InternalAnalysis
+from api.services.crossplag_detector import CrossPlagDetector
+from api.services.gptzero_detector import GPTZeroDetector
+from api.services.grammarly_detector import GrammarlyDetector
+from api.services.quillbot_detector import QuillBotDetector
 
 logger = logging.getLogger(__name__)
 
@@ -166,35 +170,87 @@ class AIDetectionService:
             if cached_result is not None:
                 return cached_result[0], cached_result[1], True
 
-        # Run detections in parallel
-        tasks = []
-
-        # External API detectors
-        if detectors is None or DetectorType.GPTZERO in detectors:
-            tasks.append(self._detect_gptzero(text))
-        if detectors is None or DetectorType.COPYLEAKS in detectors:
-            tasks.append(self._detect_copyleaks(text))
-        if detectors is None or DetectorType.SAPLING in detectors:
-            tasks.append(self._detect_sapling(text))
-        if detectors is None or DetectorType.WRITER in detectors:
-            tasks.append(self._detect_writer(text))
-        if detectors is None or DetectorType.ZEROGPT in detectors:
-            tasks.append(self._detect_zerogpt(text))
-        if detectors is None or DetectorType.ORIGINALITY in detectors:
-            tasks.append(self._detect_originality(text))
-        if detectors is None or DetectorType.QUILLBOT in detectors:
-            tasks.append(self._detect_quillbot(text))
-
-        # Run all external detectors concurrently
+        # Run detections sequentially (one after another)
         detector_results = []
-        if tasks:
-            detector_results = await asyncio.gather(*tasks, return_exceptions=True)
-            # Filter out exceptions and convert to DetectorResult
-            detector_results = [r for r in detector_results if isinstance(r, DetectorResult)]
+
+        # External API detectors - run each one and wait for completion before starting next
+        if detectors is None or DetectorType.GPTZERO in detectors:
+            logger.info("Running GPTZero detection...")
+            result = await self._detect_gptzero(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.COPYLEAKS in detectors:
+            logger.info("Running CopyLeaks detection...")
+            result = await self._detect_copyleaks(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.SAPLING in detectors:
+            logger.info("Running Sapling detection...")
+            result = await self._detect_sapling(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.WRITER in detectors:
+            logger.info("Running Writer detection...")
+            result = await self._detect_writer(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.ZEROGPT in detectors:
+            logger.info("Running ZeroGPT detection...")
+            result = await self._detect_zerogpt(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.ORIGINALITY in detectors:
+            logger.info("Running Originality.AI detection...")
+            result = await self._detect_originality(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.QUILLBOT in detectors:
+            logger.info("Running QuillBot detection...")
+            result = await self._detect_quillbot(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.TURNITIN in detectors:
+            logger.info("Running Turnitin detection...")
+            result = await self._detect_turnitin(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.GRAMMARLY in detectors:
+            logger.info("Running Grammarly detection...")
+            result = await self._detect_grammarly(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.SCRIBBR in detectors:
+            logger.info("Running Scribbr detection...")
+            result = await self._detect_scribbr(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        if detectors is None or DetectorType.CROSSPLAG in detectors:
+            logger.info("Running CrossPlag detection...")
+            result = await self._detect_crossplag(text)
+            if isinstance(result, DetectorResult):
+                detector_results.append(result)
+
+        # Log summary
+        successful = sum(1 for r in detector_results if not r.error)
+        failed = sum(1 for r in detector_results if r.error)
+        logger.info(
+            f"Detection complete - {successful} successful, {failed} failed out of {len(detector_results)} total detectors"
+        )
 
         # Internal analysis
         internal_analysis = None
         if include_internal:
+            logger.info("Running internal analysis...")
             internal_analysis = await self._internal_analysis(text)
 
         # Cache the result
@@ -206,20 +262,16 @@ class AIDetectionService:
 
     async def _detect_gptzero(self, text: str) -> DetectorResult:
         """
-        Detect using GPTZero API.
+        Detect using GPTZero API (browser session authentication).
 
+        Uses the user's working implementation with browser cookies.
         API: https://api.gptzero.me/v3/ai/text
-        Method: POST
-        Body: {"text": text_to_analyze}
-        Response: documents[0].class_probabilities with "ai" and "mixed" keys
-
         Authentication: Uses cookie string (GPTZERO_COOKIE_STRING)
         """
         start_time = time.time()
         try:
-            # Check if cookie string is configured
+            # Check if cookie string is configured - read from backend/.env
             cookie_string = settings.GPTZERO_COOKIE_STRING
-
             if not cookie_string or not cookie_string.strip():
                 message = (
                     "GPTZero cookie string not configured. Please set GPTZERO_COOKIE_STRING in .env"
@@ -235,12 +287,9 @@ class AIDetectionService:
                     error=message,
                 )
 
-            # Parse and prepare cookies
-            cookies = None
+            # Parse cookies
             try:
                 cookies_dict = parse_cookie_string(cookie_string)
-                # httpx expects cookies as a dict or Cookie object
-                cookies = cookies_dict
                 logger.info(f"GPTZero cookies parsed: {len(cookies_dict)} cookies")
             except Exception as e:
                 error_msg = f"Failed to parse GPTZero cookies: {e}"
@@ -254,6 +303,81 @@ class AIDetectionService:
                     details=None,
                     error=error_msg,
                 )
+
+            # Get scan ID from settings with fallback to working scan ID
+            scan_id = getattr(settings, "GPTZERO_SCAN_ID", None)
+            if not scan_id:
+                # Use the working scan ID from your test script
+                scan_id = "ef6eec63-f673-4764-8e96-32875529b4f6"
+                logger.info(f"Using default scan ID: {scan_id}")
+
+            # Create detector instance
+            detector = GPTZeroDetector(cookies_dict=cookies_dict, scan_id=scan_id, timeout=30)
+
+            # Run detection (async)
+            result = await detector.detect_async(text)
+
+            # Check if successful
+            if not result.get("success"):
+                error_msg = result.get("error", "Unknown error")
+
+                # Provide helpful error messages for common issues
+                if "404" in error_msg or "Scan not found" in error_msg:
+                    logger.warning(
+                        f"GPTZero scan not found (scan_id: {scan_id}). "
+                        f"Create a scan at https://app.gptzero.me/ and update GPTZERO_SCAN_ID in .env"
+                    )
+                    error_msg = (
+                        "Scan not found. Please create a scan at https://app.gptzero.me/ "
+                        "and set GPTZERO_SCAN_ID in your .env file"
+                    )
+                elif "401" in error_msg or "Unauthorized" in error_msg:
+                    logger.warning("GPTZero authentication failed. Cookies may be expired.")
+                    error_msg = (
+                        "Authentication failed. Please refresh your GPTZero cookies. "
+                        "See docs/GPTZERO_SETUP.md for instructions."
+                    )
+
+                logger.error(f"GPTZero detection failed: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.GPTZERO,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=result.get(
+                        "response_time_ms", (time.time() - start_time) * 1000
+                    ),
+                    details=None,
+                    error=error_msg,
+                )
+
+            # Extract probabilities
+            ai_prob = result.get("ai_probability", 0.5)
+            human_prob = result.get("human_probability", 0.5)
+            mixed_prob = result.get("mixed_probability", 0.0)
+            confidence = result.get("confidence", 0.0)
+
+            # Create details dict
+            details = {
+                "class_probabilities": result.get("class_probabilities", {}),
+                "mixed_probability": mixed_prob,
+                "scan_id": result.get("scan_id"),
+            }
+
+            logger.info(
+                f"GPTZero success: AI={ai_prob:.2%}, Human={human_prob:.2%}, "
+                f"Mixed={mixed_prob:.2%}, Confidence={confidence:.2f}"
+            )
+
+            return self._create_detector_result(
+                detector=DetectorType.GPTZERO,
+                ai_probability=ai_prob,
+                human_probability=human_prob,
+                confidence=confidence,
+                response_time_ms=result.get("response_time_ms", (time.time() - start_time) * 1000),
+                details=details,
+                error=None,
+            )
 
             # Prepare request body
             # GPTZero API accepts either "text" or "document" key
@@ -275,12 +399,11 @@ class AIDetectionService:
                 try:
                     endpoint = "https://api.gptzero.me/v3/ai/text"
 
-                    # Prepare request with cookies
+                    # Prepare request
                     response = await client.post(
                         endpoint,
                         headers=headers,
                         json=body,
-                        cookies=cookies,
                     )
 
                     logger.info(
@@ -513,7 +636,7 @@ class AIDetectionService:
                     if 200 <= response.status_code < 300:
                         try:
                             data = response.json()
-                            logger.info(f"Sapling API response data: {data}")
+                            # logger.info(f"Sapling API response data: {data}")
 
                             # Parse Sapling response format
                             # Based on API docs, response may contain: score, score_breakdown, etc.
@@ -791,7 +914,7 @@ class AIDetectionService:
                     if 200 <= response.status_code < 300:
                         try:
                             data = response.json()
-                            logger.info(f"ZeroGPT API response data: {data}")
+                            # logger.info(f"ZeroGPT API response data: {data}")
 
                             # Parse ZeroGPT response format based on test script
                             # Expected format: {"success": true, "data": {"isHuman": 0-100, "fakePercentage": 0-100, ...}}
@@ -1376,19 +1499,95 @@ class AIDetectionService:
             )
 
     async def _detect_quillbot(self, text: str) -> DetectorResult:
-        """Detect using QuillBot AI Detector API."""
+        """
+        Detect using QuillBot AI Detector API (browser session authentication).
+
+        Uses the 3-step workflow:
+        1. Get AI score from /api/ai-detector/score
+        2. Create document in /api/docupine/documents
+        3. Upload content to /api/docupine/documents/{id}/content
+
+        Authentication: Uses cookie string (QUILLBOT_COOKIE_STRING) and useridtoken (QUILLBOT_USERIDTOKEN)
+        """
         start_time = time.time()
-        message = "QuillBot detector not implemented. Requires real API integration."
-        logger.warning(message)
-        return self._create_detector_result(
-            detector=DetectorType.QUILLBOT,
-            ai_probability=0.5,
-            human_probability=0.5,
-            confidence=0.0,
-            response_time_ms=(time.time() - start_time) * 1000,
-            details=None,
-            error=message,
-        )
+        try:
+            # Check if cookie string is configured
+            cookie_string = settings.QUILLBOT_COOKIE_STRING
+            useridtoken = settings.QUILLBOT_USERIDTOKEN
+            if not cookie_string or not cookie_string.strip():
+                message = "QuillBot cookie string not configured. Please set QUILLBOT_COOKIE_STRING in .env"
+                logger.warning(message)
+                return self._create_detector_result(
+                    detector=DetectorType.QUILLBOT,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=message,
+                )
+
+            # Create detector instance
+            detector = QuillBotDetector(
+                cookie_string=cookie_string, useridtoken=useridtoken, timeout=60
+            )
+
+            # Run detection (synchronous call wrapped in asyncio)
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, detector.detect, text)
+
+            # Check if detection was successful
+            if not result.get("success", False):
+                error_msg = result.get("error", "Unknown error")
+                logger.error(f"QuillBot detection failed: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.QUILLBOT,
+                    ai_probability=result.get("ai_probability", 0.5),
+                    human_probability=result.get("human_probability", 0.5),
+                    confidence=result.get("confidence", 0.0),
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=result.get("raw_response"),
+                    error=error_msg,
+                )
+
+            # Extract probabilities
+            ai_prob = result.get("ai_probability", 0.5)
+            human_prob = result.get("human_probability", 0.5)
+            confidence = result.get("confidence", 0.0)
+
+            response_time = (time.time() - start_time) * 1000
+
+            logger.info(
+                f"QuillBot detection complete: AI={ai_prob:.2%}, Human={human_prob:.2%}, "
+                f"Confidence={confidence:.2%}, Time={response_time:.0f}ms"
+            )
+
+            return self._create_detector_result(
+                detector=DetectorType.QUILLBOT,
+                ai_probability=ai_prob,
+                human_probability=human_prob,
+                confidence=confidence,
+                response_time_ms=response_time,
+                details={
+                    "document_id": result.get("document_id"),
+                    "total_ai_score": result.get("total_ai_score"),
+                    "raw_response": result.get("raw_response"),
+                },
+                error=None,
+            )
+
+        except Exception as e:
+            error_msg = f"QuillBot detection error: {str(e)}"
+            logger.error(error_msg, exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.QUILLBOT,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+                error=error_msg,
+            )
 
     async def _internal_analysis(self, text: str) -> InternalAnalysis:
         """
@@ -1486,6 +1685,292 @@ class AIDetectionService:
         # Normalize to 0-1 range
         normalized = min(math.sqrt(variance) / 10, 1.0)
         return normalized
+
+    async def _detect_turnitin(self, text: str) -> DetectorResult:
+        """
+        Detect using Turnitin AI Detector API.
+
+        Note: Turnitin typically requires institutional access.
+        This is a placeholder implementation.
+        """
+        start_time = time.time()
+        try:
+            if not settings.TURNITIN_API_KEY:
+                message = "Turnitin API key not configured"
+                logger.warning(message)
+                return self._create_detector_result(
+                    detector=DetectorType.TURNITIN,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=message,
+                )
+
+            # Placeholder - Turnitin API integration would go here
+            message = "Turnitin detector not yet implemented - requires institutional access"
+            logger.info(message)
+            return self._create_detector_result(
+                detector=DetectorType.TURNITIN,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                response_time_ms=(time.time() - start_time) * 1000,
+                details={"message": message},
+                error=message,
+            )
+
+        except Exception as e:
+            logger.error(f"Turnitin detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.TURNITIN,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=str(e),
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+            )
+
+    async def _detect_grammarly(self, text: str) -> DetectorResult:
+        """
+        Detect using Grammarly AI Detector API (browser session authentication).
+
+        Uses browser session cookies to authenticate with Grammarly's API.
+        API: https://capi.grammarly.com/api/check/aidetector
+        Authentication: Uses cookie string (GRAMMARLY_COOKIE_STRING)
+        """
+        start_time = time.time()
+        try:
+            # Check if cookie string is configured
+            cookie_string = settings.GRAMMARLY_COOKIE_STRING
+            if not cookie_string or not cookie_string.strip():
+                message = "Grammarly cookie string not configured. Please set GRAMMARLY_COOKIE_STRING in .env"
+                logger.warning(message)
+                return self._create_detector_result(
+                    detector=DetectorType.GRAMMARLY,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=message,
+                )
+
+            # Parse cookies
+            try:
+                cookies_dict = parse_cookie_string(cookie_string)
+                logger.info(f"Grammarly cookies parsed: {len(cookies_dict)} cookies")
+            except Exception as e:
+                error_msg = f"Failed to parse Grammarly cookies: {e}"
+                logger.error(error_msg)
+                return self._create_detector_result(
+                    detector=DetectorType.GRAMMARLY,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=error_msg,
+                )
+
+            # Get CSRF token and container ID from settings
+            csrf_token = settings.GRAMMARLY_CSRF_TOKEN or cookies_dict.get("csrf-token", "")
+            container_id = settings.GRAMMARLY_CONTAINER_ID or cookies_dict.get(
+                "gnar_containerId", ""
+            )
+
+            # Create detector instance
+            detector = GrammarlyDetector(
+                cookies_dict=cookies_dict,
+                csrf_token=csrf_token,
+                container_id=container_id,
+                timeout=60,
+            )
+
+            # Run detection (sync wrapper for async context)
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, detector.detect, text)
+
+            # Check if successful
+            if not result.get("success"):
+                error_msg = result.get("error", "Unknown error")
+
+                # Provide helpful error messages for common issues
+                if "401" in error_msg or "Unauthorized" in error_msg:
+                    logger.warning("Grammarly authentication failed. Cookies may be expired.")
+                    error_msg = "Authentication failed. Please refresh your Grammarly cookies."
+                elif "403" in error_msg or "Forbidden" in error_msg:
+                    logger.warning("Grammarly access denied. Check CSRF token and container ID.")
+                    error_msg = (
+                        "Access denied. Please check your Grammarly CSRF token and container ID."
+                    )
+
+                logger.error(f"Grammarly detection failed: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.GRAMMARLY,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=result.get("raw_response"),
+                    error=error_msg,
+                )
+
+            # Extract results
+            ai_probability = result.get("ai_probability", 0.5)
+            human_probability = result.get("human_probability", 0.5)
+            confidence = result.get("confidence", 0.0)
+
+            logger.info(
+                f"Grammarly detection complete - "
+                f"AI: {ai_probability:.2%}, "
+                f"Human: {human_probability:.2%}, "
+                f"Confidence: {confidence:.2%}"
+            )
+
+            return self._create_detector_result(
+                detector=DetectorType.GRAMMARLY,
+                ai_probability=ai_probability,
+                human_probability=human_probability,
+                confidence=confidence,
+                response_time_ms=result.get("response_time_ms"),
+                details=result.get("raw_response"),
+            )
+
+        except Exception as e:
+            logger.error(f"Grammarly detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.GRAMMARLY,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=str(e),
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+            )
+
+    async def _detect_scribbr(self, text: str) -> DetectorResult:
+        """
+        Detect using Scribbr AI Detector API.
+
+        API: https://www.scribbr.com/ai-detector/
+        Note: Scribbr uses a proprietary AI detection model.
+        This is a placeholder implementation.
+        """
+        start_time = time.time()
+        try:
+            if not settings.SCRIBBR_API_KEY:
+                message = "Scribbr API key not configured"
+                logger.warning(message)
+                return self._create_detector_result(
+                    detector=DetectorType.SCRIBBR,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=message,
+                )
+
+            # Placeholder - Scribbr API integration would go here
+            message = "Scribbr detector not yet implemented - API documentation needed"
+            logger.info(message)
+            return self._create_detector_result(
+                detector=DetectorType.SCRIBBR,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                response_time_ms=(time.time() - start_time) * 1000,
+                details={"message": message},
+                error=message,
+            )
+
+        except Exception as e:
+            logger.error(f"Scribbr detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.SCRIBBR,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=str(e),
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+            )
+
+    async def _detect_crossplag(self, text: str) -> DetectorResult:
+        """
+        Detect using CrossPlag AI Detector API (public, no auth required).
+
+        API: https://lkv1fgxnwa.execute-api.eu-central-1.amazonaws.com/production/detect
+        Note: CrossPlag specializes in plagiarism and AI content detection.
+        No authentication required - this is a free public endpoint.
+        """
+        start_time = time.time()
+        try:
+            # Create detector instance (no auth needed)
+            detector = CrossPlagDetector(timeout=60)
+
+            # Run detection (sync wrapper for async context)
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, detector.detect, text)
+
+            # Check if successful
+            if not result.get("success"):
+                error_msg = result.get("error", "Unknown error")
+
+                # Provide helpful error messages for common issues
+                if "timeout" in error_msg.lower():
+                    logger.warning("CrossPlag request timed out.")
+                    error_msg = "Request timed out. Please try again."
+                elif "403" in error_msg or "Forbidden" in error_msg:
+                    logger.warning("CrossPlag access denied.")
+                    error_msg = "Access denied. Service may be temporarily unavailable."
+
+                logger.error(f"CrossPlag detection failed: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.CROSSPLAG,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=result.get("raw_response"),
+                    error=error_msg,
+                )
+
+            # Extract results
+            ai_probability = result.get("ai_probability", 0.5)
+            human_probability = result.get("human_probability", 0.5)
+            confidence = result.get("confidence", 0.0)
+
+            logger.info(
+                f"CrossPlag detection complete - "
+                f"AI: {ai_probability:.2%}, "
+                f"Human: {human_probability:.2%}, "
+                f"Confidence: {confidence:.2%}"
+            )
+
+            return self._create_detector_result(
+                detector=DetectorType.CROSSPLAG,
+                ai_probability=ai_probability,
+                human_probability=human_probability,
+                confidence=confidence,
+                response_time_ms=result.get("response_time_ms"),
+                details=result.get("raw_response"),
+            )
+
+        except Exception as e:
+            logger.error(f"CrossPlag detection failed: {e!s}", exc_info=True)
+            return self._create_detector_result(
+                detector=DetectorType.CROSSPLAG,
+                ai_probability=0.5,
+                human_probability=0.5,
+                confidence=0.0,
+                error=str(e),
+                response_time_ms=(time.time() - start_time) * 1000,
+                details=None,
+            )
 
     def _calculate_entropy(self, words: list[str]) -> float:
         """Calculate Shannon entropy of word distribution."""

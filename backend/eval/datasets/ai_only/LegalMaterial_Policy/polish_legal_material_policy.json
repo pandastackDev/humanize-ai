@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pl_legal_material_policy_001",
+    "text": "Profesjonaliści medyczni są prawnie i etycznie zobowiązani do zachowania poufności pacjentów. Ten obowiązek jest ściśle powiązany z konstytucyjnym prawem do prywatności, które jest wyraźnie chronione na mocy prawa południowoafrykańskiego. Pacjenci ujawniają wysoce osobiste i wrażliwe informacje dostawcom opieki zdrowotnej z oczekiwaniem, że takie informacje pozostaną poufne. Zasadniczo ujawnienie informacji medycznych bez zgody pacjenta jest zarówno nielegalne, jak i niedopuszczalne.\n\nNiemniej jednak poufność nie jest absolutna. Artykuł 36 Konstytucji pozwala na ograniczenie pewnych praw, gdy takie ograniczenie jest rozsądne i uzasadnione w otwartym i demokratycznym społeczeństwie. W okolicznościach, w których prawa konstytucyjne są w konflikcie—takie jak prawo do prywatności wobec prawa do wolności wypowiedzi—należy przeprowadzić ćwiczenie równoważenia, aby określić, które prawo powinno przeważyć w interesie sprawiedliwości.\n\nKonstytucja gwarantuje każdemu człowiekowi w Południowej Afryce prawo do prywatności, w tym ochronę przed bezprawnym naruszeniem komunikacji prywatnej. Informacje medyczne stanowią część tych chronionych komunikacji i ujawnień. Zachowanie poufności w kontekście opieki zdrowotnej jest niezbędne; bez tego zapewnienia pacjenci mogą ukrywać krytyczne informacje medyczne, potencjalnie kompromitując diagnozę, leczenie i ogólne wyniki zdrowotne.\n\nRamy statutowe, takie jak Ustawa o zdrowiu narodowym 61 z 2003 roku i Ustawa o promocji dostępu do informacji 2 z 2000 roku, regulują dostęp do dokumentacji medycznej i osobistych informacji zdrowotnych. Te prawa ustanawiają ścisłą kontrolę nad tym, jak takie informacje są dostępne, przechowywane i ujawniane, przypisując odpowiedzialność urzędnikom informacyjnym w instytucjach publicznych i wyznaczonym szefom podmiotów prywatnych.\n\nDodatkowo, Ustawa o ochronie informacji osobistych 4 z 2013 roku nakłada ogólny zakaz przetwarzania szczególnych informacji osobistych, w tym danych związanych ze zdrowiem. Jednak POPIA uznaje określone wyjątki, pozwalając na przetwarzanie, gdy wyraźna zgoda została udzielona lub gdy ujawnienie jest konieczne do leczenia medycznego, świadczenia opieki zdrowotnej lub funkcji usług społecznych związanych z opieką nad pacjentem.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Professional",
+      "word_count": 300,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Polish legal material policy about patient confidentiality and privacy rights - AI generated",
+      "verified_human": false
+    }
+  }
+]

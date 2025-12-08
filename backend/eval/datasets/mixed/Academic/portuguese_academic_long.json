@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pt_academic_001",
+    "text": "A geografia estuda a Terra e as relações entre os seres humanos e seu ambiente físico. Geógrafos examinam padrões espaciais, processos naturais e como as atividades humanas modificam a paisagem. A geografia física foca em características naturais como clima, relevo, vegetação e recursos hídricos, enquanto a geografia humana explora padrões de população, assentamento e atividades econômicas.\n\nA cartografia, ou criação de mapas, é uma ferramenta fundamental na geografia. Mapas modernos utilizam tecnologia de sensoriamento remoto e sistemas de informação geográfica para representar com precisão características da superfície terrestre. Essas ferramentas são essenciais para planejamento urbano, gestão de recursos e resposta a desastres.\n\nA geografia regional estuda áreas específicas do mundo, analisando como características físicas, históricas e culturais se combinam para criar identidades regionais distintas. A geografia econômica examina a localização de atividades econômicas e como fatores geográficos influenciam o desenvolvimento econômico.\n\nCompreender a geografia é crucial para enfrentar desafios globais como mudança climática, segurança alimentar e desenvolvimento sustentável. O conhecimento geográfico ajuda a tomar decisões informadas sobre uso da terra, conservação de recursos e planejamento para o futuro.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Mixed",
+      "word_count": 295,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "geography",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese mixed text about geography - professional tone with AI assistance",
+      "verified_human": false,
+      "composition": {
+        "style": "professional_formal",
+        "strategy": "Structured academic text with comprehensive coverage"
+      }
+    }
+  }
+]

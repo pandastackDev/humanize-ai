@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_en_essay_env_001",
+    "text": "Major international and domestic flights have been cancelled, transport systems including railway services, bus, truck and vehicle transport have been suspended, except goods trains and emergency vehicles. Educational, commercial, sports and spiritual institutions were closed, social gatherings were restricted, and citizens were advised to stay at home. Power plants, manufacturing and industrial facilities halted production, except those related to essential services (Chakraborty and Maity 2020; Paital 2020; Saadat et al. 2020; Zambrano-Monserrate et al. 2020). These containment measures induced a sharp drop in social, industrial, and economic activities. Nonetheless, lockdown also induced a strong reduction in air pollution due to the massive decrease in the combustion of fossil fuels and, more generally, energy consumption (Zambrano-Monserrate et al. 2020). For instance, decreases in emissions of greenhouse gases such as nitrogen dioxide (NO2), sulfur dioxide (SO2), and carbon dioxide (CO2) were observed, and CO2 emissions fell by 18% during February and March 2020 in China (Paital 2020; Wang and Su 2020; Zambrano-Monserrate et al. 2020).\n\nPublic mobility diminished by up to 90% as a result of lockdown policies, including traffic restrictions and people staying at home. For instance, passenger vehicle traffic in the USA reduced by 40%. With less human activity, noise levels dropped in many cities around the world (Muhammad et al. 2020; Paital 2020; Zambrano-Monserrate et al. 2020). Social distancing policies have kept people from resorts and beaches around the world while industrial shutdown has paused effluent discharge into water bodies. Such events resulted in water quality improvement due to less pollution observed in different countries such as Mexico, Spain and Ecuador. For example, Venice's canals and the Yamuna river in Delhi, India, is now significantly clearer compared to the past (Paital et al. 2020; Saadat et al. 2020). However, the above positive effects of the COVID-19 pandemic should not be seen as long-term ways to control environmental pollution because this pandemic should stop within a relatively short period of time and global social and economic activities should return to their normal level. Thus, these short-term positive impacts of COVID-19 should be utilized to develop effective future policies to protect the environment (Allegrante et al. 2020; Chang et al. 2020; Espejo et al. 2020; Ferguson et al. 2020; Raoofi et al. 2020). These policies must take into account the potential impacts of the massive re-opening of industries after the COVID-19 pandemic to cover the loss during lockdowns, which could result in a rapid increase in environmental pollution.",
+    "metadata": {
+      "language": "en",
+      "tone": "Essay",
+      "word_count": 398,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "environment",
+      "date_added": "2025-12-04",
+      "notes": "English essay about COVID-19 lockdown and environmental impacts - human written version",
+      "verified_human": true
+    }
+  }
+]

@@ -163,8 +163,9 @@ class Settings(BaseSettings):
 
     # AI Detection API Keys (for /detect endpoint)
     # Note: These are optional - detectors will work in demo mode without keys
-    GPTZERO_COOKIE_STRING: str = (
-        ""  # Session cookies for GPTZero API (required for GPTZero detection)
+    GPTZERO_COOKIE_STRING: str = ""
+    GPTZERO_SCAN_ID: str | None = (
+        None  # Optional: Scan ID from web interface (e.g., "fa3db808-0cc0-4165-964b-d7083e4a47d4")
     )
     COPYLEAKS_API_KEY: str = ""
     SAPLING_API_KEY: str = ""
@@ -172,9 +173,18 @@ class Settings(BaseSettings):
     ZEROGPT_API_KEY: str = ""
     ORIGINALITY_API_KEY: str = ""
     QUILLBOT_API_KEY: str = ""
+    QUILLBOT_COOKIE_STRING: str = (
+        ""  # Session cookies for QuillBot API (required for QuillBot detection)
+    )
+    QUILLBOT_USERIDTOKEN: str = (
+        ""  # User ID token for QuillBot API (can be extracted from cookies or provided separately)
+    )
     TURNITIN_API_KEY: str = ""
-    GRAMMARLY_API_KEY: str = ""
+    GRAMMARLY_COOKIE_STRING: str = ""  # Browser session cookies for Grammarly
+    GRAMMARLY_CSRF_TOKEN: str = ""  # CSRF token from Grammarly session
+    GRAMMARLY_CONTAINER_ID: str = ""  # Container ID from Grammarly session
     SCRIBBR_API_KEY: str = ""
+    CROSSPLAG_API_KEY: str = ""
 
     # Detection Cache Configuration
     DETECTION_CACHE_SIZE: int = 1000

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_es_legal_material_policy_001",
+    "text": "Los profesionales médicos están legal y éticamente obligados a mantener la confidencialidad del paciente. Esta obligación está estrechamente relacionada con el derecho constitucional a la privacidad, que está explícitamente protegido por la ley sudafricana. Los pacientes divulgan información altamente personal y sensible a los proveedores de atención médica con la expectativa de que dicha información permanecerá confidencial. Como regla general, la divulgación de información médica sin el consentimiento de un paciente es ilegal e inaceptable.\n\nSin embargo, la confidencialidad no es absoluta. La Sección 36 de la Constitución permite la limitación de ciertos derechos cuando tal limitación es razonable y justificable en una sociedad abierta y democrática. En circunstancias donde los derechos constitucionales entran en conflicto—como el derecho a la privacidad versus el derecho a la libertad de expresión—debe realizarse un ejercicio de equilibrio para determinar qué derecho debe prevalecer en interés de la justicia.\n\nLa Constitución garantiza a cada individuo en Sudáfrica el derecho a la privacidad, incluyendo protección contra la infracción ilegal de comunicaciones privadas. La información médica forma parte de estas comunicaciones y divulgaciones protegidas. Preservar la confidencialidad en el contexto de la atención médica es esencial; sin esta garantía, los pacientes pueden retener información médica crítica, potencialmente comprometiendo el diagnóstico, el tratamiento y los resultados generales de salud.\n\nLos marcos estatutarios como la Ley Nacional de Salud 61 de 2003 y la Ley de Promoción de Acceso a la Información 2 de 2000 regulan el acceso a los registros médicos y la información de salud personal. Estas leyes establecen controles estrictos sobre cómo se accede, almacena y divulga dicha información, asignando responsabilidad a los oficiales de información en instituciones públicas y a los jefes designados de organismos privados.\n\nAdicionalmente, la Ley de Protección de Información Personal 4 de 2013 impone una prohibición general sobre el procesamiento de información personal especial, incluyendo datos relacionados con la salud. Sin embargo, POPIA reconoce excepciones específicas, permitiendo el procesamiento donde se ha proporcionado consentimiento explícito o donde la divulgación es necesaria para el tratamiento médico, la prestación de atención médica o las funciones de servicios sociales relacionadas con la atención del paciente.",
+    "metadata": {
+      "language": "es",
+      "tone": "Professional",
+      "word_count": 300,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Spanish legal material policy about patient confidentiality and privacy rights - AI generated",
+      "verified_human": false
+    }
+  }
+]

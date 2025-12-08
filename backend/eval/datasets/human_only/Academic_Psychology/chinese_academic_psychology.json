@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_zh_academic_psych_001",
+    "text": "首先，该主题获得了萨戈达大学心理学系机构审查委员会的批准（IRB，499/2023）。在获得许可后，创建了一个Google表单，其中包含所有量表和人口统计问题，以促进数据收集。\n\n使用Google表单是因为它实用且经济。大多数学生能够使用适当的设备，没有发现与可访问性或技术困难相关的重大问题。\n\n参与者在不同地点被联系，并向他们提供了有关研究目的的详细信息。考虑到伦理考虑，在确保数据保密性后获得了他们的书面知情同意。回答了所有疑问，最后，感谢他们参与研究。\n\n数据分析\n\n在数据收集阶段之后，将回答收集在Excel表格中，进行编码，然后导入IBM-SPSS进行进一步的统计分析。进行了相关的统计检验。最后，在研究报告中对结果进行了分析、编译和讨论。本研究最终模型通过AMOS V26进行了测试。通过使用最大标准似然估计（MLE）在AMOS中测试了所提出模型中的预测关系。进行了路径分析，并通过绝对拟合指数测量了模型内这些关系的拟合优度和显著性；χ2拟合优度统计量、近似均方根误差（RMSEA）、拟合优度指数（GFI）、相对拟合指数，即规范拟合指数（NFI）、增量拟合指数（IFI）、Tucker-Lewis指数（TLI）、比较拟合指数（CFI）。通过在AMOS中对2,000个引导样本执行引导方法来验证中介模型。\n\n对于模型拟合指数的评估，遵循了推荐的标准；比较拟合指数（CFI）、Tucker-Lewis指数（TLI）、规范拟合指数（NFI）和增量拟合指数（IFI）≥ 0.90（Cortina等人，2017；Grieger，2021）；标准化均方根残差（SRMR < 0.1）（Bentler，1990）和近似均方根误差（RMSEA），其中值≤ 0.05（Brown，2006；Browne and Cudeck，1993）。已经观察到RMSEA在简单路径分析中存在问题，特别是在自由度较少的情况下。在这些模型中，大多数时候RMSEA错误地显示拟合不良，尽管模型很好地拟合了数据。因此，在这种情况下，模型的接受应基于CFI和SRMR（Kenny等人，2015）。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Academic",
+      "word_count": 298,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Chinese academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

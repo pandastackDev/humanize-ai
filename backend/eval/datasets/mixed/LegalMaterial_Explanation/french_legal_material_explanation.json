@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_fr_legal_material_explanation_001",
+    "text": "Les praticiens médicaux ont un devoir légal et éthique clair de garder confidentielles les informations des patients. Cette responsabilité est étroitement liée au droit constitutionnel à la vie privée, qui est fortement protégé en Afrique du Sud. Les patients partagent généralement des détails profondément personnels avec leurs prestataires de soins de santé en comprenant que ces informations ne seront pas divulguées. En règle générale, révéler les informations médicales de quelqu'un sans son consentement est à la fois illégal et inacceptable.\n\nCela dit, comme la plupart des règles légales, la confidentialité n'est pas absolue. La Constitution permet que certains droits soient limités lorsqu'il est raisonnable et justifiable de le faire. L'article 36 reconnaît que des situations peuvent survenir où deux droits constitutionnels entrent en conflit. Par exemple, lorsque le droit à la vie privée entre en conflit avec le droit à la liberté d'expression, l'un de ces droits peut être limité si les intérêts de la justice l'exigent.\n\nChacun en Afrique du Sud a un droit constitutionnel à la vie privée, qui inclut la protection contre l'ingérence dans les communications privées. Cette protection s'étend aux informations médicales partagées entre un patient et un praticien médical. La sauvegarde de ces informations est essentielle.\n\nSi les patients ne peuvent pas faire confiance que leurs divulgations resteront confidentielles, ils peuvent retenir des détails importants sur leur santé. Ce manque d'ouverture peut sérieusement affecter le traitement médical et peut même mettre la santé d'un patient en danger.\n\nLa Loi sur la santé nationale 61 de 2003 et la Loi sur la promotion de l'accès à l'information 2 de 2000 réglementent l'accès aux dossiers médicaux. Ces lois incluent des dispositions spécifiques visant à protéger les renseignements personnels, en particulier les renseignements détenus par les praticiens médicaux. Elles placent la responsabilité de gérer et protéger ces informations sur les responsables de l'information dans les institutions publiques et sur les dirigeants des organismes privés.\n\nEn outre, la Loi sur la protection des renseignements personnels 4 de 2013 restreint généralement le traitement des renseignements de santé personnels, y compris leur collecte et leur partage. Cependant, la Loi permet des exceptions. Les renseignements de santé personnels peuvent être traités lorsque l'individu a donné un consentement clair ou lorsque la divulgation est nécessaire pour un traitement et des soins appropriés par les professionnels médicaux, les institutions de soins de santé ou les prestataires de services sociaux.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "French legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

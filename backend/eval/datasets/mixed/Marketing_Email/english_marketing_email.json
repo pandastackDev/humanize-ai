@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_marketing_email_001",
+    "text": "Email marketing has numerous best practices, and speed is not one of them. Although deadlines may cause the need to hurry and launch, the rush to create a campaign may result in missed details in the design, messaging, and subject lines, which are the direct cause of performance.\n\nWhen emails do not meet the expectations of the subscribers or lose their focus on what people initially subscribed to, the engagement rates are likely to decline. This may lead to a decrease in the number of opens and clicks, and in other instances, an increase in the number of unsubscribes or spam. It is always a good idea to take time and go through your list, content and general strategy to make sure that your campaigns are effective and well received.\n\n8. Understand Spam Filters\n\nSpam filters are based on the constantly changing sets of rules that define whether an email will be placed in the inbox or the spam. These systems are trained on user behavior- the more people label an email as spam, the more accurate filters become. Most spam filters also exchange information with each other, enhancing their detection capabilities.\n\nEven though there is no sure method of beating spam filters altogether, marketers can prevent the most frequent triggers by adhering to the best practices:\n\nGuard your reputation as a sender. Other spam filters consider the history of the sending IP. In the case of such platforms as Mailchimp, messages are delivered through shared servers, which implies that a single malicious user can influence others. Strict compliance is useful in ensuring that overall deliverability is high.\n\nUse well-coded templates. Bad HTML structure, redundant tags, or text editor copied code can be a red flag. In case of uncertainty, apply professionally created templates or consult an expert.\n\nBe open in your communication. Ensure that it is clear why you are reaching out to subscribers and what you are offering.\n\nOnly send to subscribers who have opted in. Permission-based lists greatly minimize spam complaints and unsubscribes.\n\nStay consistent. Make your email content and design consistent with the branding that subscribers are familiar with on your website and social media.",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 269,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "English marketing material about email marketing best practices - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "marketing",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

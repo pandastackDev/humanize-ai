@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_es_marketing_email_001",
+    "text": "El marketing por correo electrónico tiene numerosas mejores prácticas, y la velocidad no es una de ellas. Aunque los plazos pueden causar la necesidad de apresurarse y lanzar, la prisa por crear una campaña puede resultar en detalles perdidos en el diseño, mensajería y líneas de asunto, que son la causa directa del rendimiento.\n\nCuando los correos electrónicos no cumplen con las expectativas de los suscriptores o pierden su enfoque en lo que las personas inicialmente se suscribieron, es probable que las tasas de participación disminuyan. Esto puede llevar a una disminución en el número de aperturas y clics, y en otros casos, un aumento en el número de cancelaciones de suscripción o spam. Siempre es una buena idea tomarse el tiempo y revisar tu lista, contenido y estrategia general para asegurarte de que tus campañas sean efectivas y bien recibidas.\n\n8. Entender los Filtros de Spam\n\nLos filtros de spam se basan en conjuntos de reglas en constante cambio que definen si un correo electrónico será colocado en la bandeja de entrada o en el spam. Estos sistemas están entrenados en el comportamiento del usuario: cuantas más personas etiqueten un correo como spam, más precisos se vuelven los filtros. La mayoría de los filtros de spam también intercambian información entre sí, mejorando sus capacidades de detección.\n\nAunque no hay un método seguro para vencer completamente los filtros de spam, los especialistas en marketing pueden prevenir los desencadenantes más frecuentes adhiriéndose a las mejores prácticas:\n\nProtege tu reputación como remitente. Otros filtros de spam consideran el historial de la IP de envío. En el caso de plataformas como Mailchimp, los mensajes se entregan a través de servidores compartidos, lo que implica que un solo usuario malicioso puede influir en otros. El cumplimiento estricto es útil para asegurar que la entregabilidad general sea alta.\n\nUsa plantillas bien codificadas. Una estructura HTML deficiente, etiquetas redundantes o código copiado del editor de texto pueden ser una bandera roja. En caso de incertidumbre, aplica plantillas creadas profesionalmente o consulta a un experto.\n\nSé abierto en tu comunicación. Asegúrate de que quede claro por qué te estás comunicando con los suscriptores y qué estás ofreciendo.\n\nEnvía solo a suscriptores que hayan optado por participar. Las listas basadas en permisos minimizan en gran medida las quejas de spam y las cancelaciones de suscripción.\n\nManténgase consistente. Haz que el contenido y diseño de tu correo electrónico sean consistentes con la marca que los suscriptores conocen en tu sitio web y redes sociales.",
+    "metadata": {
+      "language": "es",
+      "tone": "Mixed",
+      "word_count": 268,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Spanish marketing material about email marketing best practices - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "marketing",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

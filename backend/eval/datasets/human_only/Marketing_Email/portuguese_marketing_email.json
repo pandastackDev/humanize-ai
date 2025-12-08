@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pt_marketing_email_001",
+    "text": "Existem muitas melhores práticas para marketing por e-mail, mas se apressar para enviar e-mails não é uma delas. Sabemos que você pode estar sob a pressão de um prazo rigoroso, mas acelerar o processo de criação de campanha sem pensar em seu design, conteúdo e linha de assunto pode causar alguns problemas.\n\nSe seu conteúdo não é relevante para seus assinantes ou é diferente do que eles se inscreveram, há uma chance de você ver uma diminuição em aberturas e cliques ou um aumento em reclamações de spam e taxas de cancelamento de assinatura. Então, desacelere, respire fundo e certifique-se de que sua lista e campanhas estão em condições impecáveis.\n\n8. Entender os filtros de spam\n\nOs filtros de spam de e-mail usam uma longa lista de critérios para decidir se sua campanha será colocada na pasta de spam de um destinatário.\n\nA lista de critérios de spam está constantemente crescendo e se adaptando porque os filtros aprendem mais sobre como o spam parece toda vez que alguém clica em \"Isso é lixo\" ou \"Marcar como spam\" em seu cliente de e-mail. Os filtros de spam até sincronizam uns com os outros para compartilhar o que aprenderam.\n\nNão há fórmula mágica para evitar filtros de spam, mas temos algumas dicas que profissionais de marketing de e-mail podem usar para evitar os erros mais comuns que fazem com que e-mails sejam marcados como spam.\n\nMantenha uma boa reputação de envio. Alguns filtros de spam marcarão uma campanha se alguém com o mesmo endereço IP já enviou spam. Quando você envia através do Mailchimp, suas campanhas são entregues através de nossos servidores, então uma pessoa sendo marcada por spam poderia afetar a capacidade de entrega de nossos usuários. É por isso que trabalhamos com vigilância para manter nossa reputação de envio intacta e exigimos que os usuários cumpram nossos Termos de Uso.\n\nUse modelos de e-mail que estejam corretamente codificados. Código descuidado, tags extras ou código de formatação extraído de um editor de texto rico pode acionar filtros de spam. Se você não está familiarizado com código HTML, recomendamos usar um de nossos modelos ou trabalhar com um especialista.\n\nTorne suas intenções claras. Você também vai querer ter certeza de que sua intenção é clara para que seus assinantes saibam por que você está enviando e-mails para eles.\n\nCertifique-se de que todos os assinantes em sua lista optaram por receber suas campanhas. Esta é a maneira mais fácil de garantir que ninguém cancele a assinatura, reclame ou denuncie suas campanhas.\n\nSeja consistente. Tente não se afastar muito do conteúdo e design que seu público já associa à sua marca, site ou canais de mídia social.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Marketing",
+      "word_count": 268,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

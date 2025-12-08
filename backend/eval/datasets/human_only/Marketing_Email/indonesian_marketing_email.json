@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_id_marketing_email_001",
+    "text": "Ada banyak praktik terbaik untuk pemasaran email, tetapi terburu-buru mengirim email bukan salah satunya. Kami tahu Anda mungkin berada di bawah tekanan tenggat waktu yang ketat, tetapi mempercepat proses pembuatan kampanye tanpa memikirkan desain, konten, dan baris subjek Anda dapat menyebabkan beberapa masalah.\n\nJika konten Anda tidak relevan untuk pelanggan Anda atau berbeda dari apa yang mereka daftarkan, ada kemungkinan Anda akan melihat penurunan dalam pembukaan dan klik atau peningkatan dalam keluhan spam dan tingkat berhenti berlangganan. Jadi perlahan-lahan, ambil napas, dan pastikan daftar dan kampanye Anda dalam kondisi prima.\n\n8. Memahami filter spam\n\nFilter spam email menggunakan daftar panjang kriteria untuk memutuskan apakah kampanye Anda akan ditempatkan di folder spam penerima.\n\nDaftar kriteria spam terus tumbuh dan beradaptasi karena filter mempelajari lebih banyak tentang seperti apa spam terlihat setiap kali seseorang mengklik \"Ini adalah sampah\" atau \"Tandai sebagai spam\" di klien email mereka. Filter spam bahkan menyinkronkan satu sama lain untuk berbagi apa yang telah mereka pelajari.\n\nTidak ada formula ajaib untuk menghindari filter spam, tetapi kami memiliki beberapa tips yang dapat digunakan pemasar email untuk menghindari kesalahan paling umum yang membuat email ditandai sebagai spam.\n\nPertahankan reputasi pengiriman yang baik. Beberapa filter spam akan menandai kampanye jika siapa pun dengan alamat IP yang sama pernah mengirim spam. Ketika Anda mengirim melalui Mailchimp, kampanye Anda dikirimkan melalui server kami, jadi satu orang yang ditandai karena spam dapat mempengaruhi kemampuan pengiriman pengguna kami. Itulah mengapa kami bekerja dengan waspada untuk menjaga reputasi pengiriman kami utuh dan meminta pengguna untuk mematuhi Ketentuan Penggunaan kami.\n\nGunakan template email yang dikodekan dengan benar. Kode yang ceroboh, tag tambahan, atau kode pemformatan yang ditarik dari editor teks kaya dapat memicu filter spam. Jika Anda tidak terbiasa dengan kode HTML, kami sarankan menggunakan salah satu template kami atau bekerja dengan ahli.\n\nBuat niat Anda jelas. Anda juga akan ingin memastikan niat Anda jelas sehingga pelanggan Anda tahu mengapa Anda mengirim email kepada mereka.\n\nPastikan semua pelanggan di daftar Anda telah memilih untuk menerima kampanye Anda. Ini adalah cara termudah untuk memastikan tidak ada yang berhenti berlangganan, mengeluh tentang, atau melaporkan kampanye Anda.\n\nTetap konsisten. Cobalah untuk tidak terlalu menyimpang dari konten dan desain yang sudah dikaitkan audiens Anda dengan merek, situs web, atau saluran media sosial Anda.",
+    "metadata": {
+      "language": "id",
+      "tone": "Marketing",
+      "word_count": 267,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

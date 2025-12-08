@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_zh_legal_material_policy_001",
+    "text": "医疗保健专业人员需要出于伦理和法律原因尊重患者保密性。这一职责与宪法隐私权密切相关，该权利在南非受到强烈保护。患者与医生分享个人和敏感的医疗信息，相信这些信息将保持私密，在大多数情况下，未经患者同意披露此类信息既非法也不可接受。\n\n话虽如此，保密性并非绝对规则。像许多法律原则一样，它也有例外。根据宪法第36条，当合理且有必要平衡竞争利益时，可以限制某些权利。例如，如果隐私权与另一项宪法权利（如言论自由）发生冲突，法律可能允许限制一项权利以服务于正义。\n\n宪法明确规定每个人都有隐私权，包括保护免受对其通信的不合理干扰。医疗信息完全属于这种保护范围。如果患者不相信他们的披露将保持保密，他们可能会隐瞒关键信息，这可能会严重影响他们的治疗和整体健康。\n\n几项法律规范了对医疗记录和个人健康信息的访问。2003年第61号《国家健康法》和2000年第2号《信息获取促进法》规定了应如何保护患者信息以及谁负责管理这些信息。在公共和私人机构中，特定官员负责控制对这些敏感数据的访问。\n\n2013年第4号《个人信息保护法》进一步限制了对健康相关信息的处理。一般来说，除非满足某些条件，否则不得收集、使用或共享此类信息。这些包括患者已给予明确同意的情况，或披露对于确保医疗保健专业人员或相关服务提供适当的医疗治疗或护理是必要的情况。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Chinese legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_report_research_summary_001",
+    "text": "The Synapse Publications reports, published yearly by the Synapse team, headed by Jeanine McSweeney, Associate Librarian of Scholarly Communications, showcase the scholarly work of our authors and their contributions to scientific research and clinical practice at Memorial Sloan Kettering (MSK) Cancer Center.\n\nWe are happy to present a new publication this year, Research in Review: An Analysis of MSK Publications 20162020. This extended report provides a more in-depth analysis of Center-affiliated publications and provides a broad overview of the metrics typically employed to evaluate the impact of research at the article, journal, and author levels. Over the period under analysis, the Synapse team accessed and edited over 25,500 academic publications. These references are one of the aspects of a complex research environment that is examined in this analysis. The report also looks at the demographics of the authors, the current impact measures, and the methodologies applied to assess the research influence, and also identifies some interesting trends based on credible sources like PubMed Central 2 (PMC). The main goal of this report is to raise awareness of the various ways in which research contributions can be understood and evaluated.\n\nSynapse is a publicly accessible, authoritative bibliographic database of MSK publications and is created and managed by a professional team of librarians. It records the intellectual work of MSK researchers, clinicians, nurses, and healthcare professionals throughout the institution.\n\nWe are also planning to publish more Research in Review publications in the future and we would like to hear the feedback of the readers on this report.",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 201,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "English research summary report about MSK publications - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

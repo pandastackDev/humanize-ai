@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_id_legal_material_policy_001",
+    "text": "Profesional perawatan kesehatan diwajibkan untuk menghormati kerahasiaan pasien karena alasan etis dan hukum. Kewajiban ini erat terkait dengan hak konstitusional atas privasi, yang sangat dilindungi di Afrika Selatan. Pasien berbagi informasi medis pribadi dan sensitif dengan dokter mereka dengan percaya bahwa itu akan tetap pribadi, dan dalam kebanyakan kasus, mengungkapkan informasi semacam itu tanpa persetujuan pasien adalah ilegal dan tidak dapat diterima.\n\nYang mengatakan, kerahasiaan bukanlah aturan absolut. Seperti banyak prinsip hukum, ia memiliki pengecualian. Di bawah Pasal 36 Konstitusi, hak-hak tertentu dapat dibatasi ketika masuk akal dan perlu untuk menyeimbangkan kepentingan yang bersaing. Misalnya, jika hak privasi bertentangan dengan hak konstitusional lain, seperti kebebasan berekspresi, hukum dapat mengizinkan satu hak dibatasi untuk melayani keadilan.\n\nKonstitusi dengan jelas menyatakan bahwa setiap orang memiliki hak atas privasi, termasuk perlindungan dari campur tangan yang tidak dapat dibenarkan dengan komunikasi mereka. Informasi medis berada tepat dalam perlindungan ini. Jika pasien tidak merasa percaya diri bahwa pengungkapan mereka akan tetap rahasia, mereka dapat menahan informasi penting, yang dapat secara serius mempengaruhi pengobatan dan kesehatan mereka secara keseluruhan.\n\nBeberapa undang-undang mengatur akses ke catatan medis dan informasi kesehatan pribadi. Undang-Undang Kesehatan Nasional 61 tahun 2003 dan Undang-Undang Promosi Akses Informasi 2 tahun 2000 menetapkan bagaimana informasi pasien harus dilindungi dan siapa yang bertanggung jawab untuk mengelolanya. Di lembaga publik dan swasta, pejabat tertentu ditugaskan untuk mengontrol akses ke data sensitif ini.\n\nUndang-Undang Perlindungan Informasi Pribadi 4 tahun 2013 lebih lanjut membatasi pemrosesan informasi terkait kesehatan. Secara umum, informasi semacam itu tidak boleh dikumpulkan, digunakan, atau dibagikan kecuali kondisi tertentu terpenuhi. Ini termasuk situasi di mana pasien telah memberikan persetujuan eksplisit atau di mana pengungkapan diperlukan untuk memastikan perawatan medis yang tepat atau perawatan oleh profesional perawatan kesehatan atau layanan terkait.",
+    "metadata": {
+      "language": "id",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

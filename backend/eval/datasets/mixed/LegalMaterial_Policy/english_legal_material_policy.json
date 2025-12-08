@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_legal_material_policy_001",
+    "text": "Healthcare professionals are required to respect patient confidentiality for both ethical and legal reasons. This duty is closely linked to the constitutional right to privacy, which is strongly protected in South Africa. Patients share personal and sensitive medical information with their doctors trusting that it will remain private, and in most cases, it is both illegal and unacceptable to disclose such information without the patient's consent.\n\nThat said, confidentiality is not an absolute rule. Like many legal principles, it has exceptions. Under Section 36 of the Constitution, certain rights may be limited when it is reasonable and necessary to balance competing interests. For example, if the right to privacy conflicts with another constitutional right, such as freedom of expression, the law may allow one right to be limited in order to serve justice.\n\nThe Constitution clearly states that everyone has the right to privacy, including protection from unjustified interference with their communications. Medical information falls squarely within this protection. If patients do not feel confident that their disclosures will remain confidential, they may withhold crucial information, which could seriously affect their treatment and overall health.\n\nSeveral laws regulate access to medical records and personal health information. The National Health Act 61 of 2003 and the Promotion of Access to Information Act 2 of 2000 set out how patient information should be protected and who is responsible for managing it. In both public and private institutions, specific officials are tasked with controlling access to this sensitive data.\n\nThe Protection of Personal Information Act 4 of 2013 further restricts the processing of health-related information. Generally, such information may not be collected, used, or shared unless certain conditions are met. These include situations where the patient has given explicit consent or where disclosure is necessary to ensure proper medical treatment or care by healthcare professionals or related services.",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "English legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

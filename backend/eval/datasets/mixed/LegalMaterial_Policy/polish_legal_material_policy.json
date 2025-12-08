@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pl_legal_material_policy_001",
+    "text": "Profesjonaliści opieki zdrowotnej są zobowiązani do szanowania poufności pacjentów zarówno z powodów etycznych, jak i prawnych. Ten obowiązek jest ściśle powiązany z konstytucyjnym prawem do prywatności, które jest silnie chronione w Południowej Afryce. Pacjenci dzielą się osobistymi i wrażliwymi informacjami medycznymi ze swoimi lekarzami, ufając, że pozostaną one prywatne, a w większości przypadków ujawnienie takich informacji bez zgody pacjenta jest zarówno nielegalne, jak i niedopuszczalne.\n\nTo powiedziawszy, poufność nie jest regułą absolutną. Podobnie jak wiele zasad prawnych, ma wyjątki. Zgodnie z artykułem 36 Konstytucji, pewne prawa mogą być ograniczone, gdy jest to rozsądne i konieczne do zrównoważenia konkurujących interesów. Na przykład, jeśli prawo do prywatności koliduje z innym prawem konstytucyjnym, takim jak wolność wypowiedzi, prawo może pozwolić na ograniczenie jednego prawa w celu służenia sprawiedliwości.\n\nKonstytucja wyraźnie stwierdza, że każdy ma prawo do prywatności, w tym ochronę przed nieuzasadnioną ingerencją w ich komunikację. Informacje medyczne mieszczą się w tej ochronie. Jeśli pacjenci nie czują się pewni, że ich ujawnienia pozostaną poufne, mogą wstrzymać kluczowe informacje, co może poważnie wpłynąć na ich leczenie i ogólny stan zdrowia.\n\nKilka ustaw reguluje dostęp do dokumentacji medycznej i osobistych informacji zdrowotnych. Ustawa o zdrowiu narodowym 61 z 2003 roku i Ustawa o promocji dostępu do informacji 2 z 2000 roku określają, jak informacje pacjentów powinny być chronione i kto jest odpowiedzialny za ich zarządzanie. W instytucjach publicznych i prywatnych określeni urzędnicy są odpowiedzialni za kontrolowanie dostępu do tych wrażliwych danych.\n\nUstawa o ochronie informacji osobistych 4 z 2013 roku dodatkowo ogranicza przetwarzanie informacji związanych ze zdrowiem. Ogólnie rzecz biorąc, takie informacje nie mogą być zbierane, wykorzystywane ani udostępniane, chyba że spełnione są określone warunki. Obejmują one sytuacje, w których pacjent wyraził wyraźną zgodę lub gdy ujawnienie jest konieczne, aby zapewnić odpowiednie leczenie medyczne lub opiekę przez profesjonalistów opieki zdrowotnej lub powiązane usługi.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "Polish legal material policy about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

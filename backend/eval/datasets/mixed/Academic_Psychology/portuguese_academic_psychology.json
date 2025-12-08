@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pt_academic_psych_001",
+    "text": "O estudo foi aprovado pelo Comitê de Revisão Institucional do Departamento de Psicologia, Universidade de Sargodha (IRB 499/2023). Uma vez obtida a autorização ética, um Formulário Google foi criado para conter todos os itens demográficos e escalas padronizadas necessárias para coletar os dados.\n\nGoogle Forms foi escolhido como o instrumento principal de coleta de dados porque é prático, econômico e acessível. A maioria dos estudantes tinha acesso a dispositivos que poderiam preencher questionários online, e nenhum desafio técnico ou de acessibilidade importante foi observado.\n\nOs participantes foram contatados em diferentes lugares e receberam uma descrição clara dos objetivos e métodos do estudo. De acordo com os princípios éticos, o consentimento informado foi obtido por escrito apenas após garantir a confidencialidade e responder a todas as questões levantadas pelos participantes. No final, os participantes foram agradecidos por cooperar.\n\nAnálise de Dados\n\nApós a coleta de dados ser concluída, todas as respostas foram exportadas para Excel, codificadas e então importadas para IBM SPSS para serem analisadas estatisticamente. Os procedimentos estatísticos corretos foram usados e os resultados foram resumidos e discutidos para preparar o relatório do estudo.\n\nAMOS v26 foi usado para avaliar o modelo estrutural final. As relações hipotetizadas foram testadas por estimativa de máxima verossimilhança (MLE). A análise de caminhos foi realizada e o ajuste do modelo foi avaliado com base em índices de ajuste absolutos e relativos, como χ², RMSEA, GFI, NFI, IFI, TLI e CFI. A mediação foi analisada via bootstrapping usando 2.000 amostras.\n\nA avaliação do ajuste do modelo foi conduzida de acordo com os padrões aceitos: CFI, TLI, NFI e IFI 0,90 e acima (Cortina et al., 2017; Grieger, 2021); SRMR 0,10 e abaixo (Bentler, 1990); e RMSEA 0,05 e abaixo (Brown, 2006; Browne and Cudeck, 1993). No entanto, estudos anteriores mostraram que RMSEA pode ser inadequado em análise de caminhos simples com pequenos graus de liberdade. CFI e SRMR devem ser os principais critérios nos quais as decisões sobre a adequação do modelo são tomadas em tais situações (Kenny et al., 2015).",
+    "metadata": {
+      "language": "pt",
+      "tone": "Mixed",
+      "word_count": 295,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese academic text about psychology research methodology - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "academic",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

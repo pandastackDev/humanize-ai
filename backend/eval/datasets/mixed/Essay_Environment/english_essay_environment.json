@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_essay_env_001",
+    "text": "When lockdowns were introduced, nearly all international and local flights were canceled, and most transportation systems—including trains, buses, and private vehicles—were brought to a stop, except for essential goods transport and emergency services. Schools, workplaces, sports facilities, and religious centers closed their doors. People were discouraged from gathering and asked to stay home. Many factories and industrial sites paused operations unless they were tied to essential services (Chakraborty and Maity 2020; Paital 2020).\n\nThese restrictions caused a sharp slowdown in social and economic activity. But at the same time, they unintentionally created a noticeable drop in air pollution because fewer vehicles were on the road and less fossil fuel was being burned (Zambrano-Monserrate et al. 2020). Levels of gases like NO₂, SO₂, and CO₂ fell across many regions. In China, for example, CO₂ emissions dropped by around 18% during February and March 2020 (Wang and Su 2020).\n\nHuman mobility fell dramatically—up to 90% in some places—with a 40% decline in passenger traffic in the United States alone. As streets emptied, cities around the world experienced quieter soundscapes (Muhammad et al. 2020). Beaches and resorts saw fewer visitors, and the shutdown of industries reduced wastewater flowing into rivers and coastal areas. In several countries, including Mexico, Spain, and Ecuador, water quality temporarily improved. Well-known examples include the clearer canals in Venice and improved visibility in the Yamuna River in Delhi, India (Saadat et al. 2020).\n\nHowever, it's important not to treat these improvements as long-term environmental solutions. The pandemic is temporary, and once businesses fully reopen, pollution levels may rise quickly as industries try to make up for lost production. Instead, these brief environmental gains should guide the creation of more effective and sustainable policies to protect the environment in the future (Allegrante et al. 2020; Ferguson et al. 2020). Such policies will need to consider the environmental risks associated with rapid industrial recovery after the pandemic.",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 392,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "environment",
+      "date_added": "2025-12-04",
+      "notes": "English essay about COVID-19 lockdown and environmental impacts - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional_essay",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

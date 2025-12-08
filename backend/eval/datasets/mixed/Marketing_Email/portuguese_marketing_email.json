@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pt_marketing_email_001",
+    "text": "O marketing por e-mail tem numerosas melhores práticas, e a velocidade não é uma delas. Embora os prazos possam causar a necessidade de se apressar e lançar, a pressa em criar uma campanha pode resultar em detalhes perdidos no design, mensagens e linhas de assunto, que são a causa direta do desempenho.\n\nQuando os e-mails não atendem às expectativas dos assinantes ou perdem o foco no que as pessoas inicialmente se inscreveram, as taxas de engajamento provavelmente diminuirão. Isso pode levar a uma diminuição no número de aberturas e cliques, e em outros casos, um aumento no número de cancelamentos de assinatura ou spam. É sempre uma boa ideia reservar tempo e revisar sua lista, conteúdo e estratégia geral para garantir que suas campanhas sejam eficazes e bem recebidas.\n\n8. Entender os Filtros de Spam\n\nOs filtros de spam são baseados em conjuntos de regras em constante mudança que definem se um e-mail será colocado na caixa de entrada ou no spam. Esses sistemas são treinados no comportamento do usuário—quanto mais pessoas rotulam um e-mail como spam, mais precisos os filtros se tornam. A maioria dos filtros de spam também troca informações entre si, melhorando suas capacidades de detecção.\n\nMesmo que não haja um método certo para derrotar completamente os filtros de spam, os profissionais de marketing podem prevenir os gatilhos mais frequentes aderindo às melhores práticas:\n\nProteja sua reputação como remetente. Outros filtros de spam consideram o histórico do IP de envio. No caso de plataformas como Mailchimp, as mensagens são entregues através de servidores compartilhados, o que implica que um único usuário malicioso pode influenciar outros. A conformidade rigorosa é útil para garantir que a capacidade de entrega geral seja alta.\n\nUse modelos bem codificados. Estrutura HTML ruim, tags redundantes ou código copiado do editor de texto podem ser uma bandeira vermelha. Em caso de incerteza, aplique modelos criados profissionalmente ou consulte um especialista.\n\nSeja aberto em sua comunicação. Certifique-se de que está claro por que você está entrando em contato com os assinantes e o que está oferecendo.\n\nEnvie apenas para assinantes que optaram por participar. Listas baseadas em permissão minimizam significativamente reclamações de spam e cancelamentos de assinatura.\n\nMantenha-se consistente. Torne o conteúdo e o design do seu e-mail consistentes com a marca que os assinantes conhecem em seu site e mídias sociais.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Mixed",
+      "word_count": 267,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese marketing material about email marketing best practices - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "marketing",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

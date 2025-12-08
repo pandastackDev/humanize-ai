@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_en_legal_material_explanation_001",
+    "text": "Medical practitioners have a clear legal and ethical duty to keep patient information confidential. This responsibility is closely linked to the constitutional right to privacy, which is strongly protected in South Africa. Patients usually share deeply personal details with their health-care providers on the understanding that this information will not be disclosed. As a rule, revealing someone's medical information without their consent is both unlawful and unacceptable.\n\nThat said, like most legal rules, confidentiality is not absolute. The Constitution allows certain rights to be limited when it is reasonable and justifiable to do so. Section 36 recognises that situations may arise where two constitutional rights conflict. For example, when the right to privacy clashes with the right to freedom of expression, one of these rights may be limited if the interests of justice require it.\n\nEveryone in South Africa has a constitutional right to privacy, which includes protection against interference with private communications. This protection extends to medical information shared between a patient and a medical practitioner. Safeguarding this information is essential.\n\nIf patients cannot trust that their disclosures will remain confidential, they may withhold important details about their health. This lack of openness can seriously affect medical treatment and may even place a patient's health at risk.\n\nThe National Health Act 61 of 2003 and the Promotion of Access to Information Act 2 of 2000 regulate access to medical records. These laws include specific provisions aimed at protecting personal information, particularly information held by medical practitioners. They place responsibility for managing and protecting such information on information officers in public institutions and on the heads of private bodies.\n\nIn addition, the Protection of Personal Information Act 4 of 2013 generally restricts the processing of personal health information, including its collection and sharing. However, the Act allows exceptions. Personal health information may be processed where the individual has given clear consent or where disclosure is necessary for proper treatment and care by medical professionals, health-care institutions, or social service providers.",
+    "metadata": {
+      "language": "en",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "English legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

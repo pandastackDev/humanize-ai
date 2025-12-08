@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pl_academic_psych_001",
+    "text": "Przede wszystkim, temat został zatwierdzony przez Instytucjonalną Komisję Rewizyjną Wydziału Psychologii, Uniwersytetu Sargodha (IRB, 499/2023). Po uzyskaniu zezwoleń utworzono Formularz Google, który zawierał wszystkie skale i pytania demograficzne w celu ułatwienia zbierania danych.\n\nGoogle Forms były używane, ponieważ jest praktyczne i ekonomiczne. Większość studentów miała dostęp do odpowiedniego sprzętu, i nie zidentyfikowano poważnych obaw związanych z dostępnością lub trudnościami technicznymi.\n\nUczestnicy byli kontaktowani w różnych miejscach i otrzymali szczegółowe informacje na temat celu badania. Biorąc pod uwagę względy etyczne, ich pisemna świadoma zgoda została uzyskana po zapewnieniu poufności danych. Wszystkie pytania zostały odpowiedziane i na końcu zostali podziękowani za udział w badaniu.\n\nAnaliza danych\n\nPo fazie zbierania danych odpowiedzi zostały zebrane w arkuszu Excel, zakodowane i zaimportowane do IBM-SPSS w celu dalszej analizy statystycznej. Przeprowadzono odpowiednie testy statystyczne. Wreszcie, wyniki zostały przeanalizowane, skompilowane i omówione w raporcie z badania. Końcowy model obecnego badania został przetestowany poprzez AMOS V26. Przewidywane relacje w proponowanych modelach zostały przetestowane poprzez AMOS, używając estymacji maksymalnego standardowego prawdopodobieństwa (MLE). Przeprowadzono analizę ścieżek i te relacje w ramach modelu zostały zmierzone pod kątem jakości dopasowania i istotności przez bezwzględne wskaźniki dopasowania; statystyka dopasowania χ2, Błąd Średniokwadratowy Aproksymacji (RMSEA), Wskaźnik Dopasowania (GFI), względne wskaźniki dopasowania, tj. Normowany Wskaźnik Dopasowania (NFI), Przyrostowy Wskaźnik Dopasowania (IFI), Wskaźnik Tucker-Lewis (TLI), Porównawczy Wskaźnik Dopasowania (CFI). Model mediacji został zweryfikowany z testem mediacji, używając metody bootstrappingu wykonanej na 2.000 próbkach bootstrap w AMOS.\n\nDla oceny wskaźników dopasowania modelu przestrzegano zalecanych kryteriów; porównawczy wskaźnik dopasowania (CFI), wskaźnik Tucker-Lewis (TLI), Normowany Wskaźnik Dopasowania (NFI) i Przyrostowy Wskaźnik Dopasowania (IFI) ≥ 0,90 (Cortina et al., 2017; Grieger, 2021); standaryzowany błąd średniokwadratowy reszt (SRMR < 0,1) (Bentler, 1990) i błąd średniokwadratowy aproksymacji (RMSEA), gdzie wartości ≤ 0,05 (Brown, 2006; Browne and Cudeck, 1993). Zaobserwowano, że RMSEA ma problemy z prostą analizą ścieżek, szczególnie z mniejszą liczbą stopni swobody. W tych modelach większość czasu RMSEA błędnie pokazuje słabe dopasowanie, nawet jeśli model dobrze pasuje do danych. Dlatego w takich warunkach akceptacja modelu powinna opierać się na CFI i SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "pl",
+      "tone": "Academic",
+      "word_count": 293,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Polish academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

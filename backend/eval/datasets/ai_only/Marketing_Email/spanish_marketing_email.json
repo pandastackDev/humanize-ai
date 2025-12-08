@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_es_marketing_email_001",
+    "text": "El marketing por correo electrónico sigue muchas mejores prácticas, y la velocidad rara vez es una de ellas. Si bien los plazos pueden crear presión para lanzar rápidamente, apresurarse en la creación de campañas a menudo conduce a detalles pasados por alto en el diseño, mensajería y líneas de asunto—detalles que afectan directamente el rendimiento.\n\nCuando los correos electrónicos no cumplen con las expectativas de los suscriptores o se alejan de lo que las personas originalmente se registraron, las tasas de participación tienden a caer. Esto puede resultar en menos aperturas y clics, y en algunos casos, tasas de cancelación de suscripción más altas o quejas de spam. Tomarse el tiempo para revisar su lista, contenido y estrategia general ayuda a garantizar que sus campañas sigan siendo efectivas y bien recibidas.\n\n8. Entender los Filtros de Spam\n\nLos filtros de spam se basan en conjuntos de reglas en constante evolución para determinar si un correo electrónico llega a la bandeja de entrada o a la carpeta de spam. Estos sistemas aprenden del comportamiento del usuario—cada vez que alguien marca un correo como spam, los filtros se vuelven más precisos. Muchos filtros de spam también comparten datos entre sí, fortaleciendo sus capacidades de detección.\n\nAunque no hay una forma garantizada de evitar completamente los filtros de spam, los especialistas en marketing pueden evitar desencadenantes comunes siguiendo mejores prácticas probadas:\n\nProteja su reputación de envío. Algunos filtros de spam evalúan el historial de la IP de envío. Cuando se usan plataformas como Mailchimp, los mensajes se envían desde servidores compartidos, lo que significa que un mal actor puede afectar a otros. Mantener un cumplimiento estricto ayuda a mantener alta la entregabilidad general.\n\nUse plantillas correctamente codificadas. Una estructura HTML deficiente, etiquetas innecesarias o código copiado de editores de texto pueden levantar banderas rojas. En caso de duda, use plantillas diseñadas profesionalmente o busque ayuda experta.\n\nSea transparente en su mensajería. Haga obvio por qué se está contactando con los suscriptores y qué valor está ofreciendo.\n\nEnvie solo a suscriptores que hayan optado por participar. Las listas basadas en permisos reducen significativamente las quejas de spam y las cancelaciones de suscripción.\n\nManténgase consistente. Alinee el contenido y diseño de su correo electrónico con la marca que los suscriptores reconocen de su sitio web y canales sociales.",
+    "metadata": {
+      "language": "es",
+      "tone": "Marketing",
+      "word_count": 267,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Spanish marketing material about email marketing best practices",
+      "verified_human": false
+    }
+  }
+]

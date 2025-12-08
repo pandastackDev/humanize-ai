@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_fr_legal_material_policy_001",
+    "text": "Les praticiens médicaux sont tenus de se conformer au principe de confidentialité pour des raisons éthiques et légales. La confidentialité est également liée au droit à la vie privée, qui est un droit de l'homme protégé par notre Constitution. Les patients s'approchent souvent de leurs prestataires de soins de santé de confiance avec la confiance que leurs affaires personnelles seront gardées privées et, en général, il est inacceptable et illégal de divulguer les informations médicales de quiconque sans son consentement. Cependant, comme pour de nombreuses règles en droit, il existe des exceptions qui peuvent s'appliquer à la règle générale. L'article 36 de la Constitution peut limiter certains droits de l'homme et peut s'appliquer lorsqu'un équilibre doit être trouvé entre deux droits concurrents. Par exemple, lorsque le droit à la vie privée et le droit à la liberté d'expression sont en conflit, un droit peut prévaloir sur l'autre s'il est dans l'intérêt de la justice qu'un des droits soit limité.\n\nLa Constitution prévoit que tout le monde en Afrique du Sud a le droit à la vie privée, ce qui inclut le droit de ne pas avoir la vie privée de leurs communications violée.\n\nEn ce qui concerne les informations médicales, la vie privée des communications ou des divulgations d'un patient aux praticiens médicaux doit être protégée. Si la confiance du patient n'est pas sauvegardée, il est probable qu'il/elle ne sera pas disposé(e) à divulguer des informations qui sont critiques pour son traitement médical. Cela pourrait produire un résultat catastrophique qui pourrait avoir un impact négatif sur la santé du patient.\n\nLa Loi nationale sur la santé 61 de 2003 (\"NHA\") et la Loi sur la promotion de l'accès à l'information 2 de 2000 (\"PAIA\") réglementent les droits des patients et des tiers d'accéder aux dossiers médicaux. Il existe des clauses spéciales relatives aux informations personnelles, en particulier les informations détenues par les praticiens médicaux, et le droit à la vie privée. En termes de ces clauses, toutes les informations doivent être contrôlées par les responsables de l'information dans les institutions publiques et les chefs des organismes privés.\n\nLa Loi sur la protection des renseignements personnels 4 de 2013 (\"POPI\") interdit également le traitement (comme la collecte et le partage) d'informations personnelles sur la santé d'une personne, parmi d'autres motifs reconnus, en règle générale. Cependant, POPI permet le traitement d'informations sur la santé d'une personne dans certains cas, comme lorsque cette personne a expressément consenti au traitement des informations. Un autre exemple où le consentement n'a pas à être obtenu est lorsque les praticiens médicaux, les institutions de soins de santé ou les services sociaux doivent divulguer les informations pour le traitement et les soins appropriés du patient.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Professional",
+      "word_count": 299,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "legal_policy",
+      "date_added": "2025-12-04",
+      "notes": "French legal material policy about patient confidentiality and privacy rights - human written version",
+      "verified_human": true
+    }
+  }
+]

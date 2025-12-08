@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_fr_report_research_summary_001",
+    "text": "L'équipe Synapse dirigée par Jeanine McSweeney, Bibliothécaire Associée, Communications Savantes, publie annuellement les rapports Synapse Publications, présentant les contributions de nos auteurs au corpus de connaissances scientifiques et leurs activités de recherche et cliniques associées au Centre de Cancérologie Memorial Sloan Kettering (MSK).\n\nCette année, je suis ravi de partager que nous avons ajouté un nouveau rapport intitulé \"Research In Review: An Analysis of MSK Publications 2016-2020,\" qui plonge plus profondément dans les publications affiliées au Centre. Ce rapport fournit un aperçu de la variété des métriques existantes utilisées pour mesurer l'impact de la recherche au niveau de l'article, de la revue ou de l'auteur. Dans la période couverte par ce rapport, l'équipe Synapse a récupéré et organisé plus de 25,500 travaux, et c'est avec ces citations que nous partageons un aspect d'une histoire de recherche très complexe. Ce rapport met en évidence la démographie de notre communauté d'auteurs, les métriques existantes et la façon dont l'impact de la recherche est mesuré. De plus, nous partageons des faits intéressants sur les ensembles de données liés aux publications glanés à partir d'une variété de ressources crédibles telles que PubMed Central® (PMC). Nos intentions en produisant ce rapport sont simplement de sensibiliser aux façons possibles de voir les contributions de recherche.\n\nSynapse est une ressource publique et la base de données bibliographique faisant autorité des publications MSK, développée et maintenue par une équipe de bibliothécaires qualifiés. Cette base de données fournit un enregistrement de la production intellectuelle écrite par les chercheurs, cliniciens, infirmières et autres professionnels de la santé de MSK.\n\nNous espérons à l'avenir produire d'autres publications de type \"Research In Review\". N'hésitez pas à me contacter pour partager vos réflexions sur ce rapport.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Professional",
+      "word_count": 201,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "French research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

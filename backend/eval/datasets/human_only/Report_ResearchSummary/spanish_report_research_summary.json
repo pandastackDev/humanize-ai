@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_es_report_research_summary_001",
+    "text": "El equipo de Synapse dirigido por Jeanine McSweeney, Bibliotecaria Asociada, Comunicaciones Académicas, publica anualmente los informes de Publicaciones de Synapse, mostrando las contribuciones de nuestros autores al cuerpo de conocimiento científico y sus actividades de investigación y clínicas asociadas con el Centro de Cáncer Memorial Sloan Kettering (MSK).\n\nEste año me complace compartir que hemos agregado un nuevo informe titulado \"Research In Review: An Analysis of MSK Publications 2016-2020,\" que profundiza en las publicaciones afiliadas al Centro. Este informe proporciona información sobre la variedad de métricas existentes utilizadas para medir el impacto de la investigación a nivel de artículo, revista o autor. En el período cubierto en este informe, el equipo de Synapse recuperó y curó más de 25,500 trabajos, y es con estas citas que compartimos un aspecto de una historia de investigación muy compleja. Este informe destaca la demografía de nuestra comunidad de autores, las métricas existentes y cómo se mide el impacto de la investigación. Además, compartimos datos interesantes sobre conjuntos de datos relacionados con publicaciones obtenidos de una variedad de recursos creíbles como PubMed Central® (PMC). Nuestras intenciones al producir este informe son simplemente aumentar la conciencia de las posibles formas de ver las contribuciones de investigación.\n\nSynapse es un recurso de acceso público y la base de datos bibliográfica autorizada de las publicaciones de MSK, desarrollada y mantenida por un equipo de bibliotecarios capacitados. Esta base de datos proporciona un registro de la producción intelectual escrita por investigadores, clínicos, enfermeras y otros profesionales de la salud de MSK.\n\nEsperamos en el futuro producir otras publicaciones tipo \"Research In Review\". Por favor, siéntase libre de contactarme para compartir sus pensamientos sobre este informe.",
+    "metadata": {
+      "language": "es",
+      "tone": "Professional",
+      "word_count": 201,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "Spanish research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

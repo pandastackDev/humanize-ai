@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_en_academic_psych_001",
+    "text": "The research protocol received formal approval from the Institutional Review Board of the Department of Psychology, University of Sargodha (IRB 499/2023). After ethical clearance was granted, a Google Form was designed to include all demographic items and standardized scales required for data collection.\n\nGoogle Forms was selected as the primary data-collection tool due to its practicality, cost-efficiency, and accessibility. The majority of students possessed devices capable of completing online questionnaires, and no significant technical or accessibility barriers were reported.\n\nParticipants were approached in various locations and were provided with a detailed explanation of the study aims and procedures. Consistent with ethical guidelines, written informed consent was obtained only after ensuring confidentiality and addressing all participant queries. Participants were thanked for their cooperation upon completion.\n\nData Analysis\n\nOnce data collection was completed, all responses were exported into Excel, coded, and subsequently imported into IBM SPSS for statistical analysis. Appropriate statistical procedures were applied, and the results were compiled and interpreted for the study report.\n\nThe final structural model was assessed using AMOS v26. Maximum likelihood estimation (MLE) was used to test the hypothesized relationships. Path analysis was conducted, and model fit was evaluated using absolute and relative fit indices, including χ², RMSEA, GFI, NFI, IFI, TLI, and CFI. Mediation was examined via bootstrapping with 2,000 samples.\n\nModel-fit evaluation followed established criteria: CFI, TLI, NFI, and IFI ≥ 0.90 (Cortina et al., 2017; Grieger, 2021); SRMR < 0.10 (Bentler, 1990); and RMSEA ≤ 0.05 (Brown, 2006; Browne & Cudeck, 1993). However, prior research indicates that RMSEA may inaccurately indicate poor model fit in simple path analyses with limited degrees of freedom. In such cases, decisions regarding model adequacy should rely primarily on CFI and SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "en",
+      "tone": "Academic",
+      "word_count": 298,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "English academic text about psychology research methodology",
+      "verified_human": false
+    }
+  }
+]

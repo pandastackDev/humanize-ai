@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_pt_legal_material_explanation_001",
+    "text": "Os profissionais médicos têm um dever legal e ético claro de manter confidenciais as informações dos pacientes. Esta responsabilidade está intimamente ligada ao direito constitucional à privacidade, que é fortemente protegido na África do Sul. Os pacientes geralmente compartilham detalhes profundamente pessoais com seus prestadores de cuidados de saúde com o entendimento de que essas informações não serão divulgadas. Como regra, revelar as informações médicas de alguém sem seu consentimento é tanto ilegal quanto inaceitável.\n\nDito isso, como a maioria das regras legais, a confidencialidade não é absoluta. A Constituição permite que certos direitos sejam limitados quando é razoável e justificável fazê-lo. A Seção 36 reconhece que situações podem surgir onde dois direitos constitucionais entram em conflito. Por exemplo, quando o direito à privacidade colide com o direito à liberdade de expressão, um desses direitos pode ser limitado se os interesses da justiça o exigirem.\n\nTodos na África do Sul têm um direito constitucional à privacidade, que inclui proteção contra interferência em comunicações privadas. Esta proteção se estende às informações médicas compartilhadas entre um paciente e um profissional médico. Proteger essas informações é essencial.\n\nSe os pacientes não puderem confiar que suas divulgações permanecerão confidenciais, podem reter detalhes importantes sobre sua saúde. Esta falta de abertura pode afetar seriamente o tratamento médico e pode até colocar a saúde de um paciente em risco.\n\nA Lei Nacional de Saúde 61 de 2003 e a Lei de Promoção de Acesso à Informação 2 de 2000 regulamentam o acesso a registros médicos. Essas leis incluem disposições específicas destinadas a proteger informações pessoais, particularmente informações mantidas por profissionais médicos. Elas colocam a responsabilidade de gerenciar e proteger essas informações em oficiais de informação em instituições públicas e em chefes de organismos privados.\n\nAlém disso, a Lei de Proteção de Informações Pessoais 4 de 2013 geralmente restringe o processamento de informações de saúde pessoais, incluindo sua coleta e compartilhamento. No entanto, a Lei permite exceções. Informações de saúde pessoais podem ser processadas onde o indivíduo deu consentimento claro ou onde a divulgação é necessária para tratamento e cuidado adequados por profissionais médicos, instituições de cuidados de saúde ou prestadores de serviços sociais.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Mixed",
+      "word_count": 300,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese legal material explanation about patient confidentiality and privacy rights - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "professional",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

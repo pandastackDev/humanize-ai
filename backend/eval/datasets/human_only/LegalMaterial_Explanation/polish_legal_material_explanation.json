@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_pl_legal_material_explanation_001",
+    "text": "Od praktyków medycznych wymaga się przestrzegania zasady poufności z powodów etycznych i prawnych. Poufność jest również powiązana z prawem do prywatności, które jest chronionym prawem człowieka w naszej Konstytucji. Pacjenci często zwracają się do swoich zaufanych dostawców opieki zdrowotnej z przekonaniem, że ich sprawy osobiste będą zachowane w tajemnicy i ogólnie, jest nie do przyjęcia i nielegalne ujawnianie informacji medycznych kogokolwiek bez jego/jej zgody. Jednak, jak w przypadku wielu zasad w prawie, istnieją wyjątki, które mogą mieć zastosowanie do ogólnej zasady. Sekcja 36 Konstytucji może ograniczać pewne prawa człowieka i może mieć zastosowanie, gdy należy osiągnąć równowagę między dwoma konkurującymi prawami. Na przykład, gdy prawo do prywatności i prawo do wolności wypowiedzi są w konflikcie, jedno prawo może przeważyć nad drugim, jeśli w interesie sprawiedliwości jedno z praw ma być ograniczone.\n\nKonstytucja przewiduje, że każdy w Południowej Afryce ma prawo do prywatności, które obejmuje prawo do nieposiadania naruszonej prywatności swoich komunikacji.\n\nJeśli chodzi o informacje medyczne, prywatność komunikacji lub ujawnień pacjenta wobec praktyków medycznych powinna być chroniona. Jeśli zaufanie pacjenta nie jest chronione, prawdopodobne jest, że on/ona nie będzie chciał/chciała ujawnić informacji, które są kluczowe dla jego/jej leczenia medycznego. To może przynieść katastrofalny wynik, który może mieć negatywny wpływ na zdrowie pacjenta.\n\nUstawa o Zdrowiu Narodowym 61 z 2003 roku (\"NHA\") i Ustawa o Promocji Dostępu do Informacji 2 z 2000 roku (\"PAIA\") regulują prawa pacjentów i stron trzecich do dostępu do dokumentacji medycznej. Istnieją specjalne klauzule dotyczące informacji osobistych, szczególnie informacji przechowywanych przez praktyków medycznych, oraz prawa do prywatności. Zgodnie z tymi klauzulami, wszystkie informacje muszą być kontrolowane przez urzędników informacyjnych w instytucjach publicznych i szefów prywatnych podmiotów.\n\nUstawa o Ochronie Informacji Osobowych 4 z 2013 roku (\"POPI\") również zabrania przetwarzania (takiego jak zbieranie i udostępnianie) informacji osobistych o zdrowiu osoby, wśród innych uznanych podstaw, jako zasada ogólna. Jednak POPI pozwala na przetwarzanie informacji o zdrowiu osoby w pewnych przypadkach, takich jak gdy ta osoba wyraźnie wyraziła zgodę na przetwarzanie informacji. Innym przykładem, gdzie zgoda nie musi być uzyskana, jest sytuacja, gdy praktycy medyczni, instytucje opieki zdrowotnej lub usługi społeczne muszą ujawnić informacje dla właściwego leczenia i opieki nad pacjentem.",
+    "metadata": {
+      "language": "pl",
+      "tone": "Professional",
+      "word_count": 299,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "legal_explanation",
+      "date_added": "2025-12-04",
+      "notes": "Polish legal material explanation about patient confidentiality and privacy rights - human written version",
+      "verified_human": true
+    }
+  }
+]

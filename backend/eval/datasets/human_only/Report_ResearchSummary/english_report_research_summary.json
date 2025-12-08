@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_en_report_research_summary_001",
+    "text": "The Synapse team led by Jeanine McSweeney, Associate Librarian, Scholarly Communications, publishes annually the Synapse Publications reports, showcasing our authors' contributions to the body of scientific knowledge and their research and clinical activities associated with Memorial Sloan Kettering (MSK) Cancer Center.\n\nThis year I am delighted to share that we have added a new report entitled, \"Research In Review: An Analysis of MSK Publications 2016-2020,\" which dives deeper into the publications affiliated with the Center. This report provides insight into the variety of existing metrics used to measure research impact at an article-, journal-, or author-level. In the period covered in this report, the Synapse team retrieved and curated over 25,500 works, and it is with these citations that we share one aspect of a very complex research story. This report highlights the demographics of our author community, existing metrics, and how research impact is gauged. In addition, we share interesting facts about publication-related datasets gleaned from a variety of credible resources such as PubMed Central® (PMC). Our intentions in producing this report are simply to raise awareness of possible ways in which to view research contributions.\n\nSynapse is a public-facing resource and the authoritative bibliographic database of MSK publications, developed and maintained by a team of skilled librarians. This database provides a record of the intellectual output written by MSK researchers, clinicians, nurses, and other healthcare professionals.\n\nWe hope in the future to produce other \"Research In Review\" type publications.  Please feel free to reach out to me to share your thoughts about this report.",
+    "metadata": {
+      "language": "en",
+      "tone": "Professional",
+      "word_count": 202,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "English research summary report about MSK publications - human written version",
+      "verified_human": true
+    }
+  }
+]

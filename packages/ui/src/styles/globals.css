@@ -133,6 +133,8 @@
   --min-height-textarea: 200px;
   --height-tabs-list-md: 40px;
   --height-tabs-list-lg: 48px;
+  /* Human report background colors */
+  --human-report-bg: #eff6ff;
 }
 
 .dark {
@@ -171,6 +173,7 @@
   --brand-primary: #0066ff;
   --editor-bg: #1d1d1d;
   --editor-border: #1d1d1d;
+
   --tabs-bg: #262626;
   --select-bg: #1f1f1f;
   --select-hover: #282828;
@@ -262,6 +265,8 @@
   --min-height-textarea: 200px;
   --height-tabs-list-md: 40px;
   --height-tabs-list-lg: 48px;
+  /* Human report background colors - Dark mode */
+  --human-report-bg: #2d2d2d;
   /* Spacing variables - Dark mode (same values) */
   --spacing-0-5: 0.125rem;
   --spacing-1-5: 0.375rem;
@@ -1132,6 +1137,13 @@
   }
   .left-6 {
     left: var(--position-left-lg);
+  }
+  /* Human report background utility */
+  .bg-human-report {
+    background-color: #eff6ff;
+  }
+  .dark .bg-human-report {
+    background-color: #2d2d2d;
   }
 }
 

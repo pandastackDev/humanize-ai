@@ -1,0 +1,21 @@
+[
+  {
+    "id": "mixed_zh_academic_psych_001",
+    "text": "该研究获得了萨戈达大学心理学系机构审查委员会的批准（IRB 499/2023）。一旦获得伦理许可，就创建了一个Google表单，包含收集数据所需的所有人口统计项目和标准化量表。\n\n选择Google表单作为主要数据收集工具，因为它实用、成本效益高且易于访问。大多数学生能够使用可以填写在线问卷的设备，没有注意到重大技术或可访问性挑战。\n\n参与者在不同地点被联系，并获得了研究目标和方法的清晰描述。根据伦理原则，只有在确保保密性并回答参与者提出的所有问题后才获得书面知情同意。最后，感谢参与者的合作。\n\n数据分析\n\n数据收集完成后，所有回答都被导出到Excel，进行编码，然后导入IBM SPSS进行统计分析。使用了正确的统计程序，并对发现进行了总结和讨论以准备研究报告。\n\n使用AMOS v26评估最终的结构模型。通过最大似然估计（MLE）测试了假设的关系。进行了路径分析，并基于绝对和相对拟合指数评估模型拟合，如χ²、RMSEA、GFI、NFI、IFI、TLI和CFI。通过使用2,000个样本的引导法分析了中介效应。\n\n模型拟合评估根据公认标准进行：CFI、TLI、NFI和IFI 0.90及以上（Cortina等人，2017；Grieger，2021）；SRMR 0.10及以下（Bentler，1990）；RMSEA 0.05及以下（Brown，2006；Browne and Cudeck，1993）。然而，先前的研究表明，RMSEA在自由度较小的简单路径分析中可能不合适。CFI和SRMR应该是在这种情况下做出关于模型充分性决策的主要标准（Kenny等人，2015）。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Mixed",
+      "word_count": 296,
+      "source": "mixed",
+      "generator": "professional",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Chinese academic text about psychology research methodology - mixed AI/human version",
+      "verified_human": false,
+      "composition": {
+        "style": "academic",
+        "strategy": "Balanced rewrite combining AI and human perspectives"
+      }
+    }
+  }
+]

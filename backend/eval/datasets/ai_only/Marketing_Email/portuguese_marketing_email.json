@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_pt_marketing_email_001",
+    "text": "O marketing por e-mail segue muitas melhores práticas, e a velocidade raramente é uma delas. Embora os prazos possam criar pressão para lançar rapidamente, apressar-se na criação de campanhas frequentemente leva a detalhes negligenciados no design, mensagens e linhas de assunto—detalhes que afetam diretamente o desempenho.\n\nQuando os e-mails não correspondem às expectativas dos assinantes ou se afastam do que as pessoas originalmente se inscreveram, as taxas de engajamento tendem a cair. Isso pode resultar em menos aberturas e cliques, e em alguns casos, taxas de cancelamento de assinatura mais altas ou reclamações de spam. Reservar tempo para revisar sua lista, conteúdo e estratégia geral ajuda a garantir que suas campanhas permaneçam eficazes e bem recebidas.\n\n8. Entender os Filtros de Spam\n\nOs filtros de spam dependem de conjuntos de regras em constante evolução para determinar se um e-mail cai na caixa de entrada ou na pasta de spam. Esses sistemas aprendem com o comportamento do usuário—cada vez que alguém marca um e-mail como spam, os filtros se tornam mais precisos. Muitos filtros de spam também compartilham dados entre si, fortalecendo suas capacidades de detecção.\n\nEmbora não haja uma maneira garantida de contornar completamente os filtros de spam, os profissionais de marketing podem evitar gatilhos comuns seguindo melhores práticas comprovadas:\n\nProteja sua reputação de envio. Alguns filtros de spam avaliam o histórico do IP de envio. Ao usar plataformas como Mailchimp, as mensagens são enviadas de servidores compartilhados, o que significa que um ator ruim pode afetar outros. Manter a conformidade rigorosa ajuda a manter a alta capacidade de entrega geral.\n\nUse modelos corretamente codificados. Estrutura HTML ruim, tags desnecessárias ou código copiado de editores de texto podem levantar bandeiras vermelhas. Em caso de dúvida, use modelos projetados profissionalmente ou busque ajuda de especialistas.\n\nSeja transparente em suas mensagens. Deixe óbvio por que você está entrando em contato com os assinantes e qual valor está oferecendo.\n\nEnvie apenas para assinantes que optaram por participar. Listas baseadas em permissão reduzem significativamente reclamações de spam e cancelamentos de assinatura.\n\nMantenha-se consistente. Alinhe o conteúdo e o design do seu e-mail com a marca que os assinantes reconhecem do seu site e canais sociais.",
+    "metadata": {
+      "language": "pt",
+      "tone": "Marketing",
+      "word_count": 266,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Portuguese marketing material about email marketing best practices",
+      "verified_human": false
+    }
+  }
+]

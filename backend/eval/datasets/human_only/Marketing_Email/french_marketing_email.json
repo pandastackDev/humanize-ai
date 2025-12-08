@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_fr_marketing_email_001",
+    "text": "Il existe de nombreuses meilleures pratiques pour le marketing par e-mail, mais se précipiter pour envoyer des e-mails n'en fait pas partie. Nous savons que vous pourriez être sous la pression d'un délai strict, mais accélérer le processus de création de campagne sans réfléchir à votre conception, contenu et ligne d'objet peut causer certains problèmes.\n\nSi votre contenu n'est pas pertinent pour vos abonnés ou est différent de ce pour quoi ils se sont inscrits, il y a une chance que vous voyiez une diminution des ouvertures et des clics ou une augmentation des plaintes de spam et des taux de désabonnement. Alors ralentissez, respirez profondément et assurez-vous que votre liste et vos campagnes sont en parfait état.\n\n8. Comprendre les filtres anti-spam\n\nLes filtres anti-spam des e-mails utilisent une longue liste de critères pour décider si votre campagne sera placée dans le dossier spam d'un destinataire.\n\nLa liste des critères de spam ne cesse de croître et de s'adapter car les filtres apprennent davantage sur l'apparence du spam chaque fois que quelqu'un clique sur \"Ceci est indésirable\" ou \"Marquer comme spam\" dans son client de messagerie. Les filtres anti-spam se synchronisent même entre eux pour partager ce qu'ils ont appris.\n\nIl n'y a pas de formule magique pour éviter les filtres anti-spam, mais nous avons quelques conseils que les spécialistes du marketing par e-mail peuvent utiliser pour éviter les erreurs les plus courantes qui font que les e-mails sont marqués comme spam.\n\nMaintenez une bonne réputation d'envoi. Certains filtres anti-spam marqueront une campagne si quiconque avec la même adresse IP a déjà envoyé du spam. Lorsque vous envoyez via Mailchimp, vos campagnes sont livrées via nos serveurs, donc une personne marquée pour spam pourrait affecter la délivrabilité de nos utilisateurs. C'est pourquoi nous travaillons avec vigilance pour maintenir notre réputation d'envoi intacte et exigeons que les utilisateurs respectent nos Conditions d'utilisation.\n\nUtilisez des modèles d'e-mail correctement codés. Un code négligé, des balises supplémentaires ou du code de formatage tiré d'un éditeur de texte enrichi peut déclencher les filtres anti-spam. Si vous n'êtes pas familier avec le code HTML, nous recommandons d'utiliser l'un de nos modèles ou de travailler avec un expert.\n\nRendez vos intentions claires. Vous voudrez également vous assurer que votre intention est claire afin que vos abonnés sachent pourquoi vous leur envoyez des e-mails.\n\nAssurez-vous que tous les abonnés de votre liste ont opté pour recevoir vos campagnes. C'est le moyen le plus simple de s'assurer que personne ne se désabonne, ne se plaint ou ne signale vos campagnes.\n\nSoyez cohérent. Essayez de ne pas trop vous éloigner du contenu et de la conception que votre public associe déjà à votre marque, site Web ou canaux de médias sociaux.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Marketing",
+      "word_count": 269,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "French marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

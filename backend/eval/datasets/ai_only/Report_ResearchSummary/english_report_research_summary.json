@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_en_report_research_summary_001",
+    "text": "The Synapse team, led by Jeanine McSweeney, Associate Librarian for Scholarly Communications, produces the annual Synapse Publications reports, which highlight the scholarly output of our authors and their contributions to scientific research and clinical practice at Memorial Sloan Kettering (MSK) Cancer Center.\n\nThis year, we are pleased to introduce a new publication titled Research in Review: An Analysis of MSK Publications 2016–2020. This expanded report offers a deeper examination of Center-affiliated publications and presents a comprehensive overview of the metrics commonly used to assess research impact at the article, journal, and author levels. During the timeframe examined, the Synapse team retrieved and curated more than 25,500 scholarly works. These citations represent one facet of a multifaceted research landscape explored in this analysis. The report also examines author demographics, existing impact metrics, and methodologies used to evaluate research influence, while highlighting notable trends drawn from reliable sources such as PubMed Central® (PMC). The primary objective of this report is to increase awareness of the diverse ways in which research contributions may be interpreted and assessed.\n\nSynapse serves as a public-facing, authoritative bibliographic database of MSK publications and is developed and maintained by a dedicated team of professional librarians. It documents the intellectual output of MSK researchers, clinicians, nurses, and healthcare professionals across the institution.\n\nWe look forward to producing additional Research in Review publications in the future and welcome feedback from readers regarding this report.",
+    "metadata": {
+      "language": "en",
+      "tone": "Professional",
+      "word_count": 201,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "research_summary",
+      "date_added": "2025-12-04",
+      "notes": "English research summary report about MSK publications - AI generated",
+      "verified_human": false
+    }
+  }
+]

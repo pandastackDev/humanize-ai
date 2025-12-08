@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_es_academic_psych_001",
+    "text": "En primer lugar, el tema fue aprobado por la Junta de Revisión Institucional del Departamento de Psicología, Universidad de Sargodha (IRB, 499/2023). Tras la obtención de permisos, se creó un Formulario de Google, que incluía todas las escalas y preguntas demográficas para facilitar la recolección de datos.\n\nSe utilizaron Google Forms porque es práctico y económico. La mayoría de los estudiantes tenían acceso al equipo apropiado, y no se identificaron preocupaciones importantes con la accesibilidad o dificultades técnicas.\n\nLos participantes fueron contactados en diferentes lugares y se les proporcionó información detallada sobre el propósito del estudio. Teniendo en cuenta las consideraciones éticas, se tomó su consentimiento informado por escrito después de asegurar la confidencialidad de los datos. Se respondieron todas las consultas y al final, se les agradeció por su participación en el estudio.\n\nAnálisis de datos\n\nTras la fase de recolección de datos, las respuestas se recopilaron en una hoja de Excel, se codificaron y se importaron a IBM-SPSS para un análisis estadístico adicional. Se realizaron las pruebas estadísticas relevantes. Finalmente, los resultados se analizaron, compilaron y discutieron en el informe del estudio. El modelo final del presente estudio se probó a través de AMOS V26. Las relaciones predichas en los modelos propuestos se probaron a través de AMOS utilizando la estimación de máxima verosimilitud estándar (MLE). Se realizó análisis de rutas y estas relaciones dentro del modelo se midieron para la bondad de ajuste y significancia mediante índices de ajuste absolutos; estadística de bondad de ajuste χ2, el Error Cuadrático Medio de Aproximación (RMSEA), el Índice de Bondad de Ajuste (GFI), índices de ajuste relativos, es decir, Índice de Ajuste Normado (NFI), Índice de Ajuste Incremental (IFI), Índice de Tucker-Lewis (TLI), Índice de Ajuste Comparativo (CFI). El modelo de mediación se verificó con la prueba de mediación utilizando el método de bootstrapping realizado en 2,000 muestras bootstrap en AMOS.\n\nPara la evaluación de los índices de ajuste del modelo, se siguieron los criterios recomendados; un índice de ajuste comparativo (CFI), el índice de Tucker-Lewis (TLI), Índice de Ajuste Normado (NFI) e Índice de Ajuste Incremental (IFI) ≥ 0.90 (Cortina et al., 2017; Grieger, 2021); residuo cuadrático medio estandarizado (SRMR < 0.1) (Bentler, 1990) y el error cuadrático medio de aproximación (RMSEA), donde los valores ≤ 0.05 (Brown, 2006; Browne and Cudeck, 1993). Se ha observado que RMSEA tiene problemas con el análisis de rutas simple especialmente con menos grados de libertad. En estos modelos, la mayoría de las veces RMSEA muestra incorrectamente un mal ajuste, aunque el modelo se ajusta bien a los datos. Por lo tanto, en tales condiciones, la aceptación del modelo debe basarse en CFI y SRMR (Kenny et al., 2015).",
+    "metadata": {
+      "language": "es",
+      "tone": "Academic",
+      "word_count": 299,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Spanish academic text about psychology research methodology - human written version",
+      "verified_human": true
+    }
+  }
+]

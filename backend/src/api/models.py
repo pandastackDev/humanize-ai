@@ -356,6 +356,7 @@ class DetectorType(str, Enum):
     TURNITIN = "turnitin"
     GRAMMARLY = "grammarly"
     SCRIBBR = "scribbr"
+    CROSSPLAG = "crossplag"
     INTERNAL = "internal"
 
 

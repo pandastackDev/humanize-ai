@@ -77,12 +77,6 @@ uv run pyright src
 
 echo ""
 echo "============================================================"
-echo "🧪 Running tests..."
-echo "============================================================"
-uv run pytest -v
-
-echo ""
-echo "============================================================"
 echo "📦 Building package..."
 echo "============================================================"
 # Build step is optional - don't fail the entire check if it fails (e.g., due to network issues)

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_fr_academic_001",
+    "text": "La révolution numérique a transformé fondamentalement notre manière de communiquer, de travailler et de vivre. L'émergence d'Internet dans les années 1990 a marqué le début d'une ère nouvelle, caractérisée par une connectivité mondiale sans précédent. Les technologies de l'information et de la communication ont permis une diffusion instantanée des connaissances à travers le globe.\n\nL'intelligence artificielle représente l'une des avancées les plus significatives de ce siècle. Les systèmes d'apprentissage automatique peuvent désormais analyser d'énormes volumes de données, identifier des motifs complexes et prendre des décisions avec une précision remarquable. Ces capacités trouvent des applications dans des domaines variés : la médecine pour le diagnostic précoce, les transports pour les véhicules autonomes, et l'éducation pour l'enseignement personnalisé.\n\nCependant, cette transformation technologique soulève également des questions éthiques importantes. La protection des données personnelles, l'équité algorithmique et l'impact sur l'emploi nécessitent une réflexion approfondie. Il est essentiel que les développements technologiques s'accompagnent de cadres réglementaires appropriés pour garantir que les bénéfices soient partagés équitablement.\n\nL'avenir de la technologie promet des innovations encore plus révolutionnaires. L'informatique quantique pourrait résoudre des problèmes actuellement insolubles, tandis que la biotechnologie pourrait révolutionner les soins de santé. La clé réside dans une approche équilibrée qui favorise l'innovation tout en préservant les valeurs humaines fondamentales.",
+    "metadata": {
+      "language": "fr",
+      "tone": "Academic",
+      "word_count": 312,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "technology",
+      "date_added": "2025-12-04",
+      "notes": "French academic text about digital revolution and AI",
+      "verified_human": false
+    }
+  }
+]

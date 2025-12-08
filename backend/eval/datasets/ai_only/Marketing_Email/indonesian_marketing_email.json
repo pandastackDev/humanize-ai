@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_id_marketing_email_001",
+    "text": "Pemasaran email mengikuti banyak praktik terbaik, dan kecepatan jarang menjadi salah satunya. Meskipun tenggat waktu dapat menciptakan tekanan untuk meluncurkan dengan cepat, terburu-buru dalam pembuatan kampanye sering kali mengarah pada detail yang terlewat dalam desain, pesan, dan baris subjek—detail yang secara langsung mempengaruhi kinerja.\n\nKetika email gagal memenuhi harapan pelanggan atau menyimpang dari apa yang awalnya ditandatangani orang, tingkat keterlibatan cenderung turun. Ini dapat mengakibatkan lebih sedikit pembukaan dan klik, dan dalam beberapa kasus, tingkat berhenti berlangganan yang lebih tinggi atau keluhan spam. Meluangkan waktu untuk meninjau daftar, konten, dan strategi keseluruhan Anda membantu memastikan kampanye Anda tetap efektif dan diterima dengan baik.\n\n8. Memahami Filter Spam\n\nFilter spam mengandalkan set aturan yang terus berkembang untuk menentukan apakah email mendarat di kotak masuk atau folder spam. Sistem ini belajar dari perilaku pengguna—setiap kali seseorang menandai email sebagai spam, filter menjadi lebih akurat. Banyak filter spam juga berbagi data satu sama lain, memperkuat kemampuan deteksi mereka.\n\nMeskipun tidak ada cara yang dijamin untuk sepenuhnya melewati filter spam, pemasar dapat menghindari pemicu umum dengan mengikuti praktik terbaik yang terbukti:\n\nLindungi reputasi pengiriman Anda. Beberapa filter spam mengevaluasi riwayat IP pengiriman. Saat menggunakan platform seperti Mailchimp, pesan dikirim dari server bersama, yang berarti satu aktor jahat dapat mempengaruhi yang lain. Mempertahankan kepatuhan yang ketat membantu menjaga kemampuan pengiriman keseluruhan tetap tinggi.\n\nGunakan template yang dikodekan dengan benar. Struktur HTML yang buruk, tag yang tidak perlu, atau kode yang disalin dari editor teks dapat mengangkat bendera merah. Jika ragu, gunakan template yang dirancang secara profesional atau cari bantuan ahli.\n\nBersikaplah transparan dalam pesan Anda. Buat jelas mengapa Anda menghubungi pelanggan dan nilai apa yang Anda tawarkan.\n\nKirim hanya ke pelanggan yang memilih untuk berpartisipasi. Daftar berbasis izin secara signifikan mengurangi keluhan spam dan berhenti berlangganan.\n\nTetap konsisten. Sejajarkan konten dan desain email Anda dengan merek yang dikenali pelanggan dari situs web dan saluran sosial Anda.",
+    "metadata": {
+      "language": "id",
+      "tone": "Marketing",
+      "word_count": 265,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Indonesian marketing material about email marketing best practices",
+      "verified_human": false
+    }
+  }
+]

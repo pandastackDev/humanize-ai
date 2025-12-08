@@ -1,0 +1,17 @@
+[
+  {
+    "id": "human_es_marketing_email_001",
+    "text": "Hay muchas mejores prácticas para el marketing por correo electrónico, pero apresurarse para enviar correos no es una de ellas. Sabemos que podrías estar bajo la presión de un plazo estricto, pero acelerar el proceso de creación de campañas sin pensar en tu diseño, contenido y línea de asunto puede causar algunos problemas.\n\nSi tu contenido no es relevante para tus suscriptores o es diferente de lo que se registraron, hay una posibilidad de que veas una disminución en aperturas y clics o un aumento en quejas de spam y tasas de cancelación de suscripción. Así que tómate tu tiempo, respira hondo y asegúrate de que tu lista y campañas estén en condiciones pristinas.\n\n8. Entender los filtros de spam\n\nLos filtros de spam de correo electrónico usan una larga lista de criterios para decidir si tu campaña será colocada en la carpeta de spam de un destinatario.\n\nLa lista de criterios de spam está constantemente creciendo y adaptándose porque los filtros aprenden más sobre cómo se ve el spam cada vez que alguien hace clic en \"Esto es basura\" o \"Marcar como spam\" en su cliente de correo. Los filtros de spam incluso se sincronizan entre sí para compartir lo que han aprendido.\n\nNo hay una fórmula mágica para evadir los filtros de spam, pero tenemos algunos consejos que los especialistas en marketing por correo pueden usar para evitar los errores más comunes que hacen que los correos se marquen como spam.\n\nMantén una buena reputación de envío. Algunos filtros de spam marcarán una campaña si alguien con la misma dirección IP alguna vez ha enviado spam. Cuando envías a través de Mailchimp, tus campañas se entregan a través de nuestros servidores, por lo que una persona siendo marcada por spam podría afectar la entregabilidad de nuestros usuarios. Por eso trabajamos con vigilancia para mantener nuestra reputación de envío intacta y requerimos que los usuarios cumplan con nuestros Términos de Uso.\n\nUsa plantillas de correo electrónico que estén correctamente codificadas. Código descuidado, etiquetas extra o código de formato extraído de un editor de texto enriquecido puede activar los filtros de spam. Si no estás familiarizado con el código HTML, recomendamos usar una de nuestras plantillas o trabajar con un experto.\n\nHaz tus intenciones claras. También querrás asegurarte de que tu intención sea clara para que tus suscriptores sepan por qué les estás enviando correos.\n\nAsegúrate de que todos los suscriptores en tu lista hayan optado por recibir tus campañas. Esta es la forma más fácil de asegurar que nadie cancele la suscripción, se queje o reporte tus campañas.\n\nSé consistente. Trata de no alejarte demasiado del contenido y diseño que tu audiencia ya asocia con tu marca, sitio web o canales de redes sociales.",
+    "metadata": {
+      "language": "es",
+      "tone": "Marketing",
+      "word_count": 269,
+      "source": "human_written",
+      "generator": "human",
+      "domain": "email_marketing",
+      "date_added": "2025-12-04",
+      "notes": "Spanish marketing material about email marketing best practices - human written version",
+      "verified_human": true
+    }
+  }
+]

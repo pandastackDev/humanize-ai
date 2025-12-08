@@ -1,0 +1,17 @@
+[
+  {
+    "id": "ai_zh_academic_psych_001",
+    "text": "研究方案获得了萨戈达大学心理学系机构审查委员会的正式批准（IRB 499/2023）。在获得伦理许可后，设计了一个Google表单，包含数据收集所需的所有人口统计项目和标准化量表。\n\n选择Google表单作为主要数据收集工具，因为它实用、成本效益高且易于访问。大多数学生拥有能够完成在线问卷的设备，没有报告重大技术或可访问性障碍。\n\n参与者在不同地点被联系，并获得了研究目标和程序的详细解释。根据伦理准则，只有在确保保密性并解决所有参与者疑问后才获得书面知情同意。参与者在完成时感谢他们的合作。\n\n数据分析\n\n数据收集完成后，所有回答都被导出到Excel，编码，然后导入IBM SPSS进行统计分析。应用了适当的统计程序，结果被编译和解释用于研究报告。\n\n使用AMOS v26评估最终的结构模型。使用最大似然估计（MLE）来测试假设的关系。进行了路径分析，并使用绝对和相对拟合指数评估模型拟合，包括χ²、RMSEA、GFI、NFI、IFI、TLI和CFI。通过使用2,000个样本的引导法检查了中介效应。\n\n模型拟合评估遵循既定标准：CFI、TLI、NFI和IFI ≥ 0.90（Cortina等人，2017；Grieger，2021）；SRMR < 0.10（Bentler，1990）；RMSEA ≤ 0.05（Brown，2006；Browne & Cudeck，1993）。然而，先前的研究表明，RMSEA在自由度有限的简单路径分析中可能不准确地表明模型拟合不良。在这种情况下，关于模型充分性的决策应主要依赖CFI和SRMR（Kenny等人，2015）。",
+    "metadata": {
+      "language": "zh",
+      "tone": "Academic",
+      "word_count": 295,
+      "source": "ai_generated",
+      "generator": "gpt4",
+      "domain": "psychology",
+      "date_added": "2025-12-04",
+      "notes": "Chinese academic text about psychology research methodology",
+      "verified_human": false
+    }
+  }
+]
