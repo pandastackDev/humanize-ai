@@ -143,7 +143,8 @@ export function useDragDrop(hasInputText: boolean) {
   const handleContainerDrop = useCallback(
     async (
       e: React.DragEvent<HTMLElement>,
-      processUploadedFile: (file: File) => Promise<string | null>
+      processUploadedFile: (file: File) => Promise<string | null>,
+      onTextExtracted?: (text: string) => void
     ) => {
       e.preventDefault();
       e.stopPropagation();
@@ -165,7 +166,24 @@ export function useDragDrop(hasInputText: boolean) {
         return;
       }
 
-      await processUploadedFile(file);
+      try {
+        const extractedText = await processUploadedFile(file);
+        if (extractedText && extractedText.trim().length > 0) {
+          if (onTextExtracted) {
+            onTextExtracted(extractedText);
+            console.log(
+              "Drag-drop: Text set to input area, length:",
+              extractedText.length
+            );
+          } else {
+            console.warn("Drag-drop: Text extracted but no callback provided");
+          }
+        } else {
+          console.warn("Drag-drop: No text extracted from file");
+        }
+      } catch (error) {
+        console.error("Drag-drop: Error processing file:", error);
+      }
     },
     [hasInputText, getDraggedFile]
   );

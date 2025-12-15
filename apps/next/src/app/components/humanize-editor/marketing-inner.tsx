@@ -42,6 +42,7 @@ export function MarketingInner() {
                     className="rounded-full object-contain"
                     height={16}
                     src={detector.image}
+                    style={{ width: "auto", height: "auto" }}
                     width={16}
                   />
                 </div>
@@ -65,6 +66,7 @@ export function MarketingInner() {
                     className="rounded-full object-contain"
                     height={16}
                     src={detector.image}
+                    style={{ width: "auto", height: "auto" }}
                     width={16}
                   />
                 </div>
@@ -127,6 +129,7 @@ export function MarketingInner() {
               className="h-3.5 w-auto"
               height={14}
               src="https://cdn.trustpilot.net/brand-assets/4.1.0/stars/stars-4.5.svg"
+              style={{ width: "auto" }}
               unoptimized
               width={70}
             />

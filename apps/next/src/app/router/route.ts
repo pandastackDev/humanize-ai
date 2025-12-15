@@ -71,10 +71,10 @@ export const GET = async (request: NextRequest) => {
   // Redirect based on the user's role
   switch (role) {
     case "admin":
-      return redirect("/dashboard");
+      return redirect("/");
 
     case "member":
-      return redirect("/dashboard");
+      return redirect("/");
 
     default:
       // If there's no role that means the user hasn't subscribed yet, so redirect them to the pricing page

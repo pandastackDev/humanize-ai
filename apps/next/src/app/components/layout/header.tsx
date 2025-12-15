@@ -25,14 +25,6 @@ export async function Header() {
   let organizationId = sessionOrganizationId;
   let organizationName: string | undefined;
 
-  // Debug logging
-  console.log("[Header] Auth state:", {
-    hasUser: !!user,
-    userId: user?.id,
-    sessionOrganizationId,
-    role,
-  });
-
   if (user && !organizationId) {
     try {
       console.log(

@@ -24,6 +24,9 @@ dependencies = [
     "stripe>=7.0.0",
     "convex>=0.5.0",
     "writerai>=0.1.0",
+    "pypdf>=4.0.0",
+    "python-docx>=1.1.0",
+    "python-multipart>=0.0.6",
 ]
 
 [build-system]

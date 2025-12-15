@@ -11,6 +11,7 @@ from .endpoints import (
     history,
     humanize,
     items,
+    parse_file,
     subscriptions,
     users,
     webhooks,
@@ -28,3 +29,4 @@ router.include_router(billing.router, prefix="/billing", tags=["Billing"])
 router.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
 router.include_router(convex_test.router, prefix="/convex", tags=["Convex Test"])
 router.include_router(history.router, prefix="/history", tags=["History"])
+router.include_router(parse_file.router, prefix="/parse-file", tags=["File Parsing"])

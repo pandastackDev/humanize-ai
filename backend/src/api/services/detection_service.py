@@ -1944,6 +1944,21 @@ class AIDetectionService:
             human_probability = result.get("human_probability", 0.5)
             confidence = result.get("confidence", 0.0)
 
+            # Check for ambiguous results that might indicate an error
+            # If confidence is 0 and probability is exactly 0.5, it's likely an error
+            if confidence == 0.0 and ai_probability == 0.5 and human_probability == 0.5:
+                error_msg = "Ambiguous result from CrossPlag API - service may be unavailable"
+                logger.warning(f"CrossPlag returned ambiguous result: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.CROSSPLAG,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=result.get("response_time_ms"),
+                    details=result.get("raw_response"),
+                    error=error_msg,
+                )
+
             logger.info(
                 f"CrossPlag detection complete - "
                 f"AI: {ai_probability:.2%}, "

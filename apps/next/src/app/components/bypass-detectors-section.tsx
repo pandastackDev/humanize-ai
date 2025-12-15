@@ -23,7 +23,7 @@ export function BypassDetectorsSection() {
           <h2 className="mb-6 font-semibold text-foreground text-xl sm:text-2xl md:text-3xl">
             Bypass AI content detectors
           </h2>
-          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 md:gap-8 lg:gap-10">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 md:gap-10 lg:gap-12">
             {DETECTOR_LOGOS.map((logo) => (
               <div className="flex items-center justify-center" key={logo.name}>
                 <div className="relative h-32 w-32 sm:h-36 sm:w-36 md:h-40 md:w-40 lg:h-44 lg:w-44">
@@ -31,6 +31,7 @@ export function BypassDetectorsSection() {
                     alt={logo.name}
                     className="object-contain"
                     fill
+                    sizes="(max-width: 640px) 128px, (max-width: 768px) 144px, (max-width: 1024px) 160px, 176px"
                     src={logo.image}
                   />
                 </div>

@@ -13,6 +13,7 @@ Tests:
 # Import the FastAPI app
 import sys
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 import pytest
 from fastapi.testclient import TestClient
@@ -27,6 +28,18 @@ client = TestClient(app)
 class TestHumanizeEndpoint:
     """Test suite for /humanize endpoint."""
 
+    @pytest.fixture(autouse=True)
+    def reset_service_singleton(self):
+        """Reset the humanization service singleton before each test."""
+
+        # Reset the singleton
+        import api.v1.endpoints.humanize as humanize_module
+
+        humanize_module._humanization_service = None
+        yield
+        # Cleanup after test
+        humanize_module._humanization_service = None
+
     @pytest.fixture
     def sample_text(self):
         """Sample text for testing."""
@@ -39,8 +52,26 @@ class TestHumanizeEndpoint:
         """Valid request payload."""
         return {"input_text": sample_text, "tone": "Standard", "length_mode": "standard"}
 
-    def test_humanize_success(self, valid_payload):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_humanize_success(self, mock_get_service, valid_payload):
         """Test successful humanization."""
+        # Mock the humanization service to return quickly
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {
+                "word_count": 10,
+                "character_count": 80,
+                "processing_time_ms": 100.0,
+            },
+            "metadata": {
+                "detected_language": "en",
+                "model_used": "claude-3-5-sonnet-20241022",
+            },
+        }
+        mock_get_service.return_value = mock_service
+
         response = client.post("/api/v1/humanize/", json=valid_payload)
 
         assert response.status_code == 200
@@ -52,8 +83,19 @@ class TestHumanizeEndpoint:
         assert isinstance(data["humanized_text"], str)
         assert len(data["humanized_text"]) > 0
 
-    def test_humanize_all_tones(self, sample_text):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_humanize_all_tones(self, mock_get_service, sample_text):
         """Test all supported tone options."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         tones = [
             "Standard",
             "Professional",
@@ -74,8 +116,19 @@ class TestHumanizeEndpoint:
             data = response.json()
             assert "humanized_text" in data
 
-    def test_humanize_length_modes(self, sample_text):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_humanize_length_modes(self, mock_get_service, sample_text):
         """Test all length mode options."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         length_modes = ["standard", "shorten", "expand"]
 
         for length_mode in length_modes:
@@ -142,8 +195,19 @@ class TestHumanizeEndpoint:
         # Should handle or reject long text appropriately (403 for limit exceeded, 400 for bad request, 413 for payload too large)
         assert response.status_code in [200, 400, 403, 413, 500]
 
-    def test_special_characters(self):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_special_characters(self, mock_get_service):
         """Test with special characters and emojis."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "Hello! This has special characters and emojis.",
+            "language": "en",
+            "metrics": {"word_count": 8, "character_count": 50, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         payload = {
             "input_text": "Hello! @#$% This has special chars & emojis 😀🎉",
             "tone": "Standard",
@@ -157,8 +221,19 @@ class TestHumanizeEndpoint:
         data = response.json()
         assert "humanized_text" in data
 
-    def test_multiple_languages(self):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_multiple_languages(self, mock_get_service):
         """Test with different languages (if supported)."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "Translated text output.",
+            "language": "en",
+            "metrics": {"word_count": 3, "character_count": 20, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         texts = [
             ("Hello world, this is a test.", "en"),
             ("Hola mundo, esto es una prueba.", "es"),
@@ -173,9 +248,20 @@ class TestHumanizeEndpoint:
             # Should handle different languages
             assert response.status_code in [200, 400]
 
-    def test_concurrent_requests(self, valid_payload):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_concurrent_requests(self, mock_get_service, valid_payload):
         """Test that endpoint handles concurrent requests."""
         import concurrent.futures
+
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
 
         def make_request():
             return client.post("/api/v1/humanize/", json=valid_payload)
@@ -189,8 +275,19 @@ class TestHumanizeEndpoint:
         for response in responses:
             assert response.status_code == 200
 
-    def test_response_metadata(self, valid_payload):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_response_metadata(self, mock_get_service, valid_payload):
         """Test that response includes appropriate metadata."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         response = client.post("/api/v1/humanize/", json=valid_payload)
 
         assert response.status_code == 200
@@ -199,8 +296,19 @@ class TestHumanizeEndpoint:
         # Check for metadata fields
         assert "metadata" in data or "processing_time" in data or "model" in data
 
-    def test_style_sample_option(self, sample_text):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_style_sample_option(self, mock_get_service, sample_text):
         """Test with optional style_sample parameter."""
+        # Mock the humanization service
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         payload = {
             "input_text": sample_text,
             "tone": "Professional",
@@ -213,8 +321,19 @@ class TestHumanizeEndpoint:
         # Should accept style_sample if implemented
         assert response.status_code in [200, 422]
 
-    def test_idempotency(self, valid_payload):
+    @patch("api.v1.endpoints.humanize.get_humanization_service")
+    def test_idempotency(self, mock_get_service, valid_payload):
         """Test that same input produces consistent output (within reason)."""
+        # Mock the humanization service to return consistent output
+        mock_service = MagicMock()
+        mock_service.humanize.return_value = {
+            "humanized_text": "The use of advanced technology systems helps improve productivity.",
+            "language": "en",
+            "metrics": {"word_count": 10, "character_count": 80, "processing_time_ms": 100.0},
+            "metadata": {"detected_language": "en", "model_used": "claude-3-5-sonnet-20241022"},
+        }
+        mock_get_service.return_value = mock_service
+
         response1 = client.post("/api/v1/humanize/", json=valid_payload)
         response2 = client.post("/api/v1/humanize/", json=valid_payload)
 

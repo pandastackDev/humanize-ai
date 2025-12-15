@@ -291,9 +291,16 @@ export function HumanizeEditor({
     if (!file) {
       return;
     }
-    const text = await processUploadedFile(file);
-    if (text) {
-      setInputText(text);
+    try {
+      const text = await processUploadedFile(file);
+      if (text && text.trim().length > 0) {
+        setInputText(text);
+        console.log("File text set to input area, length:", text.length);
+      } else {
+        console.warn("No text extracted from file");
+      }
+    } catch (fileError) {
+      console.error("Error processing file:", fileError);
     }
   };
 
@@ -576,6 +583,18 @@ export function HumanizeEditor({
     }
   }, [isProSelected, proValue]);
 
+  const handleProUpgradeSidebarChange = (open: boolean) => {
+    setShowProUpgrade(open);
+    // When closing the sidebar, reset the pro selection back to default
+    if (!open && proType) {
+      if (proType === "readability") {
+        setReadabilityLevel("university");
+      } else if (proType === "purpose") {
+        setPurpose("general");
+      }
+    }
+  };
+
   const isInitialState = !(hasInputText || hasOutputText);
 
   const getWordCountText = () => {
@@ -732,7 +751,9 @@ export function HumanizeEditor({
                     onDragEnter={handleContainerDragEnter}
                     onDragLeave={handleContainerDragLeave}
                     onDragOver={handleContainerDragOver}
-                    onDrop={(e) => handleContainerDrop(e, processUploadedFile)}
+                    onDrop={(e) =>
+                      handleContainerDrop(e, processUploadedFile, setInputText)
+                    }
                   >
                     <fieldset
                       aria-label="Original text input and file drop zone"
@@ -757,6 +778,10 @@ export function HumanizeEditor({
                             wordBreak: "break-word",
                             overflowWrap: "break-word",
                             boxSizing: "border-box",
+                            paddingRight:
+                              hasTextareaScrollbar && hasInputText
+                                ? "3.5rem"
+                                : undefined,
                           }}
                           value={inputText}
                         />
@@ -816,8 +841,9 @@ export function HumanizeEditor({
                             onClick={handleClearInput}
                             style={{
                               position: "absolute",
-                              right: hasTextareaScrollbar ? "8px" : "0px",
+                              right: hasTextareaScrollbar ? "12px" : "2px",
                               top: "6px",
+                              zIndex: 10,
                             }}
                             title="Clear text"
                             variant="ghost"
@@ -853,95 +879,101 @@ export function HumanizeEditor({
 
                   {/* Left Footer */}
                   <div
-                    className={`flex flex-col gap-2 border-white border-t px-3 py-2 sm:flex-row sm:items-center sm:justify-between sm:px-4 sm:py-2 md:px-6 dark:border-editor-border dark:bg-editor-bg ${activeTab === "humanize" && hasOutputText ? "rounded-bl-xl" : "rounded-b-xl"}`}
+                    className={`flex flex-col gap-3 border-white border-t px-3 py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-4 sm:py-3 md:px-6 md:py-4 dark:border-editor-border dark:bg-editor-bg ${activeTab === "humanize" && hasOutputText ? "rounded-bl-xl" : "rounded-b-xl"}`}
                   >
-                    <div className="flex w-full items-center justify-between gap-2">
-                      <div className="flex flex-col items-start gap-0-5">
-                        {isOverLimit ? (
-                          <span className="cursor-help font-semibold text-destructive text-sm dark:text-destructive">
+                    <div className="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+                      {isOverLimit ? (
+                        <>
+                          <span className="shrink-0 cursor-help font-semibold text-destructive text-sm dark:text-destructive">
                             {getWordCountText()}
                           </span>
-                        ) : (
-                          <span className="font-semibold text-card-foreground text-sm">
-                            {getWordCountText()}
-                          </span>
-                        )}
-                      </div>
-                      {isOverLimit && (
-                        <Button
-                          className="h-6 cursor-pointer px-2 text-xs"
-                          onClick={() => router.push("/pricing")}
-                          variant="outline"
-                        >
-                          Unlock more words
-                        </Button>
+                          <Button
+                            className="h-7 shrink-0 cursor-pointer px-2.5 text-xs"
+                            onClick={() => router.push("/pricing")}
+                            variant="outline"
+                          >
+                            Unlock more words
+                          </Button>
+                        </>
+                      ) : (
+                        <span className="font-semibold text-card-foreground text-sm">
+                          {getWordCountText()}
+                        </span>
                       )}
                     </div>
                     {activeTab === "humanize" && (
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-3">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
-                            disabled={
-                              !inputText.trim() || isDetecting || isLoading
-                            }
-                            onClick={handleCheckForAI}
-                          >
-                            {isDetecting ? (
-                              <>
-                                <LoadingSpinner size="sm" />
-                                Detecting...
-                              </>
-                            ) : (
-                              <>
-                                <BarChart3 className="h-4 w-4" />
+                      <div className="flex shrink-0 flex-wrap items-center gap-2 sm:gap-2">
+                        <Button
+                          className="h-8 shrink-0 cursor-pointer gap-1-5 px-3 text-sm"
+                          disabled={
+                            !inputText.trim() || isDetecting || isLoading
+                          }
+                          onClick={handleCheckForAI}
+                        >
+                          {isDetecting ? (
+                            <>
+                              <LoadingSpinner size="sm" />
+                              <span>Detecting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <BarChart3 className="h-4 w-4 shrink-0" />
+                              <span className="whitespace-nowrap">
                                 Check for AI
-                              </>
-                            )}
-                          </Button>
-                          <Button
-                            className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
-                            disabled={
-                              !inputText.trim() ||
-                              isLoading ||
-                              isDetecting ||
-                              isProSelected
-                            }
-                            onClick={handleHumanize}
-                          >
-                            {isLoading ? (
-                              <>
-                                <LoadingSpinner size="sm" />
-                                Humanizing...
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles className="size-icon-xs shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large sm:size-icon-sm" />
+                              </span>
+                            </>
+                          )}
+                        </Button>
+                        <Button
+                          className="h-8 shrink-0 cursor-pointer gap-1-5 px-3 text-sm"
+                          disabled={
+                            !inputText.trim() ||
+                            isLoading ||
+                            isDetecting ||
+                            isProSelected
+                          }
+                          onClick={handleHumanize}
+                        >
+                          {isLoading ? (
+                            <>
+                              <LoadingSpinner size="sm" />
+                              <span>Humanizing...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="size-icon-xs shrink-none text-current transition-transform duration-normal ease-in-out group-data-[state=active]:scale-active-large sm:size-icon-sm" />
+                              <span className="whitespace-nowrap">
                                 Humanize
-                              </>
-                            )}
-                          </Button>
-                        </div>
+                              </span>
+                            </>
+                          )}
+                        </Button>
                       </div>
                     )}
                     {activeTab === "detector" && (
-                      <Button
-                        className="h-8 cursor-pointer gap-1-5 px-3 text-sm sm:w-auto"
-                        disabled={!inputText.trim() || isDetecting || isLoading}
-                        onClick={handleDetectAI}
-                      >
-                        {isDetecting ? (
-                          <>
-                            <LoadingSpinner size="sm" />
-                            Detecting...
-                          </>
-                        ) : (
-                          <>
-                            <BarChart3 className="h-4 w-4" />
-                            Detect AI
-                          </>
-                        )}
-                      </Button>
+                      <div className="flex shrink-0 flex-wrap items-center gap-2">
+                        <Button
+                          className="h-8 shrink-0 cursor-pointer gap-1-5 px-3 text-sm"
+                          disabled={
+                            !inputText.trim() || isDetecting || isLoading
+                          }
+                          onClick={handleDetectAI}
+                        >
+                          {isDetecting ? (
+                            <>
+                              <LoadingSpinner size="sm" />
+                              <span>Detecting...</span>
+                            </>
+                          ) : (
+                            <>
+                              <BarChart3 className="h-4 w-4 shrink-0" />
+                              <span className="whitespace-nowrap">
+                                Detect AI
+                              </span>
+                            </>
+                          )}
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -1187,7 +1219,7 @@ export function HumanizeEditor({
       />
 
       <ProUpgradeSidebar
-        onOpenChange={setShowProUpgrade}
+        onOpenChange={handleProUpgradeSidebarChange}
         open={showProUpgrade}
         proType={proType}
         proValue={proValue}

@@ -90,6 +90,10 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Workaround for Turbopack font loading issues
+  experimental: {
+    optimizePackageImports: ["next/font/google"],
+  },
   ...withWebpack,
   ...withTurpopack,
 };

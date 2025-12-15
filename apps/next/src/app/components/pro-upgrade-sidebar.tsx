@@ -9,7 +9,7 @@ import {
   SheetTitle,
 } from "@humanize/ui/components/sheet";
 import { ArrowDown } from "lucide-react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 type ProUpgradeSidebarProps = {
   open: boolean;
@@ -97,8 +97,6 @@ export function ProUpgradeSidebar({
   onOpenChange,
   proValue,
 }: ProUpgradeSidebarProps) {
-  const router = useRouter();
-
   if (!proValue) {
     return null;
   }
@@ -108,28 +106,42 @@ export function ProUpgradeSidebar({
     return null;
   }
 
-  const handleUnlock = () => {
-    router.push("/pricing");
-  };
-
   return (
     <Sheet onOpenChange={onOpenChange} open={open}>
-      <SheetContent className="w-full overflow-y-auto sm:max-w-md" side="right">
-        <SheetHeader>
-          <div className="flex items-center justify-between">
-            <SheetTitle className="font-bold text-xl">
-              {config.title}
-            </SheetTitle>
-          </div>
-          <SheetDescription className="sr-only">
-            Upgrade to PRO to unlock {config.title} features
-          </SheetDescription>
-        </SheetHeader>
+      <SheetContent
+        className="w-full overflow-y-auto border-border/50 border-l bg-gradient-to-b from-background to-muted/40 px-0 sm:max-w-md"
+        side="right"
+      >
+        <div className="flex h-full flex-col gap-6 px-5 py-6 sm:px-6">
+          <SheetHeader>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <SheetTitle className="font-bold text-xl leading-tight">
+                  {config.title}
+                </SheetTitle>
+                <p className="text-muted-foreground text-xs">
+                  Upgrade to unlock this tailored mode
+                </p>
+              </div>
+              <span className="rounded-full bg-primary/10 px-3 py-1 font-semibold text-primary text-xs">
+                PRO
+              </span>
+            </div>
+            <SheetDescription className="sr-only">
+              Upgrade to PRO to unlock {config.title} features
+            </SheetDescription>
+          </SheetHeader>
 
-        <div className="mt-6 space-y-6">
           {/* Uses Section */}
-          <div>
-            <h3 className="mb-3 font-semibold text-foreground text-sm">Uses</h3>
+          <div className="space-y-3 rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold text-foreground text-sm">
+                Best for
+              </h3>
+              <span className="text-muted-foreground text-xs">
+                {config.uses.length} examples
+              </span>
+            </div>
             <div className="flex flex-wrap gap-2">
               {config.uses.map((use) => (
                 <span
@@ -143,13 +155,13 @@ export function ProUpgradeSidebar({
           </div>
 
           {/* Examples Section */}
-          <div className="space-y-4">
+          <div className="space-y-4 rounded-xl border border-border/70 bg-background/80 p-4 shadow-sm">
             <div className="space-y-2">
               <label className="font-medium text-muted-foreground text-xs">
-                Input Example
+                Input example
               </label>
-              <div className="rounded-lg border border-border bg-muted p-3">
-                <p className="text-muted-foreground text-sm">
+              <div className="rounded-lg border border-border bg-muted/70 p-3">
+                <p className="text-muted-foreground text-sm leading-relaxed">
                   {config.inputExample}
                 </p>
               </div>
@@ -161,10 +173,10 @@ export function ProUpgradeSidebar({
 
             <div className="space-y-2">
               <label className="font-medium text-muted-foreground text-xs">
-                Humanized Output
+                Humanized output
               </label>
-              <div className="rounded-lg border border-border bg-muted p-3">
-                <p className="text-muted-foreground text-sm">
+              <div className="rounded-lg border border-border bg-primary/5 p-3">
+                <p className="text-foreground text-sm leading-relaxed">
                   {config.outputExample}
                 </p>
               </div>
@@ -172,12 +184,16 @@ export function ProUpgradeSidebar({
           </div>
 
           {/* Unlock Button */}
-          <div className="space-y-2">
+          <div className="sticky bottom-4 mt-auto space-y-2 rounded-xl border border-border/70 bg-background/90 p-4 shadow-md backdrop-blur">
+            <div className="flex items-center justify-between text-muted-foreground text-xs">
+              <span>Start a free trial</span>
+              <span>Cancel anytime</span>
+            </div>
             <Button
-              className="w-full px-6 py-6 font-semibold text-base"
-              onClick={handleUnlock}
+              asChild
+              className="w-full px-6 py-5 font-semibold text-base shadow-sm"
             >
-              Unlock With Free Trial
+              <Link href="/pricing">Unlock With Free Trial</Link>
             </Button>
             <p className="text-center text-muted-foreground text-xs">
               3 day refund guarantee

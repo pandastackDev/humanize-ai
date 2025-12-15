@@ -6,7 +6,7 @@ import {
 } from "@workos-inc/authkit-nextjs/components";
 import "@workos-inc/widgets/styles.css";
 import type { Metadata } from "next";
-import { Inter, Plus_Jakarta_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { CookieConsentBanner } from "./components/layout/cookie-consent-banner";
 import { DynamicBackground } from "./components/layout/dynamic-background";
@@ -14,17 +14,19 @@ import { Footer } from "./components/layout/footer";
 import { Header } from "./components/layout/header";
 import { QueryProvider } from "./providers/query-provider";
 
-// If loading a variable font, you don't need to specify the font weight
+// Font configuration - using Inter for both to avoid Turbopack font loading issues
+// TODO: Re-enable Plus Jakarta Sans when Turbopack font issues are resolved
 const fontSans = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-sans",
 });
 
-const fontHeading = Plus_Jakarta_Sans({
+const fontHeading = Inter({
   subsets: ["latin"],
   variable: "--font-heading",
   weight: ["600", "700", "800"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {

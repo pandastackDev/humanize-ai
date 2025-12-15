@@ -59,11 +59,17 @@ function PricingCard({
       return (
         <Button
           className="w-full bg-primary text-primary-foreground hover:opacity-90"
-          onClick={() => {
-            window.location.href = "/login";
-          }}
+          disabled={isCurrentPlanLoading}
+          onClick={() => onSubscribe(plan.name)}
         >
-          Subscribe
+          {isCurrentPlanLoading ? (
+            <>
+              <LoadingSpinner className="mr-2" size="sm" />
+              Redirecting...
+            </>
+          ) : (
+            "Subscribe"
+          )}
         </Button>
       );
     }
@@ -339,8 +345,12 @@ export function Pricing({
 
   const handleSubscribe = async (planName: string) => {
     if (!userId) {
+      const subscriptionLevel = `${planName}-${billingPeriod}`;
+      setLoadingPlan(subscriptionLevel);
       // Redirect to /login which will redirect to WorkOS sign-in
-      window.location.href = "/login";
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 50); // allow loading state to paint
       return;
     }
 

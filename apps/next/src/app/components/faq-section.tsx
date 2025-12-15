@@ -73,7 +73,7 @@ export function FAQSection() {
                 key={item.id}
                 value={item.id}
               >
-                <AccordionTrigger className="py-4 text-card-foreground hover:no-underline">
+                <AccordionTrigger className="cursor-pointer py-4 text-card-foreground hover:no-underline">
                   <span className="text-left font-medium">{item.question}</span>
                 </AccordionTrigger>
                 <AccordionContent className="pb-4 text-muted-foreground">

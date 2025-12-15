@@ -384,12 +384,12 @@ export function Footer() {
                 })}
               </div>
               {/* Theme Toggle */}
-              <div className="flex items-center gap-1 rounded-md border border-border bg-muted p-0.5">
+              <div className="flex items-center gap-1 rounded-md border border-gray-700 bg-gray-800 p-0.5">
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                     mounted && !isSystemMode && theme === "light"
-                      ? "bg-accent text-white"
-                      : "text-muted-foreground hover:text-white"
+                      ? "bg-gray-600"
+                      : "hover:bg-gray-700/50"
                   }`}
                   onClick={() => {
                     setIsSystemMode(false);
@@ -401,15 +401,15 @@ export function Footer() {
                     className={`h-4 w-4 cursor-pointer ${
                       mounted && !isSystemMode && theme === "light"
                         ? "text-white"
-                        : "text-muted-foreground"
+                        : "text-gray-400"
                     }`}
                   />
                 </button>
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
                     mounted && !isSystemMode && theme === "dark"
-                      ? "bg-accent text-white"
-                      : "text-muted-foreground hover:text-white"
+                      ? "bg-gray-600"
+                      : "hover:bg-gray-700/50"
                   }`}
                   onClick={() => {
                     setIsSystemMode(false);
@@ -421,15 +421,13 @@ export function Footer() {
                     className={`h-4 w-4 cursor-pointer ${
                       mounted && !isSystemMode && theme === "dark"
                         ? "text-white"
-                        : "text-muted-foreground"
+                        : "text-gray-400"
                     }`}
                   />
                 </button>
                 <button
                   className={`flex h-7 w-7 items-center justify-center rounded transition-colors ${
-                    isSystemMode
-                      ? "bg-accent text-white"
-                      : "text-muted-foreground hover:text-white"
+                    isSystemMode ? "bg-gray-600" : "hover:bg-gray-700/50"
                   }`}
                   onClick={() => {
                     const isNight = getIsNightTime();
@@ -441,7 +439,7 @@ export function Footer() {
                 >
                   <Monitor
                     className={`h-4 w-4 cursor-pointer ${
-                      isSystemMode ? "text-white" : "text-muted-foreground"
+                      isSystemMode ? "text-white" : "text-gray-400"
                     }`}
                   />
                 </button>

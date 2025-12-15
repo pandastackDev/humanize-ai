@@ -150,7 +150,23 @@ export function EditorControls({
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     {languageFlags[lang] && (
-                      <span className="text-lg leading-none">
+                      <span
+                        aria-label={`${lang} flag`}
+                        className="text-lg leading-none"
+                        role="img"
+                        style={
+                          {
+                            fontFamily:
+                              "Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, Twemoji Mozilla, emoji",
+                            fontSize: "1.25rem",
+                            lineHeight: "1",
+                            display: "inline-block",
+                            minWidth: "1.5rem",
+                            textAlign: "center",
+                          } as React.CSSProperties
+                        }
+                        suppressHydrationWarning
+                      >
                         {languageFlags[lang]}
                       </span>
                     )}

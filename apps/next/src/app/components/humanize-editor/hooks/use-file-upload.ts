@@ -1,8 +1,6 @@
-import mammoth from "mammoth";
-import * as pdfjsLib from "pdfjs-dist";
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
-import type { FileType } from "../types";
+import { env } from "@/env";
 import { getFileType } from "../utils";
 
 export function useFileUpload() {
@@ -10,50 +8,119 @@ export function useFileUpload() {
   const [isParsingFile, setIsParsingFile] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const parsePdf = useCallback(async (file: File): Promise<string> => {
-    try {
-      const arrayBuffer = await file.arrayBuffer();
-      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-      const numPages = pdf.numPages;
+  const extractErrorMessage = useCallback(
+    async (response: Response): Promise<string> => {
+      let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+      try {
+        const errorData = await response.json();
+        if (errorData.detail && typeof errorData.detail === "string") {
+          errorMessage = errorData.detail;
+        } else if (errorData.message && typeof errorData.message === "string") {
+          errorMessage = errorData.message;
+        }
+      } catch {
+        // If JSON parsing fails, use default error
+      }
+      return errorMessage;
+    },
+    []
+  );
 
-      const pageTexts: string[] = [];
-      for (let pageNum = 1; pageNum <= numPages; pageNum++) {
-        const page = await pdf.getPage(pageNum);
-        const textContent = await page.getTextContent();
-        const isTextItem = (item: unknown): item is { str: string } =>
-          typeof item === "object" &&
-          item !== null &&
-          "str" in item &&
-          typeof (item as { str?: unknown }).str === "string";
-        const pageText = textContent.items
-          .map((item) => (isTextItem(item) ? item.str : ""))
-          .join(" ");
-        pageTexts.push(pageText);
+  const handleFetchError = useCallback(
+    (fetchError: unknown, baseUrl: string): never => {
+      if (fetchError instanceof Error) {
+        if (fetchError.name === "AbortError") {
+          console.error("File upload aborted (timeout)");
+          throw new Error(
+            "Request timed out. The file might be too large. Please try a smaller file or paste the text directly."
+          );
+        }
+        if (
+          fetchError.message.includes("Failed to fetch") ||
+          fetchError.message.includes("NetworkError") ||
+          fetchError.message.includes("Network request failed")
+        ) {
+          console.error(
+            "Network error during file upload:",
+            fetchError.message
+          );
+          throw new Error(
+            "Network error. Please check your connection and ensure the backend server is running at " +
+              baseUrl
+          );
+        }
+        throw fetchError;
+      }
+      console.error("Unknown error during file upload:", fetchError);
+      throw new Error(
+        "Failed to parse file. Please try copying and pasting the text directly."
+      );
+    },
+    []
+  );
+
+  const parseFileViaBackend = useCallback(
+    async (file: File): Promise<string> => {
+      const baseUrl = env.NEXT_PUBLIC_PYTHON_API_URL;
+      if (!baseUrl) {
+        throw new Error(
+          "Backend API URL is not configured. Please check your environment variables."
+        );
       }
 
-      return pageTexts.join("\n\n").trim();
-    } catch (pdfError) {
-      const errorMessage =
-        pdfError instanceof Error ? pdfError.message : String(pdfError);
-      throw new Error(
-        `Failed to parse PDF file: ${errorMessage}. Please try copying and pasting the text directly, or ensure the file is not corrupted.`
+      const url = `${baseUrl}/api/v1/parse-file`;
+      console.log(
+        "Uploading file to:",
+        url,
+        "File:",
+        file.name,
+        "Size:",
+        file.size
       );
-    }
-  }, []);
 
-  const parseDocx = useCallback(async (file: File): Promise<string> => {
-    const arrayBuffer = await file.arrayBuffer();
-    const result = await mammoth.extractRawText({ arrayBuffer });
-    if (result.messages.length > 0) {
-      console.warn("DOCX parsing warnings:", result.messages);
-    }
-    return result.value.trim();
-  }, []);
+      const formData = new FormData();
+      formData.append("file", file);
 
-  const parseTxt = useCallback(async (file: File): Promise<string> => {
-    const text = await file.text();
-    return text.trim();
-  }, []);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        console.warn("File upload timeout after 30 seconds");
+        controller.abort();
+      }, 30_000);
+
+      try {
+        const response = await fetch(url, {
+          method: "POST",
+          body: formData,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+
+        if (!response.ok) {
+          const errorMessage = await extractErrorMessage(response);
+          console.error("File upload failed:", errorMessage);
+          throw new Error(errorMessage);
+        }
+
+        const data = await response.json();
+        if (!data.text || typeof data.text !== "string") {
+          throw new Error(
+            "No text could be extracted from the file. Please try another file or paste the text directly."
+          );
+        }
+
+        console.log(
+          "File parsed successfully, extracted text length:",
+          data.text.length
+        );
+        return data.text;
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        return handleFetchError(fetchError, baseUrl);
+      }
+    },
+    [extractErrorMessage, handleFetchError]
+  );
 
   const resetFileInput = useCallback(() => {
     if (fileInputRef.current) {
@@ -82,19 +149,11 @@ export function useFileUpload() {
   );
 
   const extractTextFromFile = useCallback(
-    (file: File, fileType: FileType): Promise<string> => {
-      switch (fileType) {
-        case "pdf":
-          return parsePdf(file);
-        case "docx":
-          return parseDocx(file);
-        case "txt":
-          return parseTxt(file);
-        default:
-          return Promise.resolve("");
-      }
+    (file: File): Promise<string> => {
+      // Use backend API for all file types
+      return parseFileViaBackend(file);
     },
-    [parseDocx, parsePdf, parseTxt]
+    [parseFileViaBackend]
   );
 
   const processUploadedFile = useCallback(
@@ -108,27 +167,31 @@ export function useFileUpload() {
       setError(null);
 
       try {
-        const extractedText = await extractTextFromFile(file, fileType);
+        console.log("Starting file upload:", file.name, fileType);
+        const extractedText = await extractTextFromFile(file);
+        console.log(
+          "File parsed successfully, text length:",
+          extractedText.length
+        );
 
         if (!extractedText || extractedText.trim().length === 0) {
           setError(
             "No text could be extracted from the file. Please try another file or paste the text directly."
           );
-          setIsParsingFile(false);
-          resetFileInput();
           return null;
         }
 
         setError(null);
         toast.success("File uploaded and text extracted successfully!");
         return extractedText;
-      } catch (err) {
-        console.error("File parsing error:", err);
+      } catch (parseError) {
+        console.error("File parsing error:", parseError);
         const errorMessage =
-          err instanceof Error ? err.message : "Unknown error";
+          parseError instanceof Error ? parseError.message : "Unknown error";
         setError(
           `Failed to parse file: ${errorMessage}. Please try copying and pasting the text directly.`
         );
+        toast.error(`File parsing failed: ${errorMessage}`);
         return null;
       } finally {
         setIsParsingFile(false);
