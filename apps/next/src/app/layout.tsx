@@ -6,7 +6,7 @@ import {
 } from "@workos-inc/authkit-nextjs/components";
 import "@workos-inc/widgets/styles.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 import { CookieConsentBanner } from "./components/layout/cookie-consent-banner";
 import { DynamicBackground } from "./components/layout/dynamic-background";
@@ -22,11 +22,10 @@ const fontSans = Inter({
   variable: "--font-sans",
 });
 
-const fontHeading = Inter({
+const fontHeading = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-heading",
   weight: ["600", "700", "800"],
-  display: "swap",
 });
 
 export const metadata: Metadata = {
