@@ -120,5 +120,6 @@
   // python
   "python.defaultInterpreterPath": "${workspaceFolder}/backend/.venv/bin/python",
   "python.analysis.extraPaths": ["${workspaceFolder}/backend/src"],
-  "python.languageServer": "None"
+  "python.languageServer": "None",
+  "cursorpyright.analysis.extraPaths": ["${workspaceFolder}/backend/src"]
 }

@@ -88,10 +88,3 @@ reportUnusedImport = true
 reportUnusedClass = false
 reportUnusedFunction = false
 reportUnusedVariable = false
-# Ignore missing imports for optional eval dependencies
-ignoreMissingImports = [
-    "numpy",
-    "sklearn",
-    "sentence_transformers",
-    "torch"
-]
