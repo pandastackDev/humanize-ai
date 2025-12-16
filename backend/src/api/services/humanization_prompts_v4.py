@@ -6,11 +6,13 @@ Currently falls back to V2 prompts until V4 is fully implemented.
 """
 
 try:
+    from .humanization_prompts import get_reconstruction_prompt as _get_reconstruction_prompt
     from .humanization_prompts_v2 import (
         get_main_humanization_prompt as _get_v2_humanization_prompt,
+    )
+    from .humanization_prompts_v2 import (
         get_quick_fix_prompt as _get_v2_quick_fix_prompt,
     )
-    from .humanization_prompts import get_reconstruction_prompt as _get_reconstruction_prompt
 
     _V2_AVAILABLE = True
 except ImportError:
