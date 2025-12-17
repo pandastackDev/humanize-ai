@@ -1,0 +1,91 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "FastAPI backend for humanize"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "ruff>=0.14.4",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "email-validator>=2.0.0",
+    "scalar-fastapi>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "openai>=1.0.0",
+    "anthropic>=0.30.0",
+    "lingua-language-detector>=2.1.1",
+    "langdetect>=1.0.9",
+    "tiktoken>=0.7.0",
+    "httpx>=0.27.0",
+    "requests>=2.31.0",
+    "brotli>=1.0.0",
+    "stripe>=7.0.0",
+    "convex>=0.5.0",
+    "writerai>=0.1.0",
+    "pypdf>=4.0.0",
+    "python-docx>=1.1.0",
+    "python-multipart>=0.0.6",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/yt_uv"]
+
+[tool.distutils.bdist_wheel]
+universal = true
+
+[dependency-groups]
+dev = ["pytest-cov>=5.0.0", "pyright>=1.1.381", "pytest-asyncio>=0.21.0"]
+eval = [
+    "numpy>=1.24.0",
+    "sentence-transformers>=2.2.0",
+    "torch>=2.0.0",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+logger-objects = ["utils.logger.logger"]
+extend-select = [
+    # isort
+    "I",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear - Do not use mutable data structures for argument defaults
+    "B006",
+    # flake8-bugbear - Loop control variable overrides iterable it iterates
+    "B020",
+    # ASYNC - Async functions should not open files with blocking methods like open	
+    "ASYNC230",
+]
+
+[tool.pyright]
+exclude = [
+    ".venv",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/.pytest_cache",
+    "**/*.pyc",
+    "tests",
+    "build",
+    "dist",
+    "*.egg-info"
+]
+pythonVersion = "3.12"
+venvPath = "."
+venv = ".venv"
+typeCheckingMode = "basic"
+reportMissingImports = "warning"
+reportMissingTypeStubs = false
+reportUnusedImport = true
+reportUnusedClass = false
+reportUnusedFunction = false
+reportUnusedVariable = false
+

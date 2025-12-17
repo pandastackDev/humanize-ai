@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "src/index.py": {
+      "runtime": "@vercel/python"
+    }
+  }
+}
