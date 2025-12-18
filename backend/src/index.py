@@ -55,7 +55,7 @@ app = FastAPI(
     version=settings.VERSION,
 )
 
-# Configure CORS
+# Configure CORS - MUST be added before other middleware
 # Parse CORS origins from environment variable
 if settings.CORS_ORIGINS == "*":
     # For wildcard, we cannot use credentials
@@ -69,13 +69,16 @@ else:
 logger.info(f"CORS Origins: {cors_origins}")
 logger.info(f"CORS Allow Credentials: {allow_creds}")
 
+# Add CORS middleware FIRST (before other middleware)
+# This is critical - CORS middleware must be added before any other middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=cors_origins,
     allow_credentials=allow_creds,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all methods
+    allow_headers=["*"],  # Allow all headers
     expose_headers=["*"],
+    max_age=3600,
 )
 
 
@@ -83,8 +86,20 @@ app.add_middleware(
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     logger.info(f"🔵 Request: {request.method} {request.url.path}")
+    logger.info(f"🔵 Origin: {request.headers.get('origin', 'No origin header')}")
     try:
         response = await call_next(request)
+        
+        # Ensure CORS headers are present (backup in case middleware doesn't work)
+        origin = request.headers.get("origin")
+        if origin:
+            if "*" in cors_origins or origin in cors_origins:
+                response.headers["Access-Control-Allow-Origin"] = origin if "*" not in cors_origins else "*"
+                response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+                response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+                if allow_creds:
+                    response.headers["Access-Control-Allow-Credentials"] = "true"
+        
         logger.info(
             f"✅ Response: {request.method} {request.url.path} - Status: {response.status_code}"
         )
@@ -92,7 +107,7 @@ async def log_requests(request: Request, call_next):
     except Exception as e:
         logger.error(f"❌ Error: {request.method} {request.url.path} - {str(e)}")
         logger.exception("Full traceback:")
-        return JSONResponse(
+        error_response = JSONResponse(
             status_code=500,
             content={
                 "error": "Internal server error",
@@ -101,7 +116,49 @@ async def log_requests(request: Request, call_next):
                 "method": request.method,
             },
         )
+        # Add CORS headers to error response too
+        origin = request.headers.get("origin")
+        if origin and ("*" in cors_origins or origin in cors_origins):
+            error_response.headers["Access-Control-Allow-Origin"] = origin if "*" not in cors_origins else "*"
+            error_response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+            error_response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+            if allow_creds:
+                error_response.headers["Access-Control-Allow-Credentials"] = "true"
+        return error_response
 
+
+# Add explicit OPTIONS handler for all routes (before including routers)
+# This ensures preflight requests are handled even if middleware fails
+@app.options("/{full_path:path}")
+async def options_handler(request: Request):
+    """Explicit OPTIONS handler for CORS preflight requests"""
+    from fastapi.responses import Response
+    
+    origin = request.headers.get("origin", "")
+    logger.info(f"🔵 OPTIONS preflight request from origin: {origin}")
+    logger.info(f"🔵 Request path: {request.url.path}")
+    logger.info(f"🔵 Allowed origins: {cors_origins}")
+    
+    # Create response with 200 status
+    response = Response(status_code=200)
+    
+    # Always set CORS headers (allow all for now, can be restricted later)
+    if "*" in cors_origins or not cors_origins or origin in cors_origins:
+        response.headers["Access-Control-Allow-Origin"] = origin if ("*" not in cors_origins and origin) else "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+        response.headers["Access-Control-Max-Age"] = "3600"
+        if allow_creds and origin:
+            response.headers["Access-Control-Allow-Credentials"] = "true"
+        logger.info(f"✅ OPTIONS preflight handled - CORS headers set for origin: {origin}")
+    else:
+        logger.warning(f"⚠️ OPTIONS request from unauthorized origin: {origin}")
+        # Still set headers but log warning
+        response.headers["Access-Control-Allow-Origin"] = "*"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS, PATCH"
+        response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization, Accept, Origin, X-Requested-With"
+    
+    return response
 
 # Include API v1 router with versioned prefix
 app.include_router(v1_router, prefix=settings.API_V1_STR)
