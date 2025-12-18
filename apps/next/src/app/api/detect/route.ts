@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const body = await req.json();
     const backendUrl = `${env.NEXT_PUBLIC_PYTHON_API_URL}/api/v1/detect`;
-
+    console.log("backendUrl", backendUrl);
     const response = await fetch(backendUrl, {
       method: "POST",
       headers: {
