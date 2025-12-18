@@ -1,5 +1,9 @@
 {
-  "buildCommand": "pip install -r requirements.txt",
+  "functions": {
+    "src/index.py": {
+      "runtime": "python3.12"
+    }
+  },
   "rewrites": [
     {
       "source": "/(.*)",
