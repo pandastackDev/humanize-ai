@@ -1,8 +1,7 @@
 /**
  * Humanize API client for calling the backend /humanize endpoint.
+ * Uses Next.js API routes to proxy requests and avoid CORS issues.
  */
-
-import { env } from "@/env";
 
 export type HumanizeRequest = {
   input_text: string;
@@ -38,16 +37,6 @@ export type HumanizeResponse = {
   metrics?: HumanizeMetrics;
   metadata?: HumanizeMetadata;
 };
-
-/**
- * Get the backend API base URL.
- * Ensures no trailing slash to avoid double slashes in URLs.
- */
-function getApiBaseUrl(): string {
-  const url = env.NEXT_PUBLIC_PYTHON_API_URL;
-  // Remove trailing slash if present
-  return url.endsWith("/") ? url.slice(0, -1) : url;
-}
 
 /**
  * Extract and format error message from API response.
@@ -95,8 +84,8 @@ export async function humanizeText(
   userId?: string,
   organizationId?: string
 ): Promise<HumanizeResponse> {
-  const baseUrl = getApiBaseUrl();
-  const url = `${baseUrl}/api/v1/humanize`;
+  // Use Next.js API route to proxy request and avoid CORS issues
+  const url = "/api/humanize";
 
   try {
     console.log("Fetching humanize text from:", url);

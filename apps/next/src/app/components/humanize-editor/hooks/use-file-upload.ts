@@ -1,6 +1,5 @@
 import { useCallback, useRef, useState } from "react";
 import { toast } from "sonner";
-import { env } from "@/env";
 import { getFileType } from "../utils";
 
 export function useFileUpload() {
@@ -27,7 +26,7 @@ export function useFileUpload() {
   );
 
   const handleFetchError = useCallback(
-    (fetchError: unknown, baseUrl: string): never => {
+    (fetchError: unknown): never => {
       if (fetchError instanceof Error) {
         if (fetchError.name === "AbortError") {
           console.error("File upload aborted (timeout)");
@@ -45,8 +44,7 @@ export function useFileUpload() {
             fetchError.message
           );
           throw new Error(
-            "Network error. Please check your connection and ensure the backend server is running at " +
-              baseUrl
+            "Network error. Please check your connection and try again."
           );
         }
         throw fetchError;
@@ -61,14 +59,8 @@ export function useFileUpload() {
 
   const parseFileViaBackend = useCallback(
     async (file: File): Promise<string> => {
-      const baseUrl = env.NEXT_PUBLIC_PYTHON_API_URL;
-      if (!baseUrl) {
-        throw new Error(
-          "Backend API URL is not configured. Please check your environment variables."
-        );
-      }
-
-      const url = `${baseUrl}/api/v1/parse-file`;
+      // Use Next.js API route to proxy request and avoid CORS issues
+      const url = "/api/parse-file";
       console.log(
         "Uploading file to:",
         url,
@@ -116,7 +108,7 @@ export function useFileUpload() {
         return data.text;
       } catch (fetchError) {
         clearTimeout(timeoutId);
-        return handleFetchError(fetchError, baseUrl);
+        return handleFetchError(fetchError);
       }
     },
     [extractErrorMessage, handleFetchError]

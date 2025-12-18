@@ -2,19 +2,8 @@
  * AI Detection API Client
  *
  * Client functions for interacting with the /detect endpoint
+ * Uses Next.js API routes to proxy requests and avoid CORS issues.
  */
-
-import { env } from "@/env";
-
-/**
- * Get the backend API base URL.
- * Ensures no trailing slash to avoid double slashes in URLs.
- */
-function getApiBaseUrl(): string {
-  const url = env.NEXT_PUBLIC_PYTHON_API_URL;
-  // Remove trailing slash if present
-  return url.endsWith("/") ? url.slice(0, -1) : url;
-}
 
 export type DetectRequest = {
   text: string;
@@ -89,7 +78,8 @@ export async function detectAIContent(
   request: DetectRequest
 ): Promise<DetectResponse> {
   try {
-    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect`, {
+    // Use Next.js API route to proxy request and avoid CORS issues
+    const response = await fetch("/api/detect", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -129,7 +119,8 @@ export async function compareDetection(
   request: CompareRequest
 ): Promise<CompareResponse> {
   try {
-    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect/compare`, {
+    // Use Next.js API route to proxy request and avoid CORS issues
+    const response = await fetch("/api/detect/compare", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
