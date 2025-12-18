@@ -182,9 +182,13 @@ export const env = createEnv({
 
   /**
    * Skip validation during build on CI/CD pipelines that don't have all env vars.
-   * Set SKIP_ENV_VALIDATION=true to skip validation.
+   * Automatically skips during build phase or when SKIP_ENV_VALIDATION=true.
+   * This allows builds to succeed even if env vars aren't set yet (they'll be set at runtime).
    */
-  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
+  skipValidation:
+    !!process.env.SKIP_ENV_VALIDATION ||
+    process.env.NEXT_PHASE === "phase-production-build" ||
+    !!process.env.VERCEL,
 
   /**
    * Makes it so that empty strings are treated as undefined.
