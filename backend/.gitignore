@@ -10,3 +10,5 @@ __pycache__
 .Python
 .DS_Store
 # .env*
+# Generated requirements.txt (we use pyproject.toml + uv instead)
+requirements.txt
