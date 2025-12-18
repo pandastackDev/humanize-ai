@@ -10,5 +10,5 @@ __pycache__
 .Python
 .DS_Store
 # .env*
-# Generated requirements.txt (we use pyproject.toml + uv instead)
-requirements.txt
+# Note: requirements.txt is kept in git for Vercel compatibility
+# It's auto-generated from pyproject.toml via: uv pip compile pyproject.toml -o requirements.txt
