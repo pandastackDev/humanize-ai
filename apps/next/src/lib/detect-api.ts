@@ -8,9 +8,12 @@ import { env } from "@/env";
 
 /**
  * Get the backend API base URL.
+ * Ensures no trailing slash to avoid double slashes in URLs.
  */
 function getApiBaseUrl(): string {
-  return env.NEXT_PUBLIC_PYTHON_API_URL;
+  const url = env.NEXT_PUBLIC_PYTHON_API_URL;
+  // Remove trailing slash if present
+  return url.endsWith("/") ? url.slice(0, -1) : url;
 }
 
 export type DetectRequest = {
@@ -86,7 +89,7 @@ export async function detectAIContent(
   request: DetectRequest
 ): Promise<DetectResponse> {
   try {
-    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect/`, {
+    const response = await fetch(`${getApiBaseUrl()}/api/v1/detect`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

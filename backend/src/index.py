@@ -56,12 +56,26 @@ app = FastAPI(
 )
 
 # Configure CORS
+# Parse CORS origins from environment variable
+if settings.CORS_ORIGINS == "*":
+    # For wildcard, we cannot use credentials
+    cors_origins = ["*"]
+    allow_creds = False
+else:
+    # Parse comma-separated origins and strip whitespace
+    cors_origins = [origin.strip() for origin in settings.CORS_ORIGINS.split(",")]
+    allow_creds = True
+
+logger.info(f"CORS Origins: {cors_origins}")
+logger.info(f"CORS Allow Credentials: {allow_creds}")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=settings.ALLOWED_ORIGINS,
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=cors_origins,
+    allow_credentials=allow_creds,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 

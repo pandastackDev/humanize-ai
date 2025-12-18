@@ -25,8 +25,10 @@ class Settings(BaseSettings):
     # API Configuration
     API_V1_STR: str = "/api/v1"
 
-    # CORS Settings (if needed)
-    ALLOWED_ORIGINS: list[str] = ["*"]
+    # CORS Settings
+    # Note: When allow_credentials=True, you cannot use ["*"]
+    # Set via CORS_ORIGINS env var as comma-separated list, or use ["*"] for development only
+    CORS_ORIGINS: str = "*"  # Comma-separated list of allowed origins, or "*" for all
 
     # Environment
     ENVIRONMENT: str = "development"

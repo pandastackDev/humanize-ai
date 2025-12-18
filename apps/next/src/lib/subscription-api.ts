@@ -28,10 +28,13 @@ export type SubscriptionInfo = {
 
 /**
  * Get the backend API base URL.
+ * Ensures no trailing slash to avoid double slashes in URLs.
  */
 function getApiBaseUrl(): string | null {
   try {
-    return env.NEXT_PUBLIC_PYTHON_API_URL;
+    const url = env.NEXT_PUBLIC_PYTHON_API_URL;
+    // Remove trailing slash if present
+    return url.endsWith("/") ? url.slice(0, -1) : url;
   } catch {
     // Environment variable not configured
     return null;
