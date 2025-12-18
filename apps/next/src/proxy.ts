@@ -9,8 +9,8 @@ export const config = {
     "/",
     "/pricing",
     "/dashboard/:path*",
-    // Exclude callback and login routes from middleware
-    "/((?!_next/static|_next/image|favicon.ico|callback|login|.*\\.css).*)",
+    // Exclude callback, login, and API routes from middleware
+    "/((?!_next/static|_next/image|favicon.ico|callback|login|api|.*\\.css).*)",
   ],
 };
 // export const config = { matcher: ["/", "/account/:path*", "/api/:path*"] };
