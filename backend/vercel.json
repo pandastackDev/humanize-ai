@@ -1,7 +1,4 @@
 {
-  "functions": {
-    "src/index.py": {}
-  },
   "rewrites": [
     {
       "source": "/(.*)",
