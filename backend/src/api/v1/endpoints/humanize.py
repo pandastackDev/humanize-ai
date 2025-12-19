@@ -44,7 +44,7 @@ def count_words(text: str) -> int:
     return len(words)
 
 
-@router.post("/", response_model=HumanizeResponse)
+@router.post("/", response_model=HumanizeResponse, summary="Humanize AI-generated text")
 async def humanize_text(
     request: HumanizeRequest,
     x_user_id: str | None = Header(None, alias="X-User-Id"),
