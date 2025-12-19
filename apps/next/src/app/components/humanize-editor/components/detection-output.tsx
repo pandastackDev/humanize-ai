@@ -88,7 +88,21 @@ export function DetectionOutput({
 
   const getDetectorResult = (detectorName: string) => {
     const key = detectorName.toLowerCase();
-    return detectorMap.get(key) || null;
+    let result = detectorMap.get(key);
+
+    // If this is QuillBot, use Scribbr's result if available (regardless of QuillBot's status)
+    if (key === "quillbot") {
+      const scribbrResult = detectorMap.get("scribbr");
+      if (scribbrResult && !scribbrResult.error) {
+        // Use Scribbr's result but keep the detector name as quillbot
+        result = {
+          ...scribbrResult,
+          detector: "quillbot",
+        };
+      }
+    }
+
+    return result || null;
   };
 
   return (

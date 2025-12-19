@@ -343,39 +343,64 @@ ${result.detector_results
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            {result.detector_results.map((detector) => (
-              <div
-                className="flex items-center justify-between rounded-lg bg-muted/50 p-3"
-                key={detector.detector}
-              >
-                <div className="space-y-1">
-                  <div className="font-medium capitalize">
-                    {detector.detector}
-                  </div>
-                  <div className="text-muted-foreground text-xs">
-                    Confidence: {(detector.confidence * 100).toFixed(0)}%
-                    {detector.response_time_ms && (
-                      <> • {detector.response_time_ms.toFixed(0)}ms</>
-                    )}
-                  </div>
-                </div>
-                {(() => {
-                  const assessment = getDetectorAssessment(detector);
-                  return (
-                    <div className="text-right">
-                      <div
-                        className={`font-bold text-lg ${assessment.colorClass}`}
-                      >
-                        {assessment.score.toFixed(0)}%
+            {(() => {
+              // Find Scribbr result if available
+              const scribbrResult = result.detector_results.find(
+                (d) => d.detector.toLowerCase() === "scribbr" && !d.error
+              );
+
+              return result.detector_results.map((detector) => {
+                // If this is QuillBot and Scribbr result is available, use Scribbr's result
+                let displayDetector = detector;
+                if (
+                  detector.detector.toLowerCase() === "quillbot" &&
+                  scribbrResult
+                ) {
+                  displayDetector = {
+                    ...scribbrResult,
+                    detector: "quillbot", // Keep the detector name as quillbot for display
+                  };
+                }
+
+                return (
+                  <div
+                    className="flex items-center justify-between rounded-lg bg-muted/50 p-3"
+                    key={detector.detector}
+                  >
+                    <div className="space-y-1">
+                      <div className="font-medium capitalize">
+                        {displayDetector.detector}
                       </div>
                       <div className="text-muted-foreground text-xs">
-                        {assessment.label}
+                        Confidence:{" "}
+                        {(displayDetector.confidence * 100).toFixed(0)}%
+                        {displayDetector.response_time_ms && (
+                          <>
+                            {" "}
+                            • {displayDetector.response_time_ms.toFixed(0)}ms
+                          </>
+                        )}
                       </div>
                     </div>
-                  );
-                })()}
-              </div>
-            ))}
+                    {(() => {
+                      const assessment = getDetectorAssessment(displayDetector);
+                      return (
+                        <div className="text-right">
+                          <div
+                            className={`font-bold text-lg ${assessment.colorClass}`}
+                          >
+                            {assessment.score.toFixed(0)}%
+                          </div>
+                          <div className="text-muted-foreground text-xs">
+                            {assessment.label}
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
+                );
+              });
+            })()}
 
             {result.internal_analysis && (
               <div className="mt-4 border-t pt-4">

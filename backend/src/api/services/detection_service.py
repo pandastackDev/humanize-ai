@@ -27,6 +27,7 @@ from api.services.crossplag_detector import CrossPlagDetector
 from api.services.gptzero_detector import GPTZeroDetector
 from api.services.grammarly_detector import GrammarlyDetector
 from api.services.quillbot_detector import QuillBotDetector
+from api.services.scribbr_detector import ScribbrDetector
 
 logger = logging.getLogger(__name__)
 
@@ -1900,16 +1901,18 @@ class AIDetectionService:
 
     async def _detect_scribbr(self, text: str) -> DetectorResult:
         """
-        Detect using Scribbr AI Detector API.
+        Detect using Scribbr AI Detector API (browser session authentication).
 
-        API: https://www.scribbr.com/ai-detector/
-        Note: Scribbr uses a proprietary AI detection model.
-        This is a placeholder implementation.
+        Uses browser session cookies to authenticate with Scribbr's API.
+        API: https://quillbot.scribbr.com/api/ai-detector/score
+        Authentication: Uses cookie string (SCRIBBR_COOKIE_STRING) and useridtoken (SCRIBBR_USERIDTOKEN)
         """
         start_time = time.time()
         try:
-            if not settings.SCRIBBR_API_KEY:
-                message = "Scribbr API key not configured"
+            # Check if cookie string is configured
+            cookie_string = settings.SCRIBBR_COOKIE_STRING
+            if not cookie_string or not cookie_string.strip():
+                message = "Scribbr cookie string not configured. Please set SCRIBBR_COOKIE_STRING in .env"
                 logger.warning(message)
                 return self._create_detector_result(
                     detector=DetectorType.SCRIBBR,
@@ -1921,17 +1924,80 @@ class AIDetectionService:
                     error=message,
                 )
 
-            # Placeholder - Scribbr API integration would go here
-            message = "Scribbr detector not yet implemented - API documentation needed"
-            logger.info(message)
+            # Parse cookies
+            try:
+                cookies_dict = parse_cookie_string(cookie_string)
+                logger.info(f"Scribbr cookies parsed: {len(cookies_dict)} cookies")
+            except Exception as e:
+                error_msg = f"Failed to parse Scribbr cookies: {e}"
+                logger.error(error_msg)
+                return self._create_detector_result(
+                    detector=DetectorType.SCRIBBR,
+                    ai_probability=0.5,
+                    human_probability=0.5,
+                    confidence=0.0,
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=None,
+                    error=error_msg,
+                )
+
+            # Get useridtoken from settings (default: "empty-token" for free tier)
+            useridtoken = settings.SCRIBBR_USERIDTOKEN or "empty-token"
+
+            # Create detector instance
+            detector = ScribbrDetector(
+                cookies_dict=cookies_dict, useridtoken=useridtoken, timeout=60
+            )
+
+            # Run detection (sync wrapper for async context)
+            loop = asyncio.get_event_loop()
+            result = await loop.run_in_executor(None, detector.detect, text)
+
+            # Check if successful
+            if not result.get("success"):
+                error_msg = result.get("error", "Unknown error")
+
+                # Provide helpful error messages for common issues
+                if "401" in error_msg or "Unauthorized" in error_msg:
+                    logger.warning("Scribbr authentication failed. Cookies may be expired.")
+                    error_msg = "Authentication failed. Please refresh your Scribbr cookies."
+                elif "403" in error_msg or "Forbidden" in error_msg:
+                    logger.warning("Scribbr access denied. Check cookies and useridtoken.")
+                    error_msg = "Access denied. Please check your Scribbr cookies and useridtoken."
+
+                logger.error(f"Scribbr detection failed: {error_msg}")
+                return self._create_detector_result(
+                    detector=DetectorType.SCRIBBR,
+                    ai_probability=result.get("ai_probability", 0.5),
+                    human_probability=result.get("human_probability", 0.5),
+                    confidence=result.get("confidence", 0.0),
+                    response_time_ms=(time.time() - start_time) * 1000,
+                    details=result.get("raw_response"),
+                    error=error_msg,
+                )
+
+            # Extract results
+            ai_probability = result.get("ai_probability", 0.5)
+            human_probability = result.get("human_probability", 0.5)
+            confidence = result.get("confidence", 0.0)
+
+            logger.info(
+                f"Scribbr detection complete - "
+                f"AI: {ai_probability:.2%}, "
+                f"Human: {human_probability:.2%}, "
+                f"Confidence: {confidence:.2%}"
+            )
+
             return self._create_detector_result(
                 detector=DetectorType.SCRIBBR,
-                ai_probability=0.5,
-                human_probability=0.5,
-                confidence=0.0,
-                response_time_ms=(time.time() - start_time) * 1000,
-                details={"message": message},
-                error=message,
+                ai_probability=ai_probability,
+                human_probability=human_probability,
+                confidence=confidence,
+                response_time_ms=result.get("response_time_ms"),
+                details={
+                    "chunk_details": result.get("chunk_details", []),
+                    "raw_response": result.get("raw_response"),
+                },
             )
 
         except Exception as e:

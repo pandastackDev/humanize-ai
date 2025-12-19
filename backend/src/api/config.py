@@ -183,7 +183,10 @@ class Settings(BaseSettings):
     GRAMMARLY_COOKIE_STRING: str = ""  # Browser session cookies for Grammarly
     GRAMMARLY_CSRF_TOKEN: str = ""  # CSRF token from Grammarly session
     GRAMMARLY_CONTAINER_ID: str = ""  # Container ID from Grammarly session
-    SCRIBBR_API_KEY: str = ""
+    SCRIBBR_COOKIE_STRING: str = ""  # Browser session cookies for Scribbr
+    SCRIBBR_USERIDTOKEN: str = (
+        "empty-token"  # User ID token for Scribbr API (default: "empty-token" for free tier)
+    )
     CROSSPLAG_API_KEY: str = ""
 
     # Detection Cache Configuration

@@ -387,7 +387,7 @@ class StealthWriterService:
         if not skip_puzzle and not self.access_token:
             if not self.complete_puzzle_verification():
                 logger.error("Puzzle verification failed. Cannot proceed with humanization.")
-                return None
+            return None
 
         # Log input details
         text_length = len(text)
