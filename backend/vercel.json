@@ -1,7 +1,14 @@
 {
   "functions": {
-    "src/index.py": {
-      "runtime": "@vercel/python"
+    "src/**/*.py": {
+      "memory": 1024,
+      "maxDuration": 30
     }
-  }
+  },
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "/src/index.py"
+    }
+  ]
 }
