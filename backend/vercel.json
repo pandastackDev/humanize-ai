@@ -1,6 +1,6 @@
 {
   "functions": {
-    "src/**/*.py": {
+    "api/**/*.py": {
       "memory": 1024,
       "maxDuration": 30
     }
@@ -8,7 +8,7 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/src/index.py"
+      "dest": "/api/index.py"
     }
   ]
 }

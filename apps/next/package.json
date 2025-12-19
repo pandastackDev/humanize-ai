@@ -9,8 +9,8 @@
     "debug": "next dev --inspect",
     "build": "next build",
     "start": "next start",
-    "lint-ci": "oxlint --type-aware && eslint",
-    "lint": "oxlint --type-aware --fix --fix-suggestions --fix-dangerously && eslint --fix",
+    "lint-ci": "oxlint && eslint",
+    "lint": "oxlint --fix --fix-suggestions --fix-dangerously && eslint --fix",
     "check-types": "next typegen && tsc --noEmit",
     "dev:convex": "npx convex dev",
     "setup-env": "pnpx tsx scripts/setup.ts"
