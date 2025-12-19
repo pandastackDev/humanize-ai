@@ -1912,7 +1912,9 @@ class AIDetectionService:
             # Check if cookie string is configured
             cookie_string = settings.SCRIBBR_COOKIE_STRING
             if not cookie_string or not cookie_string.strip():
-                message = "Scribbr cookie string not configured. Please set SCRIBBR_COOKIE_STRING in .env"
+                message = (
+                    "Scribbr cookie string not configured. Please set SCRIBBR_COOKIE_STRING in .env"
+                )
                 logger.warning(message)
                 return self._create_detector_result(
                     detector=DetectorType.SCRIBBR,

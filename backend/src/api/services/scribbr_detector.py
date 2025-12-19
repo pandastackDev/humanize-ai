@@ -129,24 +129,30 @@ class ScribbrDetector:
                 if "data" in data and "value" in data["data"]:
                     value = data["data"]["value"]
                     ai_score = value.get("aiScore", 0.5)
-                    
+
                     if isinstance(ai_score, (int, float)):
                         # aiScore is already 0-1 range
                         ai_probability = float(ai_score)
                     else:
-                        logger.warning(f"Unexpected aiScore type: {type(ai_score)}, value: {ai_score}")
+                        logger.warning(
+                            f"Unexpected aiScore type: {type(ai_score)}, value: {ai_score}"
+                        )
                         ai_probability = 0.5
-                    
+
                     # Extract chunk-level details if available
                     chunks = value.get("chunks", [])
                     chunk_details = []
                     if chunks:
                         for chunk in chunks:
-                            chunk_details.append({
-                                "text": chunk.get("text", "")[:100] + "..." if len(chunk.get("text", "")) > 100 else chunk.get("text", ""),
-                                "aiScore": chunk.get("aiScore", 0.5),
-                                "type": chunk.get("type", "UNKNOWN"),
-                            })
+                            chunk_details.append(
+                                {
+                                    "text": chunk.get("text", "")[:100] + "..."
+                                    if len(chunk.get("text", "")) > 100
+                                    else chunk.get("text", ""),
+                                    "aiScore": chunk.get("aiScore", 0.5),
+                                    "type": chunk.get("type", "UNKNOWN"),
+                                }
+                            )
                 else:
                     logger.warning(f"Unexpected Scribbr response format: {list(data.keys())}")
                     ai_probability = 0.5

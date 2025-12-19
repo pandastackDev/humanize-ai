@@ -344,62 +344,92 @@ ${result.detector_results
           </CardHeader>
           <CardContent className="space-y-3">
             {(() => {
-              // Find Scribbr result if available
+              // Find Scribbr result if available (check all case variations)
               const scribbrResult = result.detector_results.find(
-                (d) => d.detector.toLowerCase() === "scribbr" && !d.error
+                (d) =>
+                  d.detector.toLowerCase() === "scribbr" &&
+                  !d.error &&
+                  d.ai_probability != null &&
+                  d.human_probability != null
               );
 
-              return result.detector_results.map((detector) => {
-                // If this is QuillBot and Scribbr result is available, use Scribbr's result
-                let displayDetector = detector;
-                if (
-                  detector.detector.toLowerCase() === "quillbot" &&
-                  scribbrResult
-                ) {
-                  displayDetector = {
-                    ...scribbrResult,
-                    detector: "quillbot", // Keep the detector name as quillbot for display
-                  };
-                }
+              // Check if QuillBot exists in results
+              const quillbotExists = result.detector_results.some(
+                (d) => d.detector.toLowerCase() === "quillbot"
+              );
 
-                return (
-                  <div
-                    className="flex items-center justify-between rounded-lg bg-muted/50 p-3"
-                    key={detector.detector}
-                  >
-                    <div className="space-y-1">
-                      <div className="font-medium capitalize">
-                        {displayDetector.detector}
-                      </div>
-                      <div className="text-muted-foreground text-xs">
-                        Confidence:{" "}
-                        {(displayDetector.confidence * 100).toFixed(0)}%
-                        {displayDetector.response_time_ms && (
-                          <>
-                            {" "}
-                            • {displayDetector.response_time_ms.toFixed(0)}ms
-                          </>
-                        )}
-                      </div>
-                    </div>
-                    {(() => {
-                      const assessment = getDetectorAssessment(displayDetector);
-                      return (
-                        <div className="text-right">
-                          <div
-                            className={`font-bold text-lg ${assessment.colorClass}`}
-                          >
-                            {assessment.score.toFixed(0)}%
-                          </div>
-                          <div className="text-muted-foreground text-xs">
-                            {assessment.label}
-                          </div>
-                        </div>
-                      );
-                    })()}
-                  </div>
+              // Create enhanced detector results array
+              const enhancedResults = [...result.detector_results];
+
+              // If Scribbr is available and QuillBot doesn't exist or has error, add/update QuillBot
+              if (scribbrResult) {
+                const quillbotIndex = enhancedResults.findIndex(
+                  (d) => d.detector.toLowerCase() === "quillbot"
                 );
-              });
+
+                const quillbotWithScribbr = {
+                  ...scribbrResult,
+                  detector: "quillbot", // Keep the detector name as quillbot for display
+                  error: undefined, // Ensure no error is set
+                };
+
+                if (quillbotIndex >= 0) {
+                  // Replace existing QuillBot entry
+                  enhancedResults[quillbotIndex] = quillbotWithScribbr;
+                } else {
+                  // Add QuillBot entry if it doesn't exist
+                  enhancedResults.push(quillbotWithScribbr);
+                }
+              }
+
+              return enhancedResults
+                .map((detector) => {
+                  const detectorKey = detector.detector.toLowerCase();
+
+                  // Skip Scribbr if we're using it for QuillBot (to avoid duplicate display)
+                  if (
+                    detectorKey === "scribbr" &&
+                    scribbrResult &&
+                    quillbotExists
+                  ) {
+                    return null;
+                  }
+
+                  return (
+                    <div
+                      className="flex items-center justify-between rounded-lg bg-muted/50 p-3"
+                      key={detector.detector}
+                    >
+                      <div className="space-y-1">
+                        <div className="font-medium capitalize">
+                          {detector.detector}
+                        </div>
+                        <div className="text-muted-foreground text-xs">
+                          Confidence: {(detector.confidence * 100).toFixed(0)}%
+                          {detector.response_time_ms && (
+                            <> • {detector.response_time_ms.toFixed(0)}ms</>
+                          )}
+                        </div>
+                      </div>
+                      {(() => {
+                        const assessment = getDetectorAssessment(detector);
+                        return (
+                          <div className="text-right">
+                            <div
+                              className={`font-bold text-lg ${assessment.colorClass}`}
+                            >
+                              {assessment.score.toFixed(0)}%
+                            </div>
+                            <div className="text-muted-foreground text-xs">
+                              {assessment.label}
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                  );
+                })
+                .filter(Boolean); // Remove null entries
             })()}
 
             {result.internal_analysis && (

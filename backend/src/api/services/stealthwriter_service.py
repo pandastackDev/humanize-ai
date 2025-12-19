@@ -222,7 +222,9 @@ class StealthWriterService:
                     raise Exception("Invalid puzzle response. Missing puzzle_token or visual_x.")
 
                 if attempt == 0:
-                    logger.info(f"   ✓ Puzzle generated (visual_x: {visual_x}, width: {puzzle_width})")
+                    logger.info(
+                        f"   ✓ Puzzle generated (visual_x: {visual_x}, width: {puzzle_width})"
+                    )
 
                 # Step 2: Verify puzzle
                 # Use visual_x as the solution (with slight variation to mimic human behavior)
@@ -234,7 +236,9 @@ class StealthWriterService:
                     user_solution_x = visual_x + random.uniform(-3, 3)
 
                 if attempt == 0:
-                    logger.info(f"🔐 Step 2: Verifying puzzle solution (x: {user_solution_x:.2f})...")
+                    logger.info(
+                        f"🔐 Step 2: Verifying puzzle solution (x: {user_solution_x:.2f})..."
+                    )
                 else:
                     logger.info(
                         f"🔐 Step 2: Retrying puzzle verification (x: {user_solution_x:.2f})..."

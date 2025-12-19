@@ -63,6 +63,36 @@ export function DetectionOutput({
     detectionResult.detector_results.map((r) => [r.detector.toLowerCase(), r])
   );
 
+  // Find Scribbr result early for QuillBot fallback
+  // Check both "scribbr" and any case variations
+  const scribbrResult =
+    detectorMap.get("scribbr") ||
+    Array.from(detectorMap.values()).find(
+      (r) => r.detector.toLowerCase() === "scribbr"
+    );
+
+  // If Scribbr result is available and valid, use it for QuillBot
+  // This will overwrite any existing QuillBot entry (even if it has an error)
+  if (scribbrResult) {
+    // Check if Scribbr result is valid (no error and has valid probabilities)
+    const isScribbrValid =
+      !scribbrResult.error &&
+      scribbrResult.ai_probability != null &&
+      scribbrResult.human_probability != null &&
+      typeof scribbrResult.ai_probability === "number" &&
+      typeof scribbrResult.human_probability === "number" &&
+      !Number.isNaN(scribbrResult.ai_probability) &&
+      !Number.isNaN(scribbrResult.human_probability);
+
+    if (isScribbrValid) {
+      detectorMap.set("quillbot", {
+        ...scribbrResult,
+        detector: "quillbot", // Keep the detector name as quillbot for display
+        error: undefined, // Ensure no error is set
+      });
+    }
+  }
+
   // Calculate Turnitin score as average of all other detectors
   const otherDetectors = detectionResult.detector_results.filter(
     (r) => r.detector.toLowerCase() !== "turnitin"
@@ -88,21 +118,7 @@ export function DetectionOutput({
 
   const getDetectorResult = (detectorName: string) => {
     const key = detectorName.toLowerCase();
-    let result = detectorMap.get(key);
-
-    // If this is QuillBot, use Scribbr's result if available (regardless of QuillBot's status)
-    if (key === "quillbot") {
-      const scribbrResult = detectorMap.get("scribbr");
-      if (scribbrResult && !scribbrResult.error) {
-        // Use Scribbr's result but keep the detector name as quillbot
-        result = {
-          ...scribbrResult,
-          detector: "quillbot",
-        };
-      }
-    }
-
-    return result || null;
+    return detectorMap.get(key) || null;
   };
 
   return (
