@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@humanize/ui/components/button";
 import {
   Select,
@@ -9,6 +11,7 @@ import {
   SelectValue,
 } from "@humanize/ui/components/select";
 import { Switch } from "@humanize/ui/components/switch";
+import { useEffect, useState } from "react";
 import {
   languageFlags,
   languages,
@@ -48,6 +51,13 @@ export function EditorControls({
   hasStyleSample,
   onOpenStyleModal,
 }: EditorControlsProps) {
+  // Ensure flags only render on client-side to avoid SSR/hydration issues
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <div className="flex flex-col gap-2 bg-transparent px-3 py-2 sm:flex-row sm:items-center sm:gap-3 sm:px-4 sm:py-3 md:gap-4 md:px-6 md:py-4 dark:bg-background/50">
       <Select
@@ -149,7 +159,7 @@ export function EditorControls({
               >
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
-                    {languageFlags[lang] && (
+                    {isMounted && languageFlags[lang] && (
                       <span
                         aria-label={`${lang} flag`}
                         className="text-lg leading-none"
@@ -157,12 +167,16 @@ export function EditorControls({
                         style={
                           {
                             fontFamily:
-                              "Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, Twemoji Mozilla, emoji",
+                              "Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, Twemoji Mozilla, emoji, sans-serif",
                             fontSize: "1.25rem",
                             lineHeight: "1",
                             display: "inline-block",
                             minWidth: "1.5rem",
                             textAlign: "center",
+                            fontFeatureSettings: "normal",
+                            fontVariantEmoji: "emoji",
+                            WebkitFontSmoothing: "antialiased",
+                            MozOsxFontSmoothing: "grayscale",
                           } as React.CSSProperties
                         }
                         suppressHydrationWarning

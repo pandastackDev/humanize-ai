@@ -180,16 +180,20 @@ async def humanize_text(
 
                 if not stealthwriter.is_valid():
                     logger.error("❌ StealthWriter service validation failed")
-                    logger.error(f"   • Cookie string length: {len(settings.DEFAULT_COOKIE_STRING) if settings.DEFAULT_COOKIE_STRING else 0}")
+                    logger.error(
+                        f"   • Cookie string length: {len(settings.DEFAULT_COOKIE_STRING) if settings.DEFAULT_COOKIE_STRING else 0}"
+                    )
                     logger.error(f"   • Cookies parsed: {len(stealthwriter.cookies)}")
                     raise HTTPException(
                         status_code=503,
                         detail="StealthWriter service is not valid. Please check your DEFAULT_COOKIE_STRING configuration.",
                     )
 
-                logger.info(f"✅ StealthWriter service initialized successfully")
+                logger.info("✅ StealthWriter service initialized successfully")
                 logger.info(f"   • Cookies loaded: {len(stealthwriter.cookies)}")
-                logger.info(f"   • Access token available: {stealthwriter.access_token is not None}")
+                logger.info(
+                    f"   • Access token available: {stealthwriter.access_token is not None}"
+                )
 
                 stealthwriter_result = stealthwriter.humanize_text(
                     text=sanitized_input_text,

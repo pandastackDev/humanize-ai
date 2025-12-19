@@ -480,7 +480,7 @@ class StealthWriterService:
                     # Check for error status codes
                     if response.status_code >= 400:
                         error_message = self._decode_error_response(response)
-                        
+
                         # Handle retryable errors (500 server errors, 429 rate limits)
                         if attempt < max_retries:
                             if response.status_code == 500:
@@ -493,17 +493,18 @@ class StealthWriterService:
                                     logger.warning(
                                         f"⚠️  StealthWriter server error (500) on attempt {attempt + 1}/{max_retries + 1}"
                                     )
-                                
+
                                 import time
-                                logger.warning(
-                                    f"   Retrying in {retry_delay} seconds..."
-                                )
+
+                                logger.warning(f"   Retrying in {retry_delay} seconds...")
                                 time.sleep(retry_delay)
                                 continue  # Retry the request without raising exception
-                            
+
                             elif response.status_code == 429:
                                 # Rate limit error - retry with longer delay (exponential backoff)
-                                rate_limit_delay = retry_delay * (attempt + 1)  # Exponential: 3s, 6s, 9s
+                                rate_limit_delay = retry_delay * (
+                                    attempt + 1
+                                )  # Exponential: 3s, 6s, 9s
                                 if error_message:
                                     logger.warning(
                                         f"⚠️  StealthWriter rate limit (429) on attempt {attempt + 1}/{max_retries + 1}: {error_message}"
@@ -512,14 +513,15 @@ class StealthWriterService:
                                     logger.warning(
                                         f"⚠️  StealthWriter rate limit (429) on attempt {attempt + 1}/{max_retries + 1}"
                                     )
-                                
+
                                 import time
+
                                 logger.warning(
                                     f"   Rate limit hit. Retrying in {rate_limit_delay} seconds..."
                                 )
                                 time.sleep(rate_limit_delay)
                                 continue  # Retry the request without raising exception
-                        
+
                         # For other errors or exhausted retries, log and raise
                         if error_message:
                             logger.error(
@@ -537,8 +539,10 @@ class StealthWriterService:
                     # If we get here from raise_for_status(), check if it's retryable and we still have retries
                     if e.response and attempt < max_retries:
                         status_code = e.response.status_code
-                        error_message = self._decode_error_response(e.response) if e.response else None
-                        
+                        error_message = (
+                            self._decode_error_response(e.response) if e.response else None
+                        )
+
                         if status_code == 500:
                             # Server error - retry with standard delay
                             if error_message:
@@ -551,11 +555,14 @@ class StealthWriterService:
                                 )
                             logger.warning(f"   Retrying in {retry_delay} seconds...")
                             import time
+
                             time.sleep(retry_delay)
                             continue
                         elif status_code == 429:
                             # Rate limit error - retry with longer delay (exponential backoff)
-                            rate_limit_delay = retry_delay * (attempt + 1)  # Exponential: 3s, 6s, 9s
+                            rate_limit_delay = retry_delay * (
+                                attempt + 1
+                            )  # Exponential: 3s, 6s, 9s
                             if error_message:
                                 logger.warning(
                                     f"⚠️  StealthWriter rate limit (429) on attempt {attempt + 1}/{max_retries + 1}: {error_message}"
@@ -564,18 +571,24 @@ class StealthWriterService:
                                 logger.warning(
                                     f"⚠️  StealthWriter rate limit (429) on attempt {attempt + 1}/{max_retries + 1}"
                                 )
-                            logger.warning(f"   Rate limit hit. Retrying in {rate_limit_delay} seconds...")
+                            logger.warning(
+                                f"   Rate limit hit. Retrying in {rate_limit_delay} seconds..."
+                            )
                             import time
+
                             time.sleep(rate_limit_delay)
                             continue
-                    
+
                     # Re-raise to be handled by outer exception handler
                     raise
                 except requests.exceptions.RequestException as e:
                     # For other request exceptions, log and re-raise
-                    logger.error(f"❌ StealthWriter request exception on attempt {attempt + 1}: {e}")
+                    logger.error(
+                        f"❌ StealthWriter request exception on attempt {attempt + 1}: {e}"
+                    )
                     if attempt < max_retries:
                         import time
+
                         logger.warning(f"Retrying in {retry_delay} seconds...")
                         time.sleep(retry_delay)
                         continue
@@ -584,7 +597,9 @@ class StealthWriterService:
             # Ensure we have a response before trying to parse
             if not response:
                 logger.error("❌ No response received from StealthWriter API after all retries")
-                logger.error("💡 This could indicate: network issues, timeout, or the API is unreachable")
+                logger.error(
+                    "💡 This could indicate: network issues, timeout, or the API is unreachable"
+                )
                 return None
 
             # Try to parse JSON response
@@ -708,15 +723,23 @@ class StealthWriterService:
             if status_code == 401:
                 error_detail = error_message or "Authentication failed - cookies may have expired"
                 logger.error(f"❌ StealthWriter authentication failed (401): {error_detail}")
-                logger.error("💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies")
+                logger.error(
+                    "💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies"
+                )
             elif status_code == 403:
                 error_detail = error_message or "Access forbidden - session may have expired"
                 logger.error(f"❌ StealthWriter access forbidden (403): {error_detail}")
-                logger.error("💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies")
+                logger.error(
+                    "💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies"
+                )
             elif status_code == 429:
                 error_detail = error_message or "Rate limit reached"
-                logger.error(f"❌ StealthWriter rate limit reached (429) after {max_retries + 1} attempts: {error_detail}")
-                logger.error("💡 All retry attempts exhausted. The rate limit may be persistent. Please wait before trying again.")
+                logger.error(
+                    f"❌ StealthWriter rate limit reached (429) after {max_retries + 1} attempts: {error_detail}"
+                )
+                logger.error(
+                    "💡 All retry attempts exhausted. The rate limit may be persistent. Please wait before trying again."
+                )
             elif status_code == 500:
                 error_detail = error_message or "Server error"
                 logger.error(f"❌ StealthWriter server error (500): {error_detail}")
@@ -729,12 +752,16 @@ class StealthWriterService:
 
         except requests.exceptions.Timeout as e:
             logger.error(f"❌ StealthWriter request timeout: {e}")
-            logger.error("💡 The request took too long. Try again or check your network connection.")
+            logger.error(
+                "💡 The request took too long. Try again or check your network connection."
+            )
             return None
 
         except requests.exceptions.ConnectionError as e:
             logger.error(f"❌ StealthWriter connection error: {e}")
-            logger.error("💡 Could not connect to StealthWriter API. Check your internet connection.")
+            logger.error(
+                "💡 Could not connect to StealthWriter API. Check your internet connection."
+            )
             return None
 
         except requests.exceptions.RequestException as e:
