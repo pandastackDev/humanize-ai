@@ -4,7 +4,7 @@
       "excludeFiles": "{.next,.git,node_modules,backend/node_modules,apps/next/node_modules}/**"
     }
   },
-  "buildCommand": "cd apps/next && pnpm build",
+  "buildCommand": "pnpm --filter @humanize/next build",
   "outputDirectory": "apps/next/.next",
   "installCommand": "pnpm install",
   "framework": null,
