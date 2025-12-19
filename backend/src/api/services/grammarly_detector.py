@@ -42,20 +42,23 @@ class GrammarlyDetector:
         self.container_id = container_id or ""
         self.timeout = timeout
 
-        # Build headers
+        # Build headers matching the curl command
         self.headers = {
             "accept": "application/json",
             "accept-language": "en-US,en;q=0.9",
-            "content-type": "application/json",
-            "origin": "https://app.grammarly.com",
-            "referer": "https://app.grammarly.com/",
-            "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+            "content-type": "text/plain",  # Important: must be text/plain, not JSON
+            "origin": "https://www.grammarly.com",
+            "priority": "u=1, i",
+            "referer": "https://www.grammarly.com/ai-detector",
+            "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
             "sec-ch-ua-mobile": "?0",
             "sec-ch-ua-platform": '"Windows"',
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-site",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            "x-client-type": "cms",
+            "x-client-version": "1.0.9479",
         }
 
         # Add CSRF token and container ID to headers if available
@@ -88,14 +91,16 @@ class GrammarlyDetector:
         try:
             # Prepare request
             url = "https://capi.grammarly.com/api/check/aidetector"
-            payload = {
-                "text": text,
-            }
+            # Important: Send text as raw body, not JSON
+            # Content-Type is text/plain, so we send the text directly
 
             # Make synchronous request
             with httpx.Client(timeout=self.timeout) as client:
                 response = client.post(
-                    url, json=payload, headers=self.headers, cookies=self.cookies
+                    url,
+                    content=text,  # Send as raw text content
+                    headers=self.headers,
+                    cookies=self.cookies,
                 )
 
                 response_time_ms = (time.time() - start_time) * 1000
@@ -124,14 +129,16 @@ class GrammarlyDetector:
                 data = response.json()
 
                 # Extract AI probability from response
-                # Grammarly's response format may vary - adjust as needed
-                ai_score = data.get("ai_score", 0.5)
-                if isinstance(ai_score, (int, float)):
-                    # Normalize to 0-1 range if needed
-                    if ai_score > 1:
-                        ai_score = ai_score / 100.0
-                    ai_probability = float(ai_score)
+                # Response format: {"category": "AIDetector", "score": 100, ...}
+                # score is 0-100 where 100 = 100% AI
+                score = data.get("score", 50)
+                if isinstance(score, (int, float)):
+                    # Convert 0-100 score to 0-1 probability
+                    # score 100 = 100% AI = 1.0 ai_probability
+                    # score 0 = 0% AI = 0.0 ai_probability
+                    ai_probability = float(score) / 100.0
                 else:
+                    logger.warning(f"Unexpected score type: {type(score)}, value: {score}")
                     ai_probability = 0.5
 
                 human_probability = 1.0 - ai_probability
