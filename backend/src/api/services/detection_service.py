@@ -1094,24 +1094,25 @@ class AIDetectionService:
         """
         Split text into sentences for Originality.AI API.
 
-        Uses improved regex pattern matching from test script for better accuracy.
+        Matches the test script implementation exactly.
         """
-        # Remove HTML tags if present
-        if "<" in text and ">" in text:
-            text = re.sub(r"<[^>]+>", "", text)
+        if not text or not text.strip():
+            return [""]
 
-        # Remove extra whitespace
-        text = re.sub(r"\s+", " ", text.strip())
+        # Remove extra whitespace but preserve newlines for structure
+        text = text.strip()
 
-        # Split by sentence endings (improved pattern from test script)
-        # Uses positive lookbehind to keep punctuation with sentences
+        # Split by sentence endings (period, exclamation, question mark)
         sentences = re.split(r"(?<=[.!?])\s+", text)
 
-        # Filter out empty sentences and strip whitespace
+        # Filter out empty sentences and clean up
         sentences = [s.strip() for s in sentences if s.strip()]
 
-        # Fallback: if no sentences found, return text as single sentence
-        return sentences if sentences else [text]
+        # If no sentences found (no sentence endings), return the full text as single sentence
+        if not sentences:
+            sentences = [text]
+
+        return sentences
 
     def _analyze_blocks(self, blocks: list[dict]) -> dict:
         """
@@ -1209,8 +1210,13 @@ class AIDetectionService:
         """
         Convert plain text to HTML formatted content for Originality.AI API.
 
-        Matches the formatting from the test script.
+        Matches the test script implementation exactly.
         """
+        if not text or not text.strip():
+            return "<p></p>"
+
+        text = text.strip()
+
         # Split by double newlines (paragraphs)
         paragraphs = text.split("\n\n")
 
@@ -1219,13 +1225,15 @@ class AIDetectionService:
         for para in paragraphs:
             para = para.strip()
             if para:
-                # Replace single newlines with spaces within paragraphs
-                para = re.sub(r"\n+", " ", para)
+                # Replace single newlines with <br> tags for line breaks within paragraphs
+                para = para.replace("\n", "<br>")
+                # Handle bold text markers (**text** or *text*)
+                para = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", para)
                 formatted_paragraphs.append(f"<p>{para}</p>")
 
         # If no paragraphs found, wrap entire text
         if not formatted_paragraphs:
-            text = re.sub(r"\n+", " ", text.strip())
+            text = text.replace("\n", "<br>")
             formatted_paragraphs.append(f"<p>{text}</p>")
 
         return "".join(formatted_paragraphs)
@@ -1234,7 +1242,7 @@ class AIDetectionService:
         self,
         client: httpx.AsyncClient,
         scan_id: int,
-        max_wait_time: int = 180,
+        max_wait_time: int = 300,
         poll_interval: float = 2.0,
     ) -> dict:
         """
@@ -1243,8 +1251,8 @@ class AIDetectionService:
         Args:
             client: Shared HTTPX client
             scan_id: Scan identifier returned from create call
-            max_wait_time: Maximum seconds to wait for completion
-            poll_interval: Delay between polling attempts
+            max_wait_time: Maximum seconds to wait for completion (default: 5 minutes)
+            poll_interval: Delay between polling attempts (default: 2 seconds)
 
         Returns:
             Final scan result payload
@@ -1254,13 +1262,26 @@ class AIDetectionService:
         """
         start_time = time.time()
 
+        # Build headers matching test script
+        get_headers = {
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9",
+            "authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
+            "origin": "https://app.originality.ai",
+            "referer": "https://app.originality.ai/",
+            "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": '"Windows"',
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-site",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+        }
+
         while True:
             response = await client.get(
                 f"{self._ORIGINALITY_BASE_URL}/{scan_id}",
-                headers={
-                    "Authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
-                    "Accept": "application/json",
-                },
+                headers=get_headers,
             )
 
             if response.status_code >= 400:
@@ -1276,6 +1297,7 @@ class AIDetectionService:
             jobs_remaining = scan.get("jobs_remaining", 0)
 
             if running == 0 and jobs_remaining == 0:
+                logger.info(f"Originality.AI scan {scan_id} completed")
                 return data
 
             elapsed = time.time() - start_time
@@ -1285,6 +1307,9 @@ class AIDetectionService:
                     f"(running={running}, jobs_remaining={jobs_remaining})"
                 )
 
+            logger.debug(
+                f"Waiting for scan to complete... (running={running}, jobs_remaining={jobs_remaining})"
+            )
             await asyncio.sleep(poll_interval)
 
     async def _detect_originality(self, text: str) -> DetectorResult:
@@ -1313,27 +1338,28 @@ class AIDetectionService:
             formatted_content = self._create_formatted_content(text)
 
             # Generate title from first sentence if not provided
-            title = text[:50] + "..." if len(text) > 50 else text
             if sentences:
                 first_sentence = sentences[0]
-                if len(first_sentence) > 50:
-                    title = first_sentence[:50] + "..."
-                else:
-                    title = first_sentence
+                title = first_sentence[:50] + ("..." if len(first_sentence) > 50 else "")
+            else:
+                title = text[:50] + ("..." if len(text) > 50 else "")
 
             # Calculate credit cost (rough estimate: 1 credit per 100 words)
             word_count = len(text.split())
             credit_cost = max(1, (word_count + 99) // 100)
 
-            # Prepare request body according to Originality.AI API format
+            # Default excluded URLs (matching test script)
+            excluded_urls = ["https://example.com"]
+
+            # Prepare request body according to Originality.AI API format (matching test script)
             request_body = {
                 "sentences": sentences,
                 "originalContent": text,
                 "formattedContent": formatted_content,
                 "creditCost": credit_cost,
                 "title": title,
-                "aiModelVersion": 1,
-                "excludedUrls": [],
+                "aiModelVersion": 5,  # Updated to version 5 from test script
+                "excludedUrls": excluded_urls,
                 "pcoTargetedCountry": "United States",
                 "pcoTargetedDevice": "desktop",
                 "pcoPublishingDomain": "",
@@ -1349,15 +1375,30 @@ class AIDetectionService:
                 "scan_egc": False,
             }
 
+            # Build headers matching test script
+            headers = {
+                "accept": "application/json",
+                "accept-language": "en-US,en;q=0.9",
+                "authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
+                "content-type": "application/json",
+                "origin": "https://app.originality.ai",
+                "priority": "u=1, i",
+                "referer": "https://app.originality.ai/",
+                "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": '"Windows"',
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "cors",
+                "sec-fetch-site": "same-site",
+                "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
+            }
+
             # Call Originality.AI API with optimized timeout
             async with httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0)) as client:
+                logger.info("Creating Originality.AI scan...")
                 create_response = await client.post(
                     self._ORIGINALITY_BASE_URL,
-                    headers={
-                        "Authorization": f"Bearer {settings.ORIGINALITY_API_KEY}",
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                    },
+                    headers=headers,
                     json=request_body,
                 )
 
@@ -1374,50 +1415,56 @@ class AIDetectionService:
                         logger.error(f"Originality.AI response missing scan ID: {create_data}")
                         raise RuntimeError("Originality.AI response missing scan ID")
 
+                    logger.info(f"Originality.AI scan created with ID: {scan_id}")
+
                     scan_results = create_data.get("scan_results", {})
                     scan_meta = scan_results.get("scan", {})
 
+                    # Poll for completion if scan is still running
                     if not scan_results or scan_meta.get("running", 1) != 0:
+                        logger.info("Waiting for scan to complete...")
                         final_data = await self._poll_originality_scan(client, scan_id)
                     else:
                         final_data = create_data
 
+                    # Parse final results (matching test script structure)
                     scan_results = final_data.get("scan_results", {})
                     scan = scan_results.get("scan", {})
                     ai_results = scan_results.get("aiResults", {})
-                    plag_results = scan_results.get("plagResults", {})
 
-                    ai_fake_score = ai_results.get("ai_fake_score")
-                    if ai_fake_score is None:
-                        ai_fake_score = scan.get("ai_fake_score")
-                    if ai_fake_score is None:
-                        ai_fake_score = ai_results.get("fake")
-                    if ai_fake_score is None:
-                        ai_fake_score = 0.5
-
-                    ai_real_score = ai_results.get("ai_real_score")
+                    # Extract scores - matching test script response structure
+                    # Primary source: scan_results.scan.ai_real_score and ai_fake_score
+                    ai_real_score = scan.get("ai_real_score")
                     if ai_real_score is None:
-                        ai_real_score = scan.get("ai_real_score")
-                    if ai_real_score is None:
-                        ai_real_score = ai_results.get("real")
+                        ai_real_score = ai_results.get("ai_real_score")
                     if ai_real_score is None:
                         ai_real_score = 0.5
 
+                    ai_fake_score = scan.get("ai_fake_score")
+                    if ai_fake_score is None:
+                        ai_fake_score = ai_results.get("ai_fake_score")
+                    if ai_fake_score is None:
+                        ai_fake_score = 0.5
+
+                    # Convert to probabilities
                     ai_probability = float(ai_fake_score)
                     human_probability = float(ai_real_score)
                     confidence = abs(ai_probability - 0.5) * 2
 
+                    # Analyze blocks if available
                     block_analysis = None
                     if ai_results and "blocks" in ai_results:
                         block_analysis = self._analyze_blocks(ai_results.get("blocks", []))
 
+                    # Get plagiarism score if available
+                    plag_results = scan_results.get("plagResults", {})
                     plagiarism_score = None
                     if plag_results:
                         plagiarism_score = plag_results.get("documentScore")
 
                     logger.info(
-                        f"Originality.AI API: AI={ai_probability:.3f}, "
-                        f"Human={human_probability:.3f}, Confidence={confidence:.3f}, "
+                        f"Originality.AI success: AI={ai_probability:.1%}, "
+                        f"Human={human_probability:.1%}, Confidence={confidence:.1%}, "
                         f"ScanID={scan.get('id') or scan_id}"
                     )
 
