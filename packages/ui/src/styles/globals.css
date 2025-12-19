@@ -607,6 +607,22 @@
   .w-tabs {
     width: var(--width-tabs);
   }
+  /* Emoji flag utilities */
+  .emoji-flag {
+    font-family:
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+      "Noto Color Emoji", "Twemoji Mozilla", "emoji", sans-serif;
+    font-size: 1.25rem;
+    line-height: 1;
+    display: inline-block;
+    min-width: 1.5rem;
+    text-align: center;
+    font-feature-settings: normal;
+    font-variant-emoji: emoji;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
   .w-feedback {
     width: var(--width-feedback);
   }
