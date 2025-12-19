@@ -32,6 +32,9 @@ yarn-error.log*
 
 # local env files
 .env*.local
+.env*.backup
+.env*.example
+*STRIPE_SETUP.md
 
 # vercel
 .vercel
