@@ -41,6 +41,7 @@ class TestDetectEndpoint:
         """Valid request payload."""
         return {"text": ai_text}
 
+    @pytest.mark.slow
     def test_detect_success(self, valid_payload):
         """Test successful detection."""
         response = client.post("/api/v1/detect/", json=valid_payload)
@@ -105,6 +106,7 @@ class TestDetectEndpoint:
         # Should handle short text
         assert response.status_code in [200, 400]
 
+    @pytest.mark.slow
     def test_very_long_text(self):
         """Test with very long text."""
         long_text = "This is a test sentence. " * 1000  # ~5000 words
@@ -115,6 +117,7 @@ class TestDetectEndpoint:
         # Should handle or reject long text appropriately
         assert response.status_code in [200, 400, 413]
 
+    @pytest.mark.slow
     def test_special_characters(self):
         """Test with special characters."""
         # Use text with enough words after sanitization (special chars/emojis may be removed)
@@ -221,6 +224,7 @@ class TestDetectEndpoint:
         for response in responses:
             assert response.status_code == 200
 
+    @pytest.mark.slow
     def test_mixed_content(self):
         """Test with mixed human/AI content."""
         mixed_text = """
@@ -284,6 +288,7 @@ class TestDetectErrorHandling:
 class TestDetectPerformance:
     """Performance tests for /detect endpoint."""
 
+    @pytest.mark.slow
     def test_response_time(self):
         """Test that endpoint responds within reasonable time."""
         import time
@@ -304,6 +309,7 @@ class TestDetectPerformance:
         print(f"Response time: {elapsed:.3f}s")
         assert elapsed < 12.0
 
+    @pytest.mark.slow
     def test_throughput(self):
         """Test throughput with multiple sequential requests."""
         import time
