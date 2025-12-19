@@ -179,10 +179,17 @@ async def humanize_text(
                 stealthwriter = StealthWriterService(cookie_string=settings.DEFAULT_COOKIE_STRING)
 
                 if not stealthwriter.is_valid():
+                    logger.error("❌ StealthWriter service validation failed")
+                    logger.error(f"   • Cookie string length: {len(settings.DEFAULT_COOKIE_STRING) if settings.DEFAULT_COOKIE_STRING else 0}")
+                    logger.error(f"   • Cookies parsed: {len(stealthwriter.cookies)}")
                     raise HTTPException(
                         status_code=503,
                         detail="StealthWriter service is not valid. Please check your DEFAULT_COOKIE_STRING configuration.",
                     )
+
+                logger.info(f"✅ StealthWriter service initialized successfully")
+                logger.info(f"   • Cookies loaded: {len(stealthwriter.cookies)}")
+                logger.info(f"   • Access token available: {stealthwriter.access_token is not None}")
 
                 stealthwriter_result = stealthwriter.humanize_text(
                     text=sanitized_input_text,
@@ -191,9 +198,15 @@ async def humanize_text(
                 )
 
                 if not stealthwriter_result:
+                    # Check if service is valid to provide better error message
+                    if not stealthwriter.is_valid():
+                        raise HTTPException(
+                            status_code=503,
+                            detail="StealthWriter service is not properly configured. Please check your DEFAULT_COOKIE_STRING in .env file.",
+                        )
                     raise HTTPException(
                         status_code=503,
-                        detail="StealthWriter API call failed. Please check your cookies or try again later.",
+                        detail="StealthWriter API call failed. This could be due to: expired cookies, puzzle verification failure, network issues, or API errors. Please check the server logs for details and try again later.",
                     )
 
                 final_humanized_text = stealthwriter.extract_humanized_text(stealthwriter_result)

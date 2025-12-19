@@ -246,7 +246,9 @@ class StealthWriterService:
 
                 verify_result = self.puzzle_verify(puzzle_token, user_solution_x)
                 if not verify_result:
-                    raise Exception("Failed to verify puzzle")
+                    error_msg = "Failed to verify puzzle - no response from puzzle_verify"
+                    logger.error(f"   ❌ {error_msg}")
+                    raise Exception(error_msg)
 
                 if not verify_result.get("success"):
                     if attempt < max_retries - 1:
@@ -270,7 +272,9 @@ class StealthWriterService:
                 check_result = self.puzzle_check(access_token)
 
                 if not check_result:
-                    raise Exception("Failed to check access token")
+                    error_msg = "Failed to check access token - no response from puzzle_check"
+                    logger.error(f"   ❌ {error_msg}")
+                    raise Exception(error_msg)
 
                 if not check_result.get("valid"):
                     if attempt < max_retries - 1:
@@ -384,14 +388,26 @@ class StealthWriterService:
             Humanization results from the API, or None if failed
         """
         if not self.is_valid():
+            logger.error("❌ StealthWriter service not available")
+            logger.error(f"   • is_available: {self.is_available}")
+            logger.error(f"   • cookies count: {len(self.cookies)}")
             logger.warning("StealthWriter service not available, skipping")
             return None
 
         # Complete puzzle verification first (unless skipped)
         if not skip_puzzle and not self.access_token:
-            if not self.complete_puzzle_verification():
-                logger.error("Puzzle verification failed. Cannot proceed with humanization.")
-            return None
+            logger.info("🔐 Starting puzzle verification...")
+            logger.info(f"   • skip_puzzle: {skip_puzzle}")
+            logger.info(f"   • access_token available: {self.access_token is not None}")
+            puzzle_success = self.complete_puzzle_verification()
+            if not puzzle_success:
+                logger.error("❌ Puzzle verification failed. Cannot proceed with humanization.")
+                logger.error("💡 Check server logs above for puzzle verification details")
+                return None
+            logger.info("✅ Puzzle verification successful, proceeding with humanization")
+            logger.info(f"   • Access token set: {self.access_token is not None}")
+        elif self.access_token:
+            logger.info("✅ Using existing access token (skipping puzzle verification)")
 
         # Log input details
         text_length = len(text)
@@ -431,6 +447,7 @@ class StealthWriterService:
         # Retry logic for server errors
         max_retries = 2
         retry_delay = 2  # seconds
+        response = None  # Initialize response variable
 
         try:
             for attempt in range(max_retries + 1):
@@ -474,8 +491,10 @@ class StealthWriterService:
                     logger.info("✅ StealthWriter API call successful")
                     break  # Success, exit retry loop
                 except requests.exceptions.HTTPError as e:
+                    # Store response for outer handler
+                    response = e.response
                     # If it's a 500 error and we have retries left, wait and retry
-                    if e.response.status_code == 500 and attempt < max_retries:
+                    if e.response and e.response.status_code == 500 and attempt < max_retries:
                         import time
 
                         logger.warning(
@@ -487,6 +506,21 @@ class StealthWriterService:
                     else:
                         # Re-raise to be handled by outer exception handler
                         raise
+                except requests.exceptions.RequestException as e:
+                    # For other request exceptions, log and re-raise
+                    logger.error(f"❌ StealthWriter request exception on attempt {attempt + 1}: {e}")
+                    if attempt < max_retries:
+                        import time
+                        logger.warning(f"Retrying in {retry_delay} seconds...")
+                        time.sleep(retry_delay)
+                        continue
+                    raise
+
+            # Ensure we have a response before trying to parse
+            if not response:
+                logger.error("❌ No response received from StealthWriter API after all retries")
+                logger.error("💡 This could indicate: network issues, timeout, or the API is unreachable")
+                return None
 
             # Try to parse JSON response
             # Note: requests library automatically handles Brotli decompression if available
@@ -601,51 +635,50 @@ class StealthWriterService:
                 return None
 
         except requests.exceptions.HTTPError as e:
-            status_code = e.response.status_code
+            status_code = e.response.status_code if e.response else 0
 
             # Try to decode error message from response
             error_message = self._decode_error_response(e.response) if e.response else None
 
             if status_code == 401:
-                if error_message:
-                    logger.warning(f"StealthWriter authentication failed (401): {error_message}")
-                else:
-                    logger.warning("StealthWriter authentication failed - cookies may have expired")
+                error_detail = error_message or "Authentication failed - cookies may have expired"
+                logger.error(f"❌ StealthWriter authentication failed (401): {error_detail}")
+                logger.error("💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies")
             elif status_code == 403:
-                if error_message:
-                    logger.warning(f"StealthWriter access forbidden (403): {error_message}")
-                    logger.warning(
-                        "💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies"
-                    )
-                else:
-                    logger.warning("StealthWriter access forbidden - session may have expired")
-                    logger.warning(
-                        "💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies"
-                    )
+                error_detail = error_message or "Access forbidden - session may have expired"
+                logger.error(f"❌ StealthWriter access forbidden (403): {error_detail}")
+                logger.error("💡 Action needed: Update DEFAULT_COOKIE_STRING in .env with fresh cookies")
             elif status_code == 429:
-                if error_message:
-                    logger.warning(f"StealthWriter rate limit reached (429): {error_message}")
-                else:
-                    logger.warning("StealthWriter rate limit reached")
+                error_detail = error_message or "Rate limit reached"
+                logger.error(f"❌ StealthWriter rate limit reached (429): {error_detail}")
             elif status_code == 500:
-                if error_message:
-                    logger.warning(f"StealthWriter server error (500): {error_message}")
-                else:
-                    logger.warning("StealthWriter server error (500)")
+                error_detail = error_message or "Server error"
+                logger.error(f"❌ StealthWriter server error (500): {error_detail}")
             else:
-                if error_message:
-                    logger.warning(f"StealthWriter HTTP error {status_code}: {error_message}")
-                else:
-                    logger.warning(f"StealthWriter HTTP error {status_code}")
+                error_detail = error_message or f"HTTP error {status_code}"
+                logger.error(f"❌ StealthWriter HTTP error {status_code}: {error_detail}")
 
+            # Return None with detailed error for better debugging
+            return None
+
+        except requests.exceptions.Timeout as e:
+            logger.error(f"❌ StealthWriter request timeout: {e}")
+            logger.error("💡 The request took too long. Try again or check your network connection.")
+            return None
+
+        except requests.exceptions.ConnectionError as e:
+            logger.error(f"❌ StealthWriter connection error: {e}")
+            logger.error("💡 Could not connect to StealthWriter API. Check your internet connection.")
             return None
 
         except requests.exceptions.RequestException as e:
-            logger.warning(f"StealthWriter request error: {e}")
+            logger.error(f"❌ StealthWriter request error: {e}")
+            logger.error(f"💡 Request failed: {type(e).__name__}")
             return None
 
         except Exception as e:
-            logger.error(f"Unexpected error calling StealthWriter: {e}", exc_info=True)
+            logger.error(f"❌ Unexpected error calling StealthWriter: {e}", exc_info=True)
+            logger.error(f"💡 Error type: {type(e).__name__}")
             return None
 
     def extract_humanized_text(self, result: dict[str, Any]) -> str | None:
