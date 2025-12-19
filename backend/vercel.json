@@ -1,6 +1,6 @@
 {
   "functions": {
-    "src/index.py": {
+    "api/index.py": {
       "excludeFiles": "{.next,.git,node_modules}/**"
     }
   }
