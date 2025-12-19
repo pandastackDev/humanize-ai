@@ -2,10 +2,14 @@
 StealthWriter API service for additional humanization pass.
 
 This service calls the StealthWriter API as a final optional enhancement step.
+NOTE: This API requires session authentication via cookies and puzzle verification.
 """
 
+import hashlib
 import json
 import logging
+import random
+import time
 import urllib.parse
 from typing import Any
 
@@ -40,7 +44,7 @@ def parse_cookie_string(cookie_string: str) -> dict[str, str]:
 
 
 class StealthWriterService:
-    """Service for calling StealthWriter API."""
+    """Service for calling StealthWriter API with puzzle verification."""
 
     def __init__(self, cookie_string: str | None = None):
         """
@@ -49,9 +53,10 @@ class StealthWriterService:
         Args:
             cookie_string: Full cookie string from DEFAULT_COOKIE_STRING env var
         """
-        self.base_url = "https://app.stealthwriter.ai/api/humanize"
+        self.base_url = "https://app.stealthwriter.ai/api"
         self.cookies: dict[str, str] = {}
         self.is_available = False
+        self.access_token: str | None = None  # Will be set after puzzle verification
 
         if cookie_string and cookie_string.strip():
             try:
@@ -64,26 +69,227 @@ class StealthWriterService:
         else:
             logger.info("StealthWriter service not available (no cookie string provided)")
 
-        # Build headers similar to browser request
-        self.headers = {
+        # Build base headers similar to browser request
+        self.base_headers = {
             "accept": "*/*",
             "accept-encoding": "gzip, deflate, br, zstd",
             "accept-language": "en-US,en;q=0.9",
-            "content-type": "application/json",
             "origin": "https://app.stealthwriter.ai",
             "referer": "https://app.stealthwriter.ai/humanizer",
-            "sec-ch-ua": '"Chromium";v="142", "Google Chrome";v="142", "Not_A Brand";v="99"',
+            "sec-ch-ua": '"Google Chrome";v="143", "Chromium";v="143", "Not A(Brand";v="24"',
             "sec-ch-ua-mobile": "?0",
             "sec-ch-ua-platform": '"Windows"',
             "sec-fetch-dest": "empty",
             "sec-fetch-mode": "cors",
             "sec-fetch-site": "same-origin",
-            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36",
+            "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36",
         }
 
     def is_valid(self) -> bool:
         """Check if the service is available and properly configured."""
         return self.is_available and bool(self.cookies)
+
+    def puzzle_generate(self) -> dict[str, Any] | None:
+        """
+        Generate a puzzle challenge.
+
+        Returns:
+            Dictionary with puzzle_token, puzzle_width, and visual_x, or None if failed
+        """
+        headers = self.base_headers.copy()
+        # puzzle_generate doesn't need content-type
+
+        try:
+            response = requests.get(
+                f"{self.base_url}/puzzle_generate",
+                headers=headers,
+                cookies=self.cookies if self.cookies else None,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error generating puzzle: {e}")
+            return None
+
+    def puzzle_verify(self, puzzle_token: str, user_solution_x: float) -> dict[str, Any] | None:
+        """
+        Verify puzzle solution.
+
+        Args:
+            puzzle_token: Token from puzzle_generate
+            user_solution_x: X coordinate solution (typically visual_x from puzzle_generate)
+
+        Returns:
+            Dictionary with success status and access_token, or None if failed
+        """
+        headers = self.base_headers.copy()
+        headers["content-type"] = "text/plain;charset=UTF-8"
+
+        payload = {
+            "puzzle_token": puzzle_token,
+            "user_solution_x": user_solution_x,
+        }
+
+        try:
+            response = requests.post(
+                f"{self.base_url}/puzzle_verify",
+                headers=headers,
+                cookies=self.cookies if self.cookies else None,
+                json=payload,
+                timeout=30,
+            )
+            response.raise_for_status()
+            result = response.json()
+
+            # Store access token for future use
+            if result.get("success") and "access_token" in result:
+                self.access_token = result["access_token"]
+
+            return result
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error verifying puzzle: {e}")
+            return None
+
+    def puzzle_check(self, access_token: str | None = None) -> dict[str, Any] | None:
+        """
+        Check if access token is valid.
+
+        Args:
+            access_token: Access token from puzzle_verify (uses stored token if not provided)
+
+        Returns:
+            Dictionary with valid status, or None if failed
+        """
+        if not access_token:
+            access_token = self.access_token
+
+        if not access_token:
+            logger.error("No access token available. Complete puzzle verification first.")
+            return None
+
+        headers = self.base_headers.copy()
+        headers["content-type"] = "text/plain;charset=UTF-8"
+
+        payload = {"access_token": access_token}
+
+        try:
+            response = requests.post(
+                f"{self.base_url}/puzzle_check",
+                headers=headers,
+                cookies=self.cookies if self.cookies else None,
+                json=payload,
+                timeout=30,
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error checking puzzle token: {e}")
+            return None
+
+    def complete_puzzle_verification(self, max_retries: int = 3) -> bool:
+        """
+        Complete the full puzzle verification flow:
+        1. Generate puzzle
+        2. Verify puzzle (using visual_x as solution)
+        3. Check access token
+
+        Args:
+            max_retries: Maximum number of retry attempts if verification fails
+
+        Returns:
+            True if verification successful, False otherwise
+        """
+        for attempt in range(max_retries):
+            try:
+                # Step 1: Generate puzzle
+                if attempt == 0:
+                    logger.info("🔐 Step 1: Generating puzzle challenge...")
+                else:
+                    logger.info(
+                        f"🔐 Step 1: Regenerating puzzle challenge (attempt {attempt + 1}/{max_retries})..."
+                    )
+
+                puzzle_data = self.puzzle_generate()
+                if not puzzle_data:
+                    raise Exception("Failed to generate puzzle")
+
+                puzzle_token = puzzle_data.get("puzzle_token")
+                visual_x = puzzle_data.get("visual_x")
+                puzzle_width = puzzle_data.get("puzzle_width", 300)
+
+                if not puzzle_token or visual_x is None:
+                    raise Exception("Invalid puzzle response. Missing puzzle_token or visual_x.")
+
+                if attempt == 0:
+                    logger.info(f"   ✓ Puzzle generated (visual_x: {visual_x}, width: {puzzle_width})")
+
+                # Step 2: Verify puzzle
+                # Use visual_x as the solution (with slight variation to mimic human behavior)
+                if attempt == 0:
+                    # First attempt: use visual_x directly
+                    user_solution_x = float(visual_x)
+                else:
+                    # Retry attempts: add small random variation (±3 pixels) to mimic human imprecision
+                    user_solution_x = visual_x + random.uniform(-3, 3)
+
+                if attempt == 0:
+                    logger.info(f"🔐 Step 2: Verifying puzzle solution (x: {user_solution_x:.2f})...")
+                else:
+                    logger.info(
+                        f"🔐 Step 2: Retrying puzzle verification (x: {user_solution_x:.2f})..."
+                    )
+
+                verify_result = self.puzzle_verify(puzzle_token, user_solution_x)
+                if not verify_result:
+                    raise Exception("Failed to verify puzzle")
+
+                if not verify_result.get("success"):
+                    if attempt < max_retries - 1:
+                        logger.warning("   ⚠️  Puzzle verification failed, retrying...")
+                        time.sleep(1)  # Brief delay before retry
+                        continue
+                    raise Exception("Puzzle verification failed after all retries.")
+
+                access_token = verify_result.get("access_token")
+                if not access_token:
+                    if attempt < max_retries - 1:
+                        logger.warning("   ⚠️  No access token received, retrying...")
+                        time.sleep(1)
+                        continue
+                    raise Exception("No access token received from puzzle verification.")
+
+                logger.info("   ✓ Puzzle verified successfully")
+
+                # Step 3: Check access token
+                logger.info("🔐 Step 3: Validating access token...")
+                check_result = self.puzzle_check(access_token)
+
+                if not check_result:
+                    raise Exception("Failed to check access token")
+
+                if not check_result.get("valid"):
+                    if attempt < max_retries - 1:
+                        logger.warning("   ⚠️  Access token validation failed, retrying...")
+                        time.sleep(1)
+                        continue
+                    raise Exception("Access token validation failed after all retries.")
+
+                logger.info("   ✓ Access token validated")
+                logger.info("🔐 Puzzle verification complete!\n")
+
+                return True
+
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    logger.warning(f"   ⚠️  Error: {e}, retrying...")
+                    time.sleep(2)  # Longer delay on error
+                    continue
+                else:
+                    logger.error(f"❌ Puzzle verification failed after {max_retries} attempts: {e}")
+                    return False
+
+        return False
 
     def _decode_error_response(self, response: requests.Response) -> str | None:
         """
@@ -155,18 +361,20 @@ class StealthWriterService:
         style: str = "Don't Change",
         use_british_english: bool = False,
         detector_mode: str = "normal",
+        skip_puzzle: bool = False,
     ) -> dict[str, Any] | None:
         """
         Humanize text using StealthWriter API.
 
         Args:
             text: Text content to humanize
-            model: Model to use (default: "ghost-v4.7-mini")
-            level: Humanization level 1-10 (default: 10)
+            model: Model to use (default: "ghost-v4.6-mini")
+            level: Humanization level 1-10 (default: 8)
             n: Number of variations to generate (default: 5)
             style: Writing style (default: "Don't Change")
             use_british_english: Use British English (default: False)
             detector_mode: Detector mode (default: "normal")
+            skip_puzzle: Skip puzzle verification (for testing, default: False)
 
         Returns:
             Humanization results from the API, or None if failed
@@ -174,6 +382,12 @@ class StealthWriterService:
         if not self.is_valid():
             logger.warning("StealthWriter service not available, skipping")
             return None
+
+        # Complete puzzle verification first (unless skipped)
+        if not skip_puzzle and not self.access_token:
+            if not self.complete_puzzle_verification():
+                logger.error("Puzzle verification failed. Cannot proceed with humanization.")
+                return None
 
         # Log input details
         text_length = len(text)
@@ -189,8 +403,6 @@ class StealthWriterService:
         logger.info(f"   • Variations (n): {n}")
 
         # Generate fingerprint (simple hash-based approach)
-        import hashlib
-
         fingerprint = hashlib.md5(text.encode()).hexdigest()
 
         # API expects an "options" object containing the parameters
@@ -208,6 +420,10 @@ class StealthWriterService:
             },
         }
 
+        # Build headers for humanize request
+        headers = self.base_headers.copy()
+        headers["content-type"] = "application/json"
+
         # Retry logic for server errors
         max_retries = 2
         retry_delay = 2  # seconds
@@ -218,12 +434,12 @@ class StealthWriterService:
                     logger.info(
                         f"🌐 StealthWriter API call (attempt {attempt + 1}/{max_retries + 1})..."
                     )
-                    logger.debug(f"   • URL: {self.base_url}")
+                    logger.debug(f"   • URL: {self.base_url}/humanize")
                     logger.debug(f"   • Payload size: {len(json.dumps(payload))} bytes")
 
                     response = requests.post(
-                        self.base_url,
-                        headers=self.headers,
+                        f"{self.base_url}/humanize",
+                        headers=headers,
                         cookies=self.cookies,
                         json=payload,
                         timeout=60,
