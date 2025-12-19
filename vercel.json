@@ -4,14 +4,14 @@
       "excludeFiles": "{.next,.git,node_modules,backend/node_modules,apps/next/node_modules}/**"
     }
   },
-  "buildCommand": "pnpm --filter @humanize/next build",
+  "buildCommand": "SKIP_ENV_VALIDATION=true pnpm --filter @humanize/next build",
   "outputDirectory": "apps/next/.next",
   "installCommand": "pnpm install",
-  "framework": null,
-  "routes": [
+  "framework": "nextjs",
+  "rewrites": [
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
+      "source": "/api/v1/:path*",
+      "destination": "/api/index.py"
     }
   ]
 }
