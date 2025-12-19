@@ -1,7 +1,5 @@
 {
   "functions": {
-    "src/index.py": {
-      "runtime": "python3.12"
-    }
+    "src/index.py": {}
   }
 }
